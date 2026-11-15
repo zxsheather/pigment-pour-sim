@@ -27,7 +27,7 @@ def carry_instruction(color: str, goal: str) -> str:
             f"and stop beside {destination}. Keep the bottle in the gripper.")
 
 
-def build_control_model(scene_path: Path, config: dict) -> mujoco.MjModel:
+def build_control_model(scene_path: Path, config: dict, *, scene_transform=None) -> mujoco.MjModel:
     """Add servos and simple finger collision pads to the static scene."""
     tree = ET.parse(scene_path)
     scene = tree.getroot()
@@ -87,6 +87,8 @@ def build_control_model(scene_path: Path, config: dict) -> mujoco.MjModel:
     for geom in scene.findall(".//geom"):
         if geom.get("name", "").startswith("bottle_") and geom.get("name", "").endswith("_shell"):
             geom.set("mass", str(0.11 + config["bottle"]["initial_ml"] * 0.001))
+    if scene_transform is not None:
+        scene_transform(scene, config)
     return mujoco.MjModel.from_xml_string(ET.tostring(scene, encoding="unicode"))
 
 
@@ -98,9 +100,10 @@ class CarryEnv:
     """
 
     def __init__(self, scene_path: Path | None = None, *, render: bool = False,
-                 image_size: int = 256, max_seconds: float = 75.0):
+                 image_size: int = 256, max_seconds: float = 75.0, model_transform=None):
         self.config = json.loads((ROOT / "scene_config.json").read_text())
-        self.model = build_control_model(scene_path or ROOT / "generated/scene.xml", self.config)
+        self.model = build_control_model(scene_path or ROOT / "generated/scene.xml", self.config,
+                                         scene_transform=model_transform)
         self.data = mujoco.MjData(self.model)
         self.render_enabled = render
         self.image_size = image_size
