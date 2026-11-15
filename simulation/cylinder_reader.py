@@ -52,17 +52,27 @@ def read_volume(rgb: np.ndarray) -> dict:
     _,index,stats=max(relevant,key=lambda item:item[0])
     x,y,w,h,_=stats
     center_x=int(round(x+w*.5))
-    tops=[]
-    for column in range(max(x,center_x-2),min(x+w,center_x+3)):
+    tops=[];columns=[]
+    margin=max(1,int(w*.1))
+    for column in range(x+margin,x+w-margin):
         pixels=np.flatnonzero(labels[:,column]==index)
-        if len(pixels)>3:tops.append(float(pixels[0]))
+        if len(pixels)>3:
+            tops.append(float(pixels[0]));columns.append(column)
     if len(tops)<3 or np.ptp(tops)>8:
         return dict(valid=False,reason="ambiguous_liquid_boundary")
-    liquid_y=float(np.median(tops))
+    # Black graduation lines or digits can hide the boundary in central
+    # columns. Use the highest edge supported by three adjacent columns,
+    # with a median rejecting isolated one-pixel noise. No volume prior.
+    edges=[float(np.median(tops[i:i+3])) for i in range(len(tops)-2)
+           if columns[i+2]-columns[i]==2 and np.ptp(tops[i:i+3])<=1]
+    if not edges:return dict(valid=False,reason="ambiguous_liquid_boundary")
+    liquid_y=min(edges)
+    support=int(np.count_nonzero(np.abs(np.array(tops)-liquid_y)<=1))
     volume=20+(y20-liquid_y)/(y20-y35)*15
     if not 0<=volume<=50:return dict(valid=False,reason="reading_out_of_scale")
     return dict(valid=True,volume_ml=float(volume),liquid_y=liquid_y,liquid_x=center_x,
                 y20=y20,y35=y35,anchor_x=anchor_x,liquid_bbox=stats[:4].astype(int).tolist(),
+                boundary_support_columns=support,boundary_support_fraction=support/len(tops),
                 eye_alignment_error_px=liquid_y-(rgb.shape[0]-1)/2,
                 method="two_color_graduation_anchors_and_liquid_boundary")
 

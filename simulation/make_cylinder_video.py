@@ -12,7 +12,7 @@ from cylinder_reader import read_volume,annotate
 PHASES={"approach":"伸手靠近","advance":"张开夹爪并对准","close":"合拢夹持",
         "lift":"从托盘提起","retract":"回收手臂","back_away":"退离桌边",
         "present":"移到相机前","straighten":"调整量筒竖直","hold_for_reading":"等待稳定",
-        "align_eye_level":"液面对齐视线","read_stable":"稳定读取刻度"}
+        "align_eye_level":"液面对齐视线","find_scale":"转动手腕寻找刻度","read_stable":"稳定读取刻度"}
 
 
 def main():
@@ -52,14 +52,23 @@ def main():
                     last_roi=(max(0,int(ax-45)),max(0,int(top)),
                               min(rgb.shape[1],int(lx+65)),min(rgb.shape[0],int(bottom)))
             available=[row for row in history if row["time"]<=times[index]+1e-8]
-            if available:last_reading=available[-1]
+            if available:
+                last_reading=available[-1]
+                # Use the saved raw-RGB observation, since H.264 may erase a
+                # tiny color anchor. This affects the display crop only.
+                ax=last_reading["anchor_x"];lx=last_reading["liquid_x"]
+                top=min(last_reading["y35"],last_reading["liquid_y"])-40
+                bottom=max(last_reading["y20"],last_reading["liquid_y"])+50
+                last_roi=(max(0,int(ax-45)),max(0,int(top)),
+                          min(rgb.shape[1],int(lx+65)),min(rgb.shape[0],int(bottom)))
             frame=Image.new("RGB",(1280,864),"#111827");draw=ImageDraw.Draw(frame)
-            draw.text((24,14),"量筒拿近与读数 · 接触抓取 + 图像读数",font=fonts[0],fill="#f1f5f9")
+            title="量筒稳定优化 · V 形指垫 + 图像读数" if summary.get("grip_profile")=="v-pad" else "量筒拿近与读数 · 接触抓取 + 图像读数"
+            draw.text((24,14),title,font=fonts[0],fill="#f1f5f9")
             draw.text((24,56),f"{PHASES.get(str(phases[index]),str(phases[index]))}    |    仿真 {times[index]:.1f} 秒    |    {args.speed:g} 倍速",
                       font=fonts[2],fill="#a8b3c7")
             frame.paste(Image.fromarray(full).resize((720,720)),(16,96))
-            if last_reading and phases[index] in ("align_eye_level","read_stable"):
-                shown=annotate(rgb,read_volume(rgb))
+            if last_reading and phases[index]=="read_stable":
+                shown=annotate(rgb,last_reading)
             else:shown=rgb
             image=Image.fromarray(shown)
             if last_roi is not None:image=image.crop(last_roi)
@@ -68,7 +77,8 @@ def main():
             draw.text((776,108),"头部相机 · 图像局部放大",font=fonts[2],fill="#f1f5f9",
                       stroke_width=2,stroke_fill="#172033")
             if last_reading:
-                label=f"图像读数：{last_reading['volume_ml']:.1f} mL";color="#6ee7b7"
+                prefix="稳定读数" if phases[index]=="read_stable" else "对齐中估读"
+                label=f"{prefix}：{last_reading['volume_ml']:.1f} mL";color="#6ee7b7"
             else:label="图像读数：等待稳定观察";color="#a8b3c7"
             draw.text((760,630),label,font=fonts[1],fill=color)
             draw.text((760,680),f"量筒倾斜  {np.degrees(tilt[index]):.1f}°",font=fonts[2],fill="#e2e8f0")
