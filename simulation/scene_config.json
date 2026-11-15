@@ -1,0 +1,145 @@
+{
+  "reference_image": "../场地照片/任务场地.jpg",
+  "units": "m, rad, mL",
+  "geometry_status": "Photo-guided static reconstruction. Each table's short axis follows the robot's forward direction (+X), and the two tables are arranged along +X. All dimensions are estimates; route and docking headings illustrate the layout only.",
+  "table": {
+    "center_xy": [
+      0.58,
+      0.58
+    ],
+    "size_xy": [
+      1.2,
+      1.2
+    ],
+    "height": 0.75,
+    "join": {
+      "count": 2,
+      "split_axis": "x",
+      "gap_m": 0.004
+    }
+  },
+  "source_tray": {
+    "center_xy": [
+      0.23,
+      0.58
+    ],
+    "size_xy": [
+      0.43,
+      0.43
+    ]
+  },
+  "target_tray": {
+    "center_xy": [
+      0.88,
+      0.3
+    ],
+    "size_xy": [
+      0.57,
+      0.54
+    ]
+  },
+  "bottle": {
+    "radius": 0.029,
+    "height": 0.155,
+    "initial_ml": 100.0
+  },
+  "cylinder": {
+    "center_xy": [
+      0.88,
+      0.3
+    ],
+    "radius": 0.012,
+    "height": 0.245,
+    "capacity_ml": 50.0
+  },
+  "robot": {
+    "base_x": -0.44,
+    "source_base_y": 0.846,
+    "source_base_yaw": 0.0,
+    "target_base_x": 0.614,
+    "target_base_y": -0.55,
+    "target_base_yaw": 1.5707963268,
+    "lift": 0.3
+  },
+  "navigation": {
+    "layout": "adjacent_table_edges",
+    "status": "layout illustration: route and docking footprint",
+    "base_footprint_xy": [
+      0.618,
+      0.511
+    ],
+    "clearance_m": 0.12,
+    "route_xy": [
+      [
+        -0.44,
+        0.846
+      ],
+      [
+        -0.55,
+        0.846
+      ],
+      [
+        -0.55,
+        -0.55
+      ],
+      [
+        0.614,
+        -0.55
+      ]
+    ]
+  },
+  "bottles": [
+    {
+      "color": "green",
+      "offset_xy": [
+        -0.09,
+        0.09
+      ],
+      "rgba": [
+        0.06,
+        0.53,
+        0.34,
+        1
+      ]
+    },
+    {
+      "color": "blue",
+      "offset_xy": [
+        -0.09,
+        -0.09
+      ],
+      "rgba": [
+        0.09,
+        0.3,
+        0.83,
+        1
+      ]
+    },
+    {
+      "color": "yellow",
+      "offset_xy": [
+        0.09,
+        0.09
+      ],
+      "rgba": [
+        0.94,
+        0.78,
+        0.05,
+        1
+      ]
+    },
+    {
+      "color": "red",
+      "offset_xy": [
+        0.09,
+        -0.09
+      ],
+      "rgba": [
+        0.88,
+        0.16,
+        0.16,
+        1
+      ]
+    }
+  ]
+}
