@@ -1,0 +1,12 @@
+diff --git a/wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl.py b/wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl.py
+index 9eff1fe..fb70fc1 100644
+--- a/wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl.py
++++ b/wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl.py
+@@ -526,6 +526,7 @@ class Qwen2_5_VLVisionSdpaAttention(nn.Module):
+         cu_seqlens: torch.Tensor,
+         rotary_pos_emb: Optional[torch.Tensor] = None,
+         position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
++        max_seqlen: Optional[int] = None,
+     ) -> torch.Tensor:
+         seq_length = hidden_states.shape[0]
+         q, k, v = (
