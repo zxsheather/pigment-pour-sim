@@ -20,7 +20,8 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
-from robot_action_filter import RobotActionFilter,limit_pose_step,TemporalActionEnsemble,average_model_action_samples
+from robot_action_filter import (RobotActionFilter,limit_pose_step,TemporalActionEnsemble,
+                                 average_model_action_samples,GripperOpeningConfirmation)
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
@@ -99,7 +100,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
-                 state_embedding_precision="training"):
+                 state_embedding_precision="training",gripper_open_confirmations=0):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -117,6 +118,7 @@ class CylinderTrial:
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
         self.prediction_samples=prediction_samples;self.sampled_chunks=[]
         self.state_embedding_precision=state_embedding_precision
+        self.opening_guard=GripperOpeningConfirmation(self.env.state_vector()[19],gripper_open_confirmations)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -219,6 +221,8 @@ class CylinderTrial:
             temporal_ensemble_predictions=self.temporal_ensemble.max_predictions,
             prediction_samples_per_observation=self.prediction_samples,
             state_embedding_precision=self.state_embedding_precision,
+            gripper_opening_confirmation=dict(forecasts=self.opening_guard.confirmations,
+                abrupt_increase_threshold_m_per_finger=.005,decisions=self.opening_guard.decisions),
             sampled_action_decoding=("single model draw" if self.prediction_samples==1 else
                                      "same-observation independent flow draws averaged; rotations projected to SO(3)"),
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
@@ -285,6 +289,8 @@ def main():
                    help="Average independent flow draws at the SAME current observation; 1 preserves baseline decoding.")
     p.add_argument("--state-embedding-precision",choices=("training","native"),default="training",
                    help="Match training's state rounding before projection; native preserves the earlier Wall inference path.")
+    p.add_argument("--gripper-open-confirmations",type=int,choices=(0,2,3,4),default=0,
+                   help="Optional command ablation: confirm abrupt >5mm finger opening across policy forecasts; 0 disables.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -309,7 +315,8 @@ def main():
                          cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
                          ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble,
                          prediction_samples=args.prediction_samples,
-                         state_embedding_precision=args.state_embedding_precision) for index,case in enumerate(cases)]
+                         state_embedding_precision=args.state_embedding_precision,
+                         gripper_open_confirmations=args.gripper_open_confirmations) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -337,10 +344,11 @@ def main():
             for trial,chunk,observation in zip(active,chunks,observations):
                 try:absolute=relative_to_absolute(chunk,observation["state"][:23])
                 except ValueError as error:trial.fail(str(error));continue
-                trial.temporal_ensemble.add(int(round(trial.env.data.time/CONTROL_DT)),absolute)
-                for action in absolute[:args.execute_steps]:
+                guarded=trial.opening_guard(absolute,args.execute_steps)
+                trial.temporal_ensemble.add(int(round(trial.env.data.time/CONTROL_DT)),guarded)
+                for raw_action,action in zip(absolute[:args.execute_steps],guarded[:args.execute_steps]):
                     command=trial.temporal_ensemble.command(int(round(trial.env.data.time/CONTROL_DT)),action)
-                    trial.step(command,raw_model_action=action)
+                    trial.step(command,raw_model_action=raw_action)
                     if trial.done:break
             print(json.dumps(dict(case_status=[dict(seed=trial.case["seed"],seconds=float(trial.env.data.time),
                 held=trial.held,contacts=trial.env.metrics()["grip_contacts"],max_lifted_m=trial.max_lift,
@@ -365,6 +373,7 @@ def main():
                     temporal_ensemble_predictions=args.temporal_ensemble,
                     prediction_samples_per_observation=args.prediction_samples,
                     state_embedding_precision=args.state_embedding_precision,
+                    gripper_open_confirmations=args.gripper_open_confirmations,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

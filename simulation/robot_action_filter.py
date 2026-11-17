@@ -53,6 +53,46 @@ class TemporalActionEnsemble:
         return output
 
 
+class GripperOpeningConfirmation:
+    """Optionally confirm abrupt opening across distinct policy forecasts.
+
+    Closure passes immediately. A >5mm per-finger increase over the last
+    accepted command needs repeated forecasts; gradual opening still passes.
+    Only predicted commands and the initial robot aperture enter this helper.
+    This is an explicit execution ablation, not a learned-policy improvement.
+    """
+    def __init__(self, initial_aperture, confirmations=0):
+        if confirmations not in (0, 2, 3, 4) or not np.isfinite(initial_aperture):
+            raise ValueError("Invalid gripper opening confirmation settings")
+        self.confirmations=confirmations
+        self.last=float(initial_aperture)
+        self.pending=0
+        self.decisions=[]
+        self.normalized_margin=.005/(.0975/2)
+
+    def __call__(self, actions, execute_steps):
+        actions=np.asarray(actions)
+        if (actions.ndim!=2 or actions.shape[1]!=23 or
+                not 1<=execute_steps<=len(actions) or not np.isfinite(actions).all()):
+            raise ValueError("Invalid action forecast for gripper confirmation")
+        output=actions.copy()
+        if not self.confirmations:
+            return output
+        opening=bool(np.median(actions[:execute_steps,19])>self.last+self.normalized_margin)
+        self.pending=self.pending+1 if opening else 0
+        blocked=opening and self.pending<self.confirmations
+        previous=self.last
+        if blocked:
+            output[:,19]=np.minimum(output[:,19],self.last)
+        self.last=float(output[execute_steps-1,19])
+        self.decisions.append(dict(forecast_index=len(self.decisions),
+            previous_normalized_target=previous,
+            proposed_prefix_median=float(np.median(actions[:execute_steps,19])),
+            pending_forecasts=self.pending,blocked=bool(blocked),
+            accepted_last_prefix_target=self.last))
+        return output
+
+
 def limit_pose_step(command, robot_state, translation=0., rotation=0.):
     """Bound a Cartesian command relative to measured robot pose before IK.
 
