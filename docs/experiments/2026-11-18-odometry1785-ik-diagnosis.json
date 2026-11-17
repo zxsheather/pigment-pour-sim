@@ -1,0 +1,67 @@
+{
+  "kind": "recorded_neural_target_ik_diagnosis",
+  "episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step1785-single-v2/episode_000",
+  "source_failure_seconds": 20.74999999999699,
+  "replayed_prefix_steps": 7,
+  "replayed_robot_state_max_difference": 0.0,
+  "reproduced_default_ik_residual": 0.006050614201449446,
+  "acceptance_weighted_residual": 0.002,
+  "multi_start_results": [
+    {
+      "joint_limit_margin_rad": 0.005,
+      "seeds": 33,
+      "best_weighted_residual": 0.006050614201449141,
+      "position_error_m": 0.004409330624057605,
+      "rotation_error_rad": 0.016573586534012873,
+      "best_joints_rad": [
+        -0.3816644163369233,
+        1.8782251617678305,
+        -2.7874999999999996,
+        0.8880018948830121,
+        0.4272728925047614,
+        -0.01654671343954216
+      ],
+      "distance_to_bounds_rad": [
+        2.4058355836630767,
+        1.7819748382321696,
+        4.440892098500626e-16,
+        0.677798105116988,
+        1.1385271074952388,
+        1.898353286560458
+      ]
+    },
+    {
+      "joint_limit_margin_rad": 0.0,
+      "seeds": 33,
+      "best_weighted_residual": 0.006033078978619054,
+      "position_error_m": 0.004396513311816938,
+      "rotation_error_rad": 0.016525719427012708,
+      "best_joints_rad": [
+        -0.3816661537691823,
+        1.8806359544644817,
+        -2.7924999999999995,
+        0.890643486923203,
+        0.4272787408246661,
+        -0.016568388772557147
+      ],
+      "distance_to_bounds_rad": [
+        2.4108338462308176,
+        1.7845640455355183,
+        4.440892098500626e-16,
+        0.6801565130767969,
+        1.1435212591753339,
+        1.9033316112274428
+      ]
+    }
+  ],
+  "serial_arm_origin_reach_upper_bound_m": 0.7828493864845792,
+  "target_origin_reach_excess_m": 0.0,
+  "weighted_residual_geometric_lower_bound": 0.0,
+  "geometrically_infeasible_at_original_acceptance": false,
+  "lower_bound_derivation": "Origin error <= point error + norm(grasp_offset)*rotation_angle; Cauchy-Schwarz with rotation weight0.25. Serial hinge-link lengths bound origin reach.",
+  "physics_replayed": true,
+  "new_policy_forward": false,
+  "task_success_measured": false,
+  "controller_or_acceptance_modified": false,
+  "source_sha256": "c59a74a3e1862e8ab7e70c29da4f73b02823363ba6345530408fcb34604dd42d"
+}

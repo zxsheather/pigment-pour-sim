@@ -1,0 +1,40 @@
+{
+  "kind": "actual_neural_state_normalization_ablation",
+  "same_checkpoint": true,
+  "baseline_summary": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step1785-single-v2/summary.json",
+  "ablation_summary": "/data/hlou/pigment-pour-study/runs/cylinder-odometry1785-unclipped-state-v1/summary.json",
+  "baseline_successes": 0,
+  "ablation_successes": 0,
+  "baseline_failure": "Unreachable model action:0.00605",
+  "ablation_failure": "Unreachable model action:0.00252",
+  "baseline_seconds": 20.74999999999699,
+  "ablation_seconds": 18.200000000002934,
+  "ablation_unclipped_robot_state": true,
+  "ablation_observations_outside_old_bounds": 4,
+  "ablation_outside_old_bounds_seconds": [
+    16.800000000006197,
+    17.200000000005264,
+    17.600000000004332,
+    18.0000000000034
+  ],
+  "ablation_affected_dimensions": [
+    11
+  ],
+  "initial_rgb_comparison": {
+    "face_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 8.96843112244898e-05
+    },
+    "left_wrist_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 0.00021424585459183673
+    },
+    "right_wrist_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 0.0002889827806122449
+    }
+  },
+  "initial_first8_raw_right_position_max_delta_m": 0.0006426594336517155,
+  "adopted": false,
+  "note": "Both actual full neural trials failed. Initial rendered pixels and predictions differ, so task differences are not an exact identical-prefix causal comparison. Out-of-bound state observations explicitly quantify whether the unclipping mechanism was exercised."
+}

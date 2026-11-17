@@ -20,23 +20,28 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
+from robot_state_normalization import enable_unclipped_robot_state
 from robot_action_filter import (RobotActionFilter,limit_pose_step,TemporalActionEnsemble,
                                  average_model_action_samples,GripperOpeningConfirmation)
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
                             "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
-                            "robot_action_filter.py")}
+                            "robot_action_filter.py","robot_state_normalization.py")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
     def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random",
-                 state_embedding_precision="training"):
+                 state_embedding_precision="training",unclipped_robot_state=False):
         if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
         super().__init__(checkpoint,train_config,norm_key)
         self.flow_steps=flow_steps
         self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
         self.state_width=26 if self.with_odometry else 23
+        if unclipped_robot_state:
+            if not self.with_odometry or self._model.config.use_state_string_representation:
+                raise ValueError("State unclipping experiment requires 26D continuous robot state")
+            enable_unclipped_robot_state(self._normalizer_propri)
         if state_embedding_precision not in ("training","native"):
             raise ValueError("Invalid state embedding precision contract")
         self.state_embedding_precision=state_embedding_precision
@@ -60,6 +65,7 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
                                 flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
+                                unclipped_robot_state=unclipped_robot_state,
                                 state_precision_alignment_applies=not self._model.config.use_state_string_representation,
                                 token_embedding_dtype=str(self._model.model.embed_tokens.weight.dtype))
 
@@ -100,7 +106,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
-                 state_embedding_precision="training",gripper_open_confirmations=0):
+                 state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -118,6 +124,7 @@ class CylinderTrial:
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
         self.prediction_samples=prediction_samples;self.sampled_chunks=[]
         self.state_embedding_precision=state_embedding_precision
+        self.unclipped_robot_state=unclipped_robot_state
         self.opening_guard=GripperOpeningConfirmation(self.env.state_vector()[19],gripper_open_confirmations)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
@@ -221,6 +228,7 @@ class CylinderTrial:
             temporal_ensemble_predictions=self.temporal_ensemble.max_predictions,
             prediction_samples_per_observation=self.prediction_samples,
             state_embedding_precision=self.state_embedding_precision,
+            unclipped_robot_state=self.unclipped_robot_state,
             gripper_opening_confirmation=dict(forecasts=self.opening_guard.confirmations,
                 abrupt_increase_threshold_m_per_finger=.005,decisions=self.opening_guard.decisions),
             sampled_action_decoding=("single model draw" if self.prediction_samples==1 else
@@ -291,6 +299,8 @@ def main():
                    help="Match training's state rounding before projection; native preserves the earlier Wall inference path.")
     p.add_argument("--gripper-open-confirmations",type=int,choices=(0,2,3,4),default=0,
                    help="Optional command ablation: confirm abrupt >5mm finger opening across policy forecasts; 0 disables.")
+    p.add_argument("--unclipped-robot-state",action="store_true",
+                   help="Optional state-input ablation: preserve the existing affine scale without clipping robot states.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -304,7 +314,8 @@ def main():
     torch.manual_seed(47)
     policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key,
                               flow_steps=args.flow_steps,flow_noise=args.flow_noise,
-                              state_embedding_precision=args.state_embedding_precision)
+                              state_embedding_precision=args.state_embedding_precision,
+                              unclipped_robot_state=args.unclipped_robot_state)
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
     if args.policy_batch_size<1:p.error("Policy batch size must be positive")
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
@@ -316,7 +327,8 @@ def main():
                          ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble,
                          prediction_samples=args.prediction_samples,
                          state_embedding_precision=args.state_embedding_precision,
-                         gripper_open_confirmations=args.gripper_open_confirmations) for index,case in enumerate(cases)]
+                         gripper_open_confirmations=args.gripper_open_confirmations,
+                         unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -374,6 +386,7 @@ def main():
                     prediction_samples_per_observation=args.prediction_samples,
                     state_embedding_precision=args.state_embedding_precision,
                     gripper_open_confirmations=args.gripper_open_confirmations,
+                    unclipped_robot_state=args.unclipped_robot_state,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")
