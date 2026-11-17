@@ -12,7 +12,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--dataset", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--target-recovery-fraction",type=float,
+                   help="Rescale the recovery group to a fixed sampling share while retaining within-group priorities.")
     a = p.parse_args()
+    if a.target_recovery_fraction is not None and not 0<a.target_recovery_fraction<1:
+        p.error("Target recovery fraction must be in (0,1)")
     assert not a.output.exists()
     provenance = json.loads((a.dataset/"demonstration_provenance.json").read_text())
     table = arrow.dataset(sorted((a.dataset/"data").rglob("*.parquet")), format="parquet").to_table(
@@ -41,9 +45,15 @@ def main():
         rows.append(dict(episode=episode, frames=int(selected.sum()), source=demo["source"],
                          starts_holding=initial.get("starts_holding", False)))
     assert rows, "No successful recovery demonstrations found"
+    group_scale=1.
+    if a.target_recovery_fraction is not None:
+        group_scale=(weights[~recovery].sum()*a.target_recovery_fraction
+                     /((1-a.target_recovery_fraction)*weights[recovery].sum()))
+        weights[recovery]*=group_scale
     np.save(a.output, weights, allow_pickle=False)
     report = dict(dataset=str(a.dataset.resolve()), frames=len(weights), recovery_episodes=rows,
         weight_rule="Original frames 1; recovery <2s:64, 2..6s:8, >=6s:2",
+        recovery_group_scale=group_scale,target_recovery_sampling_fraction=a.target_recovery_fraction,
         recovery_frame_fraction=float(recovery.mean()),
         expected_recovery_sampling_fraction=float(weights[recovery].sum()/weights.sum()),
         weights_sha256=hashlib.sha256(a.output.read_bytes()).hexdigest(),

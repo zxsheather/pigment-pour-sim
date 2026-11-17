@@ -20,7 +20,7 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
-from robot_action_filter import RobotActionFilter,limit_pose_step
+from robot_action_filter import RobotActionFilter,limit_pose_step,TemporalActionEnsemble
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
@@ -84,7 +84,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
-                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002):
+                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -99,6 +99,7 @@ class CylinderTrial:
         self.with_odometry=with_odometry
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
         self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
+        self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -133,10 +134,11 @@ class CylinderTrial:
     def fail(self,reason):
         self.done=True;self.reason=reason
 
-    def step(self,action):
+    def step(self,action,*,raw_model_action=None):
         env=self.env;state=env.state_vector();t=float(env.data.time)
         before_metrics=env.metrics()
-        raw_action=action.copy();action=self.action_filter(action)
+        raw_action=action.copy() if raw_model_action is None else raw_model_action.copy()
+        action=self.action_filter(action)
         action=limit_pose_step(action,state,self.cartesian_speed_limit*CONTROL_DT,self.angular_speed_limit*CONTROL_DT)
         try:
             joints,opening,forward,yaw=cartesian_to_joint_target(env,action,max_ik_residual=self.ik_max_residual)
@@ -197,6 +199,7 @@ class CylinderTrial:
             evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
             final_task_gates=self.task_gates,
             action_filter_seconds=self.action_filter.seconds,
+            temporal_ensemble_predictions=self.temporal_ensemble.max_predictions,
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
                                       angular_speed_limit_rad_s=self.angular_speed_limit),
             ik_projection=dict(max_allowed_weighted_residual=self.ik_max_residual,
@@ -253,6 +256,8 @@ def main():
     p.add_argument("--angular-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback rotation limit, rad/s; 0 disables.")
     p.add_argument("--ik-max-residual",type=float,default=.002,
                    help="Allowed weighted nearest-IK residual, m/rad*0.25; physical task gates stay fixed.")
+    p.add_argument("--temporal-ensemble",type=int,default=0,choices=range(9),
+                   help="Average overlapping forecasts for the same tick; newest gripper retained; 0 disables.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -274,7 +279,7 @@ def main():
                          max_seconds=args.max_seconds,image_size=args.image_size,
                          action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
                          cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
-                         ik_max_residual=args.ik_max_residual) for index,case in enumerate(cases)]
+                         ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -295,8 +300,10 @@ def main():
             for trial,chunk,observation in zip(active,chunks,observations):
                 try:absolute=relative_to_absolute(chunk,observation["state"][:23])
                 except ValueError as error:trial.fail(str(error));continue
+                trial.temporal_ensemble.add(int(round(trial.env.data.time/CONTROL_DT)),absolute)
                 for action in absolute[:args.execute_steps]:
-                    trial.step(action)
+                    command=trial.temporal_ensemble.command(int(round(trial.env.data.time/CONTROL_DT)),action)
+                    trial.step(command,raw_model_action=action)
                     if trial.done:break
             print(json.dumps(dict(case_status=[dict(seed=trial.case["seed"],seconds=float(trial.env.data.time),
                 held=trial.held,contacts=trial.env.metrics()["grip_contacts"],max_lifted_m=trial.max_lift,
@@ -318,6 +325,7 @@ def main():
                     robot_servo_envelope=dict(cartesian_speed_limit_m_s=args.cartesian_speed_limit,
                                              angular_speed_limit_rad_s=args.angular_speed_limit),
                     ik_max_residual=args.ik_max_residual,
+                    temporal_ensemble_predictions=args.temporal_ensemble,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

@@ -9,6 +9,33 @@ from scipy.spatial.transform import Rotation
 from cylinder_actions import rotation_from_rows
 
 
+class TemporalActionEnsemble:
+    """Average overlapping model forecasts for the same future control tick.
+
+    These are robot-frame absolute targets, already decoded at each observation
+    anchor. The newest gripper command is retained to preserve closure preload.
+    """
+    def __init__(self, max_predictions=0):
+        if not 0<=max_predictions<=8:raise ValueError("Invalid temporal ensemble size")
+        self.max_predictions=max_predictions;self.forecasts=[]
+
+    def add(self, start_tick, actions):
+        if not self.max_predictions:return
+        self.forecasts=[(start,chunk) for start,chunk in self.forecasts if start+len(chunk)>start_tick]
+        self.forecasts.append((start_tick,np.asarray(actions,dtype=float).copy()))
+        self.forecasts=self.forecasts[-self.max_predictions:]
+
+    def command(self, tick, latest):
+        if not self.max_predictions:return np.asarray(latest).copy()
+        candidates=[chunk[tick-start] for start,chunk in self.forecasts if 0<=tick-start<len(chunk)]
+        if not candidates:raise ValueError("No model forecast covers the current timestep")
+        average=np.mean(candidates,axis=0);output=np.asarray(latest,dtype=float).copy()
+        output[10:13]=average[10:13]
+        output[13:19]=rotation_from_rows(average[13:19])[:2].reshape(6)
+        output[20:23]=average[20:23]
+        return output
+
+
 def limit_pose_step(command, robot_state, translation=0., rotation=0.):
     """Bound a Cartesian command relative to measured robot pose before IK.
 

@@ -83,9 +83,14 @@ def main():
             weights = np.load(weights_path, allow_pickle=False)
             selected = weights[np.asarray(inner.train_dataset.indices)]
             assert np.array_equal(loader.sampler.weights.numpy(), selected)
-            sampling.update(weights_sha256=hashlib.sha256(Path(weights_path).read_bytes()).hexdigest(),
+            manifest=json.loads(Path(weights_path).with_suffix(".json").read_text())
+            weights_sha=hashlib.sha256(Path(weights_path).read_bytes()).hexdigest()
+            assert weights_sha==manifest["weights_sha256"]
+            recovery_ids=[row["episode"] for row in manifest["recovery_episodes"]]
+            selected_recovery=np.isin(episode_ids[np.asarray(inner.train_dataset.indices)],recovery_ids)
+            sampling.update(weights_sha256=weights_sha,
                 validation_frames_excluded=True,
-                expected_recovery_fraction=float(selected[selected>1].sum()/selected.sum()))
+                expected_recovery_fraction=float(selected[selected_recovery].sum()/selected.sum()))
         report = {"shapes": shapes, "training_iterations_per_epoch": iters,
                   "sampling": sampling,
                   "base_odometry_observed":with_odometry,

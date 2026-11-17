@@ -1,0 +1,79 @@
+{
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v2",
+  "frames": 33795,
+  "recovery_episodes": [
+    {
+      "episode": 44,
+      "frames": 577,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_005",
+      "starts_holding": false
+    },
+    {
+      "episode": 45,
+      "frames": 509,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_015",
+      "starts_holding": false
+    },
+    {
+      "episode": 46,
+      "frames": 620,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_035",
+      "starts_holding": false
+    },
+    {
+      "episode": 47,
+      "frames": 333,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-held-recovery-v1/snapshot_032",
+      "starts_holding": true
+    },
+    {
+      "episode": 48,
+      "frames": 334,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-held-recovery-v1/snapshot_040",
+      "starts_holding": true
+    },
+    {
+      "episode": 49,
+      "frames": 199,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-reading-recovery-v1/snapshot_100",
+      "starts_holding": true
+    },
+    {
+      "episode": 50,
+      "frames": 249,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-reading-recovery-v3/snapshot_150",
+      "starts_holding": true
+    },
+    {
+      "episode": 51,
+      "frames": 598,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-multivolume-recovery-v1/episode_000_snapshot_010",
+      "starts_holding": false
+    },
+    {
+      "episode": 52,
+      "frames": 600,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-multivolume-recovery-v1/episode_000_snapshot_025",
+      "starts_holding": false
+    },
+    {
+      "episode": 53,
+      "frames": 554,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-multivolume-recovery-v1/episode_001_snapshot_010",
+      "starts_holding": false
+    },
+    {
+      "episode": 54,
+      "frames": 555,
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-multivolume-recovery-v1/episode_001_snapshot_025",
+      "starts_holding": false
+    }
+  ],
+  "weight_rule": "Original frames 1; recovery <2s:64, 2..6s:8, >=6s:2",
+  "recovery_group_scale": 0.6695394245142003,
+  "target_recovery_sampling_fraction": 0.5,
+  "recovery_frame_fraction": 0.1517384228436159,
+  "expected_recovery_sampling_fraction": 0.49999999999999994,
+  "weights_sha256": "118fc012615e3d0c1d8db6f816248c043bfb506ba3d713f30f3482daf362ccf1",
+  "note": "Sampling probabilities, not new observations; independent test cases are never read"
+}

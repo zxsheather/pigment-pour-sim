@@ -311,11 +311,56 @@
         "linear_speed_m_s": 0.2887737028927979,
         "angular_speed_rad_s": 6.66605449994025
       }
+    },
+    {
+      "step": 510,
+      "success": false,
+      "reason": "lost_grasp",
+      "seconds": 41.10000000001422,
+      "held": true,
+      "max_lifted_m": 0.15477482286121713,
+      "max_slip_m": 0.025052714364220394,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": true,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": 0.1665003713495078,
+        "camera_distance_m": 0.313712051015768,
+        "linear_speed_m_s": 0.17418371196078844,
+        "angular_speed_rad_s": 0.7755318535973754
+      },
+      "geometry_audit_passed": true
     }
   ],
   "odometry_development_prefix_collection": {
     "kind": "two_short_25sec_policy_visited_state_rollouts_for_training_recoveries",
     "source": "runs/cylinder-odometry-step255-recovery-rollouts-v1",
     "not_original8_or_independent12_benchmark": true
+  },
+  "odometry510_temporal_ensemble4": {
+    "step": 510,
+    "success": false,
+    "reason": "cylinder_tilt",
+    "seconds": 25.849999999985105,
+    "held": true,
+    "max_lifted_m": 0.08037519637663437,
+    "max_slip_m": 0.010412705534797144,
+    "final_task_gates": {
+      "held": true,
+      "lifted": true,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": false,
+      "still": false,
+      "base_retreat_m": 0.17479156680607577,
+      "camera_distance_m": 0.45019734875583517,
+      "linear_speed_m_s": 0.08623925038987698,
+      "angular_speed_rad_s": 0.4062499288310314
+    },
+    "geometry_audit_passed": true,
+    "decision": "Not selected: failed by tilt before baseline lost-grasp time"
   }
 }
