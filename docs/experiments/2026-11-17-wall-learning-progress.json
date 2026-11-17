@@ -275,5 +275,18 @@
     "max_lifted_m": 0.0,
     "max_slip_m": 0.0,
     "decision": "Did not establish grasp; keep standard Gaussian sampling"
+  },
+  "centered510_nearest_IK_01": {
+    "success": false,
+    "reason": "Unreachable model action:0.01171",
+    "seconds": 10.200000000000975,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "ik_projection": {
+      "max_allowed_weighted_residual": 0.01,
+      "max_attempted_residual": 0.011707368670377003,
+      "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+    },
+    "decision": "No grasp; a looser IK execution rejection did not solve the model trajectory error; keep default .002"
   }
 }

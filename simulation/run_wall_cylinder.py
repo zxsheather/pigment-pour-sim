@@ -84,7 +84,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
-                 cartesian_speed_limit=0.,angular_speed_limit=0.):
+                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -98,6 +98,7 @@ class CylinderTrial:
         self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
         self.with_odometry=with_odometry
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
+        self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -138,11 +139,13 @@ class CylinderTrial:
         raw_action=action.copy();action=self.action_filter(action)
         action=limit_pose_step(action,state,self.cartesian_speed_limit*CONTROL_DT,self.angular_speed_limit*CONTROL_DT)
         try:
-            joints,opening,forward,yaw=cartesian_to_joint_target(env,action)
+            joints,opening,forward,yaw=cartesian_to_joint_target(env,action,max_ik_residual=self.ik_max_residual)
         except ValueError as error:
+            self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,getattr(env,"last_cartesian_ik_residual",0.))
             self.fail(str(error));return
+        self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,env.last_cartesian_ik_residual)
         for cam,writer in self.writers.items():writer.append_data(env.render(cam))
-        self.rows.append(dict(time=t,state=state,action=action.copy(),raw_action=raw_action,slip=before_metrics["bottle_slip_m"],
+        self.rows.append(dict(time=t,state=state,action=action.copy(),raw_action=raw_action,ik_residual=env.last_cartesian_ik_residual,slip=before_metrics["bottle_slip_m"],
                               tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
         _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
@@ -196,6 +199,9 @@ class CylinderTrial:
             action_filter_seconds=self.action_filter.seconds,
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
                                       angular_speed_limit_rad_s=self.angular_speed_limit),
+            ik_projection=dict(max_allowed_weighted_residual=self.ik_max_residual,
+                               max_attempted_residual=self.max_attempted_ik_residual,
+                               metric="norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"),
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
@@ -222,6 +228,7 @@ class CylinderTrial:
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             unfiltered_model_action=np.array([r["raw_action"] for r in self.rows]),
+            ik_residual=np.array([r["ik_residual"] for r in self.rows]),
             slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
             contacts=np.array([r["contacts"] for r in self.rows]),phase=np.array(["wall_policy"]*len(self.rows)))
         env.close();return summary
@@ -244,11 +251,15 @@ def main():
                    help="Optional robot-command low-pass time constant; no object/task feedback.")
     p.add_argument("--cartesian-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback translation limit, m/s; 0 disables.")
     p.add_argument("--angular-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback rotation limit, rad/s; 0 disables.")
+    p.add_argument("--ik-max-residual",type=float,default=.002,
+                   help="Allowed weighted nearest-IK residual, m/rad*0.25; physical task gates stay fixed.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
     if any(not np.isfinite(x) or x<0 for x in [args.cartesian_speed_limit,args.angular_speed_limit]):
         p.error("Cartesian servo limits must be finite and nonnegative")
+    if not np.isfinite(args.ik_max_residual) or not 0<args.ik_max_residual<=.02:
+        p.error("IK residual limit must be in (0,0.02]")
     args.output.mkdir(parents=True,exist_ok=False)
     cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
     controller=json.loads(args.controller_config.read_text())
@@ -262,7 +273,8 @@ def main():
     trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
                          max_seconds=args.max_seconds,image_size=args.image_size,
                          action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
-                         cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit) for index,case in enumerate(cases)]
+                         cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
+                         ik_max_residual=args.ik_max_residual) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -305,6 +317,7 @@ def main():
                     action_filter_seconds=args.action_filter_seconds,
                     robot_servo_envelope=dict(cartesian_speed_limit_m_s=args.cartesian_speed_limit,
                                              angular_speed_limit_rad_s=args.angular_speed_limit),
+                    ik_max_residual=args.ik_max_residual,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

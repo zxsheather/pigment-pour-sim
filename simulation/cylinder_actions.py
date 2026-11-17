@@ -51,7 +51,7 @@ def commanded_cartesian_action(env,reference_qpos):
     return np.concatenate(parts).astype(np.float32)
 
 
-def cartesian_to_joint_target(env,action):
+def cartesian_to_joint_target(env,action,*,max_ik_residual=.002):
     action=np.asarray(action,dtype=float)
     if action.shape!=(23,) or not np.isfinite(action).all():raise ValueError("Invalid absolute Cartesian action")
     base=env.data.xmat[env.robot_root].reshape(3,3)
@@ -59,6 +59,7 @@ def cartesian_to_joint_target(env,action):
     origin=env.data.xpos[env.robot_root]+base@action[10:13]
     point=origin+rotation@env.grasp_offset
     joints,error=env.inverse_kinematics(point,rotation,initial=env.data.qpos[env.arm_addresses])
-    if error>.002:raise ValueError(f"Unreachable model action:{error:.5f}")
+    env.last_cartesian_ik_residual=float(error)
+    if error>max_ik_residual:raise ValueError(f"Unreachable model action:{error:.5f}")
     opening=float(np.clip(action[19]*.0975/2,0.,.04875))
     return joints,opening,float(np.clip(action[20],-.12,.12)),float(np.clip(action[22],-.3,.3))
