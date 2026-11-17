@@ -52,10 +52,17 @@ def main():
     old_provenance = json.loads((args.original / "demonstration_provenance.json").read_text())
     new_provenance = json.loads((args.appended / "demonstration_provenance.json").read_text())
     assert old_provenance == new_provenance[:len(old_provenance)]
-    for demo in new_provenance[len(old_provenance):]:
+    for episode_id,demo in enumerate(new_provenance[len(old_provenance):],start=len(old_provenance)):
         result = demo["metadata"]["result"]
         assert result["success"]
         assert result["initial_state_provenance"]["kind"] == "expert_recovery_training_only"
+        selected=np.flatnonzero(new["episode"]==episode_id)
+        with np.load(Path(demo["source"])/"trajectory.npz") as source:
+            source_state=source["state"]
+            if new["state"].shape[1]==26:
+                source_state=np.concatenate([source_state,source["base_pose"]],axis=1)
+            assert np.array_equal(new["state"][selected],source_state.astype(np.float32))
+            assert np.array_equal(new["action"][selected],source["action"].astype(np.float32))
     norm = json.loads(args.norm_stats.read_text())["norm_stats"]
     chunks = []
     for episode in sorted(set(new["episode"][count:])):
@@ -71,6 +78,7 @@ def main():
                   original_frames=count, appended_frames=len(state),
                   appended_episodes=len(new_provenance)-len(old_provenance),
                   original_state_action_indices_and_provenance_unchanged=True,
+                  appended_robot_state_and_action_exactly_match_source=True,
                   norm_stats_sha256=hashlib.sha256(args.norm_stats.read_bytes()).hexdigest(),
                   norm_stats_unchanged=True, horizon=args.horizon,
                   appended_state=coverage(state, norm["observation.state"]),

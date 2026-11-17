@@ -119,12 +119,13 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794940668.7055273,
-    "project_gib": 47.02,
-    "free_gib": 181.61,
+    "time": 1794941706.0750604,
+    "project_gib": 47.03,
+    "free_gib": 181.6,
     "latest_model": "1530 fully saved/audited/evaluated failed; needed as latest restart until next complete checkpoint",
     "optimizer_retained": "1530 only",
-    "training_continues": true
+    "training_continues": true,
+    "next52_staged_without_model_updates": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -145,5 +146,18 @@
       "estimated_allocated_bytes": 8613888,
       "deleted_at": 1794940668.6275709
     }
-  ]
+  ],
+  "staged_targeted_training_dataset": {
+    "path": "datasets/cylinder-hold-recovery-v1",
+    "episodes": 52,
+    "frames": 31797,
+    "appended_source": "cylinder-odometry1275-held-recovery-v1/snapshot_051",
+    "added_frames": 309,
+    "official_loader_validation": "runs/cylinder-hold-recovery-data-check-v1/data-validation-chronological.json",
+    "normalization_unchanged": true,
+    "all_new_labels_in_bounds": true,
+    "shared_old_video_bytes": 557124501,
+    "no_model_updates_yet": true
+  },
+  "staged_video_deduplication": "runs/cylinder-hold-recovery-data-check-v1/shared-video-storage.json"
 }

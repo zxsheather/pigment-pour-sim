@@ -24,6 +24,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--check-episode",type=int,action="append",default=[],
+                        help="Also check first/middle/last usable training anchors from this episode.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     torch.cuda.set_device(0)
@@ -76,6 +78,45 @@ def main():
             assert batch["agent_pos_mask"].bool().all()
             assert raw["observation.state"].shape[-1]==26
         else:assert (batch["proprioception"][...,23:]==0).all()
+        explicit_episode_checks=[]
+        explicit_episode_training_coverage=[]
+        train_indices=np.asarray(inner.train_dataset.indices,dtype=int)
+        frame_numbers=np.asarray(raw_frame["frame_index"])
+        sample_weights=(loader.sampler.weights.numpy() if hasattr(loader.sampler,"weights")
+                        else np.ones(len(train_indices)))
+        for episode in args.check_episode:
+            selected=np.flatnonzero(episode_ids[train_indices]==episode)
+            if not len(selected):raise ValueError(f"Episode {episode} has no usable training anchors")
+            # random_split keeps a permuted list of source indices; sort by
+            # source frame to actually check the start of the recovery.
+            selected=selected[np.argsort(train_indices[selected])]
+            source_frames=frame_numbers[train_indices[selected]]
+            explicit_episode_training_coverage.append(dict(episode=episode,
+                usable_training_anchors=len(selected),first_frame=int(source_frames[0]),
+                last_frame=int(source_frames[-1]),source_frame_zero_in_training=bool((source_frames==0).any()),
+                initial2s_training_anchors=int((source_frames<40).sum()),
+                expected_sampling_fraction=float(sample_weights[selected].sum()/sample_weights.sum())))
+            for subset_row in np.unique(selected[[0,len(selected)//2,-1]]):
+                source_index=int(train_indices[subset_row])
+                source_sample=inner.hf_dataset[source_index]
+                processed_sample=inner[int(subset_row)]
+                assert torch.equal(processed_sample["agent_pos"],source_sample["observation.state"])
+                expected=relative_chunks(np.repeat(source_sample["observation.state"].numpy()[None],
+                    len(source_sample["action"]),axis=0),source_sample["action"].numpy(),
+                    len(source_sample["action"]))[0]
+                assert np.allclose(processed_sample["action"].numpy(),expected,atol=1e-6)
+                checked=loader.collate_fn([processed_sample])
+                for value in checked.values():
+                    if torch.is_tensor(value) and value.is_floating_point():assert torch.isfinite(value).all()
+                assert tuple(checked["action_chunk"].shape[-2:])==(cfg.task.action_horizon_flow,26)
+                assert not checked["dof_mask"][...,23:].bool().any()
+                assert (checked["action_chunk"][...,23:]==0).all()
+                if with_odometry:assert checked["agent_pos_mask"].bool().all()
+                explicit_episode_checks.append(dict(episode=episode,source_index=source_index,
+                    frame_index=int(raw_frame[source_index]["frame_index"]),
+                    relative_actions_match=True,robot_state_preserved=True,
+                    collated_action_shape=list(checked["action_chunk"].shape),
+                    finite=True,padding_masked=True))
         sampling = {"sampler": type(loader.sampler).__name__}
         weights_path = cfg.data.lerobot_config.get("frame_sampling_weights_path")
         if weights_path:
@@ -99,6 +140,8 @@ def main():
                   "state_unchanged_and_base_labels_preserved": True,
                   "relative_rotations_match_loader": True,
                   "episode_end_actions_repeat_last": True,
+                  "explicit_episode_checks":explicit_episode_checks,
+                  "explicit_episode_training_coverage":explicit_episode_training_coverage,
                   "selected_training_episodes": inner.hf_dataset.episodes,
                   "virtual_action_and_state_tail":("Only action tail is padded; all 26 robot-state dimensions observed" if with_odometry else "zero after normalization"),
                   "note": "Data-path validation only; no model forward/backward."}
