@@ -1,0 +1,40 @@
+{
+  "source": "pigment-pour-sim/simulation/generated/cylinder-odometry-held-recovery-v2/snapshot_050/summary.json",
+  "changed_teacher_read_lateral_m": 0.18,
+  "baseline_read_lateral_m": 0.14,
+  "result": {
+    "success": false,
+    "failure_reason": "unreadable:calibration_anchors_not_visible",
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step510-single-v1/episode_000",
+      "snapshot_index": 50,
+      "source_simulated_seconds": 19.99999999999874,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": true,
+      "recovery_stage": "transport_or_grasp"
+    },
+    "simulated_seconds": 32.84999999997483,
+    "max_slip_m": 0.01561135218544123,
+    "max_held_tilt_rad": 0.03279240670452931,
+    "geometry_audit_passed": true,
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.18,
+      "read_distance_m": 0.35,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "reading": {
+      "valid": false,
+      "reason": "calibration_anchors_not_visible"
+    }
+  },
+  "decision": "Failed reading; retained and excluded from training. Not selected.",
+  "model_success": false
+}

@@ -9,6 +9,23 @@ from scipy.spatial.transform import Rotation
 from cylinder_actions import rotation_from_rows
 
 
+def average_model_action_samples(samples):
+    """Average independent model draws anchored at the same observation.
+
+    Unlike a temporal ensemble, these draws all use current feedback. Keep the
+    one-sample path exact; project averaged 6D rotations back onto SO(3).
+    """
+    samples=np.asarray(samples)
+    if samples.ndim!=3 or samples.shape[0]<1 or samples.shape[-1]<23 or not np.isfinite(samples).all():
+        raise ValueError("Invalid model action samples")
+    if len(samples)==1:return samples[0].copy()
+    result=samples.mean(0,dtype=np.float64)
+    for start in (3,13):
+        for action in result:
+            action[start:start+6]=rotation_from_rows(action[start:start+6])[:2].reshape(6)
+    return result
+
+
 class TemporalActionEnsemble:
     """Average overlapping model forecasts for the same future control tick.
 

@@ -20,7 +20,7 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
-from robot_action_filter import RobotActionFilter,limit_pose_step,TemporalActionEnsemble
+from robot_action_filter import RobotActionFilter,limit_pose_step,TemporalActionEnsemble,average_model_action_samples
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
@@ -84,7 +84,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
-                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0):
+                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -100,6 +100,7 @@ class CylinderTrial:
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
         self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
+        self.prediction_samples=prediction_samples;self.sampled_chunks=[]
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -200,6 +201,9 @@ class CylinderTrial:
             final_task_gates=self.task_gates,
             action_filter_seconds=self.action_filter.seconds,
             temporal_ensemble_predictions=self.temporal_ensemble.max_predictions,
+            prediction_samples_per_observation=self.prediction_samples,
+            sampled_action_decoding=("single model draw" if self.prediction_samples==1 else
+                                     "same-observation independent flow draws averaged; rotations projected to SO(3)"),
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
                                       angular_speed_limit_rad_s=self.angular_speed_limit),
             ik_projection=dict(max_allowed_weighted_residual=self.ik_max_residual,
@@ -218,6 +222,8 @@ class CylinderTrial:
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
+        if self.prediction_samples>1:
+            np.save(self.output/"sampled_chunks.npy",np.asarray(self.sampled_chunks))
         np.savez_compressed(self.output/"model_observations.npz",
             timestamp=np.array([r["time"] for r in self.observations]),
             state=np.array([r["state"] for r in self.observations]))
@@ -258,6 +264,8 @@ def main():
                    help="Allowed weighted nearest-IK residual, m/rad*0.25; physical task gates stay fixed.")
     p.add_argument("--temporal-ensemble",type=int,default=0,choices=range(9),
                    help="Average overlapping forecasts for the same tick; newest gripper retained; 0 disables.")
+    p.add_argument("--prediction-samples",type=int,default=1,choices=range(1,9),
+                   help="Average independent flow draws at the SAME current observation; 1 preserves baseline decoding.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -279,19 +287,27 @@ def main():
                          max_seconds=args.max_seconds,image_size=args.image_size,
                          action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
                          cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
-                         ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble) for index,case in enumerate(cases)]
+                         ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble,
+                         prediction_samples=args.prediction_samples) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
             if not active:break
             observations=[trial.observation() for trial in active]
-            chunks=[];latencies=[];inference_start=time.monotonic()
-            for first in range(0,len(active),args.policy_batch_size):
+            expanded=[obs for obs in observations for _ in range(args.prediction_samples)]
+            draws=[];latencies=[];inference_start=time.monotonic()
+            for first in range(0,len(expanded),args.policy_batch_size):
                 start=time.monotonic()
-                predicted=policy.predict_many(observations[first:first+args.policy_batch_size]);torch.cuda.synchronize()
+                predicted=policy.predict_many(expanded[first:first+args.policy_batch_size]);torch.cuda.synchronize()
                 latency=time.monotonic()-start
-                chunks.extend(predicted);latencies.extend([latency]*len(predicted))
-            for trial,chunk,latency in zip(active,chunks,latencies):trial.chunks.append(chunk);trial.latencies.append(latency)
+                draws.extend(predicted)
+                latencies.extend([latency if args.prediction_samples==1 else latency/len(predicted)]*len(predicted))
+            sample_groups=np.asarray(draws).reshape(len(active),args.prediction_samples,policy._action_horizon,26)
+            chunks=[average_model_action_samples(group) for group in sample_groups]
+            observation_latencies=np.asarray(latencies).reshape(len(active),args.prediction_samples).sum(1)
+            for trial,chunk,samples,latency in zip(active,chunks,sample_groups,observation_latencies):
+                trial.chunks.append(chunk);trial.latencies.append(float(latency))
+                if args.prediction_samples>1:trial.sampled_chunks.append(samples)
             print(json.dumps(dict(active=len(active),chunk=len(active[0].chunks),inference_seconds=time.monotonic()-inference_start,
                                   first_right_action=chunks[0][0,10:20].tolist())),flush=True)
             if args.probe_only:
@@ -326,6 +342,7 @@ def main():
                                              angular_speed_limit_rad_s=args.angular_speed_limit),
                     ik_max_residual=args.ik_max_residual,
                     temporal_ensemble_predictions=args.temporal_ensemble,
+                    prediction_samples_per_observation=args.prediction_samples,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")
