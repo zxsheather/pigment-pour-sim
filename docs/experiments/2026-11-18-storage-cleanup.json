@@ -7,12 +7,12 @@
   "project_bytes_before_direct_delete": 129913544704,
   "project_bytes_after_delete": 43090665472,
   "retained_full_weights": [
+    "runs/cylinder-joint-position-bc-v1/checkpoints/0_128/model.safetensors",
     "runs/cylinder-hold-correction-bc-v1/checkpoints/0_768/model.safetensors",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/model.safetensors",
     "models/wall-oss-0.5/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/optimizer.pt"
+    "runs/cylinder-joint-position-bc-v1/checkpoints/0_128/optimizer.pt"
   ],
   "retained_key_fallback_archive": null,
   "fallback_original_bytes": 8978728704,
@@ -129,6 +129,18 @@
       "estimated_allocated_bytes": 8978739200,
       "deleted_at": 1794954814.0085227,
       "reason": "OldCartesian2040 audit reference retired after full hold-correction curve and all audits terminal; actual joint training now uses retained768 parent. Latest old1024 weights+optimizer retained until new checkpoint safe."
+    },
+    {
+      "path": "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/model.safetensors",
+      "estimated_allocated_bytes": 8978735104,
+      "deleted_at": 1794956008.6119547,
+      "reason": "Obsolete oldCartesianfinal1024 fallback retired after newjoint128weights+optimizer fullysaved, auditpassed, and realjoint neuralmodel loaded; raw768 parent retained."
+    },
+    {
+      "path": "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/optimizer.pt",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794956008.8580692,
+      "reason": "Obsolete oldCartesianfinal1024 fallback retired after newjoint128weights+optimizer fullysaved, auditpassed, and realjoint neuralmodel loaded; raw768 parent retained."
     }
   ],
   "retention_policy": "Keep pretrained, required current parent, current best/latest/pending weights; only latest optimizer; historical unsuccessful fallback and archive base retired together.",
@@ -177,13 +189,16 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794954815.046678,
-    "project_gib": 30.181,
-    "free_gib": 198.28,
+    "time": 1794956009.1737864,
+    "project_gib": 30.213,
+    "free_gib": 198.248,
     "active_run": "cylinder-joint-position-bc-v1",
-    "actual_joint_training_step": 15,
+    "actual_joint_training_step": 150,
+    "latest_restart": "joint128",
     "parent": "hold-correction768",
-    "old2040_reference_retired": true,
+    "old1024_fallback_retired": true,
+    "joint128_weight_audit_passed": true,
+    "joint128_neural_case_in_progress": true,
     "training_continues": true
   },
   "subsequent_redundant_payload_removals": [
