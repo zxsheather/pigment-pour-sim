@@ -61,14 +61,18 @@ class GripperOpeningConfirmation:
     Only predicted commands and the initial robot aperture enter this helper.
     This is an explicit execution ablation, not a learned-policy improvement.
     """
-    def __init__(self, initial_aperture, confirmations=0):
-        if confirmations not in (0, 2, 3, 4) or not np.isfinite(initial_aperture):
+    def __init__(self, initial_aperture, confirmations=0, mode="prefix-median"):
+        if (confirmations not in (0, 2, 3, 4) or not np.isfinite(initial_aperture)
+                or mode not in ("prefix-median", "aligned-forecasts")):
             raise ValueError("Invalid gripper opening confirmation settings")
         self.confirmations=confirmations
+        self.mode=mode
         self.last=float(initial_aperture)
         self.pending=0
         self.decisions=[]
         self.normalized_margin=.005/(.0975/2)
+        self.forecast_tick=0
+        self.forecasts=[]
 
     def __call__(self, actions, execute_steps):
         actions=np.asarray(actions)
@@ -78,6 +82,8 @@ class GripperOpeningConfirmation:
         output=actions.copy()
         if not self.confirmations:
             return output
+        if self.mode=="aligned-forecasts":
+            return self._aligned(actions,execute_steps)
         opening=bool(np.median(actions[:execute_steps,19])>self.last+self.normalized_margin)
         self.pending=self.pending+1 if opening else 0
         blocked=opening and self.pending<self.confirmations
@@ -89,6 +95,39 @@ class GripperOpeningConfirmation:
             previous_normalized_target=previous,
             proposed_prefix_median=float(np.median(actions[:execute_steps,19])),
             pending_forecasts=self.pending,blocked=bool(blocked),
+            accepted_last_prefix_target=self.last))
+        return output
+
+    def _aligned(self, actions, execute_steps):
+        """Confirm each abrupt opening at the SAME future control tick.
+
+        Forecasts overlap in time. A late-prefix spike cannot gain approval
+        from a different tick, a prefix median, or repeated frames in one call.
+        Closure and gradual opening remain immediately available.
+        """
+        if execute_steps*self.confirmations>len(actions):
+            raise ValueError("Aligned gripper confirmation requires overlapping forecasts")
+        start=self.forecast_tick
+        forecasts=self.forecasts+[(start,actions[:,19].copy())]
+        output=actions.copy();blocked=[];agreement=[];previous=self.last
+        for offset in range(execute_steps):
+            proposed=float(actions[offset,19]);tick=start+offset;count=0
+            if proposed>self.last+self.normalized_margin:
+                for begin,apertures in reversed(forecasts):
+                    position=tick-begin
+                    if (not 0<=position<len(apertures) or
+                            apertures[position]<=self.last+self.normalized_margin):
+                        break
+                    count+=1
+                if count<self.confirmations:
+                    output[offset,19]=self.last;blocked.append(offset)
+            self.last=float(output[offset,19]);agreement.append(count)
+        self.forecasts=forecasts[-(self.confirmations-1):]
+        self.forecast_tick+=execute_steps
+        self.decisions.append(dict(forecast_index=len(self.decisions),
+            mode=self.mode,start_tick=start,previous_normalized_target=previous,
+            blocked=bool(blocked),blocked_prefix_steps=blocked,
+            same_tick_opening_agreement=agreement,
             accepted_last_prefix_target=self.last))
         return output
 

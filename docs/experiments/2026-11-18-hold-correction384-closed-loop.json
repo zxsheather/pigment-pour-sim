@@ -1,0 +1,1530 @@
+{
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-hold-correction-bc-v1/checkpoints/0_384",
+  "config": "/data/hlou/pigment-pour-study/runs/cylinder-hold-correction-bc-v1/train.yml",
+  "controller": {
+    "environment": {
+      "grasp_x": 0.115,
+      "grasp_height": 0.225,
+      "solver_impratio": 10.0,
+      "physics_dt": 0.0005
+    },
+    "teacher": {
+      "grip_opening": 0.003
+    }
+  },
+  "probe_only": false,
+  "episodes": [
+    {
+      "policy": "wall_oss_full_cylinder",
+      "success": false,
+      "failure_reason": "lost_grasp",
+      "evaluation_interrupted": false,
+      "source_sha256": {
+        "run_wall_cylinder.py": "37625cc4d5042b98ad46ba9255a09cd345e8fa991330f7ab7e74c07be1e9f867",
+        "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+        "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+        "inspect_cylinder.py": "3030869a25d7a7fbd36f69012254eb8359dc095891026ec5e862e2a60b7d2022",
+        "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+        "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+        "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+        "robot_action_filter.py": "d54610d4ea986d7d69ff080f2fb8a561695efbb927281c6c5f9d952985f54ac2",
+        "robot_state_normalization.py": "39f5ba5c9de98cc58fa532258f34f5d468761752f721c5dce3e1d3c777cdb487"
+      },
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": true,
+        "upright": true,
+        "still": false,
+        "base_retreat_m": 0.013856107887017133,
+        "camera_distance_m": 0.3994151847790529,
+        "linear_speed_m_s": 0.1221486427359198,
+        "angular_speed_rad_s": 0.6407773804032995
+      },
+      "action_filter_seconds": 0.0,
+      "temporal_ensemble_predictions": 0,
+      "prediction_samples_per_observation": 1,
+      "state_embedding_precision": "training",
+      "unclipped_robot_state": false,
+      "gripper_opening_confirmation": {
+        "forecasts": 0,
+        "abrupt_increase_threshold_m_per_finger": 0.005,
+        "decisions": []
+      },
+      "sampled_action_decoding": "single model draw",
+      "robot_servo_envelope": {
+        "cartesian_speed_limit_m_s": 0.0,
+        "angular_speed_limit_rad_s": 0.0
+      },
+      "ik_projection": {
+        "max_allowed_weighted_residual": 0.002,
+        "max_attempted_residual": 0.001777560301223139,
+        "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+      },
+      "grip_profile": "official",
+      "case": {
+        "volume": 25.0,
+        "seed": 100,
+        "jitter": 0.004
+      },
+      "simulated_seconds": 62.55000000011664,
+      "max_slip_m": 0.025650057024244874,
+      "max_held_tilt_rad": 0.08917167604949607,
+      "max_lifted_m": 0.16059638995683068,
+      "expected_volume_ml": 25.0,
+      "reading": {
+        "valid": false,
+        "reason": "ambiguous_liquid_boundary"
+      },
+      "reading_history": [
+        {
+          "time": 0.05000000000000004,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.3000000000000002,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.5999999999999893,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.8999999999999563,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.1999999999999234,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.4999999999998903,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.7999999999998573,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.0999999999998686,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.349999999999952,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.6000000000000356,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.850000000000119,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.1000000000002026,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.350000000000286,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.6000000000003696,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.850000000000453,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.15000000000042,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.450000000000253,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.750000000000087,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.049999999999921,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.3499999999997545,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.649999999999588,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.949999999999422,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.249999999999256,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.549999999999089,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.849999999998923,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.149999999998757,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.449999999998591,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.749999999998424,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.049999999998347,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.299999999998652,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.549999999998958,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.799999999999264,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.049999999999569,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.299999999999875,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.55000000000018,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.800000000000486,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.050000000000791,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.300000000001097,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.550000000001402,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.800000000001708,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.050000000002013,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.300000000002319,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.550000000002624,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.80000000000293,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.050000000003235,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.300000000003541,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.550000000003847,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.800000000004152,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.050000000004458,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.300000000004763,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.550000000005069,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.800000000005374,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.05000000000568,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.300000000005985,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.55000000000629,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.800000000006596,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.050000000006902,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.300000000007207,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.550000000007513,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.800000000007818,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.050000000007945,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.350000000007245,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.650000000006546,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.950000000005847,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.250000000005148,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.55000000000445,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.85000000000375,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.15000000000305,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.45000000000235,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.750000000001652,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.050000000000953,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.350000000000254,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.649999999999554,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.949999999998855,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.249999999998156,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.549999999997457,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.849999999996758,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.14999999999606,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.44999999999536,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.74999999999466,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.04999999999396,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.349999999993262,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.649999999992563,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.949999999991864,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.249999999991164,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.549999999990465,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.849999999989766,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.149999999989067,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.449999999988368,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.74999999998767,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.04999999998697,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.34999999998627,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.64999999998557,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.949999999984872,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.249999999984173,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.549999999983473,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.849999999982774,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.149999999982075,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.449999999981376,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.749999999980677,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.049999999979978,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.34999999997928,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.64999999997858,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.94999999997788,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.24999999997718,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.54999999997648,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.849999999975783,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.149999999975083,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.449999999974384,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.749999999973685,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.049999999972986,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.349999999972287,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.649999999971588,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.94999999997089,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.19999999997172,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.44999999997292,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.69999999997411,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.949999999975304,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.1999999999765,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.44999999997769,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.699999999978886,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.94999999998008,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.19999999998127,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.44999999998247,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.69999999998366,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.949999999984854,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.19999999998605,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.44999999998724,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.699999999988435,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.94999999998963,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.19999999999082,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.449999999992016,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.69999999999321,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.949999999994404,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.1999999999956,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.44999999999679,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.699999999997985,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.94999999999918,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.20000000000037,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.450000000001566,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.70000000000276,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.95000000000395,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.20000000000515,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.45000000000634,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.700000000007535,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.95000000000873,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.20000000000992,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.450000000011116,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.70000000001231,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.9500000000135,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.2000000000147,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.45000000001589,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.700000000017084,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.95000000001828,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.20000000001947,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.450000000020665,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.70000000002186,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.95000000002305,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.20000000002425,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.45000000002544,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.700000000026634,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.95000000002783,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.20000000002902,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.450000000030215,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.70000000003141,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.9500000000326,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.200000000033796,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.45000000003499,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.700000000036184,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.95000000003738,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.20000000003857,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.450000000039765,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.70000000004096,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.95000000004215,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.200000000043346,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.45000000004454,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.70000000004573,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.95000000004693,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.20000000004812,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.450000000049315,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.70000000005051,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.9500000000517,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.200000000052896,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.45000000005409,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.70000000005528,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.95000000005648,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.20000000005767,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.450000000058864,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.70000000006006,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.95000000006125,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.200000000062445,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.45000000006364,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.70000000006483,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.95000000006603,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.20000000006722,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.450000000068414,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.70000000006961,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.9500000000708,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.200000000071995,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.45000000007319,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.70000000007438,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.950000000075576,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.20000000007677,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.450000000077964,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.70000000007916,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.95000000008035,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.200000000081545,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.45000000008274,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.70000000008393,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.950000000085126,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.20000000008632,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.45000000008751,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.70000000008871,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.9500000000899,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.200000000091094,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.45000000009229,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.70000000009348,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.950000000094676,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.20000000009587,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.45000000009706,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.70000000009826,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.95000000009945,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.200000000100644,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.45000000010184,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.70000000010303,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.950000000104225,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.20000000010542,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.45000000010661,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.700000000107806,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.950000000109,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.200000000110194,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.45000000011139,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.70000000011258,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.950000000113775,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.20000000011497,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.45000000011616,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        }
+      ],
+      "final_tilt_rad": 0.058247034673081385,
+      "geometry_audit": {
+        "passed": true,
+        "default_profile": "official",
+        "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+        "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+        "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+        "custom_pads": 0,
+        "geometry_import": "Unchanged union of the source convex solids",
+        "fingers": [
+          {
+            "link": "left_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "left_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          },
+          {
+            "link": "right_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "right_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          }
+        ],
+        "contact_model": {
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ],
+          "condim": 3,
+          "noslip_iterations": 0,
+          "calibration": "Nominal simulator defaults; not measured hardware properties"
+        }
+      },
+      "inference_seconds": [
+        3.813018162996741,
+        3.3678329730028054,
+        3.1189975310044247,
+        3.1691360949989758,
+        3.119932512003288,
+        3.2940976619938738,
+        3.0931793459967594,
+        3.0698514280011295,
+        3.269614199998614,
+        3.0017296980004176,
+        3.159466684999643,
+        3.1727906090018223,
+        3.2494016959972214,
+        3.220327336995979,
+        3.1169141120044515,
+        3.382432564001647,
+        3.0405128720012726,
+        3.1618805210018763,
+        3.1252520269990782,
+        3.2608569350049947,
+        3.1462006180008757,
+        3.0540537929991842,
+        3.3865550420014188,
+        3.057880735002982,
+        3.1400356809972436,
+        3.102407474994834,
+        3.2563959440012695,
+        3.109512843002449,
+        3.08330267600104,
+        3.3071935120024136,
+        3.073848291998729,
+        3.2808729430034873,
+        3.196979457999987,
+        3.185920397998416,
+        3.200574538001092,
+        3.1863242280014674,
+        3.4491904309979873,
+        3.1929544740050915,
+        3.1352859510006965,
+        3.1111081400013063,
+        3.111977166001452,
+        3.028777250998246,
+        3.2132945220000693,
+        3.5014321970011224,
+        3.1448216499993578,
+        3.1569177380006295,
+        3.177682294000988,
+        2.975134350999724,
+        3.0985829990022467,
+        3.181871138003771,
+        3.3736287239953526,
+        3.0297061300007044,
+        3.096778238999832,
+        3.048933088000922,
+        3.0174283039959846,
+        3.1149356109963264,
+        3.1497152660012944,
+        3.3272595500020543,
+        3.1022272650006926,
+        3.1122575900008087,
+        3.083922023004561,
+        3.1582398889950127,
+        3.16347905099974,
+        3.1692024389994913,
+        3.3719189199982793,
+        3.0269743030003156,
+        3.117732367005374,
+        3.071031145998859,
+        3.1613487270005862,
+        3.199921774001268,
+        3.1971821260012803,
+        3.3574992409994593,
+        2.9587492780046887,
+        3.1380600229967968,
+        3.0839516580017516,
+        3.23626444900583,
+        3.178104995000467,
+        3.2124057920009363,
+        3.522759153005609,
+        3.1170879670025897,
+        3.188350286996865,
+        3.044952468997508,
+        3.117889526998624,
+        3.072630645998288,
+        3.1953342909982894,
+        3.4454459400003543,
+        3.131601301000046,
+        3.1820735319997766,
+        3.262905588999274,
+        2.849964002001798,
+        3.0520249730034266,
+        3.1528496999962954,
+        3.552408399998967,
+        3.114619591004157,
+        3.0839256859981106,
+        3.1437570749985753,
+        2.987275186998886,
+        3.012911122001242,
+        3.213452641997719,
+        3.4782797250009025,
+        3.1550856480025686,
+        3.009183585003484,
+        3.23521555300249,
+        2.99459009700513,
+        3.099119022997911,
+        3.178505395000684,
+        3.519817090993456,
+        3.1180122119985754,
+        3.0466788270059624,
+        3.2700249289991916,
+        2.8073156440004823,
+        3.079782794993662,
+        3.2343678000033833,
+        3.318180146998202,
+        3.1284503349961597,
+        3.0742708920006407,
+        3.4300494290000643,
+        3.1108122849982465,
+        3.1984606429978157,
+        3.1192291539991857,
+        3.0496615969968843,
+        3.041057840004214,
+        3.2168579360004514,
+        3.478078947002359,
+        3.17647290500463,
+        3.1107837020026636,
+        3.318384951002372,
+        3.119031868998718,
+        3.115003726001305,
+        3.107985872993595,
+        3.127010574004089,
+        3.0472813570013386,
+        3.212225220995606,
+        3.339676427000086,
+        2.9397890719992574,
+        3.1588264610036276,
+        3.198185278000892,
+        2.931856802999391,
+        3.0437141549991793,
+        2.9417105190004804,
+        3.515738900998258,
+        3.1615257390003535,
+        3.064792279001267,
+        3.395082574003027,
+        2.961426490001031,
+        3.048467898996023,
+        3.07879274199513,
+        3.098620065000432,
+        3.0082829000020865,
+        3.129875478000031,
+        3.6103798870026367,
+        3.1825427709991345,
+        3.009612420006306,
+        3.2344528309986345,
+        3.026507100999879,
+        2.9257785899972077,
+        2.908905656004208
+      ],
+      "executed_dimensions": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22
+      ],
+      "ignored_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        21
+      ],
+      "observation_inputs": "Three RGB cameras and 26D robot proprioception including base x/y/yaw; no object pose, phase or fill value",
+      "base_odometry": true,
+      "exact_input_images_recorded": true,
+      "low_level_controller": "Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction"
+    }
+  ],
+  "execution_prefix": 8,
+  "policy_batch_size": 1,
+  "flow_steps": 10,
+  "flow_noise": "random",
+  "action_filter_seconds": 0.0,
+  "robot_servo_envelope": {
+    "cartesian_speed_limit_m_s": 0.0,
+    "angular_speed_limit_rad_s": 0.0
+  },
+  "ik_max_residual": 0.002,
+  "temporal_ensemble_predictions": 0,
+  "prediction_samples_per_observation": 1,
+  "state_embedding_precision": "training",
+  "gripper_open_confirmations": 0,
+  "unclipped_robot_state": false,
+  "evaluation_complete": true,
+  "successes": 0,
+  "total": 1
+}

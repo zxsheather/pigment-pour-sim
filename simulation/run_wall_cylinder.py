@@ -106,7 +106,8 @@ class CylinderWallPolicy(CarryWallPolicy):
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
-                 state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False):
+                 state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
+                 gripper_open_confirmation_mode="prefix-median"):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -125,7 +126,8 @@ class CylinderTrial:
         self.prediction_samples=prediction_samples;self.sampled_chunks=[]
         self.state_embedding_precision=state_embedding_precision
         self.unclipped_robot_state=unclipped_robot_state
-        self.opening_guard=GripperOpeningConfirmation(self.env.state_vector()[19],gripper_open_confirmations)
+        self.opening_guard=GripperOpeningConfirmation(self.env.state_vector()[19],gripper_open_confirmations,
+                                                     gripper_open_confirmation_mode)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -230,6 +232,7 @@ class CylinderTrial:
             state_embedding_precision=self.state_embedding_precision,
             unclipped_robot_state=self.unclipped_robot_state,
             gripper_opening_confirmation=dict(forecasts=self.opening_guard.confirmations,
+                mode=self.opening_guard.mode,
                 abrupt_increase_threshold_m_per_finger=.005,decisions=self.opening_guard.decisions),
             sampled_action_decoding=("single model draw" if self.prediction_samples==1 else
                                      "same-observation independent flow draws averaged; rotations projected to SO(3)"),
@@ -299,6 +302,8 @@ def main():
                    help="Match training's state rounding before projection; native preserves the earlier Wall inference path.")
     p.add_argument("--gripper-open-confirmations",type=int,choices=(0,2,3,4),default=0,
                    help="Optional command ablation: confirm abrupt >5mm finger opening across policy forecasts; 0 disables.")
+    p.add_argument("--gripper-open-confirmation-mode",choices=("prefix-median","aligned-forecasts"),default="prefix-median",
+                   help="Optional gripper ablation: confirm each future tick using overlapping forecasts instead of prefix medians.")
     p.add_argument("--unclipped-robot-state",action="store_true",
                    help="Optional state-input ablation: preserve the existing affine scale without clipping robot states.")
     args=p.parse_args()
@@ -328,6 +333,7 @@ def main():
                          prediction_samples=args.prediction_samples,
                          state_embedding_precision=args.state_embedding_precision,
                          gripper_open_confirmations=args.gripper_open_confirmations,
+                         gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
@@ -386,6 +392,7 @@ def main():
                     prediction_samples_per_observation=args.prediction_samples,
                     state_embedding_precision=args.state_embedding_precision,
                     gripper_open_confirmations=args.gripper_open_confirmations,
+                    gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
                     unclipped_robot_state=args.unclipped_robot_state,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
