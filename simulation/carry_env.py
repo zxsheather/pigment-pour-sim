@@ -1,8 +1,10 @@
 """Contact-based bottle transport on the reconstructed planar robot model."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
+import tempfile
 import xml.etree.ElementTree as ET
 
 import mujoco
@@ -27,10 +29,61 @@ def carry_instruction(color: str, goal: str) -> str:
             f"and stop beside {destination}. Keep the bottle in the gripper.")
 
 
-def build_control_model(scene_path: Path, config: dict, *, scene_transform=None) -> mujoco.MjModel:
+def preserve_official_finger_geometry(scene, scene_path: Path):
+    """Import each convex solid in the official STL as one contact geom.
+
+    The pinned collision STLs contain multiple disconnected convex solids.
+    Loading each whole STL as one MuJoCo mesh would fill empty space between
+    those solids with a single convex hull. Splitting connected components
+    preserves the supplied union without designing a new pad or moving vertices.
+    """
+    import trimesh
+    assets=scene.find("asset")
+    cache=ROOT/"generated/official_finger_collision"
+    cache.mkdir(parents=True,exist_ok=True)
+    converted={}
+    for side in ("left","right"):
+        for finger in ("left","right"):
+            body=scene.find(f".//body[@name='{side}_arm_gripper_{finger}_link']")
+            for index,geom in enumerate(list(body.findall("geom"))):
+                if geom.get("contype")=="0":continue
+                name=geom.get("mesh")
+                if not name:raise ValueError("Official finger collision must reference a mesh")
+                if name not in converted:
+                    asset=assets.find(f"mesh[@name='{name}']")
+                    path=Path(asset.get("file"))
+                    if not path.is_absolute():path=scene_path.parent/path
+                    digest=hashlib.sha256(path.read_bytes()).hexdigest()
+                    mesh=trimesh.load_mesh(path)
+                    parts=mesh.split(only_watertight=False)
+                    if not parts or not all(part.is_convex for part in parts):
+                        raise ValueError("Official finger STL has a nonconvex solid; do not silently replace its shape")
+                    converted[name]=[]
+                    for component,part in enumerate(parts):
+                        target=cache/f"{digest[:16]}_{component}.stl"
+                        if not target.exists():
+                            with tempfile.TemporaryDirectory(dir=cache) as temporary:
+                                stage=Path(temporary)/"part.stl"
+                                part.export(stage);stage.replace(target)
+                        component_name=f"{name}_solid_{component}"
+                        attrs=dict(asset.attrib,name=component_name,file=str(target.resolve()))
+                        ET.SubElement(assets,"mesh",attrs)
+                        converted[name].append(component_name)
+                body.remove(geom)
+                for component,component_name in enumerate(converted[name]):
+                    attrs=dict(geom.attrib,mesh=component_name,
+                               name=f"{side}_{finger}_official_collision_{index}_{component}")
+                    ET.SubElement(body,"geom",attrs)
+
+
+def build_control_model(scene_path: Path, config: dict, *, scene_transform=None,
+                        finger_collisions="flat-proxy") -> mujoco.MjModel:
     """Add servos and simple finger collision pads to the static scene."""
+    if finger_collisions not in ("flat-proxy", "official"):
+        raise ValueError("Unknown finger collision model")
     tree = ET.parse(scene_path)
     scene = tree.getroot()
+    if finger_collisions=="official":preserve_official_finger_geometry(scene,scene_path)
     option = scene.find("option")
     option.set("timestep", str(PHYSICS_DT))
     option.set("impratio", "5")
@@ -71,6 +124,10 @@ def build_control_model(scene_path: Path, config: dict, *, scene_transform=None)
     for side in ("left", "right"):
         for finger, offset in (("left", 0.018), ("right", -0.018)):
             body = scene.find(f".//body[@name='{side}_arm_gripper_{finger}_link']")
+            if finger_collisions == "official":
+                # Preserve the collision geoms imported from the pinned URDF.
+                # No custom contact pad is inserted into this baseline.
+                continue
             for geom in body.findall("geom"):
                 if geom.get("contype") != "0":
                     geom.set("contype", "0")
@@ -100,10 +157,11 @@ class CarryEnv:
     """
 
     def __init__(self, scene_path: Path | None = None, *, render: bool = False,
-                 image_size: int = 256, max_seconds: float = 75.0, model_transform=None):
+                 image_size: int = 256, max_seconds: float = 75.0, model_transform=None,
+                 finger_collisions="flat-proxy"):
         self.config = json.loads((ROOT / "scene_config.json").read_text())
         self.model = build_control_model(scene_path or ROOT / "generated/scene.xml", self.config,
-                                         scene_transform=model_transform)
+                                         scene_transform=model_transform,finger_collisions=finger_collisions)
         self.data = mujoco.MjData(self.model)
         self.render_enabled = render
         self.image_size = image_size

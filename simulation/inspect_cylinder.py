@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 import imageio.v2 as imageio
 import mujoco
@@ -37,18 +38,26 @@ def add_digit(parent, digit: str, x: float, z: float):
 
 
 class CylinderEnv(CarryEnv):
-    def __init__(self, volume_ml=25.0, *, render=False, image_size=640, grip_profile="v-pad",
+    def __init__(self, volume_ml=25.0, *, render=False, image_size=640, grip_profile="official",
                  friction_scale=1.0, mass_scale=1.0):
         if not 0 < volume_ml <= CAPACITY_ML:
             raise ValueError("Volume must be within (0,50] mL")
         self.volume_ml = float(volume_ml)
-        if grip_profile not in ("flat","v-pad"):raise ValueError("Unknown grip profile")
+        if grip_profile not in ("official","flat","v-pad"):raise ValueError("Unknown grip profile")
         self.grip_profile=grip_profile
         if not all(np.isfinite(v) and v>0 for v in (friction_scale,mass_scale)):
             raise ValueError("Friction and mass scales must be finite and positive")
         self.friction_scale=float(friction_scale)
         self.mass_scale=float(mass_scale)
-        super().__init__(render=render, image_size=image_size, model_transform=self._configure_model)
+        self.finger_force_limits={finger:10.0 for finger in ("left","right")}
+        if grip_profile=="official":
+            spec=json.loads((ROOT.parent/"sources.json").read_text())["sdk_robot"]
+            urdf=ET.parse(ROOT.parent/spec["destination"]/"urdf/quanta_x1/ex001_robot.urdf").getroot()
+            self.finger_force_limits={finger:float(urdf.find(
+                f"joint[@name='right_arm_gripper_{finger}_joint']/limit").get("effort"))
+                for finger in ("left","right")}
+        super().__init__(render=render, image_size=image_size, model_transform=self._configure_model,
+                         finger_collisions="official" if grip_profile=="official" else "flat-proxy")
         self.cylinder_body = self.model.body("measuring_cylinder").id
         self.arm_addresses = np.array([self.model.joint(f"right_arm_joint{i}").qposadr[0]
                                        for i in range(1, 7)], dtype=int)
@@ -57,13 +66,15 @@ class CylinderEnv(CarryEnv):
         self.ik_data = mujoco.MjData(self.model)
 
     def _configure_model(self, scene, config):
-        scene.find("option").set("noslip_iterations","8")
+        official=self.grip_profile=="official"
+        scene.find("option").set("noslip_iterations","0" if official else "8")
+        if official:scene.find("option").set("impratio","1")
         body = scene.find(".//body[@name='measuring_cylinder']")
         for child in list(body):
             body.remove(child)
         element(body, "freejoint", name="cylinder_free")
         mass = (0.09 + self.volume_ml / 1000)*self.mass_scale
-        friction=fmt(np.array([1.2,.01,.008])*self.friction_scale)
+        friction=fmt(np.array([1.,.005,.0001] if official else [1.2,.01,.008])*self.friction_scale)
         element(body, "inertial", pos="0 0 .105", mass=mass,
                 diaginertia=fmt([mass*.245**2/12, mass*.245**2/12, mass*.012**2/2]))
         element(body, "geom", name="cylinder_base", type="box", pos="0 0 .003", size=".043 .043 .003",
@@ -77,7 +88,7 @@ class CylinderEnv(CarryEnv):
                     pos=fmt([middle*np.cos(angle), middle*np.sin(angle), .1255]),
                     size=fmt([(outer-inner)/2, middle*np.pi/32, .1195]), euler=fmt([0, 0, angle]),
                     rgba=".80 .90 .93 .12", mass=0, contype=2, conaffinity=3,
-                    friction=friction, condim=6, solref=".006 1")
+                    friction=friction, condim=3 if official else 6, solref=".02 1" if official else ".006 1")
         height = self.volume_ml / CAPACITY_ML * SCALE_SPAN
         element(body, "geom", name="cylinder_liquid", type="cylinder",
                 size=fmt([inner*.98, height/2]), pos=fmt([0,0,SCALE_ZERO+height/2]),
@@ -98,7 +109,16 @@ class CylinderEnv(CarryEnv):
                     add_digit(body, digit, .004+digit_index*.0034, z)
         for finger in ("left", "right"):
             actuator=scene.find(f".//actuator/position[@name='right_arm_gripper_{finger}_joint_servo']")
-            actuator.set("forcerange", "-10 10")
+            limit=self.finger_force_limits[finger]
+            actuator.set("forcerange",fmt([-limit,limit]))
+            if official:
+                # The URDF supplies geometry, but no contact material. Use
+                # nominal MuJoCo contact defaults, explicitly uncalibrated.
+                for geom in scene.findall(f".//body[@name='right_arm_gripper_{finger}_link']/geom"):
+                    if geom.get("contype")!="0":
+                        geom.set("friction",friction);geom.set("condim","3")
+                        geom.set("solref",".02 1")
+                continue
             offset=.018 if finger=="left" else -.018
             for level,height in enumerate((-.014,.014)):
                 pad=scene.find(f".//geom[@name='right_{finger}_contact_pad_{level}']")
@@ -380,13 +400,23 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  view_search_history=view_search,neq=env.model.neq,
                  policy="privileged_pose_teacher",perception="RGB only; 20/35 mL color calibration anchors",
                  grip_profile=env.grip_profile,
+                 hardware_model=("Pinned official parallel-finger collision meshes; no custom pads"
+                                 if env.grip_profile=="official" else "Historical custom finger-pad proxy"),
+                 contact_calibration="Uncalibrated simulation assumptions; no measured real-finger friction",
                  friction_scale=env.friction_scale,mass_scale=env.mass_scale,
                  initial_yaw_rad=env.initial_yaw,yaw_jitter_rad=yaw_jitter,
                  max_held_tilt_rad=max_tilt,max_contact_loss_seconds=max_contact_loss,
                  final_finger_normal_forces_n=metrics["finger_normal_forces_n"],
-                 gripper_actuator_force_limit_n=10.0,
+                 gripper_actuator_force_limit_n=max(env.finger_force_limits.values()),
+                 gripper_force_limit_source=("Official URDF prismatic-joint effort limits"
+                                             if env.grip_profile=="official" else "Historical experiment assumption"),
                  motion_teacher_inputs="Simulator cylinder pose for grasp and upright correction; robot/camera calibration",
-                 collision_model="32 hollow wall segments and base; two pad levels per finger; "+env.grip_profile,
+                 collision_model="32 hollow wall segments and base; "+env.grip_profile,
+                 contact_parameters=dict(noslip_iterations=int(env.model.opt.noslip_iterations),
+                                         finger_geoms=[dict(type=int(env.model.geom_type[g]),
+                                             condim=int(env.model.geom_condim[g]),friction=env.model.geom_friction[g].tolist())
+                                             for g in range(env.model.ngeom)
+                                             if env.model.geom_bodyid[g] in env.finger_bodies and env.model.geom_contype[g]]),
                  max_lifted_m=max((float(row['cylinder'][2]-original_z) for row in rows),default=0.0),
                  initial_camera_distance_m=initial_distance,
                  final_camera_distance_m=float(np.linalg.norm(env.data.xpos[env.cylinder_body]
@@ -426,7 +456,8 @@ def main():
     parser.add_argument("--record",action="store_true")
     parser.add_argument("--seed",type=int,default=0)
     parser.add_argument("--jitter",type=float,default=0.0)
-    parser.add_argument("--grip-profile",choices=("flat","v-pad"),default="v-pad")
+    parser.add_argument("--grip-profile",choices=("official","flat","v-pad"),default="official",
+                        help="official: pinned URDF collision meshes; flat/v-pad: historical custom proxies")
     parser.add_argument("--friction-scale",type=float,default=1.0)
     parser.add_argument("--mass-scale",type=float,default=1.0)
     parser.add_argument("--yaw-jitter",type=float,default=0.0,help="Maximum initial scale yaw perturbation in radians")

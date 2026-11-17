@@ -57,7 +57,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output",type=Path,required=True)
     parser.add_argument("--suite",choices=("original","heldout","fresh"),default="original")
-    parser.add_argument("--grip-profile",choices=("flat","v-pad"),default="v-pad")
+    parser.add_argument("--grip-profile",choices=("official","flat","v-pad"),default="official")
     parser.add_argument("--workers",type=int,default=1,choices=range(1,9))
     parser.add_argument("--seed-offset",type=int,default=0,help="Use new position/yaw samples without changing the matrix")
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=False)
@@ -103,6 +103,9 @@ def main():
         negative["rotated_image"]=read_volume(np.ascontiguousarray(np.rot90(reference)))
         assert all(not negative[k]["valid"] for k in ("blank_image","missing_anchor","missing_liquid","rotated_image"))
         assert negative["release"]["passed"]
+    else:
+        negative["cylinder_negative_checks_skipped"]={
+            "reason":"No successful cylinder episode was available for release and image-negative checks"}
     # Check the shared model-builder hook leaves the old carry task usable.
     carry=CarryEnv()
     try:

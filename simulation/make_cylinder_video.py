@@ -62,7 +62,10 @@ def main():
                 last_roi=(max(0,int(ax-45)),max(0,int(top)),
                           min(rgb.shape[1],int(lx+65)),min(rgb.shape[0],int(bottom)))
             frame=Image.new("RGB",(1280,864),"#111827");draw=ImageDraw.Draw(frame)
-            title="量筒稳定优化 · V 形指垫 + 图像读数" if summary.get("grip_profile")=="v-pad" else "量筒拿近与读数 · 接触抓取 + 图像读数"
+            titles={"official":"量筒基线 · 官方平行手指碰撞模型",
+                    "flat":"历史对照 · 自定义平面指垫",
+                    "v-pad":"历史对照 · 自定义 V 形指垫"}
+            title=titles.get(summary.get("grip_profile"),"量筒拿近与读数 · 接触抓取 + 图像读数")
             draw.text((24,14),title,font=fonts[0],fill="#f1f5f9")
             draw.text((24,56),f"{PHASES.get(str(phases[index]),str(phases[index]))}    |    仿真 {times[index]:.1f} 秒    |    {args.speed:g} 倍速",
                       font=fonts[2],fill="#a8b3c7")
