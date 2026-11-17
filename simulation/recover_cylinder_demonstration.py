@@ -22,8 +22,18 @@ def main():
     p.add_argument("--output",type=Path,required=True);p.add_argument("--record",action="store_true")
     p.add_argument("--start-holding",action="store_true",help="Preserve the existing grasp and teach transport/readout only.")
     p.add_argument("--reading-only",action="store_true",help="Held recovery after the robot already retreated: teach presentation/stopping/readout.")
+    p.add_argument("--held-initial-lift-m",type=float,default=0.,
+                   help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
+    p.add_argument("--eye-alignment-target-px",type=float,default=2.,
+                   help="Teacher centering target before stable reads; acceptance remains at most2 pixels.")
     a=p.parse_args()
     if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
+    if not np.isfinite(a.held_initial_lift_m) or not 0<=a.held_initial_lift_m<=.10:
+        p.error("Held recovery lift must be within [0,0.10] m")
+    if a.held_initial_lift_m and (not a.start_holding or a.reading_only):
+        p.error("Initial lift requires --start-holding without --reading-only")
+    if not np.isfinite(a.eye_alignment_target_px) or not .5<=a.eye_alignment_target_px<=2.:
+        p.error("Eye alignment target must be within [0.5,2] pixels")
     a.output.mkdir(parents=True,exist_ok=False)
     source=json.loads((a.policy_episode/"summary.json").read_text());case=source["case"]
     controller=json.loads(a.controller_config.read_text())
@@ -68,6 +78,7 @@ def main():
                         clock="Restarted at zero for the new demonstration sampling timestamps",
                         teacher_inputs="Simulator object pose and robot state; learned policy inputs unchanged")
         provenance["starts_holding"]=a.start_holding
+        provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
         (a.output/"recovery_source.json").write_text(json.dumps(provenance,indent=2)+"\n")
         if not recoverable:
@@ -81,7 +92,8 @@ def main():
         env.grasp_reference=env._bottle_relative_position()
         teacher=dict(controller.get("teacher",{}));teacher.update(record_training=True,training_image_size=448,
                     reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding,
-                    skip_retreat=a.reading_only)
+                    skip_retreat=a.reading_only,held_initial_lift_m=a.held_initial_lift_m,
+                    eye_alignment_target_px=a.eye_alignment_target_px)
         result=run_inspection(env,a.output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
         if not result["success"]:raise SystemExit(1)

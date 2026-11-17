@@ -10,11 +10,11 @@
     "models/wall-oss-0.5/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_1275/model.safetensors",
-    "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors"
+    "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors",
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1530/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_510/optimizer.pt",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_1275/optimizer.pt"
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1530/optimizer.pt"
   ],
   "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
   "fallback_original_bytes": 8978728704,
@@ -59,9 +59,21 @@
       "reason": "Superseded by fully saved and audited1275; evaluated1020 had no valid4cm lift and performed worse than retained510 and latest1275",
       "estimated_allocated_bytes": 1613295616,
       "deleted_at": 1794938082.410869
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_510/optimizer.pt",
+      "reason": "Old optimizer superseded by complete1530 restart; selected model weights retained, future new-data fine-tuning initializes its own optimizer",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794939870.872195
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_1275/optimizer.pt",
+      "reason": "Old optimizer superseded by complete1530 restart; selected model weights retained, future new-data fine-tuning initializes its own optimizer",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794939870.898423
     }
   ],
-  "retention_policy": "Keep pretrained, required parent, selected best, latest complete and pending/candidate checkpoints; prune older evaluated no-grasp failures, review held failures before pruning.",
+  "retention_policy": "Keep pretrained, required parent, historical shared archive base, current selected best, latest/pending/candidate weights; only latest complete optimizer needed for restart. Prune obsolete evaluated versions after comparison.",
   "training_progress_confirmed": "2026-11-18 01:12:36,010 - [rank0] - INFO -  epoch   0/1000 | iter   1056/  7478 | loss 0.008763 | flow_loss 0.008763 | lr 0.000030 | time_current_backward_step 10.872992s |",
   "categories": {
     "duplicate or superseded exported dataset; current51 and raw future5 retained": {
@@ -107,10 +119,31 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794938082.5172517,
-    "removed_this_check_bytes": 10592034816,
-    "project_gib": 40.09,
-    "free_gib": 189.06,
+    "time": 1794940668.7055273,
+    "project_gib": 47.02,
+    "free_gib": 181.61,
+    "latest_model": "1530 fully saved/audited/evaluated failed; needed as latest restart until next complete checkpoint",
+    "optimizer_retained": "1530 only",
     "training_continues": true
-  }
+  },
+  "subsequent_redundant_payload_removals": [
+    {
+      "path": "pigment-pour-sim/simulation/generated/cylinder-odometry1530-lift-recovery-v1/snapshot_039/training_face_view.mp4",
+      "reason": "Completed failed teacher recovery, excluded from training; numeric trajectory and reading images retained, successfulv2 raw videos retained",
+      "estimated_allocated_bytes": 3624960,
+      "deleted_at": 1794940668.6260538
+    },
+    {
+      "path": "pigment-pour-sim/simulation/generated/cylinder-odometry1530-lift-recovery-v1/snapshot_039/training_left_wrist_view.mp4",
+      "reason": "Completed failed teacher recovery, excluded from training; numeric trajectory and reading images retained, successfulv2 raw videos retained",
+      "estimated_allocated_bytes": 2265088,
+      "deleted_at": 1794940668.627008
+    },
+    {
+      "path": "pigment-pour-sim/simulation/generated/cylinder-odometry1530-lift-recovery-v1/snapshot_039/training_right_wrist_view.mp4",
+      "reason": "Completed failed teacher recovery, excluded from training; numeric trajectory and reading images retained, successfulv2 raw videos retained",
+      "estimated_allocated_bytes": 8613888,
+      "deleted_at": 1794940668.6275709
+    }
+  ]
 }

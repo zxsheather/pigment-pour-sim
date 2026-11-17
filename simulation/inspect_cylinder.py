@@ -266,8 +266,15 @@ class InspectionFailure(RuntimeError):
 def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0,
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
-                   reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False):
+                   reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
+                   held_initial_lift_m=0.,eye_alignment_target_px=2.):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
+    if not np.isfinite(held_initial_lift_m) or not 0<=held_initial_lift_m<=.10:
+        raise ValueError("Held recovery lift must be within [0,0.10] m")
+    if held_initial_lift_m and (not start_holding or skip_retreat):
+        raise ValueError("Initial lift requires a held transport recovery")
+    if not np.isfinite(eye_alignment_target_px) or not .5<=eye_alignment_target_px<=2.:
+        raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
     geometry_report=None
     if env.grip_profile=="official":
         from audit_gripper import audit
@@ -381,6 +388,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             env.grasp_reference=env._bottle_relative_position();held=True
             env.grasp_point_reference=env.grip_point_relative()
             point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+            if held_initial_lift_m:
+                point=point+np.array([0.,0.,held_initial_lift_m])
+                move("lift_from_partial_grasp",point,2)
             q=env.data.qpos[env.arm_addresses].copy() if skip_retreat else move("retract",point+[0,-.15,0],3)
         else:
             approach=cylinder+[0,-.10,env.grasp_height]
@@ -444,7 +454,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             print(json.dumps(readings[-1]),flush=True)
             if not reading["valid"]:raise InspectionFailure(f"unreadable:{reading['reason']}")
             if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
-            if abs(reading["eye_alignment_error_px"])<=2.0:break
+            if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:break
             focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[env.model.camera("face_view").id])/2))
             dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-.025,.025)
             point[2]+=dz
@@ -479,6 +489,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  initial_state_provenance=initial_state_provenance,
                  starts_holding=start_holding,
                  recovery_skips_existing_retreat=skip_retreat,
+                 recovery_initial_lift_m=held_initial_lift_m,
                  lifted_m=float(env.data.xpos[env.cylinder_body,2]-original_z),
                  final_tilt_rad=metrics["bottle_tilt_rad"],max_slip_m=max_slip,
                  final_contacts=metrics["grip_contacts"],phases=phase_log,
@@ -490,6 +501,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  controller_parameters=dict(grip_opening_m=grip_opening,motion_scale=motion_scale,
                                             grasp_height_m=env.grasp_height,grasp_x_m=float(env.grasp_offset[0]),
                                             read_lateral_m=read_lateral,read_distance_m=read_distance,
+                                            eye_alignment_target_px=eye_alignment_target_px,
                                             grasp_roll_rad=grasp_roll,upright_feedback_gain=upright_gain),
                  grip_force_target_n=env.grip_force_target,
                  grasp_reference_point_m=None if env.grasp_point_reference is None else env.grasp_point_reference.tolist(),
