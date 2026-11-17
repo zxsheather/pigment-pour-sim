@@ -1,0 +1,126 @@
+{
+  "kind": "actual_neural_execution_ablation",
+  "baseline": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step1275-single-v2/summary.json",
+  "ablation": "/data/hlou/pigment-pour-study/runs/cylinder-odometry1275-opening-confirm2-v1/summary.json",
+  "same_checkpoint": true,
+  "same_torch_seed": 47,
+  "same_controller_and_acceptance": true,
+  "state_embedding_precision": "training",
+  "ablation_confirmations": 2,
+  "baseline_confirmations": 0,
+  "baseline_success": 0,
+  "ablation_success": 0,
+  "baseline_final_simulated_seconds": 20.79999999999699,
+  "ablation_final_simulated_seconds": 17.850000000003867,
+  "baseline_failure": "lost_grasp",
+  "ablation_failure": "lost_grasp",
+  "baseline_max_slip_m": 0.05079196241161551,
+  "ablation_max_slip_m": 0.04385507080525004,
+  "baseline_max_lift_m": 0.06936977851563919,
+  "ablation_max_lift_m": 0.07218819518041308,
+  "blocked_forecasts": [
+    {
+      "forecast_index": 22,
+      "previous_normalized_target": 0.5658696293830872,
+      "proposed_prefix_median": 0.7144912481307983,
+      "pending_forecasts": 1,
+      "blocked": true,
+      "accepted_last_prefix_target": 0.5658696293830872
+    },
+    {
+      "forecast_index": 44,
+      "previous_normalized_target": 0.28969264030456543,
+      "proposed_prefix_median": 0.6350430250167847,
+      "pending_forecasts": 1,
+      "blocked": true,
+      "accepted_last_prefix_target": 0.20597410202026367
+    }
+  ],
+  "initial_rgb_comparison": {
+    "face_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 0.00013452646683673468
+    },
+    "left_wrist_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 0.000204280931122449
+    },
+    "right_wrist_view": {
+      "max_channel_difference": 1,
+      "changed_pixel_fraction": 0.0002491230867346939
+    }
+  },
+  "initial_raw_prediction_max_abs_difference": 0.001793980598449707,
+  "initial_raw_right_position_max_delta_m": 0.0008241350296884775,
+  "adopted": false,
+  "conclusion": "Both actual neural runs failed. The prefix-median rule allowed two late opening spikes in forecast43 (20.28/14.12mm per-finger targets) despite the mostly closed prefix. The next forecast was blocked but held the already loose14.12mm target; contact was then lost. The rule is not adopted. Initial RGB/predictions also differ, so this is not an exact identical-prefix counterfactual.",
+  "source_sha256": {
+    "run_wall_cylinder.py": "a5ef4013a5964b2d63df2fff2ec1916e871e6b0709803c42446608e6f9533437",
+    "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+    "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+    "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+    "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+    "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+    "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+    "robot_action_filter.py": "d54610d4ea986d7d69ff080f2fb8a561695efbb927281c6c5f9d952985f54ac2"
+  },
+  "last_forecast_decisions": [
+    {
+      "forecast_index": 38,
+      "previous_normalized_target": 0.06028607487678528,
+      "proposed_prefix_median": 0.054320648312568665,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.05737540125846863
+    },
+    {
+      "forecast_index": 39,
+      "previous_normalized_target": 0.05737540125846863,
+      "proposed_prefix_median": 0.05997689068317413,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.06323125958442688
+    },
+    {
+      "forecast_index": 40,
+      "previous_normalized_target": 0.06323125958442688,
+      "proposed_prefix_median": 0.06997092068195343,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.06139117479324341
+    },
+    {
+      "forecast_index": 41,
+      "previous_normalized_target": 0.06139117479324341,
+      "proposed_prefix_median": 0.05307972431182861,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.06514120101928711
+    },
+    {
+      "forecast_index": 42,
+      "previous_normalized_target": 0.06514120101928711,
+      "proposed_prefix_median": 0.07355409860610962,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.06903403997421265
+    },
+    {
+      "forecast_index": 43,
+      "previous_normalized_target": 0.06903403997421265,
+      "proposed_prefix_median": 0.06318634748458862,
+      "pending_forecasts": 0,
+      "blocked": false,
+      "accepted_last_prefix_target": 0.28969264030456543
+    },
+    {
+      "forecast_index": 44,
+      "previous_normalized_target": 0.28969264030456543,
+      "proposed_prefix_median": 0.6350430250167847,
+      "pending_forecasts": 1,
+      "blocked": true,
+      "accepted_last_prefix_target": 0.20597410202026367
+    }
+  ],
+  "identified_rule_limitation": "A median over the executed prefix does not reject minority opening spikes. This failed trial does not evaluate an alternative per-frame confirmation controller."
+}
