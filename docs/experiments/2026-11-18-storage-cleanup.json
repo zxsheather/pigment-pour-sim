@@ -9,10 +9,11 @@
   "retained_full_weights": [
     "models/wall-oss-0.5/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors"
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_128/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/optimizer.pt"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_128/optimizer.pt"
   ],
   "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
   "fallback_original_bytes": 8978728704,
@@ -111,6 +112,12 @@
       "reason": "Old training terminal; exact51episode prefix and all immutable videos preserved in active52 export. Original provenance and SHA manifest retained.",
       "estimated_allocated_bytes": 7593984,
       "deleted_at": 1794945047.8823717
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/optimizer.pt",
+      "reason": "New128 complete weights and optimizer saved/audited; old2040 optimizer no longer needed. Parent2040 weights retained for all future audits.",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794946058.3592985
     }
   ],
   "retention_policy": "Keep pretrained, required parent, historical shared archive base, current selected best, latest/pending/candidate weights; only latest complete optimizer needed for restart. Prune obsolete evaluated versions after comparison.",
@@ -159,14 +166,13 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794945047.969769,
-    "project_gib": 30.39,
-    "free_gib": 198.08,
-    "removed_this_check_bytes": 19578359808,
-    "active_training": "hold-correction52, real gradient steps confirmed",
-    "last_observed_new_step": 24,
-    "parent": "odometry2040",
-    "old51_export_retired_without_losing_shared_media": true
+    "time": 1794946058.7726202,
+    "project_gib": 38.77,
+    "free_gib": 189.7,
+    "removed_this_check_bytes": 1613295616,
+    "latest_restart": "hold-correction128",
+    "parent_weights": "odometry2040",
+    "training_continues": true
   },
   "subsequent_redundant_payload_removals": [
     {
