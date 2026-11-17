@@ -141,7 +141,9 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 为检查前缀中位数漏过末尾尖峰的问题，新增显式可选 `--gripper-open-confirmation-mode aligned-forecasts`，配合 `--gripper-open-confirmations 2`：逐帧检查大于每指 5 mm 的突然张开，要求两次重叠预测对**同一未来控制时刻**都预测张开；闭合立即通过，持续的张开意图仍可通过。该规则只读模型指令和初始机器人开度，不读物体位姿或任务阶段。默认确认次数仍为 0，旧 `prefix-median` 模式也保留。[验证](experiments/2026-11-18-aligned-gripper-validation.json) 通过，关闭时逐值透传、其他动作分量不变、不同未来时刻不能相互确认，并在已记录预测中拦住上述三帧；离线回放不计真实闭环成功。另启动的神经网络加此保护的完整闭环单独记录，原设置训练和后续正式评测设置保持不变。
 
-该保护的 [实际闭环](experiments/2026-11-18-aligned-gripper-closed-loop.json) 抬起 13.30 cm、距头部相机 37.51 cm，但退离仅 4.24 cm、未停稳，45.50 s 时仍因滑移 25.82 mm 失败。[对照记录](experiments/2026-11-18-aligned-gripper-comparison.json) 确认保护实际拦截了两组预测中的 12 帧指令；首帧机器人状态相同，但首组原始模型预测已有约 0.00163 的最大数值差异，因此整段差别不能全部归因于保护规则。该执行保护未采用；[执行记录](experiments/2026-11-18-aligned-gripper-job-status.json) 确认正式评测队列已恢复，原设置的 `0_512` 正在评测，主训练未中断。当前仍无神经网络完整单例成功，独立测试未使用。
+该保护的 [实际闭环](experiments/2026-11-18-aligned-gripper-closed-loop.json) 抬起 13.30 cm、距头部相机 37.51 cm，但退离仅 4.24 cm、未停稳，45.50 s 时仍因滑移 25.82 mm 失败。[对照记录](experiments/2026-11-18-aligned-gripper-comparison.json) 确认保护实际拦截了两组预测中的 12 帧指令；首帧机器人状态相同，但首组原始模型预测已有约 0.00163 的最大数值差异，因此整段差别不能全部归因于保护规则。该执行保护未采用；[执行记录](experiments/2026-11-18-aligned-gripper-job-status.json) 确认正式评测队列已恢复，随后完成下述 `0_512` 评测，主训练未中断。当前仍无神经网络完整单例成功，独立测试未使用。
+
+原设置 `0_512` 的 [权重核验](experiments/2026-11-18-hold-correction512-weight-audit.json) 通过；[完整闭环](experiments/2026-11-18-hold-correction512-closed-loop.json) 保持夹持、抬起 17.47 cm、最大滑移 7.21 mm、退离 15.02 cm、相机距离 45.92 cm，但 33.25 s 的末端目标 IK 残差 0.00302 超过原 0.002 门槛，仍失败。没有放宽 IK 或物理成功条件；当前训练已继续至第 572 步，下一份计划检查点为 `0_640`。仅保留当前父权重、暂定较好 `0_384`、最新 `0_512` 与最新一份优化器，项目约 38.40 GiB、磁盘可用约 190.16 GiB。
 
 针对反复出现的笛卡尔目标不可达，新增 `reconstruct_cylinder_joints.py` 检查另一种数据表示是否具备可用观测。它重放已记录且经过限速的 9 维关节／夹爪／底盘指令，仅保存右臂关节位置和速度，不重新编码视频。[562 帧完整示范](experiments/2026-11-18-joint-reconstruction-base.json) 与 [309 帧恢复示范](experiments/2026-11-18-joint-reconstruction-held.json) 均完整重建，原 23 维机器人状态、量筒位置和姿态差异均为零；后者从原始完整物理状态及控制缓存恢复。这里只验证了这两段数据，没有检查全部 52 条，也没有训练关节动作策略；当前模型及动作表示不变，重放不计模型任务成绩。
 

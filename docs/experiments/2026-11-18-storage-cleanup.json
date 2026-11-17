@@ -8,12 +8,12 @@
   "project_bytes_after_delete": 43090665472,
   "retained_full_weights": [
     "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_512/model.safetensors",
     "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/model.safetensors",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_256/model.safetensors",
     "models/wall-oss-0.5/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/optimizer.pt"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_512/optimizer.pt"
   ],
   "retained_key_fallback_archive": null,
   "fallback_original_bytes": 8978728704,
@@ -172,14 +172,16 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794948441.606536,
-    "project_gib": 38.262,
-    "free_gib": 190.296,
+    "time": 1794950147.3779287,
+    "project_gib": 38.398,
+    "free_gib": 190.161,
     "training_continues": true,
-    "active_dataset_sha256_unchanged": true,
-    "retired_historical_fallback": true,
-    "latest_restart": "hold-correction384",
-    "latest384_weight_audit_passed": true
+    "training_step": 572,
+    "latest_restart": "hold-correction512",
+    "selected_model": "hold-correction384 provisional development-case score; full task failed",
+    "formal512_full_task_failed": true,
+    "latest512_weight_audit_passed": true,
+    "historical_fallback_retired": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -216,7 +218,7 @@
   },
   "staged_video_deduplication": "runs/cylinder-hold-recovery-data-check-v1/shared-video-storage.json",
   "automatic_checkpoint_retention_log": "/data/hlou/pigment-pour-study/runs/cylinder-hold-correction-bc-v1/checkpoint-retention.jsonl",
-  "automatic_checkpoint_retirements_confirmed": 2,
+  "automatic_checkpoint_retirements_confirmed": 4,
   "historical_fallback_retired_manifest": "/data/hlou/pigment-pour-study/results/storage-cleanup-20261118/retired-historical-fallback-manifest.json",
   "historical_fallback_cleanup": {
     "deleted": [
