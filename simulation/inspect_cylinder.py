@@ -266,7 +266,7 @@ class InspectionFailure(RuntimeError):
 def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0,
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
-                   reset_scene=True,initial_state_provenance=None,start_holding=False):
+                   reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     geometry_report=None
     if env.grip_profile=="official":
@@ -277,6 +277,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     elif not initial_state_provenance or abs(env.data.time)>1e-9:
         raise ValueError("Recovery demonstrations require provenance and an episode-relative clock")
     if start_holding and reset_scene:raise ValueError("Held continuation requires preserved physics")
+    if skip_retreat and not start_holding:raise ValueError("Reading recovery requires an existing grasp")
     rotation=np.array([[0,-1,0],[1,0,0],[0,0,1.]],dtype=float)
     c,s=np.cos(grasp_roll),np.sin(grasp_roll)
     rotation=rotation@np.array([[1.,0,0],[0,c,-s],[0,s,c]])
@@ -380,7 +381,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             env.grasp_reference=env._bottle_relative_position();held=True
             env.grasp_point_reference=env.grip_point_relative()
             point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
-            q=move("retract",point+[0,-.15,0],3)
+            q=env.data.qpos[env.arm_addresses].copy() if skip_retreat else move("retract",point+[0,-.15,0],3)
         else:
             approach=cylinder+[0,-.10,env.grasp_height]
             move("approach",approach,opening=.034)
@@ -391,13 +392,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             env.grasp_point_reference=env.grip_point_relative()
             move("lift",cylinder+[0,0,env.grasp_height+.04],2)
             q=move("retract",cylinder+[0,-.15,env.grasp_height+.12],3)
-        target_y=env.base_pose()[1]-.24
-        for _ in range(150):
-            distance=env.base_pose()[1]-target_y
-            if distance<.008:break
-            tick("back_away",q,grip_opening,-min(.10,1.5*distance))
-        else:raise InspectionFailure("base_retreat_timeout")
-        for _ in range(15):tick("back_away",q,grip_opening)
+        if not skip_retreat:
+            target_y=env.base_pose()[1]-.24
+            for _ in range(150):
+                distance=env.base_pose()[1]-target_y
+                if distance<.008:break
+                tick("back_away",q,grip_opening,-min(.10,1.5*distance))
+            else:raise InspectionFailure("base_retreat_timeout")
+            for _ in range(15):tick("back_away",q,grip_opening)
         eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
         point=eye+[read_lateral,read_distance,env.grasp_height-(SCALE_ZERO+SCALE_SPAN/2)]
         q=move("present",point,3)
@@ -476,6 +478,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  initialization="scene_reset" if reset_scene else "preserved_policy_visited_physics",
                  initial_state_provenance=initial_state_provenance,
                  starts_holding=start_holding,
+                 recovery_skips_existing_retreat=skip_retreat,
                  lifted_m=float(env.data.xpos[env.cylinder_body,2]-original_z),
                  final_tilt_rad=metrics["bottle_tilt_rad"],max_slip_m=max_slip,
                  final_contacts=metrics["grip_contacts"],phases=phase_log,

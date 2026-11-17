@@ -21,7 +21,10 @@ def main():
     p.add_argument("--controller-config",type=Path,required=True)
     p.add_argument("--output",type=Path,required=True);p.add_argument("--record",action="store_true")
     p.add_argument("--start-holding",action="store_true",help="Preserve the existing grasp and teach transport/readout only.")
-    a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+    p.add_argument("--reading-only",action="store_true",help="Held recovery after the robot already retreated: teach presentation/stopping/readout.")
+    a=p.parse_args()
+    if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
+    a.output.mkdir(parents=True,exist_ok=False)
     source=json.loads((a.policy_episode/"summary.json").read_text());case=source["case"]
     controller=json.loads(a.controller_config.read_text())
     aggregate=json.loads((a.policy_episode.parent/"summary.json").read_text())
@@ -30,6 +33,7 @@ def main():
                     friction_scale=case.get("friction_scale",1.),mass_scale=case.get("mass_scale",1.))
     try:
         env.reset_inspection(seed=case["seed"],jitter=case.get("jitter",.004),yaw_jitter=case.get("yaw_jitter",0.))
+        initial_base=env.base_pose().copy()
         original_height=float(env.data.xpos[env.cylinder_body,2])
         with np.load(a.policy_episode/"recovery_physics.npz") as saved:
             index=a.snapshot_index;spec=int(saved["state_spec"])
@@ -50,12 +54,21 @@ def main():
         if a.start_holding:
             recoverable=(metrics["grip_contacts"]==2 and env.data.xpos[env.cylinder_body,2]-original_height>.02
                          and axis[2]>np.cos(.12))
+        if a.reading_only:
+            # After retreat the held cylinder can be below its original tray
+            # height. That is a useful recovery state, not a task success.
+            # Require a loaded grasp, clearance and no forbidden contact;
+            # retain the earlier stricter lift guard for transport starts.
+            recoverable = (metrics["grip_contacts"]==2 and axis[2]>np.cos(.12)
+                and initial_base[1]-env.base_pose()[1]>=.20
+                and env.data.xpos[env.cylinder_body,2]>.10 and not metrics["forbidden_contacts"])
         provenance=dict(policy_episode=str(a.policy_episode.resolve()),snapshot_index=index,
                         source_simulated_seconds=source_time,kind="expert_recovery_training_only",
                         physical_state="Recorded policy-visited integration state and controller cache; no pose reset",
                         clock="Restarted at zero for the new demonstration sampling timestamps",
                         teacher_inputs="Simulator object pose and robot state; learned policy inputs unchanged")
         provenance["starts_holding"]=a.start_holding
+        provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
         (a.output/"recovery_source.json").write_text(json.dumps(provenance,indent=2)+"\n")
         if not recoverable:
             (a.output/"source_rejected.json").write_text(json.dumps(dict(reason="initial_state_not_suitable_for_selected_recovery_mode",
@@ -67,7 +80,8 @@ def main():
         env.data.time=0.;env.grasp_point_reference=None
         env.grasp_reference=env._bottle_relative_position()
         teacher=dict(controller.get("teacher",{}));teacher.update(record_training=True,training_image_size=448,
-                    reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding)
+                    reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding,
+                    skip_retreat=a.reading_only)
         result=run_inspection(env,a.output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
         if not result["success"]:raise SystemExit(1)
