@@ -39,6 +39,12 @@ class CylinderWallPolicy(CarryWallPolicy):
         inputs=self._construct_model_input(encoded,[prefix]*len(encoded),[postfix]*len(encoded))
         padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
                                         inputs["dataset_names"]).to("cuda")
+        # The official normalizer is padded to 26 dimensions, so normalizing
+        # an all-zero vector turns its virtual tail into -1. The training
+        # collator pads AFTER normalization and supplies zeros instead. These
+        # masked values still enter w1 alongside the mask: match training.
+        padding[...,23:]=0
+        inputs["proprioception"][...,23:]=0
         output=self._model.generate_flow_action(action_horizon=self._action_horizon,action_dim=26,
             num_inference_timesteps=10,padding_action=padding,**inputs)
         actions=output["predict_action"].float().cpu().numpy()
@@ -62,6 +68,7 @@ class CylinderTrial:
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
+        self.observations=[]
         self.next_read=0.;self.good_readings=[];self.latencies=[];self.writers={}
         self.evaluation_interrupted=False
         if record:
@@ -69,8 +76,14 @@ class CylinderTrial:
                 self.writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
 
     def observation(self):
-        return dict(state=self.env.state_vector().copy(),
-                    images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
+        observation=dict(state=self.env.state_vector().copy(),
+                         images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
+        self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
+        if self.writers:
+            folder=self.output/"model_observations"/f"chunk_{len(self.chunks):04d}"
+            folder.mkdir(parents=True,exist_ok=False)
+            for name,rgb in observation["images"].items():imageio.imwrite(folder/f"{name}.png",rgb)
+        return observation
 
     def fail(self,reason):
         self.done=True;self.reason=reason
@@ -133,10 +146,14 @@ class CylinderTrial:
             final_tilt_rad=env.metrics()["bottle_tilt_rad"],geometry_audit=self.geometry_report,
             inference_seconds=self.latencies,executed_dimensions=list(range(10,21))+[22],ignored_dimensions=list(range(10))+[21],
             observation_inputs="Three RGB cameras and 23D robot proprioception; no object pose, phase or fill value",
+            exact_input_images_recorded=bool(self.writers),
             low_level_controller="Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction")
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
+        np.savez_compressed(self.output/"model_observations.npz",
+            timestamp=np.array([r["time"] for r in self.observations]),
+            state=np.array([r["state"] for r in self.observations]))
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
@@ -188,6 +205,9 @@ def main():
                 for action in absolute[:args.execute_steps]:
                     trial.step(action)
                     if trial.done:break
+            print(json.dumps(dict(case_status=[dict(seed=trial.case["seed"],seconds=float(trial.env.data.time),
+                held=trial.held,contacts=trial.env.metrics()["grip_contacts"],max_lifted_m=trial.max_lift,
+                max_slip_m=trial.max_slip,done=trial.done,reason=trial.reason) for trial in active])),flush=True)
     except BaseException as error:
         for trial in trials:
             if not trial.done:

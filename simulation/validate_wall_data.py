@@ -69,6 +69,8 @@ def main():
         assert batch["dof_mask"].shape[-1] == 26
         assert batch["dof_mask"][..., 20:23].bool().all(), "Base actions were masked out"
         assert not batch["dof_mask"][..., 23:].bool().any(), "Padding contributes to loss"
+        assert (batch["action_chunk"][...,23:]==0).all()
+        assert (batch["proprioception"][...,23:]==0).all()
         report = {"shapes": shapes, "training_iterations_per_epoch": iters,
                   "active_base_dimensions": [20, 21, 22], "padding_dimensions": [23, 24, 25],
                   "finite": True, "dataset_names": batch.get("dataset_names"),
@@ -76,6 +78,7 @@ def main():
                   "relative_rotations_match_loader": True,
                   "episode_end_actions_repeat_last": True,
                   "selected_training_episodes": inner.hf_dataset.episodes,
+                  "virtual_action_and_state_tail": "zero after normalization",
                   "note": "Data-path validation only; no model forward/backward."}
         args.output.write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report), flush=True)
