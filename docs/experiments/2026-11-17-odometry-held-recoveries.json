@@ -1,0 +1,99 @@
+{
+  "recoveries": [
+    {
+      "source": "pigment-pour-sim/simulation/generated/cylinder-odometry-held-recovery-v1/snapshot_050/summary.json",
+      "result": {
+        "success": true,
+        "failure_reason": null,
+        "initial_state_provenance": {
+          "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step510-single-v1/episode_000",
+          "snapshot_index": 50,
+          "source_simulated_seconds": 19.99999999999874,
+          "kind": "expert_recovery_training_only",
+          "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+          "clock": "Restarted at zero for the new demonstration sampling timestamps",
+          "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+          "starts_holding": true,
+          "recovery_stage": "transport_or_grasp"
+        },
+        "simulated_seconds": 36.34999999999154,
+        "max_slip_m": 0.02005715677703185,
+        "max_held_tilt_rad": 0.03279240670452931,
+        "absolute_reading_error_ml": 0.06097560975609895,
+        "geometry_audit_passed": true,
+        "controller_parameters": {
+          "grip_opening_m": 0.003,
+          "motion_scale": 1.0,
+          "grasp_height_m": 0.225,
+          "grasp_x_m": 0.115,
+          "read_lateral_m": 0.14,
+          "read_distance_m": 0.35,
+          "grasp_roll_rad": 0.0,
+          "upright_feedback_gain": 0.0
+        },
+        "reading": {
+          "valid": true,
+          "volume_ml": 24.9390243902439,
+          "liquid_y": 384.0,
+          "liquid_x": 538,
+          "y20": 411.0,
+          "y35": 329.0,
+          "anchor_x": 528.0,
+          "liquid_bbox": [
+            528,
+            384,
+            21,
+            135
+          ],
+          "boundary_support_columns": 17,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": 0.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        }
+      }
+    },
+    {
+      "source": "pigment-pour-sim/simulation/generated/cylinder-odometry-held-recovery-v1/snapshot_070/summary.json",
+      "result": {
+        "success": false,
+        "failure_reason": "lost_grasp",
+        "initial_state_provenance": {
+          "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step510-single-v1/episode_000",
+          "snapshot_index": 70,
+          "source_simulated_seconds": 27.999999999980094,
+          "kind": "expert_recovery_training_only",
+          "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+          "clock": "Restarted at zero for the new demonstration sampling timestamps",
+          "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+          "starts_holding": true,
+          "recovery_stage": "transport_or_grasp"
+        },
+        "simulated_seconds": 9.600000000000241,
+        "max_slip_m": 0.025080891251526665,
+        "max_held_tilt_rad": 0.07344244206607724,
+        "geometry_audit_passed": true,
+        "controller_parameters": {
+          "grip_opening_m": 0.003,
+          "motion_scale": 1.0,
+          "grasp_height_m": 0.225,
+          "grasp_x_m": 0.115,
+          "read_lateral_m": 0.14,
+          "read_distance_m": 0.35,
+          "grasp_roll_rad": 0.0,
+          "upright_feedback_gain": 0.0
+        },
+        "reading": {
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        }
+      }
+    }
+  ],
+  "dataset": "datasets/cylinder-recovery-odometry-v3",
+  "episodes": 56,
+  "frames": 34522,
+  "included_recovery": "snapshot_050 only",
+  "excluded_recovery": "snapshot_070 failed lost_grasp",
+  "role": "Teacher training data, no policy task success",
+  "current51_training_inputs_changed": false
+}

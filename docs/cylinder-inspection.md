@@ -92,6 +92,12 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 另提供默认关闭的 `--temporal-ensemble`：对同一未来控制时刻的重叠绝对末端预测平均，旋转重新正交化，夹爪使用最新指令；保留原始模型指令和实际执行指令，不读取物体真值。时间对齐、过期预测移除、夹爪直通、旋转有效性和默认逐值透传均通过 [检查](experiments/2026-11-17-temporal-ensemble-validation.json)。但相同 `0_510`、相同单例和默认 IK 下，平均四组预测在 25.85 s 因倾斜失败，抬起仅 8.04 cm；因此未采用。两种真实闭环、几何审计和代码 SHA 见 [对照记录](experiments/2026-11-17-odometry510-execution-comparison.json)。截至这些记录，尚无任何神经网络策略完整通过单例任务。
 
+`diagnose_wall_sampling.py` 用保存的同一组三路 RGB／26 维机器人状态重复运行真实模型，不推进物理。在原模型第 20/28 s 的两组观测，各采样 8 次标准高斯 flow：前 8 个执行帧的右末端位置 RMS 标准差分别为 1.64–4.74 mm、1.72–8.08 mm，旋转 RMS 标准差约 0.28–0.44°，见 [重复前向记录](experiments/2026-11-17-odometry510-sampling-variation.json)。这只测出随机采样带来的输出变化，不等于任务误差，不能单独证明哪种滤波或解码能提高成功率。
+
+另外从这个模型第 20/28 s 的真实持筒状态补采两条教师恢复。前者在 36.35 s 内完成读数，新增滑移仍有 20.06 mm、读数误差 0.061 mL；后者在 9.60 s 因新增滑移 25.08 mm 失败，见 [两条记录](experiments/2026-11-17-odometry-held-recoveries.json)。失败恢复保留并排除；成功恢复暂存为 `datasets/cylinder-recovery-odometry-v3` 第 56 条，共 34,522 帧，尚未训练。其 [追加检查](experiments/2026-11-17-odometry56-append-coverage.json) 确认旧数据不变、机器人状态均在原边界内，但两个相对旋转分量有约 14.23% 超出旧动作归一化边界，另两个约 0.89%；因此不能仅凭 [数据加载通过](experiments/2026-11-17-odometry56-data-validation.json) 就声称动作标签完全保留。当前训练继续使用冻结的 51 条。
+
+恢复物理状态后仅作几何接触诊断，量筒局部接触高度约从第 16 s 的 188–199 mm 变到第 40 s 的 216–218 mm，均位于 250 mm 筒壁内，见 [接触位置记录](experiments/2026-11-17-odometry510-contact-locations.json)。该记录包括接触位置和距离，不是另一条执行结果，也不替代滑移／承载力评分。
+
 另修正推理补齐约定：训练 collator 在归一化后补三个 0，推理原先却将它们归一化成 -1。现在显式还原为 0。相同检查点、相同随机种子和上述十组教师观测的配对诊断没有发现预测数值变化，故没有将该修正当作本轮成功率改善或主要失败原因。
 
 输入数据快照在 `/data/hlou/pigment-pour-study/snapshots/cylinder-official-bc-v2-inputs-20261117`（约 1.06 GiB，923 个文件附 SHA256）：含源码归档、实际 Wall Python 源码、48 条完整采集记录、44 条训练导出和训练配置。它冻结训练输入，模型最终结果仍以 `runs` 中的后续闭环记录为准。时间步再减半到 0.25 ms 的单例检查仍成功，滑移 8.75 mm、读数误差 0.061 mL，见 [数值检查](experiments/2026-11-17-official-dt-convergence-025-v1.json)；不是大样本真机结论。
