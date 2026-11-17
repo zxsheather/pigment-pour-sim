@@ -42,6 +42,8 @@ def stats(values):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--config",type=Path,required=True)
     p.add_argument("--state-profile",choices=("empirical","robot_margin"),default="empirical")
+    p.add_argument("--action-profile",choices=("empirical","zero_centered"),default="empirical",
+                   help="Center relative no-motion poses and zero base speed in their numeric ranges.")
     p.add_argument("--reference-action-stats",type=Path,
                    help="Keep an existing training-only action scale while adding recovery observations.")
     a=p.parse_args();cfg=yaml.safe_load(a.config.read_text())
@@ -83,7 +85,22 @@ def main():
         values["q01"]=low.tolist();values["q99"]=high.tolist()
         report["provenance"]["state_bounds"]="q01/q99 slots store robust bounds: training min/max plus 30mm position and 0.1 rotation-component margins per side, spans >=100mm/0.5; grippers [0,1], bounded base velocities. Not empirical percentiles."
     else:report["provenance"]["state_bounds"]="Empirical 1st/99th percentiles"
+    if a.action_profile=="zero_centered":
+        values=report["norm_stats"]["action"]
+        low=np.array(values["q01"]);high=np.array(values["q99"])
+        for start in (0,10):
+            center=np.array([0.,0.,0.,1.,0.,0.,0.,1.,0.])
+            radius=np.maximum(np.maximum(abs(low[start:start+9]-center),
+                                         abs(high[start:start+9]-center))*1.2,
+                              [.02]*3+[.05]*6)
+            low[start:start+9]=center-radius;high[start:start+9]=center+radius
+            low[start+9]=0.;high[start+9]=1.
+        low[20:23]=[-.12,-.12,-.3];high[20:23]=[.12,.12,.3]
+        values["q01"]=low.tolist();values["q99"]=high.tolist()
+        report["provenance"]["action_bounds"]="Relative position 0 and rotation identity are centers, radius=max(1.2*empirical 1%/99% deviations,20mm/0.05); base velocities use symmetric controller limits; grippers [0,1]. q01/q99 slots are declared bounds, not percentiles."
+    else:report["provenance"]["action_bounds"]="Empirical 1st/99th percentiles"
     if a.reference_action_stats:
+        if a.action_profile!="empirical":raise ValueError("Cannot override centered action bounds with a reference")
         reference=json.loads(a.reference_action_stats.read_text())
         report["norm_stats"]["action"]=reference["norm_stats"]["action"]
         report["provenance"]["fixed_action_scale_sha256"]=hashlib.sha256(a.reference_action_stats.read_bytes()).hexdigest()

@@ -20,10 +20,12 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
+from robot_action_filter import RobotActionFilter
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
-                            "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py")}
+                            "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
+                            "robot_action_filter.py")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
@@ -60,7 +62,7 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 
 class CylinderTrial:
-    def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448):
+    def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -71,6 +73,7 @@ class CylinderTrial:
         self.env.reset_inspection(seed=case["seed"],jitter=case.get("jitter",.004),yaw_jitter=case.get("yaw_jitter",0.))
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
+        self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -106,12 +109,13 @@ class CylinderTrial:
     def step(self,action):
         env=self.env;state=env.state_vector();t=float(env.data.time)
         before_metrics=env.metrics()
+        raw_action=action.copy();action=self.action_filter(action)
         try:
             joints,opening,forward,yaw=cartesian_to_joint_target(env,action)
         except ValueError as error:
             self.fail(str(error));return
         for cam,writer in self.writers.items():writer.append_data(env.render(cam))
-        self.rows.append(dict(time=t,state=state,action=action.copy(),slip=before_metrics["bottle_slip_m"],
+        self.rows.append(dict(time=t,state=state,action=action.copy(),raw_action=raw_action,slip=before_metrics["bottle_slip_m"],
                               tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
         _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
@@ -162,6 +166,7 @@ class CylinderTrial:
         summary=dict(policy="wall_oss_full_cylinder",success=self.success,failure_reason=self.reason,
             evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
             final_task_gates=self.task_gates,
+            action_filter_seconds=self.action_filter.seconds,
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
@@ -185,6 +190,7 @@ class CylinderTrial:
             applied_base_action=np.array([r["applied_base_action"] for r in self.recovery_states]))
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
+            unfiltered_model_action=np.array([r["raw_action"] for r in self.rows]),
             slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
             contacts=np.array([r["contacts"] for r in self.rows]),phase=np.array(["wall_policy"]*len(self.rows)))
         env.close();return summary
@@ -201,7 +207,12 @@ def main():
     p.add_argument("--policy-batch-size",type=int,default=1,
                    help="Limit inference microbatch size for Thor memory and latency.")
     p.add_argument("--flow-steps",type=int,default=10,choices=range(1,101))
-    args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
+    p.add_argument("--action-filter-seconds",type=float,default=0.,
+                   help="Optional robot-command low-pass time constant; no object/task feedback.")
+    args=p.parse_args()
+    if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
+        p.error("Action filter time constant must be finite and nonnegative")
+    args.output.mkdir(parents=True,exist_ok=False)
     cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
     controller=json.loads(args.controller_config.read_text())
     torch.manual_seed(47)
@@ -211,7 +222,8 @@ def main():
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
     (args.output/"model_load.json").write_text(json.dumps(policy.load_report,indent=2)+"\n")
     trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
-                         max_seconds=args.max_seconds,image_size=args.image_size) for index,case in enumerate(cases)]
+                         max_seconds=args.max_seconds,image_size=args.image_size,
+                         action_filter_seconds=args.action_filter_seconds) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -250,6 +262,7 @@ def main():
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
                     flow_steps=args.flow_steps,
+                    action_filter_seconds=args.action_filter_seconds,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

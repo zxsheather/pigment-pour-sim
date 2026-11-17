@@ -71,6 +71,28 @@
       "max_lifted_m": 0.0,
       "max_slip_m": 0.0,
       "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 1020,
+      "run": "cylinder-continuous-v1-step1020-single-v1",
+      "success": false,
+      "reason": "lost_grasp",
+      "seconds": 83.25000000021548,
+      "max_lifted_m": 0.11663990348895936,
+      "max_slip_m": 0.025182784742476375,
+      "geometry_audit_passed": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": false,
+        "base_retreat_m": 0.6515685547383007,
+        "camera_distance_m": 0.35967898933830533,
+        "linear_speed_m_s": 0.03382096139519887,
+        "angular_speed_rad_s": 0.19905541136366783
+      }
     }
   ],
   "stage_diagnosis_510": [
@@ -117,5 +139,45 @@
       "tilt_rad": 0.053258846873386154
     }
   ],
-  "interpretation": "Development cases only. Lift during collision is not valid held lift. No model full-task success yet. Independent cases remain unused."
+  "interpretation": "Development cases only. Lift during collision is not valid held lift. No model full-task success yet. Independent cases remain unused.",
+  "continuous_prefix16": [
+    {
+      "step": 1020,
+      "success": false,
+      "reason": "Unreachable model action:0.00502",
+      "seconds": 19.99999999999874,
+      "max_lifted_m": 0.01779020546646004,
+      "final_task_gates": {
+        "held": true,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": 0.1324512491361307,
+        "camera_distance_m": 0.7773130944183319,
+        "linear_speed_m_s": 0.09469753754847758,
+        "angular_speed_rad_s": 0.2550220978027397
+      }
+    },
+    {
+      "step": 510,
+      "success": false,
+      "reason": "timeout",
+      "seconds": 90.00000000024771,
+      "max_lifted_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": true,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.3671395675493898,
+        "camera_distance_m": 1.0026545229935249,
+        "linear_speed_m_s": 8.506274424245327e-14,
+        "angular_speed_rad_s": 1.1345843647612735e-15
+      }
+    }
+  ]
 }
