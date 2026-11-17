@@ -7,15 +7,16 @@
   "project_bytes_before_direct_delete": 129913544704,
   "project_bytes_after_delete": 43090665472,
   "retained_full_weights": [
-    "models/wall-oss-0.5/model.safetensors",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_128/model.safetensors"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/model.safetensors",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_256/model.safetensors",
+    "models/wall-oss-0.5/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_128/optimizer.pt"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/optimizer.pt",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_256/optimizer.pt"
   ],
-  "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
+  "retained_key_fallback_archive": null,
   "fallback_original_bytes": 8978728704,
   "fallback_patch_bytes": 725816456,
   "fallback_reconstruction_sha256": "b4f77587de4bdd7f60edd6fa747a12b0a45bcb20385e1993978b20081a7061c2",
@@ -120,7 +121,7 @@
       "deleted_at": 1794946058.3592985
     }
   ],
-  "retention_policy": "Keep pretrained, required parent, historical shared archive base, current selected best, latest/pending/candidate weights; only latest complete optimizer needed for restart. Prune obsolete evaluated versions after comparison.",
+  "retention_policy": "Keep pretrained, required current parent, current best/latest/pending weights; only latest optimizer; historical unsuccessful fallback and archive base retired together.",
   "training_progress_confirmed": "2026-11-18 01:12:36,010 - [rank0] - INFO -  epoch   0/1000 | iter   1056/  7478 | loss 0.008763 | flow_loss 0.008763 | lr 0.000030 | time_current_backward_step 10.872992s |",
   "categories": {
     "duplicate or superseded exported dataset; current51 and raw future5 retained": {
@@ -166,13 +167,12 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794946058.7726202,
-    "project_gib": 38.77,
-    "free_gib": 189.7,
-    "removed_this_check_bytes": 1613295616,
-    "latest_restart": "hold-correction128",
-    "parent_weights": "odometry2040",
-    "training_continues": true
+    "time": 1794948214.9897206,
+    "project_gib": 39.744,
+    "free_gib": 188.815,
+    "training_continues": true,
+    "active_dataset_sha256_unchanged": true,
+    "retired_historical_fallback": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -207,5 +207,31 @@
     "no_model_updates_yet": false,
     "status": "active real fine-tuning, no longer staging"
   },
-  "staged_video_deduplication": "runs/cylinder-hold-recovery-data-check-v1/shared-video-storage.json"
+  "staged_video_deduplication": "runs/cylinder-hold-recovery-data-check-v1/shared-video-storage.json",
+  "automatic_checkpoint_retention_log": "/data/hlou/pigment-pour-study/runs/cylinder-hold-correction-bc-v1/checkpoint-retention.jsonl",
+  "automatic_checkpoint_retirements_confirmed": 2,
+  "historical_fallback_retired_manifest": "/data/hlou/pigment-pour-study/results/storage-cleanup-20261118/retired-historical-fallback-manifest.json",
+  "historical_fallback_cleanup": {
+    "deleted": [
+      {
+        "path": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
+        "estimated_allocated_bytes": 725831680,
+        "deleted_at": 1794948213.9493668,
+        "reason": "Historical failed neural fallback retired together with its dedicated archive base; current parent2040 and active256 model/optimizer preserved"
+      },
+      {
+        "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
+        "estimated_allocated_bytes": 8978735104,
+        "deleted_at": 1794948214.2042634,
+        "reason": "Historical failed neural fallback retired together with its dedicated archive base; current parent2040 and active256 model/optimizer preserved"
+      }
+    ],
+    "allocated_gib_freed": 9.0381,
+    "project_before_gib": 48.782,
+    "project_after_gib": 39.744,
+    "free_before_gib": 179.777,
+    "free_after_gib": 188.815,
+    "active_dataset_file_count": 17,
+    "dataset_sha256_before_after_identical": true
+  }
 }
