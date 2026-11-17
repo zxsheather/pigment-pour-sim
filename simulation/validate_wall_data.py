@@ -3,6 +3,7 @@
 Launch with torchrun --nproc_per_node=1; model weights are not required.
 """
 import argparse
+import hashlib
 import json
 import logging
 from pathlib import Path
@@ -71,7 +72,18 @@ def main():
         assert not batch["dof_mask"][..., 23:].bool().any(), "Padding contributes to loss"
         assert (batch["action_chunk"][...,23:]==0).all()
         assert (batch["proprioception"][...,23:]==0).all()
+        sampling = {"sampler": type(loader.sampler).__name__}
+        weights_path = cfg.data.lerobot_config.get("frame_sampling_weights_path")
+        if weights_path:
+            assert type(loader.sampler).__name__ == "RecoveryDistributedSampler"
+            weights = np.load(weights_path, allow_pickle=False)
+            selected = weights[np.asarray(inner.train_dataset.indices)]
+            assert np.array_equal(loader.sampler.weights.numpy(), selected)
+            sampling.update(weights_sha256=hashlib.sha256(Path(weights_path).read_bytes()).hexdigest(),
+                validation_frames_excluded=True,
+                expected_recovery_fraction=float(selected[selected>1].sum()/selected.sum()))
         report = {"shapes": shapes, "training_iterations_per_epoch": iters,
+                  "sampling": sampling,
                   "active_base_dimensions": [20, 21, 22], "padding_dimensions": [23, 24, 25],
                   "finite": True, "dataset_names": batch.get("dataset_names"),
                   "state_unchanged_and_base_labels_preserved": True,

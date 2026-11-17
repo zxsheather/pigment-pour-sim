@@ -20,6 +20,7 @@ def main():
     p.add_argument("--model",type=Path,required=True);p.add_argument("--config",type=Path,required=True)
     p.add_argument("--episode",type=Path,required=True);p.add_argument("--output",type=Path,required=True)
     p.add_argument("--norm-key",default="cylinder_official_v2")
+    p.add_argument("--flow-steps",type=int,default=10,choices=range(1,101))
     a=p.parse_args()
     if a.output.exists():raise FileExistsError(a.output)
     meta=json.loads((a.episode/"metadata.json").read_text())
@@ -33,7 +34,7 @@ def main():
         with av.open(str(a.episode/f"{meta.get('video_prefix','')}{camera}.mp4")) as video:
             for index,frame in enumerate(video.decode(video=0)):
                 if index in images:images[index][camera]=frame.to_ndarray(format="rgb24")
-    torch.manual_seed(47);policy=CylinderWallPolicy(a.model,a.config,a.norm_key)
+    torch.manual_seed(47);policy=CylinderWallPolicy(a.model,a.config,a.norm_key,flow_steps=a.flow_steps)
     results=[]
     for index in indices:
         observation=dict(state=data["state"][index],images=images[index])
@@ -54,7 +55,7 @@ def main():
                  first_predicted_right_action=absolute[0,10:23].tolist(),first_teacher_right_action=expected[0,10:23].tolist())
         results.append(row);print(json.dumps(row),flush=True)
     report=dict(kind="offline_teacher_observation_diagnostic",model=str(a.model.resolve()),
-                episode=str(a.episode.resolve()),samples=results,
+                episode=str(a.episode.resolve()),samples=results,flow_steps=a.flow_steps,
                 note="Teacher observations only; does not measure policy-induced drift or task success.")
     a.output.write_text(json.dumps(report,indent=2)+"\n")
 

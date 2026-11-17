@@ -41,6 +41,9 @@ def stats(values):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--config",type=Path,required=True)
+    p.add_argument("--state-profile",choices=("empirical","robot_margin"),default="empirical")
+    p.add_argument("--reference-action-stats",type=Path,
+                   help="Keep an existing training-only action scale while adding recovery observations.")
     a=p.parse_args();cfg=yaml.safe_load(a.config.read_text())
     assert cfg["data"]["train_test_split"]==1.,"Export must contain training episodes only"
     root=Path(cfg["data"]["lerobot_config"]["root"])
@@ -64,6 +67,27 @@ def main():
                     rotation="first two rows; R_rel = R_abs @ R_state.T",
                     data_sha256={str(path.relative_to(root)):hashlib.sha256(path.read_bytes()).hexdigest()
                                  for path in sorted((root/"data").rglob("*.parquet"))}))
+    if a.state_profile=="robot_margin":
+        # Preprocessing margins, not measured hardware/material properties.
+        # Avoid magnifying almost-constant pose channels and hiding an empty
+        # closed gripper behind the empirical held-object width lower bound.
+        values=report["norm_stats"]["observation.state"]
+        low=state.min(0);high=state.max(0)
+        for start in (0,10):
+            center=(low[start:start+9]+high[start:start+9])/2
+            width=np.maximum(high[start:start+9]-low[start:start+9]
+                             +np.array([.06]*3+[.2]*6),[.10]*3+[.50]*6)
+            low[start:start+9]=center-width/2;high[start:start+9]=center+width/2
+            low[start+9]=0.;high[start+9]=1.
+        low[20:23]=[-.12,-.12,-.3];high[20:23]=[.12,.12,.3]
+        values["q01"]=low.tolist();values["q99"]=high.tolist()
+        report["provenance"]["state_bounds"]="q01/q99 slots store robust bounds: training min/max plus 30mm position and 0.1 rotation-component margins per side, spans >=100mm/0.5; grippers [0,1], bounded base velocities. Not empirical percentiles."
+    else:report["provenance"]["state_bounds"]="Empirical 1st/99th percentiles"
+    if a.reference_action_stats:
+        reference=json.loads(a.reference_action_stats.read_text())
+        report["norm_stats"]["action"]=reference["norm_stats"]["action"]
+        report["provenance"]["fixed_action_scale_sha256"]=hashlib.sha256(a.reference_action_stats.read_bytes()).hexdigest()
+        report["provenance"]["fixed_action_scale_source"]=str(a.reference_action_stats.resolve())
     output=Path(cfg["data"]["norm_stats_path"])
     if output.exists():raise FileExistsError(output)
     output.write_text(json.dumps(report,indent=2)+"\n")

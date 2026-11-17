@@ -265,17 +265,22 @@ class InspectionFailure(RuntimeError):
 
 def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0,
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
-                   grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224):
+                   grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
+                   reset_scene=True,initial_state_provenance=None,start_holding=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     geometry_report=None
     if env.grip_profile=="official":
         from audit_gripper import audit
         geometry_report=audit(env)
         (output/"geometry_audit.json").write_text(json.dumps(geometry_report,indent=2)+"\n")
-    env.reset_inspection(seed=seed,jitter=jitter,yaw_jitter=yaw_jitter)
+    if reset_scene:env.reset_inspection(seed=seed,jitter=jitter,yaw_jitter=yaw_jitter)
+    elif not initial_state_provenance or abs(env.data.time)>1e-9:
+        raise ValueError("Recovery demonstrations require provenance and an episode-relative clock")
+    if start_holding and reset_scene:raise ValueError("Held continuation requires preserved physics")
     rotation=np.array([[0,-1,0],[1,0,0],[0,0,1.]],dtype=float)
     c,s=np.cos(grasp_roll),np.sin(grasp_roll)
     rotation=rotation@np.array([[1.,0,0],[0,c,-s],[0,s,c]])
+    if start_holding:rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
     cylinder=env.data.xpos[env.cylinder_body].copy()
     original_z=float(cylinder[2])
     initial_eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
@@ -370,15 +375,22 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         return q1
     reason=None
     try:
-        approach=cylinder+[0,-.10,env.grasp_height]
-        move("approach",approach,opening=.034)
-        q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
-        for _ in range(35):tick("close",q,grip_opening)
-        if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
-        env.grasp_reference=env._bottle_relative_position();held=True
-        env.grasp_point_reference=env.grip_point_relative()
-        move("lift",cylinder+[0,0,env.grasp_height+.04],2)
-        q=move("retract",cylinder+[0,-.15,env.grasp_height+.12],3)
+        if start_holding:
+            if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("held_continuation_requires_two_contacts")
+            env.grasp_reference=env._bottle_relative_position();held=True
+            env.grasp_point_reference=env.grip_point_relative()
+            point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+            q=move("retract",point+[0,-.15,0],3)
+        else:
+            approach=cylinder+[0,-.10,env.grasp_height]
+            move("approach",approach,opening=.034)
+            q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
+            for _ in range(35):tick("close",q,grip_opening)
+            if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
+            env.grasp_reference=env._bottle_relative_position();held=True
+            env.grasp_point_reference=env.grip_point_relative()
+            move("lift",cylinder+[0,0,env.grasp_height+.04],2)
+            q=move("retract",cylinder+[0,-.15,env.grasp_height+.12],3)
         target_y=env.base_pose()[1]-.24
         for _ in range(150):
             distance=env.base_pose()[1]-target_y
@@ -461,6 +473,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     imageio.imwrite(output/"final_overview.png",env.render("cylinder_overview"))
     metrics=env.metrics()
     summary=dict(success=reason is None,failure_reason=reason,simulated_seconds=float(env.data.time),
+                 initialization="scene_reset" if reset_scene else "preserved_policy_visited_physics",
+                 initial_state_provenance=initial_state_provenance,
+                 starts_holding=start_holding,
                  lifted_m=float(env.data.xpos[env.cylinder_body,2]-original_z),
                  final_tilt_rad=metrics["bottle_tilt_rad"],max_slip_m=max_slip,
                  final_contacts=metrics["grip_contacts"],phases=phase_log,

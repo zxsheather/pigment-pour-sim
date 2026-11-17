@@ -22,6 +22,11 @@ def main():
     parser.add_argument("--front-resolution",type=int,default=224,choices=(224,448))
     parser.add_argument("--train-episode-fraction",type=float,default=.75,
                         help="Official loader selects this leading fraction of episodes; use 1 for a train-only export.")
+    parser.add_argument("--state-representation",choices=("string","continuous"),default="string")
+    parser.add_argument("--state-projection-lr",type=float,default=3e-4)
+    parser.add_argument("--seed",type=int,default=42)
+    parser.add_argument("--frame-sampling-weights",type=Path,
+                        help="Opt-in recovery sampling; requires patch_wall_recovery_sampling.py.")
     args = parser.parse_args()
     if args.steps < 2:
         parser.error("steps must be at least 2 for the official zero-based checkpoint schedule")
@@ -31,6 +36,8 @@ def main():
     architecture = json.loads((model / "config.json").read_text())
     architecture["_attn_implementation"] = "sdpa"
     architecture["vision_config"]["_attn_implementation"] = "sdpa"
+    state_string=args.state_representation=="string"
+    architecture["use_state_string_representation"]=state_string
     architecture_path = output / "architecture.json"
     architecture_path.write_text(json.dumps(architecture, indent=2) + "\n")
     action = {"follow_left_ee_cartesian_pos_relative": 3,
@@ -43,13 +50,13 @@ def main():
         "model_type": "qwen2_5",
         "task": {"dof_config": action, "ar_dof_config": dict(action), "agent_pos_config": state,
                  "action_horizon": args.horizon, "action_horizon_flow": args.horizon,
-                 "use_state_string_representation": True},
+                 "use_state_string_representation": state_string},
         "model": {"backbone": "qwen2_5", "config_path": str(architecture_path),
                   "processor_path": str(model), "pretrained_path": None,
                   "attn_implementation": "sdpa", "attn_deterministic": True,
                   "use_ema": False, "flow_loss_weight": 1.0, "ar_loss_weight": 0.0},
         "hyperparams": {"num_epoch": 1000, "batch_size_per_gpu": args.batch_size,
-                        "gradient_accumulation_steps": 1, "seed": 42,
+                        "gradient_accumulation_steps": 1, "seed": args.seed,
                         "optimizer": {"optimizer_type": "adamw", "learning_rate": args.learning_rate,
                                       "action_expert_learning_rate": args.learning_rate,
                                       "train_action_expert_only": True,
@@ -64,7 +71,7 @@ def main():
                                   "state": "observation.state", "action": "action"},
                  "norm_stats_path": str(output / "norm_stats.json"),
                  "train_test_split": args.train_episode_fraction, "num_workers": 0, "max_length": 1024,
-                 "use_state_string_representation": True, "action_horizon_flow": args.horizon,
+                 "use_state_string_representation": state_string, "action_horizon_flow": args.horizon,
                  "action_horizon_ar": args.horizon,
                  "resolution": {"face_view": args.front_resolution, "left_wrist_view": 224, "right_wrist_view": 224},
                  "camera_name_mapping": {"face_view": "front view", "left_wrist_view": "left wrist view",
@@ -77,6 +84,19 @@ def main():
                        "resume_from": str(model / "model.safetensors")},
         "debug": {"profile": False, "nvtx": False},
     }
+    if not state_string:
+        optimizer=config["hyperparams"]["optimizer"]
+        optimizer.pop("action_expert_learning_rate")
+        optimizer["lr_groups"]=[
+            dict(name="action",lr=args.learning_rate,include=["action_preprocessor.w",
+                "action_preprocessor.time_","action_preprocessor.action_proj_back","moe.experts.1",
+                "qkv_proj_experts.1","o_proj_experts.1","input_layernorms.1",
+                "post_attention_layernorms.1","model.norms.1"],fail_on_empty=True),
+            dict(name="state_projection",lr=args.state_projection_lr,
+                 include=["action_preprocessor.propri_proj"],fail_on_empty=True)]
+    if args.frame_sampling_weights:
+        assert args.frame_sampling_weights.is_file()
+        config["data"]["lerobot_config"]["frame_sampling_weights_path"]=str(args.frame_sampling_weights.resolve())
     path = output / "train.yml"
     path.write_text(yaml.safe_dump(config, sort_keys=False))
     print(path)

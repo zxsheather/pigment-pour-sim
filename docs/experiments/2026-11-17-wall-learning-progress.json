@@ -1,0 +1,121 @@
+{
+  "string": [
+    {
+      "checkpoint_step_index": 255,
+      "run": "cylinder-bc-v2-step255-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 510,
+      "run": "cylinder-bc-v2-step510-single-v1",
+      "success": false,
+      "reason": "Unreachable model action:0.00280",
+      "seconds": 17.7000000000041,
+      "max_lifted_m": 0.003369965951596776,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 765,
+      "run": "cylinder-bc-v2-step765-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 1020,
+      "run": "cylinder-bc-v2-step1020-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0037752137269692065,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    }
+  ],
+  "continuous": [
+    {
+      "checkpoint_step_index": 255,
+      "run": "cylinder-continuous-v1-step255-single-v1",
+      "success": false,
+      "reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16']]",
+      "seconds": 16.500000000006896,
+      "max_lifted_m": 0.043374519428426406,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 510,
+      "run": "cylinder-continuous-v1-step510-single-v1",
+      "success": false,
+      "reason": "collision:[['tabletop_1', 'cylinder_base']]",
+      "seconds": 48.75000000005075,
+      "max_lifted_m": 0.15974505457871946,
+      "max_slip_m": 0.019731871860529916,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 765,
+      "run": "cylinder-continuous-v1-step765-single-v1",
+      "success": false,
+      "reason": "Unreachable model action:0.00448",
+      "seconds": 10.200000000000975,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    }
+  ],
+  "stage_diagnosis_510": [
+    {
+      "snapshot": 0,
+      "time": 0.0,
+      "base_retreat_m": 0.0,
+      "head_distance_m": 0.6564660634993152,
+      "tilt_rad": 0.0
+    },
+    {
+      "snapshot": 40,
+      "time": 16.00000000000806,
+      "base_retreat_m": 0.06515567965051938,
+      "head_distance_m": 0.6181089094372962,
+      "tilt_rad": 0.02749374139140365
+    },
+    {
+      "snapshot": 60,
+      "time": 23.999999999989416,
+      "base_retreat_m": 0.15500847257039463,
+      "head_distance_m": 0.4819866450397947,
+      "tilt_rad": 0.022462609194352206
+    },
+    {
+      "snapshot": 80,
+      "time": 31.999999999970772,
+      "base_retreat_m": 0.20209724790443173,
+      "head_distance_m": 0.4664205285757665,
+      "tilt_rad": 0.041396009748036
+    },
+    {
+      "snapshot": 100,
+      "time": 40.00000000000897,
+      "base_retreat_m": 0.23050218336300532,
+      "head_distance_m": 0.45691162819541187,
+      "tilt_rad": 0.038924225061101644
+    },
+    {
+      "snapshot": 121,
+      "time": 48.400000000049076,
+      "base_retreat_m": 0.2544472517765076,
+      "head_distance_m": 0.5177665812729896,
+      "tilt_rad": 0.053258846873386154
+    }
+  ],
+  "interpretation": "Development cases only. Lift during collision is not valid held lift. No model full-task success yet. Independent cases remain unused."
+}

@@ -27,6 +27,12 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
 
 
 class CylinderWallPolicy(CarryWallPolicy):
+    def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10):
+        if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
+        super().__init__(checkpoint,train_config,norm_key)
+        self.flow_steps=flow_steps
+        self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0)
+
     @torch.inference_mode()
     def predict_many(self,observations,instruction=CYLINDER_INSTRUCTION):
         encoded=[]
@@ -46,7 +52,7 @@ class CylinderWallPolicy(CarryWallPolicy):
         padding[...,23:]=0
         inputs["proprioception"][...,23:]=0
         output=self._model.generate_flow_action(action_horizon=self._action_horizon,action_dim=26,
-            num_inference_timesteps=10,padding_action=padding,**inputs)
+            num_inference_timesteps=self.flow_steps,padding_action=padding,**inputs)
         actions=output["predict_action"].float().cpu().numpy()
         if actions.shape!=(len(encoded),self._action_horizon,26) or not np.isfinite(actions).all():
             raise ValueError("Invalid batched Wall actions")
@@ -69,7 +75,11 @@ class CylinderTrial:
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
         self.observations=[]
+        self.recovery_states=[]
+        self.recovery_spec=int(mujoco.mjtState.mjSTATE_INTEGRATION)
+        self.hold_actuator_ids=sorted(self.env.hold_targets)
         self.next_read=0.;self.good_readings=[];self.latencies=[];self.writers={}
+        self.task_gates={}
         self.evaluation_interrupted=False
         if record:
             for cam in ("cylinder_overview","face_view"):
@@ -79,6 +89,11 @@ class CylinderTrial:
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
         self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
+        physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
+        mujoco.mj_getState(self.env.model,self.env.data,physics,self.recovery_spec)
+        self.recovery_states.append(dict(physics=physics,
+            hold_targets=np.array([self.env.hold_targets[i] for i in self.hold_actuator_ids]),
+            applied_base_action=self.env.applied_action.copy()))
         if self.writers:
             folder=self.output/"model_observations"/f"chunk_{len(self.chunks):04d}"
             folder.mkdir(parents=True,exist_ok=False)
@@ -117,7 +132,13 @@ class CylinderTrial:
         eye=env.data.cam_xpos[env.model.camera("face_view").id]
         retreat=float(self.initial_base[1]-env.base_pose()[1])
         dof=env.model.joint("cylinder_free").dofadr[0]
-        still=(np.linalg.norm(env.data.qvel[dof:dof+3])<=.005 and np.linalg.norm(env.data.qvel[dof+3:dof+6])<=.03)
+        linear_speed=float(np.linalg.norm(env.data.qvel[dof:dof+3]))
+        angular_speed=float(np.linalg.norm(env.data.qvel[dof+3:dof+6]))
+        still=(linear_speed<=.005 and angular_speed<=.03)
+        self.task_gates=dict(held=self.held,lifted=self.max_lift>=.04,retreated=retreat>=.20,
+            close_to_head=bool(np.linalg.norm(center-eye)<.45),upright=bool(metrics["bottle_tilt_rad"]<=np.deg2rad(3)),
+            still=still,base_retreat_m=retreat,camera_distance_m=float(np.linalg.norm(center-eye)),
+            linear_speed_m_s=linear_speed,angular_speed_rad_s=angular_speed)
         eligible=(self.held and self.max_lift>=.04 and retreat>=.20 and np.linalg.norm(center-eye)<.45
                   and metrics["bottle_tilt_rad"]<=np.deg2rad(3) and still)
         if env.data.time>=self.next_read:
@@ -140,6 +161,7 @@ class CylinderTrial:
         imageio.imwrite(self.output/"final_face.png",rgb)
         summary=dict(policy="wall_oss_full_cylinder",success=self.success,failure_reason=self.reason,
             evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
+            final_task_gates=self.task_gates,
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
@@ -154,6 +176,13 @@ class CylinderTrial:
         np.savez_compressed(self.output/"model_observations.npz",
             timestamp=np.array([r["time"] for r in self.observations]),
             state=np.array([r["state"] for r in self.observations]))
+        # Privileged simulator snapshots are separate from policy inputs. They
+        # allow later expert-recovery demonstrations from policy-visited states.
+        np.savez_compressed(self.output/"recovery_physics.npz",state_spec=self.recovery_spec,
+            full_state=np.array([r["physics"] for r in self.recovery_states]),
+            hold_actuator_ids=self.hold_actuator_ids,
+            hold_targets=np.array([r["hold_targets"] for r in self.recovery_states]),
+            applied_base_action=np.array([r["applied_base_action"] for r in self.recovery_states]))
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
@@ -171,11 +200,12 @@ def main():
     p.add_argument("--record",action="store_true");p.add_argument("--image-size",type=int,default=448)
     p.add_argument("--policy-batch-size",type=int,default=1,
                    help="Limit inference microbatch size for Thor memory and latency.")
+    p.add_argument("--flow-steps",type=int,default=10,choices=range(1,101))
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
     controller=json.loads(args.controller_config.read_text())
     torch.manual_seed(47)
-    policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key)
+    policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key,flow_steps=args.flow_steps)
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
     if args.policy_batch_size<1:p.error("Policy batch size must be positive")
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
@@ -207,7 +237,8 @@ def main():
                     if trial.done:break
             print(json.dumps(dict(case_status=[dict(seed=trial.case["seed"],seconds=float(trial.env.data.time),
                 held=trial.held,contacts=trial.env.metrics()["grip_contacts"],max_lifted_m=trial.max_lift,
-                max_slip_m=trial.max_slip,done=trial.done,reason=trial.reason) for trial in active])),flush=True)
+                max_slip_m=trial.max_slip,task_gates=trial.task_gates,
+                done=trial.done,reason=trial.reason) for trial in active])),flush=True)
     except BaseException as error:
         for trial in trials:
             if not trial.done:
@@ -218,6 +249,7 @@ def main():
         report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
+                    flow_steps=args.flow_steps,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

@@ -41,6 +41,8 @@ def main():
     parser.add_argument("--repo-id",default="local/pigment-carry")
     parser.add_argument("--reuse-source-videos", action="store_true",
                         help="Copy validated source H.264 videos without a second lossy encoding.")
+    parser.add_argument("--base-dataset",type=Path,
+                        help="Copy an immutable existing dataset, then append new successful episodes.")
     args = parser.parse_args()
     if args.output.exists():
         parser.error("output must be a new directory")
@@ -86,11 +88,24 @@ def main():
             "names": ["height", "width", "channels"],
         }
     dataset_class = SourceVideoDataset if args.reuse_source_videos else LeRobotDataset
-    dataset = dataset_class.create(repo_id=args.repo_id, root=args.output,
+    if args.base_dataset:
+        shutil.copytree(args.base_dataset,args.output)
+        dataset=dataset_class(args.repo_id,root=args.output,video_backend="pyav",vcodec="h264")
+        assert dataset.meta.info["robot_type"]==validated[0][1].get("robot_type","quanta_x1_planar_carry")
+        for key,feature in features.items():
+            assert dataset.features[key]["dtype"]==feature["dtype"]
+            assert tuple(dataset.features[key]["shape"])==tuple(feature["shape"])
+        assert dataset.fps==20
+        dataset.start_image_writer(num_threads=3)
+        provenance=json.loads((args.base_dataset/"demonstration_provenance.json").read_text())
+        assert dataset.num_episodes==len(provenance)
+        old_frames=dataset.num_frames
+    else:
+        dataset = dataset_class.create(repo_id=args.repo_id, root=args.output,
                                    fps=20, robot_type=validated[0][1].get("robot_type","quanta_x1_planar_carry"),
                                    features=features, use_videos=True, vcodec="h264",
                                    image_writer_threads=3)
-    provenance = []
+        provenance=[];old_frames=0
     for episode, metadata, states, actions in validated:
         source_videos = {f"observation.images.{camera}":
                          episode / f"{metadata.get('video_prefix','')}{camera}.mp4"
@@ -127,6 +142,9 @@ def main():
     (args.output / "demonstration_provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
     # Open the final artifact through the same reader used by Wall-X.
     reopened = LeRobotDataset(args.repo_id, root=args.output, video_backend="pyav")
+    assert reopened.num_episodes==len(provenance)
+    assert reopened.num_frames==old_frames+sum(len(item[2]) for item in validated)
+    assert len(reopened.hf_dataset)==reopened.num_frames
     item = reopened[0]
     assert item["action"].shape == (23,)
     for camera in CAMERAS:
