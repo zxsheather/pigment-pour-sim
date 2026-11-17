@@ -1,0 +1,13 @@
+{
+  "parent": "runs/cylinder-odometry-bc-v1/checkpoints/0_2040",
+  "keep": "Parent, latest complete, best provisional development-case weights; only latest optimizer",
+  "selection_scope": "One development case, not a multi-case model ranking",
+  "score_order": [
+    "full single success",
+    "held/lifted/retreated/close gates",
+    "retreat capped20cm",
+    "lift capped15cm",
+    "lower slip"
+  ],
+  "all_other_checkpoints_require_completed_evaluation_before_retirement": true
+}

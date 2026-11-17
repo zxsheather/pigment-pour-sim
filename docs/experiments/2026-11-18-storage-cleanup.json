@@ -9,20 +9,19 @@
   "retained_full_weights": [
     "models/wall-oss-0.5/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
-    "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_1785/model.safetensors"
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_1785/optimizer.pt"
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/optimizer.pt"
   ],
   "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
   "fallback_original_bytes": 8978728704,
   "fallback_patch_bytes": 725816456,
   "fallback_reconstruction_sha256": "b4f77587de4bdd7f60edd6fa747a12b0a45bcb20385e1993978b20081a7061c2",
-  "active_dataset": "datasets/cylinder-recovery-odometry-v1",
+  "active_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1",
   "active_dataset_files": 12,
   "active_dataset_sha256_unchanged": true,
-  "raw_current_and_future_training_episodes_preserved": 56,
+  "raw_current_and_future_training_episodes_preserved": 59,
   "old_unused_archived_checkpoints_permanently_deleted": true,
   "experiment_json_logs_and_numeric_rollout_records_retained": true,
   "deleted_manifest": "/data/hlou/pigment-pour-study/results/storage-cleanup-20261118/deleted.jsonl",
@@ -88,6 +87,30 @@
       "reason": "Evaluated1275 failed; provisional1785 has larger valid lift and lower slip on same development case, complete1785 weights+optimizer retained. Config-only52data-check reference needs no1275 weights.",
       "estimated_allocated_bytes": 8978735104,
       "deleted_at": 1794943679.7539232
+    },
+    {
+      "path": "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors",
+      "reason": "All previous audits/evaluations terminal; real new training uses2040 parent. Old centered reference and superseded1785 no longer required; configs, hashes and numeric evidence retained",
+      "estimated_allocated_bytes": 8978735104,
+      "deleted_at": 1794945045.310404
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_1785/model.safetensors",
+      "reason": "All previous audits/evaluations terminal; real new training uses2040 parent. Old centered reference and superseded1785 no longer required; configs, hashes and numeric evidence retained",
+      "estimated_allocated_bytes": 8978735104,
+      "deleted_at": 1794945046.3641396
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_1785/optimizer.pt",
+      "reason": "All previous audits/evaluations terminal; real new training uses2040 parent. Old centered reference and superseded1785 no longer required; configs, hashes and numeric evidence retained",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794945047.8257382
+    },
+    {
+      "path": "datasets/cylinder-recovery-odometry-v1",
+      "reason": "Old training terminal; exact51episode prefix and all immutable videos preserved in active52 export. Original provenance and SHA manifest retained.",
+      "estimated_allocated_bytes": 7593984,
+      "deleted_at": 1794945047.8823717
     }
   ],
   "retention_policy": "Keep pretrained, required parent, historical shared archive base, current selected best, latest/pending/candidate weights; only latest complete optimizer needed for restart. Prune obsolete evaluated versions after comparison.",
@@ -136,13 +159,14 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794943681.1428998,
-    "project_gib": 38.73,
-    "free_gib": 189.9,
-    "removed_this_check_bytes": 8978735104,
-    "selected_and_latest_model": "1785, all full-task cases still failed",
-    "optimizer_retained": "1785 only",
-    "training_continues": true
+    "time": 1794945047.969769,
+    "project_gib": 30.39,
+    "free_gib": 198.08,
+    "removed_this_check_bytes": 19578359808,
+    "active_training": "hold-correction52, real gradient steps confirmed",
+    "last_observed_new_step": 24,
+    "parent": "odometry2040",
+    "old51_export_retired_without_losing_shared_media": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -174,7 +198,8 @@
     "normalization_unchanged": true,
     "all_new_labels_in_bounds": true,
     "shared_old_video_bytes": 557124501,
-    "no_model_updates_yet": true
+    "no_model_updates_yet": false,
+    "status": "active real fine-tuning, no longer staging"
   },
   "staged_video_deduplication": "runs/cylinder-hold-recovery-data-check-v1/shared-video-storage.json"
 }
