@@ -14,9 +14,18 @@ def main():
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--steps", type=int, default=20)
+    parser.add_argument("--learning-rate",type=float,default=1e-5)
+    parser.add_argument("--batch-size",type=int,default=1)
+    parser.add_argument("--save-every",type=int)
+    parser.add_argument("--run-name",default="carry_smoke")
+    parser.add_argument("--horizon",type=int,default=32,choices=range(1,33))
+    parser.add_argument("--front-resolution",type=int,default=224,choices=(224,448))
+    parser.add_argument("--train-episode-fraction",type=float,default=.75,
+                        help="Official loader selects this leading fraction of episodes; use 1 for a train-only export.")
     args = parser.parse_args()
     if args.steps < 2:
         parser.error("steps must be at least 2 for the official zero-based checkpoint schedule")
+    if not 0<args.train_episode_fraction<=1:parser.error("Invalid training episode fraction")
     args.output.mkdir(parents=True, exist_ok=False)
     dataset, model, output = (path.resolve() for path in (args.dataset, args.model, args.output))
     architecture = json.loads((model / "config.json").read_text())
@@ -33,16 +42,16 @@ def main():
     config = {
         "model_type": "qwen2_5",
         "task": {"dof_config": action, "ar_dof_config": dict(action), "agent_pos_config": state,
-                 "action_horizon": 32, "action_horizon_flow": 32,
+                 "action_horizon": args.horizon, "action_horizon_flow": args.horizon,
                  "use_state_string_representation": True},
         "model": {"backbone": "qwen2_5", "config_path": str(architecture_path),
                   "processor_path": str(model), "pretrained_path": None,
                   "attn_implementation": "sdpa", "attn_deterministic": True,
                   "use_ema": False, "flow_loss_weight": 1.0, "ar_loss_weight": 0.0},
-        "hyperparams": {"num_epoch": 100, "batch_size_per_gpu": 1,
+        "hyperparams": {"num_epoch": 1000, "batch_size_per_gpu": args.batch_size,
                         "gradient_accumulation_steps": 1, "seed": 42,
-                        "optimizer": {"optimizer_type": "adamw", "learning_rate": 1e-5,
-                                      "action_expert_learning_rate": 1e-5,
+                        "optimizer": {"optimizer_type": "adamw", "learning_rate": args.learning_rate,
+                                      "action_expert_learning_rate": args.learning_rate,
                                       "train_action_expert_only": True,
                                       "max_grad_norm": 1.0, "betas": [0.9, 0.95],
                                       "weight_decay": 1e-8},
@@ -54,16 +63,16 @@ def main():
                                             ("face_view", "left_wrist_view", "right_wrist_view")},
                                   "state": "observation.state", "action": "action"},
                  "norm_stats_path": str(output / "norm_stats.json"),
-                 "train_test_split": 0.75, "num_workers": 0, "max_length": 1024,
-                 "use_state_string_representation": True, "action_horizon_flow": 32,
-                 "action_horizon_ar": 32,
-                 "resolution": {"face_view": 224, "left_wrist_view": 224, "right_wrist_view": 224},
+                 "train_test_split": args.train_episode_fraction, "num_workers": 0, "max_length": 1024,
+                 "use_state_string_representation": True, "action_horizon_flow": args.horizon,
+                 "action_horizon_ar": args.horizon,
+                 "resolution": {"face_view": args.front_resolution, "left_wrist_view": 224, "right_wrist_view": 224},
                  "camera_name_mapping": {"face_view": "front view", "left_wrist_view": "left wrist view",
                                          "right_wrist_view": "right wrist view"}, "state_bins": 512},
-        "logging": {"log_name": "carry_smoke", "use_wandb": False, "log_interval": 1,
+        "logging": {"log_name": args.run_name, "use_wandb": False, "log_interval": 10,
                     # The official trainer checks saves before incrementing
                     # its zero-based step index. Save the final update.
-                    "save_interval": args.steps - 1, "val_interval": 1000000, "epoch_save_interval": 1000},
+                    "save_interval": args.save_every or args.steps - 1, "val_interval": 1000000, "epoch_save_interval": 1000},
         "checkpoint": {"save_path": str(output / "checkpoints"),
                        "resume_from": str(model / "model.safetensors")},
         "debug": {"profile": False, "nvtx": False},

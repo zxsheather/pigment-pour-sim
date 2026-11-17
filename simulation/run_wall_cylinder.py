@@ -1,0 +1,185 @@
+"""Execute Wall-predicted arm/gripper/base actions on the fixed official fingers.
+
+Only robot kinematics and joint feedback enter the execution controller.
+Object truth and the calibrated RGB reader are used by the evaluator only.
+"""
+import argparse
+import json
+from pathlib import Path
+import time
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+import torch
+
+from audit_gripper import audit
+from carry_env import CAMERAS,CONTROL_DT
+from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
+from cylinder_reader import read_volume
+from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
+from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
+
+
+class CylinderWallPolicy(CarryWallPolicy):
+    @torch.inference_mode()
+    def predict_many(self,observations,instruction=CYLINDER_INSTRUCTION):
+        encoded=[]
+        for obs in observations:
+            state=np.zeros((1,1,26),np.float32);state[...,:23]=obs["state"]
+            mask=np.zeros_like(state);mask[...,:23]=1
+            dof=np.zeros((1,self._action_horizon,26),np.float32);dof[...,:23]=1
+            encoded.append(dict(proprioception=state,agent_pos_mask=mask,dof_mask=dof,**obs["images"]))
+        prefix,postfix=self._get_flow_prompt(instruction)
+        inputs=self._construct_model_input(encoded,[prefix]*len(encoded),[postfix]*len(encoded))
+        padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
+                                        inputs["dataset_names"]).to("cuda")
+        output=self._model.generate_flow_action(action_horizon=self._action_horizon,action_dim=26,
+            num_inference_timesteps=10,padding_action=padding,**inputs)
+        actions=output["predict_action"].float().cpu().numpy()
+        if actions.shape!=(len(encoded),self._action_horizon,26) or not np.isfinite(actions).all():
+            raise ValueError("Invalid batched Wall actions")
+        return actions
+
+
+class CylinderTrial:
+    def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448):
+        self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
+        options=controller.get("environment",{})
+        if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
+            raise ValueError("Execution config cannot alter finger geometry/material")
+        self.env=CylinderEnv(case["volume"],image_size=768,**options,
+            friction_scale=case.get("friction_scale",1.),mass_scale=case.get("mass_scale",1.))
+        self.geometry_report=audit(self.env)
+        self.env.reset_inspection(seed=case["seed"],jitter=case.get("jitter",.004),yaw_jitter=case.get("yaw_jitter",0.))
+        self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
+        self.initial_base=self.env.base_pose().copy()
+        self.image_size=image_size;self.max_seconds=max_seconds
+        self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
+        self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
+        self.next_read=0.;self.good_readings=[];self.latencies=[];self.writers={}
+        if record:
+            for cam in ("cylinder_overview","face_view"):
+                self.writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
+
+    def observation(self):
+        return dict(state=self.env.state_vector().copy(),
+                    images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
+
+    def fail(self,reason):
+        self.done=True;self.reason=reason
+
+    def step(self,action):
+        env=self.env;state=env.state_vector();t=float(env.data.time)
+        before_metrics=env.metrics()
+        for cam,writer in self.writers.items():writer.append_data(env.render(cam))
+        try:
+            joints,opening,forward,yaw=cartesian_to_joint_target(env,action)
+            _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
+        except ValueError as error:
+            self.fail(str(error));return
+        self.rows.append(dict(time=t,state=state,action=action.copy(),slip=before_metrics["bottle_slip_m"],
+                              tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
+        lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
+        if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
+        if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
+        if not self.held:
+            self.contact_seconds=self.contact_seconds+CONTROL_DT if metrics["grip_contacts"]==2 and opening<.02 else 0.
+            if self.contact_seconds>=.25:
+                self.held=True;env.grasp_point_reference=env.grip_point_relative()
+        else:
+            self.max_slip=max(self.max_slip,metrics["bottle_slip_m"])
+            self.max_tilt=max(self.max_tilt,metrics["bottle_tilt_rad"])
+            self.lost_seconds=self.lost_seconds+CONTROL_DT if metrics["grip_contacts"]<2 else 0.
+            if self.lost_seconds>.2 or self.max_slip>.025:self.fail("lost_grasp");return
+            if metrics["bottle_tilt_rad"]>.12:self.fail("cylinder_tilt");return
+        # Evaluation-only gates: they never generate or correct an action.
+        center=env.data.xpos[env.cylinder_body]+env.data.xmat[env.cylinder_body].reshape(3,3)@np.array([0,0,.125])
+        eye=env.data.cam_xpos[env.model.camera("face_view").id]
+        retreat=float(self.initial_base[1]-env.base_pose()[1])
+        dof=env.model.joint("cylinder_free").dofadr[0]
+        still=(np.linalg.norm(env.data.qvel[dof:dof+3])<=.005 and np.linalg.norm(env.data.qvel[dof+3:dof+6])<=.03)
+        eligible=(self.held and self.max_lift>=.04 and retreat>=.20 and np.linalg.norm(center-eye)<.45
+                  and metrics["bottle_tilt_rad"]<=np.deg2rad(3) and still)
+        if env.data.time>=self.next_read:
+            self.next_read=float(env.data.time)+.25
+            reading=read_volume(env.render("face_view")) if eligible else dict(valid=False,reason="physical_task_gates_not_met")
+            self.readings.append(dict(time=float(env.data.time),**reading))
+            good=(eligible and reading["valid"] and abs(reading["eye_alignment_error_px"])<=2
+                  and reading.get("boundary_support_fraction",0)>=.5)
+            if good:self.good_readings.append(reading["volume_ml"])
+            else:self.good_readings=[]
+            if len(self.good_readings)>=3 and np.ptp(self.good_readings[-3:])<=.4:
+                if abs(self.good_readings[-1]-env.volume_ml)<=.5:self.done=True;self.success=True
+                else:self.fail("reading_inaccurate")
+        if env.data.time>=self.max_seconds and not self.done:self.fail("timeout")
+
+    def finish(self):
+        env=self.env
+        for writer in self.writers.values():writer.close()
+        rgb=env.render("face_view");reading=read_volume(rgb)
+        imageio.imwrite(self.output/"final_face.png",rgb)
+        summary=dict(policy="wall_oss_full_cylinder",success=self.success,failure_reason=self.reason,
+            grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
+            max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
+            expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
+            final_tilt_rad=env.metrics()["bottle_tilt_rad"],geometry_audit=self.geometry_report,
+            inference_seconds=self.latencies,executed_dimensions=list(range(10,21))+[22],ignored_dimensions=list(range(10))+[21],
+            observation_inputs="Three RGB cameras and 23D robot proprioception; no object pose, phase or fill value",
+            low_level_controller="Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction")
+        if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
+        (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+        np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
+        np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
+            state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
+            slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
+            contacts=np.array([r["contacts"] for r in self.rows]),phase=np.array(["wall_policy"]*len(self.rows)))
+        env.close();return summary
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--model",type=Path,required=True);p.add_argument("--config",type=Path)
+    p.add_argument("--norm-key",default="ex_normal");p.add_argument("--controller-config",type=Path,required=True)
+    p.add_argument("--cases",type=Path);p.add_argument("--volume",type=float,default=25);p.add_argument("--seed",type=int,default=100)
+    p.add_argument("--output",type=Path,required=True);p.add_argument("--execute-steps",type=int,default=4)
+    p.add_argument("--max-seconds",type=float,default=90);p.add_argument("--probe-only",action="store_true")
+    p.add_argument("--record",action="store_true");p.add_argument("--image-size",type=int,default=448)
+    args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
+    cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
+    controller=json.loads(args.controller_config.read_text())
+    torch.manual_seed(47)
+    policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key)
+    if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
+    (args.output/"model_load.json").write_text(json.dumps(policy.load_report,indent=2)+"\n")
+    trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
+                         max_seconds=args.max_seconds,image_size=args.image_size) for index,case in enumerate(cases)]
+    try:
+        while True:
+            active=[trial for trial in trials if not trial.done]
+            if not active:break
+            observations=[trial.observation() for trial in active]
+            start=time.monotonic();chunks=policy.predict_many(observations);torch.cuda.synchronize()
+            latency=time.monotonic()-start
+            for trial,chunk in zip(active,chunks):trial.chunks.append(chunk);trial.latencies.append(latency)
+            print(json.dumps(dict(active=len(active),chunk=len(active[0].chunks),inference_seconds=latency,
+                                  first_right_action=chunks[0,0,10:20].tolist())),flush=True)
+            if args.probe_only:
+                for trial in active:trial.fail("probe_only_no_execution")
+                break
+            for trial,chunk,observation in zip(active,chunks,observations):
+                try:absolute=relative_to_absolute(chunk,observation["state"])
+                except ValueError as error:trial.fail(str(error));continue
+                for action in absolute[:args.execute_steps]:
+                    trial.step(action)
+                    if trial.done:break
+    finally:
+        results=[trial.finish() for trial in trials]
+        report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
+                    controller=controller,probe_only=args.probe_only,episodes=results,
+                    successes=sum(r["success"] for r in results),total=len(results))
+        (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")
+        print(json.dumps(dict(successes=report["successes"],total=report["total"])),flush=True)
+
+
+if __name__=="__main__":main()

@@ -9,6 +9,9 @@ from pathlib import Path
 
 import torch
 import torch.distributed as dist
+import numpy as np
+
+from compute_cylinder_norm_stats import relative_chunks
 
 from wall_x.config.loader import load_config
 from wall_x.data.backends.lerobot.build import load_lerobot_normalizers
@@ -49,6 +52,16 @@ def main():
             assert torch.allclose(processed["action"][..., start:start + 3],
                                   raw["action"][..., start:start + 3]
                                   - raw["observation.state"][start:start + 3], atol=1e-6)
+        expected=relative_chunks(np.repeat(raw["observation.state"].numpy()[None],len(raw["action"]),axis=0),
+                                 raw["action"].numpy(),len(raw["action"]))[0]
+        assert np.allclose(processed["action"].numpy(),expected,atol=1e-6)
+        # Query a real episode boundary through LeRobot, where future actions
+        # must repeat that episode's last action rather than enter another one.
+        raw_frame=inner.hf_dataset.hf_dataset
+        episode_ids=np.asarray(raw_frame["episode_index"])
+        boundary=int(np.flatnonzero(episode_ids==episode_ids[0])[-1])
+        end=inner.hf_dataset[boundary]["action"]
+        assert torch.allclose(end,end[0].expand_as(end))
         shapes = {key: list(value.shape) for key, value in batch.items() if torch.is_tensor(value)}
         for key, value in batch.items():
             if torch.is_tensor(value) and (value.is_floating_point() or value.is_complex()):
@@ -60,6 +73,9 @@ def main():
                   "active_base_dimensions": [20, 21, 22], "padding_dimensions": [23, 24, 25],
                   "finite": True, "dataset_names": batch.get("dataset_names"),
                   "state_unchanged_and_base_labels_preserved": True,
+                  "relative_rotations_match_loader": True,
+                  "episode_end_actions_repeat_last": True,
+                  "selected_training_episodes": inner.hf_dataset.episodes,
                   "note": "Data-path validation only; no model forward/backward."}
         args.output.write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report), flush=True)

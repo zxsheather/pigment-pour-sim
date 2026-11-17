@@ -17,13 +17,14 @@ from inspect_cylinder import CylinderEnv,run_inspection
 
 
 def evaluate_case(job):
-    case,output,grip_profile=job
+    case,output,grip_profile,controller=job
     output.mkdir()
-    env=CylinderEnv(case["volume"],image_size=768,grip_profile=grip_profile,
+    env=CylinderEnv(case["volume"],image_size=768,grip_profile=grip_profile,**controller.get("environment",{}),
                     friction_scale=case["friction_scale"],mass_scale=case["mass_scale"])
     try:
         with (output/"run.log").open("w") as log,contextlib.redirect_stdout(log):
-            result=run_inspection(env,output,seed=case["seed"],jitter=case["jitter"],yaw_jitter=case["yaw_jitter"])
+            result=run_inspection(env,output,seed=case["seed"],jitter=case["jitter"],yaw_jitter=case["yaw_jitter"],
+                                  **controller.get("teacher",{}))
         return dict(case,volume_ml=case["volume"],success=result["success"],
                     reason=result["failure_reason"],reading=result["reading"],
                     error_ml=result.get("absolute_reading_error_ml"),
@@ -34,8 +35,8 @@ def evaluate_case(job):
     finally:env.close()
 
 
-def release_saved_episode(case,output,grip_profile):
-    env=CylinderEnv(case["volume"],image_size=768,grip_profile=grip_profile,
+def release_saved_episode(case,output,grip_profile,controller):
+    env=CylinderEnv(case["volume"],image_size=768,grip_profile=grip_profile,**controller.get("environment",{}),
                     friction_scale=case["friction_scale"],mass_scale=case["mass_scale"])
     try:
         env.reset_inspection(seed=case["seed"],jitter=case["jitter"],yaw_jitter=case["yaw_jitter"])
@@ -56,11 +57,19 @@ def release_saved_episode(case,output,grip_profile):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output",type=Path,required=True)
-    parser.add_argument("--suite",choices=("original","heldout","fresh"),default="original")
+    parser.add_argument("--suite",choices=("original","heldout","fresh","training"),default="original")
     parser.add_argument("--grip-profile",choices=("official","flat","v-pad"),default="official")
     parser.add_argument("--workers",type=int,default=1,choices=range(1,9))
     parser.add_argument("--seed-offset",type=int,default=0,help="Use new position/yaw samples without changing the matrix")
+    parser.add_argument("--controller-config",type=Path)
+    parser.add_argument("--record-training",action="store_true")
+    parser.add_argument("--training-image-size",type=int,default=448,choices=(224,448))
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=False)
+    controller=json.loads(args.controller_config.read_text()) if args.controller_config else {}
+    if set(controller.get("environment",{}))-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
+        raise ValueError("Controller config may not override fixed hardware or materials")
+    if args.record_training:
+        controller.setdefault("teacher",{}).update(record_training=True,training_image_size=args.training_image_size)
     results=[];negative={};reference=None
     if args.suite=="original":
         cases=[dict(volume=volume,seed=seed,jitter=.004,yaw_jitter=0.,friction_scale=1.,mass_scale=1.)
@@ -71,14 +80,18 @@ def main():
         cases=[dict(volume=volume,seed=200+index*4+trial,jitter=.008,yaw_jitter=np.deg2rad(8),
                     friction_scale=(.8,.9,1.1,1.2)[trial],mass_scale=(1.2,.9,1.1,.8)[trial])
                for index,volume in enumerate((5,12,22,32,40)) for trial in range(4)]
-    else:
+    elif args.suite=="fresh":
         # Fresh cases fixed after discovering the high-fill reading failure;
         # the former heldout matrix is now a regression set, not heldout data.
         cases=[dict(volume=volume,seed=300+index*3+trial,jitter=.010,yaw_jitter=np.deg2rad(10),
                     friction_scale=(.85,1.,1.15)[trial],mass_scale=(1.15,1.,.85)[trial])
                for index,volume in enumerate((6,18,28,40)) for trial in range(3)]
+    else:
+        cases=[dict(volume=volume,seed=index*6+trial,jitter=.008,yaw_jitter=np.deg2rad(8),
+                    friction_scale=1.,mass_scale=1.)
+               for index,volume in enumerate((5,10,15,20,25,30,35,40)) for trial in range(6)]
     for case in cases:case["seed"]+=args.seed_offset
-    jobs=[(case,args.output/f"volume_{case['volume']}_seed_{case['seed']}",args.grip_profile) for case in cases]
+    jobs=[(case,args.output/f"volume_{case['volume']}_seed_{case['seed']}",args.grip_profile,controller) for case in cases]
     if args.workers==1:
         for job in jobs:
             result=evaluate_case(job);results.append(result);print(json.dumps(result),flush=True)
@@ -89,7 +102,7 @@ def main():
     for case,result,job in zip(cases,results,jobs):
         if result["success"]:
             reference=imageio.imread(job[1]/"final_face.png")
-            negative["release"]=release_saved_episode(case,job[1],args.grip_profile)
+            negative["release"]=release_saved_episode(case,job[1],args.grip_profile,controller)
             break
     if reference is not None:
         negative["blank_image"]=read_volume(np.full_like(reference,255))
@@ -115,6 +128,7 @@ def main():
         negative["carry_regression"]={"success":info["success"],"seconds":info["simulated_seconds"]}
     finally:carry.close()
     report=dict(suite=args.suite,grip_profile=args.grip_profile,workers=args.workers,seed_offset=args.seed_offset,
+                controller=controller,
                 episodes=results,successes=sum(row["success"] for row in results),total=len(results),
                 negative_checks=negative,
                 maximum_slip_m=max(row["max_slip_m"] for row in results),

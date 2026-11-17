@@ -12,7 +12,8 @@ from cylinder_reader import read_volume,annotate
 PHASES={"approach":"伸手靠近","advance":"张开夹爪并对准","close":"合拢夹持",
         "lift":"从托盘提起","retract":"回收手臂","back_away":"退离桌边",
         "present":"移到相机前","straighten":"调整量筒竖直","hold_for_reading":"等待稳定",
-        "align_eye_level":"液面对齐视线","find_scale":"转动手腕寻找刻度","read_stable":"稳定读取刻度"}
+        "align_eye_level":"液面对齐视线","find_scale":"转动手腕寻找刻度","read_stable":"稳定读取刻度",
+        "wall_policy":"Wall 模型闭环动作"}
 
 
 def main():
@@ -28,6 +29,7 @@ def main():
     if font is None:p.error("Chinese font not found; provide --font")
     fonts=[ImageFont.truetype(str(font),size) for size in (30,26,22,19)]
     summary=json.loads((args.episode/"summary.json").read_text())
+    model_policy=summary.get("policy")=="wall_oss_full_cylinder"
     with np.load(args.episode/"trajectory.npz") as data:
         times=data["timestamp"].copy();phases=data["phase"].copy();tilt=data["tilt"].copy()
         slip=data["slip"].copy();contacts=data["contacts"].copy()
@@ -66,6 +68,7 @@ def main():
                     "flat":"历史对照 · 自定义平面指垫",
                     "v-pad":"历史对照 · 自定义 V 形指垫"}
             title=titles.get(summary.get("grip_profile"),"量筒拿近与读数 · 接触抓取 + 图像读数")
+            if model_policy:title="Wall 模型评测 · 官方平行手指"
             draw.text((24,14),title,font=fonts[0],fill="#f1f5f9")
             draw.text((24,56),f"{PHASES.get(str(phases[index]),str(phases[index]))}    |    仿真 {times[index]:.1f} 秒    |    {args.speed:g} 倍速",
                       font=fonts[2],fill="#a8b3c7")
@@ -88,7 +91,9 @@ def main():
             if phases[index] not in ("approach","advance","close"):
                 draw.text((760,722),f"夹持滑移  {slip[index]*1000:.1f} mm   接触 {int(contacts[index])}/2",font=fonts[2],fill="#e2e8f0")
             else:draw.text((760,722),"夹持尚未建立",font=fonts[2],fill="#a8b3c7")
-            draw.text((24,829),"程序教师使用仿真位姿；读数只用图像与彩色校准刻度；液面为简化模型",font=fonts[3],fill="#a8b3c7")
+            caption=("Wall 输入：RGB 与机器人状态；推理时仿真暂停；评分读数使用彩色校准刻度"
+                     if model_policy else "程序教师使用仿真位姿；读数只用图像与彩色校准刻度；液面为简化模型")
+            draw.text((24,829),caption,font=fonts[3],fill="#a8b3c7")
             writer.append_data(np.asarray(frame))
         if frame is None:raise ValueError("No recorded video frames")
         draw=ImageDraw.Draw(frame)

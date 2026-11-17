@@ -14,12 +14,16 @@ from inspect_cylinder import CylinderEnv
 from carry_env import ROOT
 
 
-def audit():
+def audit(env=None):
     spec=json.loads((ROOT.parent/"sources.json").read_text())["sdk_robot"]
     asset_root=ROOT.parent/spec["destination"]/"urdf/quanta_x1"
     urdf=asset_root/"ex001_robot.urdf"
     source=ET.parse(urdf).getroot()
-    env=CylinderEnv()
+    owns_environment=env is None
+    if env is None:env=CylinderEnv()
+    baseline=json.loads((ROOT.parent/"docs/experiments/2026-11-17-official-parallel-baseline.json").read_text())["audit"]
+    expected_hashes={item["source_file"]:item["sha256"] for item in baseline["fingers"]}
+    assert hashlib.sha256(urdf.read_bytes()).hexdigest()==baseline["urdf_sha256"]
     nominal=mujoco.MjModel.from_xml_string('<mujoco><worldbody><geom type="sphere" size=".01"/></worldbody></mujoco>')
     try:
         assert env.grip_profile=="official"
@@ -33,6 +37,7 @@ def audit():
                 name=f"{side}_arm_gripper_{finger}_link"
                 relative=source.find(f"link[@name='{name}']/collision/geometry/mesh").get("filename")
                 path=asset_root/relative
+                assert hashlib.sha256(path.read_bytes()).hexdigest()==expected_hashes[relative]
                 mesh=trimesh.load_mesh(path)
                 parts=mesh.split(only_watertight=False)
                 assert all(part.is_convex for part in parts)
@@ -44,7 +49,8 @@ def audit():
                 for g in geoms:
                     assert env.model.geom_type[g]==mujoco.mjtGeom.mjGEOM_MESH
                     assert env.model.geom_condim[g]==nominal.geom_condim[0]==3
-                    np.testing.assert_allclose(env.model.geom_friction[g],nominal.geom_friction[0])
+                    scale=env.friction_scale if side=="right" else 1.
+                    np.testing.assert_allclose(env.model.geom_friction[g],nominal.geom_friction[0]*scale)
                     np.testing.assert_allclose(env.model.geom_solref[g],nominal.geom_solref[0])
                     mesh_id=env.model.geom_dataid[g]
                     adr=env.model.mesh_vertadr[mesh_id];count=env.model.mesh_vertnum[mesh_id]
@@ -77,7 +83,8 @@ def audit():
                     custom_pads=0,geometry_import="Unchanged union of the source convex solids",
                     fingers=fingers,contact_model=dict(friction=nominal.geom_friction[0].tolist(),
                     condim=3,noslip_iterations=0,calibration="Nominal simulator defaults; not measured hardware properties"))
-    finally:env.close()
+    finally:
+        if owns_environment:env.close()
 
 
 if __name__=="__main__":

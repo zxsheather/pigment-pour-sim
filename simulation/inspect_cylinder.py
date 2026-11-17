@@ -12,15 +12,21 @@ import mujoco
 import numpy as np
 from scipy.optimize import least_squares
 
-from carry_env import CarryEnv, CARRY_JOINTS, CONTROL_DT, PHYSICS_DT, GRASP_OFFSET, ROOT
+from carry_env import CarryEnv, CARRY_JOINTS, CONTROL_DT, PHYSICS_DT, GRASP_OFFSET, ROOT, CAMERAS
 from build_scene import camera, element, fmt
 from cylinder_reader import read_volume, annotate
+from cylinder_actions import commanded_cartesian_action
 
 SCALE_ZERO = 0.012
 SCALE_SPAN = 0.220
 CAPACITY_ML = 50.0
 GRIP_HEIGHT = 0.225
 READ_DISTANCE = 0.35
+CYLINDER_INSTRUCTION = ("Pick up the measuring cylinder, hold it upright, bring it close to the head camera, "
+                        "and align the liquid surface with the image center for reading. Keep holding it.")
+INSPECTION_SOURCE_HASHES={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
+                          for name in ("inspect_cylinder.py","cylinder_actions.py","cylinder_reader.py",
+                                       "carry_env.py","audit_gripper.py","scene_config.json")}
 
 
 def add_digit(parent, digit: str, x: float, z: float):
@@ -39,7 +45,8 @@ def add_digit(parent, digit: str, x: float, z: float):
 
 class CylinderEnv(CarryEnv):
     def __init__(self, volume_ml=25.0, *, render=False, image_size=640, grip_profile="official",
-                 friction_scale=1.0, mass_scale=1.0):
+                 friction_scale=1.0, mass_scale=1.0,grasp_height=GRIP_HEIGHT,grasp_x=GRASP_OFFSET[0],
+                 solver_impratio=1.,physics_dt=PHYSICS_DT,grip_force_target=None):
         if not 0 < volume_ml <= CAPACITY_ML:
             raise ValueError("Volume must be within (0,50] mL")
         self.volume_ml = float(volume_ml)
@@ -49,6 +56,13 @@ class CylinderEnv(CarryEnv):
             raise ValueError("Friction and mass scales must be finite and positive")
         self.friction_scale=float(friction_scale)
         self.mass_scale=float(mass_scale)
+        self.grasp_height=float(grasp_height)
+        self.grasp_offset=np.array([grasp_x,0.,0.])
+        self.solver_impratio=float(solver_impratio)
+        self.grip_force_target=grip_force_target
+        if grip_force_target is not None and not 0<grip_force_target<=20:raise ValueError("Invalid grip force target")
+        if not np.isfinite(self.solver_impratio) or self.solver_impratio<=0:raise ValueError("Invalid impratio")
+        if not 0<physics_dt<=CONTROL_DT:raise ValueError("Invalid physics timestep")
         self.finger_force_limits={finger:10.0 for finger in ("left","right")}
         if grip_profile=="official":
             spec=json.loads((ROOT.parent/"sources.json").read_text())["sdk_robot"]
@@ -58,6 +72,7 @@ class CylinderEnv(CarryEnv):
                 for finger in ("left","right")}
         super().__init__(render=render, image_size=image_size, model_transform=self._configure_model,
                          finger_collisions="official" if grip_profile=="official" else "flat-proxy")
+        self.model.opt.timestep=physics_dt
         self.cylinder_body = self.model.body("measuring_cylinder").id
         self.arm_addresses = np.array([self.model.joint(f"right_arm_joint{i}").qposadr[0]
                                        for i in range(1, 7)], dtype=int)
@@ -68,7 +83,7 @@ class CylinderEnv(CarryEnv):
     def _configure_model(self, scene, config):
         official=self.grip_profile=="official"
         scene.find("option").set("noslip_iterations","0" if official else "8")
-        if official:scene.find("option").set("impratio","1")
+        if official:scene.find("option").set("impratio",str(self.solver_impratio))
         body = scene.find(".//body[@name='measuring_cylinder']")
         for child in list(body):
             body.remove(child)
@@ -169,7 +184,7 @@ class CylinderEnv(CarryEnv):
         return self.observe()
 
     def grip_point_relative(self):
-        point=self.data.xpos[self.cylinder_body]+self.data.xmat[self.cylinder_body].reshape(3,3)@np.array([0,0,GRIP_HEIGHT])
+        point=self.data.xpos[self.cylinder_body]+self.data.xmat[self.cylinder_body].reshape(3,3)@np.array([0,0,self.grasp_height])
         return self.data.xmat[self.gripper_body].reshape(3,3).T@(point-self.data.xpos[self.gripper_body])
 
     def metrics(self):
@@ -195,7 +210,7 @@ class CylinderEnv(CarryEnv):
         def residual(q):
             d.qpos[self.arm_addresses]=q
             mujoco.mj_kinematics(self.model,d)
-            current=d.xpos[self.gripper_body]+d.xmat[self.gripper_body].reshape(3,3)@GRASP_OFFSET
+            current=d.xpos[self.gripper_body]+d.xmat[self.gripper_body].reshape(3,3)@self.grasp_offset
             delta_rotation=rotation@d.xmat[self.gripper_body].reshape(3,3).T
             delta_quat=np.empty(4);mujoco.mju_mat2Quat(delta_quat,delta_rotation.reshape(-1))
             orientation=np.empty(3);mujoco.mju_quat2Vel(orientation,delta_quat,1.0)
@@ -212,7 +227,7 @@ class CylinderEnv(CarryEnv):
             if np.linalg.norm(result.fun)<.0001:break
         return best.x.copy(),float(np.linalg.norm(best.fun))
 
-    def step_joints(self, target, *, opening=.034, forward=0.0):
+    def step_joints(self, target, *, opening=.034, forward=0.0,yaw=0.0):
         for index,value in enumerate(target,1):
             actuator=self.model.actuator(f"right_arm_joint{index}_servo").id
             previous=self.hold_targets[actuator]
@@ -222,8 +237,24 @@ class CylinderEnv(CarryEnv):
             previous=self.hold_targets[actuator]
             self.hold_targets[actuator]=float(previous+np.clip(sign*opening-previous,-.03*CONTROL_DT,.03*CONTROL_DT))
         self.applied_action[0]+=np.clip(forward-self.applied_action[0],-.3*CONTROL_DT,.3*CONTROL_DT)
-        for _ in range(round(CONTROL_DT/PHYSICS_DT)):
-            self._apply_servos(self.applied_action[0],0);mujoco.mj_step(self.model,self.data)
+        self.applied_action[1]+=np.clip(yaw-self.applied_action[1],-.3*CONTROL_DT,.3*CONTROL_DT)
+        for _ in range(round(CONTROL_DT/self.model.opt.timestep)):
+            if self.grip_force_target is not None and opening<=.015:
+                # Force-limited closure using robot joint position/velocity,
+                # not object pose or privileged contact-force feedback.
+                for finger,direction in (("left",-1.),("right",1.)):
+                    name=f"right_arm_gripper_{finger}_joint"
+                    joint=self.model.joint(name);actuator=self.model.actuator(name+"_servo").id
+                    position=float(self.data.qpos[joint.qposadr[0]])
+                    velocity=float(self.data.qvel[joint.dofadr[0]])
+                    speed_limit=.03 if abs(position)>.015 else .12
+                    force=direction*min(self.grip_force_target,200*(speed_limit-direction*velocity))
+                    limit=self.finger_force_limits[finger];force=float(np.clip(force,-limit,limit))
+                    kp=self.model.actuator_gainprm[actuator,0]
+                    kv=-self.model.actuator_biasprm[actuator,2]
+                    command=position+(force+kv*velocity)/kp
+                    self.hold_targets[actuator]=float(np.clip(command,*joint.range))
+            self._apply_servos(*self.applied_action);mujoco.mj_step(self.model,self.data)
         mujoco.mj_forward(self.model,self.data)
         return self.observe(),self.metrics()
 
@@ -232,9 +263,19 @@ class InspectionFailure(RuntimeError):
     pass
 
 
-def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0):
+def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0,
+                   grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
+                   grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224):
+    if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
+    geometry_report=None
+    if env.grip_profile=="official":
+        from audit_gripper import audit
+        geometry_report=audit(env)
+        (output/"geometry_audit.json").write_text(json.dumps(geometry_report,indent=2)+"\n")
     env.reset_inspection(seed=seed,jitter=jitter,yaw_jitter=yaw_jitter)
     rotation=np.array([[0,-1,0],[1,0,0],[0,0,1.]],dtype=float)
+    c,s=np.cos(grasp_roll),np.sin(grasp_roll)
+    rotation=rotation@np.array([[1.,0,0],[0,c,-s],[0,s,c]])
     cylinder=env.data.xpos[env.cylinder_body].copy()
     original_z=float(cylinder[2])
     initial_eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
@@ -244,18 +285,44 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     readings=[];view_search=[]
     if record:
         for cam in ("cylinder_overview","face_view"):
-            writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
+            writers[(cam,env.image_size)]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
+    if record_training:
+        for cam in CAMERAS:
+            writers[(cam,training_image_size)]=imageio.get_writer(output/f"training_{cam}.mp4",fps=20,codec="libx264",quality=9,macro_block_size=1,ffmpeg_params=["-threads","1"])
     def tick(phase,q,opening,forward=0):
         nonlocal lost_seconds,max_slip,max_tilt,max_contact_loss
         before=env.state_vector();t=float(env.data.time)
+        before_qpos=env.data.qpos.copy()
         before_metrics=env.metrics();before_cylinder=env.data.xpos[env.cylinder_body].copy()
-        if record:
-            for cam,writer in writers.items():writer.append_data(env.render(cam))
+        before_relative=env.grip_point_relative();before_base=env.base_pose().copy()
+        before_quaternion=env.data.xquat[env.cylinder_body].copy()
+        for (cam,size),writer in writers.items():writer.append_data(env.render(cam,width=size))
+        if held and upright_gain>0:
+            # Privileged demonstration teacher only. The learned policy must
+            # predict this correction from its RGB/proprioception inputs.
+            axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
+            tilt=float(np.arccos(np.clip(axis[2],-1,1)))
+            if tilt>.003:
+                direction=np.cross(axis,[0.,0.,1.]);direction/=np.linalg.norm(direction)
+                quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,direction,min(.18,upright_gain*tilt))
+                correction=np.empty(9);mujoco.mju_quat2Mat(correction,quat)
+                planned=env.ik_data;planned.qpos[:]=env.data.qpos;planned.qpos[env.arm_addresses]=q
+                mujoco.mj_kinematics(env.model,planned)
+                planned_rotation=planned.xmat[env.gripper_body].reshape(3,3).copy()
+                point=planned.xpos[env.gripper_body]+planned_rotation@env.grasp_offset
+                q,error=env.inverse_kinematics(point,correction.reshape(3,3)@planned_rotation,
+                                                initial=env.data.qpos[env.arm_addresses])
+                if error>.002:raise InspectionFailure("upright_feedback_unreachable")
         _,metrics=env.step_joints(q,opening=opening,forward=forward)
         commanded=np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id] for i in range(1,7)])
         commanded_opening=env.hold_targets[env.model.actuator("right_arm_gripper_left_joint_servo").id]
+        cartesian_action=commanded_cartesian_action(env,before_qpos)
+        cartesian_action[19]=2*opening/.0975
         rows.append(dict(time=t,state=before,joints=np.r_[commanded,commanded_opening,env.applied_action],
                          cylinder=before_cylinder,phase=phase,
+                         action=cartesian_action,
+                         relative_point=before_relative,base_pose=before_base,
+                         cylinder_quaternion=before_quaternion,
                          finger_forces=before_metrics["finger_normal_forces_n"],
                          slip=before_metrics["bottle_slip_m"],tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
         if not np.isfinite(env.data.qpos).all():raise InspectionFailure("nonfinite_state")
@@ -270,16 +337,17 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # require the cylinder and image reading to be still at the end.
             if lost_seconds>.2 or metrics["bottle_slip_m"]>.025:raise InspectionFailure("lost_grasp")
             if metrics["bottle_tilt_rad"]>.12:raise InspectionFailure("cylinder_tilt")
-    def move(phase,point,seconds=2.0,opening=.010):
+    def move(phase,point,seconds=2.0,opening=None):
+        if opening is None:opening=grip_opening
         q0=env.data.qpos[env.arm_addresses].copy()
-        p0=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@GRASP_OFFSET
+        p0=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@env.grasp_offset
         rotation0=env.data.xmat[env.gripper_body].reshape(3,3).copy()
         delta_quat=np.empty(4);mujoco.mju_mat2Quat(delta_quat,(rotation@rotation0.T).reshape(-1))
         rotvec=np.empty(3);mujoco.mju_quat2Vel(rotvec,delta_quat,1.0)
         angle=float(np.linalg.norm(rotvec))
         q1,error=env.inverse_kinematics(np.asarray(point),rotation,initial=q0)
         if error>.002:raise InspectionFailure(f"unreachable:{phase}:{error:.4f}")
-        duration=max(seconds,1.875*np.max(abs(q1-q0))/.45)
+        duration=max(seconds,1.875*np.max(abs(q1-q0))/.45)*motion_scale
         count=int(np.ceil(duration/CONTROL_DT))
         phase_log.append(dict(phase=phase,start_seconds=float(env.data.time),target=list(point),ik_error=error))
         print(json.dumps(phase_log[-1]),flush=True)
@@ -302,26 +370,26 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         return q1
     reason=None
     try:
-        approach=cylinder+[0,-.10,GRIP_HEIGHT]
+        approach=cylinder+[0,-.10,env.grasp_height]
         move("approach",approach,opening=.034)
-        q=move("advance",cylinder+[0,0,GRIP_HEIGHT],2,opening=.034)
-        for _ in range(35):tick("close",q,.010)
+        q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
+        for _ in range(35):tick("close",q,grip_opening)
         if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
         env.grasp_reference=env._bottle_relative_position();held=True
         env.grasp_point_reference=env.grip_point_relative()
-        move("lift",cylinder+[0,0,GRIP_HEIGHT+.04],2)
-        q=move("retract",cylinder+[0,-.15,GRIP_HEIGHT+.12],3)
+        move("lift",cylinder+[0,0,env.grasp_height+.04],2)
+        q=move("retract",cylinder+[0,-.15,env.grasp_height+.12],3)
         target_y=env.base_pose()[1]-.24
         for _ in range(150):
             distance=env.base_pose()[1]-target_y
             if distance<.008:break
-            tick("back_away",q,.010,-min(.10,1.5*distance))
+            tick("back_away",q,grip_opening,-min(.10,1.5*distance))
         else:raise InspectionFailure("base_retreat_timeout")
-        for _ in range(15):tick("back_away",q,.010)
+        for _ in range(15):tick("back_away",q,grip_opening)
         eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
-        point=eye+[.14,READ_DISTANCE,GRIP_HEIGHT-(SCALE_ZERO+SCALE_SPAN/2)]
+        point=eye+[read_lateral,read_distance,env.grasp_height-(SCALE_ZERO+SCALE_SPAN/2)]
         q=move("present",point,3)
-        for _ in range(20):tick("hold_for_reading",q,.010)
+        for _ in range(20):tick("hold_for_reading",q,grip_opening)
         # The demonstration teacher may use simulator object pose to correct
         # grasp-induced tilt. This is joint control, not an object attachment;
         # the separate reading/height controller still consumes only pixels.
@@ -335,7 +403,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             correction=np.empty(9);mujoco.mju_quat2Mat(correction,quat)
             rotation=correction.reshape(3,3)@env.data.xmat[env.gripper_body].reshape(3,3)
             q=move("straighten",point,1.5)
-            for _ in range(10):tick("straighten",q,.010)
+            for _ in range(10):tick("straighten",q,grip_opening)
         def needs_view(reading):
             if not reading["valid"]:return True
             # Coarse height alignment may observe a curved projected cap.
@@ -354,7 +422,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     c,s=np.cos(yaw),np.sin(yaw)
                     rotation=np.array([[c,-s,0],[s,c,0],[0,0,1]])@rotation_seed
                     q=move("find_scale",point,1.2)
-                    for _ in range(10):tick("find_scale",q,.010)
+                    for _ in range(10):tick("find_scale",q,grip_opening)
                     rgb=env.render("face_view");reading=read_volume(rgb)
                     if not needs_view(reading):break
             readings.append(dict(time=float(env.data.time),**reading))
@@ -364,15 +432,15 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
             if abs(reading["eye_alignment_error_px"])<=2.0:break
             focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[env.model.camera("face_view").id])/2))
-            dz=np.clip(reading["eye_alignment_error_px"]*READ_DISTANCE/focal,-.025,.025)
+            dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-.025,.025)
             point[2]+=dz
             q=move("align_eye_level",point,1.2)
-            for _ in range(10):tick("align_eye_level",q,.010)
+            for _ in range(10):tick("align_eye_level",q,grip_opening)
         else:raise InspectionFailure("eye_alignment_timeout")
         # Repeat observations while physically holding still; no ground-truth
         # volume is used by the perception or height controller.
         for _ in range(3):
-            for _ in range(5):tick("read_stable",q,.010)
+            for _ in range(5):tick("read_stable",q,grip_opening)
             reading=read_volume(env.render("face_view"));readings.append(dict(time=float(env.data.time),**reading))
             if not reading["valid"]:raise InspectionFailure(f"unstable_reading:{reading['reason']}")
             if needs_view(reading):raise InspectionFailure("unstable_boundary_visibility")
@@ -400,6 +468,13 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  view_search_history=view_search,neq=env.model.neq,
                  policy="privileged_pose_teacher",perception="RGB only; 20/35 mL color calibration anchors",
                  grip_profile=env.grip_profile,
+                 geometry_audit_passed=bool(geometry_report and geometry_report["passed"]),
+                 controller_parameters=dict(grip_opening_m=grip_opening,motion_scale=motion_scale,
+                                            grasp_height_m=env.grasp_height,grasp_x_m=float(env.grasp_offset[0]),
+                                            read_lateral_m=read_lateral,read_distance_m=read_distance,
+                                            grasp_roll_rad=grasp_roll,upright_feedback_gain=upright_gain),
+                 grip_force_target_n=env.grip_force_target,
+                 grasp_reference_point_m=None if env.grasp_point_reference is None else env.grasp_point_reference.tolist(),
                  hardware_model=("Pinned official parallel-finger collision meshes; no custom pads"
                                  if env.grip_profile=="official" else "Historical custom finger-pad proxy"),
                  contact_calibration="Uncalibrated simulation assumptions; no measured real-finger friction",
@@ -413,6 +488,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  motion_teacher_inputs="Simulator cylinder pose for grasp and upright correction; robot/camera calibration",
                  collision_model="32 hollow wall segments and base; "+env.grip_profile,
                  contact_parameters=dict(noslip_iterations=int(env.model.opt.noslip_iterations),
+                                         impratio=float(env.model.opt.impratio),physics_timestep=float(env.model.opt.timestep),
                                          finger_geoms=[dict(type=int(env.model.geom_type[g]),
                                              condim=int(env.model.geom_condim[g]),friction=env.model.geom_friction[g].tolist())
                                              for g in range(env.model.ngeom)
@@ -425,8 +501,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  seed=seed,position_jitter_m=jitter,fps=20,frames=len(rows),
                  joint_command_columns=["right_joint1","right_joint2","right_joint3","right_joint4",
                                         "right_joint5","right_joint6","half_gripper_gap_m","base_vx","base_yaw_rate"],
-                 source_sha256={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
-                                for name in ("inspect_cylinder.py","cylinder_reader.py","carry_env.py","scene_config.json")},
+                 source_sha256=INSPECTION_SOURCE_HASHES,
                  liquid_model="Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics")
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
@@ -438,9 +513,19 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     np.savez_compressed(output/"final_physics.npz",qpos=env.data.qpos,qvel=env.data.qvel,
                         ctrl=env.data.ctrl,time=env.data.time)
     (output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
+    metadata=dict(result=summary,instruction=CYLINDER_INSTRUCTION,frames=len(rows),fps=20,
+                  recorded_cameras=list(CAMERAS) if record_training else [],video_prefix="training_",
+                  robot_type="quanta_x1_official_cylinder",action_space="23D absolute Cartesian targets and body velocities",
+                  action_label="FK of commanded joints, including the requested gripper preload; not measured future pose",
+                  training_observations="RGB camera images and robot proprioception only; no object pose or fill value")
+    (output/"metadata.json").write_text(json.dumps(metadata,indent=2)+"\n")
     np.savez_compressed(output/"trajectory.npz",timestamp=np.array([r["time"] for r in rows]),
+                        action=np.array([r["action"] for r in rows]),
                         state=np.array([r["state"] for r in rows]),joint_command=np.array([r["joints"] for r in rows]),
                         cylinder_position=np.array([r["cylinder"] for r in rows]),phase=np.array([r["phase"] for r in rows]),
+                        grip_point_relative=np.array([r["relative_point"] for r in rows]),
+                        cylinder_quaternion=np.array([r["cylinder_quaternion"] for r in rows]),
+                        base_pose=np.array([r["base_pose"] for r in rows]),
                         slip=np.array([r["slip"] for r in rows]),tilt=np.array([r["tilt"] for r in rows]),
                         finger_normal_forces=np.array([r["finger_forces"] for r in rows]),
                         contacts=np.array([r["contacts"] for r in rows]))
@@ -461,13 +546,31 @@ def main():
     parser.add_argument("--friction-scale",type=float,default=1.0)
     parser.add_argument("--mass-scale",type=float,default=1.0)
     parser.add_argument("--yaw-jitter",type=float,default=0.0,help="Maximum initial scale yaw perturbation in radians")
+    parser.add_argument("--grip-opening",type=float,default=.010,help="Position-servo closure target; geometry and force limit unchanged")
+    parser.add_argument("--motion-scale",type=float,default=1.,help="Trajectory duration multiplier")
+    parser.add_argument("--grasp-height",type=float,default=GRIP_HEIGHT,help="Grasp point above cylinder base, m")
+    parser.add_argument("--grasp-x",type=float,default=float(GRASP_OFFSET[0]),help="Tool point along finger, m")
+    parser.add_argument("--solver-impratio",type=float,default=1.,help="Friction/normal impedance ratio; no change to friction coefficient")
+    parser.add_argument("--physics-dt",type=float,default=PHYSICS_DT)
+    parser.add_argument("--read-lateral",type=float,default=.14)
+    parser.add_argument("--read-distance",type=float,default=READ_DISTANCE)
+    parser.add_argument("--grasp-roll-deg",type=float,default=0.)
+    parser.add_argument("--upright-gain",type=float,default=0.,help="Program-teacher object-pose feedback, never used by Wall execution")
+    parser.add_argument("--record-training",action="store_true",help="Record three raw 224px training cameras aligned with Cartesian actions")
+    parser.add_argument("--training-image-size",type=int,default=224,choices=(224,448))
+    parser.add_argument("--grip-force-target",type=float,help="Robot-feedback force-limited closure; URDF force cap stays unchanged")
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     env=CylinderEnv(args.volume,render=False,image_size=768,grip_profile=args.grip_profile,
-                    friction_scale=args.friction_scale,mass_scale=args.mass_scale)
+                    friction_scale=args.friction_scale,mass_scale=args.mass_scale,
+                    grasp_height=args.grasp_height,grasp_x=args.grasp_x,
+                    solver_impratio=args.solver_impratio,physics_dt=args.physics_dt,grip_force_target=args.grip_force_target)
     try:
         if not args.probe_ik:
             result=run_inspection(env,args.output,record=args.record,seed=args.seed,jitter=args.jitter,
-                                  yaw_jitter=args.yaw_jitter)
+                                  yaw_jitter=args.yaw_jitter,grip_opening=args.grip_opening,motion_scale=args.motion_scale,
+                                  read_lateral=args.read_lateral,read_distance=args.read_distance,
+                                  grasp_roll=np.deg2rad(args.grasp_roll_deg),upright_gain=args.upright_gain,
+                                  record_training=args.record_training,training_image_size=args.training_image_size)
             if not result["success"]:raise SystemExit(1)
             return
         env.reset_inspection()
