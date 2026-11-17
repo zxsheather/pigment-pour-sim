@@ -7,6 +7,8 @@ from pathlib import Path
 
 import yaml
 
+from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_STATE_LAYOUT
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -24,6 +26,8 @@ def main():
     parser.add_argument("--train-episode-fraction",type=float,default=.75,
                         help="Official loader selects this leading fraction of episodes; use 1 for a train-only export.")
     parser.add_argument("--state-representation",choices=("string","continuous"),default="string")
+    parser.add_argument("--action-space",choices=("cartesian","joint"),default="cartesian",
+                        help="Joint mode uses six joint deltas, gripper, two base velocities and 18D robot state.")
     parser.add_argument("--base-odometry",action="store_true",
                         help="Use robot base x/y/yaw in the three previously masked state slots.")
     parser.add_argument("--state-projection-lr",type=float,default=3e-4)
@@ -34,6 +38,8 @@ def main():
     if args.steps < 2:
         parser.error("steps must be at least 2 for the official zero-based checkpoint schedule")
     if not 0<args.train_episode_fraction<=1:parser.error("Invalid training episode fraction")
+    if args.action_space=="joint" and args.state_representation!="continuous":
+        parser.error("Joint representation requires continuous robot state")
     args.output.mkdir(parents=True, exist_ok=False)
     dataset, model, output = (path.resolve() for path in (args.dataset, args.model, args.output))
     architecture = json.loads((model / "config.json").read_text())
@@ -42,7 +48,6 @@ def main():
     state_string=args.state_representation=="string"
     architecture["use_state_string_representation"]=state_string
     architecture_path = output / "architecture.json"
-    architecture_path.write_text(json.dumps(architecture, indent=2) + "\n")
     action = {"follow_left_ee_cartesian_pos_relative": 3,
               "follow_left_ee_rotation_6D_relative": 6, "follow_left_gripper": 1,
               "follow_right_ee_cartesian_pos_relative": 3,
@@ -51,8 +56,15 @@ def main():
     state = {key.removesuffix("_relative"): value for key, value in action.items()}
     if args.base_odometry:
         state.pop("action_padding");state["base_odometry"]=3
+    if args.action_space=="joint":
+        action=dict(JOINT_ACTION_LAYOUT);state=dict(JOINT_STATE_LAYOUT)
+        architecture.update(dof_config=action,ar_dof_config=dict(action),agent_pos_config=state)
+    architecture_path.write_text(json.dumps(architecture, indent=2) + "\n")
     info=json.loads((dataset/"meta/info.json").read_text())
-    assert info["features"]["observation.state"]["shape"]==[26 if args.base_odometry else 23]
+    assert info["features"]["observation.state"]["shape"]==[18 if args.action_space=="joint" else 26 if args.base_odometry else 23]
+    if args.action_space=="joint":
+        assert info["features"]["action"]["shape"]==[9]
+        assert json.loads((dataset/"joint_export_validation.json").read_text())["passed"]
     config = {
         "model_type": "qwen2_5",
         "task": {"dof_config": action, "ar_dof_config": dict(action), "agent_pos_config": state,
@@ -104,6 +116,10 @@ def main():
     if args.frame_sampling_weights:
         assert args.frame_sampling_weights.is_file()
         config["data"]["lerobot_config"]["frame_sampling_weights_path"]=str(args.frame_sampling_weights.resolve())
+    if args.action_space=="joint":
+        stats=dataset/"joint_norm_stats.json"
+        assert stats.is_file()
+        config["data"]["norm_stats_path"]=str(stats)
     path = output / "train.yml"
     path.write_text(yaml.safe_dump(config, sort_keys=False))
     print(path)

@@ -7,20 +7,19 @@
   "project_bytes_before_direct_delete": 129913544704,
   "project_bytes_after_delete": 43090665472,
   "retained_full_weights": [
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_512/model.safetensors",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/model.safetensors",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_768/model.safetensors",
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/model.safetensors",
     "models/wall-oss-0.5/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_512/optimizer.pt"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_1024/optimizer.pt"
   ],
   "retained_key_fallback_archive": null,
   "fallback_original_bytes": 8978728704,
   "fallback_patch_bytes": 725816456,
   "fallback_reconstruction_sha256": "b4f77587de4bdd7f60edd6fa747a12b0a45bcb20385e1993978b20081a7061c2",
-  "active_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1",
-  "active_dataset_files": 12,
+  "active_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-recovery-v1",
+  "active_dataset_files": 21,
   "active_dataset_sha256_unchanged": true,
   "raw_current_and_future_training_episodes_preserved": 59,
   "old_unused_archived_checkpoints_permanently_deleted": true,
@@ -124,6 +123,12 @@
       "estimated_allocated_bytes": 1613295616,
       "deleted_at": 1794948441.5179343,
       "reason": "Latest384 model+optimizer completely saved and weight audit passed; retain256 model weights only, latest384 optimizer supports restart"
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_2040/model.safetensors",
+      "estimated_allocated_bytes": 8978739200,
+      "deleted_at": 1794954814.0085227,
+      "reason": "OldCartesian2040 audit reference retired after full hold-correction curve and all audits terminal; actual joint training now uses retained768 parent. Latest old1024 weights+optimizer retained until new checkpoint safe."
     }
   ],
   "retention_policy": "Keep pretrained, required current parent, current best/latest/pending weights; only latest optimizer; historical unsuccessful fallback and archive base retired together.",
@@ -172,16 +177,14 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794950147.3779287,
-    "project_gib": 38.398,
-    "free_gib": 190.161,
-    "training_continues": true,
-    "training_step": 572,
-    "latest_restart": "hold-correction512",
-    "selected_model": "hold-correction384 provisional development-case score; full task failed",
-    "formal512_full_task_failed": true,
-    "latest512_weight_audit_passed": true,
-    "historical_fallback_retired": true
+    "time": 1794954815.046678,
+    "project_gib": 30.181,
+    "free_gib": 198.28,
+    "active_run": "cylinder-joint-position-bc-v1",
+    "actual_joint_training_step": 15,
+    "parent": "hold-correction768",
+    "old2040_reference_retired": true,
+    "training_continues": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -243,5 +246,6 @@
     "active_dataset_file_count": 17,
     "dataset_sha256_before_after_identical": true
   },
-  "latest_additional_cleanup_allocated_gib": 10.5406
+  "latest_additional_cleanup_allocated_gib": 10.5406,
+  "active_cartesian_export_retained_as_shared_video_reference_not_duplicate_media": "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1"
 }

@@ -17,6 +17,8 @@ import torch
 from audit_gripper import audit
 from carry_env import CAMERAS,CONTROL_DT
 from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
+from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_STATE_LAYOUT,
+    absolute_joint_chunk,joint_action_to_targets,robot_joint_observation,bounded_joint_command)
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
@@ -27,19 +29,30 @@ from robot_action_filter import (RobotActionFilter,limit_pose_step,TemporalActio
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
                             "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
-                            "robot_action_filter.py","robot_state_normalization.py")}
+                            "robot_action_filter.py","robot_state_normalization.py","cylinder_joint_actions.py")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
+    @staticmethod
+    def _validate_robot_layouts(config):
+        if 'follow_right_arm_joint_position_relative' in config['dof_config']:
+            if (list(config['dof_config'].items())!=list(JOINT_ACTION_LAYOUT.items()) or
+                    list(config['agent_pos_config'].items())!=list(JOINT_STATE_LAYOUT.items())):
+                raise ValueError('Unsupported cylinder joint layout')
+        else:CarryWallPolicy._validate_robot_layouts(config)
+
     def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random",
                  state_embedding_precision="training",unclipped_robot_state=False):
         if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
         super().__init__(checkpoint,train_config,norm_key)
         self.flow_steps=flow_steps
+        self.action_space=('joint' if 'follow_right_arm_joint_position_relative' in
+                           self._train_config['dof_config'] else 'cartesian')
+        self.action_width=9 if self.action_space=='joint' else 23
         self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
-        self.state_width=26 if self.with_odometry else 23
+        self.state_width=18 if self.action_space=='joint' else 26 if self.with_odometry else 23
         if unclipped_robot_state:
-            if not self.with_odometry or self._model.config.use_state_string_representation:
+            if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
             enable_unclipped_robot_state(self._normalizer_propri)
         if state_embedding_precision not in ("training","native"):
@@ -63,6 +76,7 @@ class CylinderWallPolicy(CarryWallPolicy):
                 return ctx
             self._model._prepare_flow_action_inputs=prepare_zero_noise
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
+                                action_space=self.action_space,active_action_dimensions=self.action_width,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
                                 flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
                                 unclipped_robot_state=unclipped_robot_state,
@@ -76,16 +90,16 @@ class CylinderWallPolicy(CarryWallPolicy):
             assert obs["state"].shape==(self.state_width,)
             state=np.zeros((1,1,26),np.float32);state[...,:self.state_width]=obs["state"]
             mask=np.zeros_like(state);mask[...,:self.state_width]=1
-            dof=np.zeros((1,self._action_horizon,26),np.float32);dof[...,:23]=1
+            dof=np.zeros((1,self._action_horizon,26),np.float32);dof[...,:self.action_width]=1
             encoded.append(dict(proprioception=state,agent_pos_mask=mask,dof_mask=dof,**obs["images"]))
         prefix,postfix=self._get_flow_prompt(instruction)
         inputs=self._construct_model_input(encoded,[prefix]*len(encoded),[postfix]*len(encoded))
         padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
                                         inputs["dataset_names"]).to("cuda")
         # Match the training collator's zero padding after normalization.
-        # The action tail is masked; the state tail is observed only for the
-        # explicit robot-odometry experiment.
-        padding[...,23:]=0
+        # Zero every virtual action/state slot after normalization. Cartesian
+        # odometry uses all26 state slots; the joint variant observes18.
+        padding[...,self.action_width:]=0
         inputs["proprioception"][...,self.state_width:]=0
         if self.state_embedding_precision=="training" and not self._model.config.use_state_string_representation:
             # Training's scatter_proprioception_embeddings first rounds state
@@ -107,7 +121,13 @@ class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
-                 gripper_open_confirmation_mode="prefix-median"):
+                 gripper_open_confirmation_mode="prefix-median",action_space="cartesian"):
+        if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
+        if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
+                                        temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
+            raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
+        self.action_space=action_space
+        self.max_joint_limit_projection=0.;self.joint_limit_projected_frames=0
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -119,7 +139,7 @@ class CylinderTrial:
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
         self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
-        self.with_odometry=with_odometry
+        self.with_odometry=with_odometry or action_space=='joint'
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
         self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
@@ -145,7 +165,8 @@ class CylinderTrial:
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
-        if self.with_odometry:
+        if self.action_space=='joint':observation['state']=robot_joint_observation(self.env)
+        elif self.with_odometry:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
         physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
@@ -166,18 +187,29 @@ class CylinderTrial:
         env=self.env;state=env.state_vector();t=float(env.data.time)
         before_metrics=env.metrics()
         raw_action=action.copy() if raw_model_action is None else raw_model_action.copy()
-        action=self.action_filter(action)
-        action=limit_pose_step(action,state,self.cartesian_speed_limit*CONTROL_DT,self.angular_speed_limit*CONTROL_DT)
+        if self.action_space=='cartesian':
+            action=self.action_filter(action)
+            action=limit_pose_step(action,state,self.cartesian_speed_limit*CONTROL_DT,self.angular_speed_limit*CONTROL_DT)
+        joint_projection=0.;ik_residual=None
         try:
-            joints,opening,forward,yaw=cartesian_to_joint_target(env,action,max_ik_residual=self.ik_max_residual)
+            if self.action_space=='joint':
+                joints,opening,forward,yaw,joint_projection=joint_action_to_targets(env,action)
+                self.max_joint_limit_projection=max(self.max_joint_limit_projection,joint_projection)
+                self.joint_limit_projected_frames+=int(joint_projection>0)
+            else:
+                joints,opening,forward,yaw=cartesian_to_joint_target(env,action,max_ik_residual=self.ik_max_residual)
+                ik_residual=env.last_cartesian_ik_residual
         except ValueError as error:
-            self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,getattr(env,"last_cartesian_ik_residual",0.))
+            if self.action_space=='cartesian':
+                self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,getattr(env,"last_cartesian_ik_residual",0.))
             self.fail(str(error));return
-        self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,env.last_cartesian_ik_residual)
+        if ik_residual is not None:self.max_attempted_ik_residual=max(self.max_attempted_ik_residual,ik_residual)
         for cam,writer in self.writers.items():writer.append_data(env.render(cam))
-        self.rows.append(dict(time=t,state=state,action=action.copy(),raw_action=raw_action,ik_residual=env.last_cartesian_ik_residual,slip=before_metrics["bottle_slip_m"],
+        self.rows.append(dict(time=t,state=state,action=action.copy(),raw_action=raw_action,ik_residual=ik_residual,joint_projection=joint_projection,slip=before_metrics["bottle_slip_m"],
                               tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
+        if self.action_space=='joint':self.rows[-1]['joint_state']=robot_joint_observation(env)
         _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
+        if self.action_space=='joint':self.rows[-1]['joint_command']=bounded_joint_command(env)
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
         if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
         if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
@@ -224,6 +256,7 @@ class CylinderTrial:
         rgb=env.render("face_view");reading=read_volume(rgb)
         imageio.imwrite(self.output/"final_face.png",rgb)
         summary=dict(policy="wall_oss_full_cylinder",success=self.success,failure_reason=self.reason,
+            action_space=self.action_space,
             evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
             final_task_gates=self.task_gates,
             action_filter_seconds=self.action_filter.seconds,
@@ -238,19 +271,26 @@ class CylinderTrial:
                                      "same-observation independent flow draws averaged; rotations projected to SO(3)"),
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
                                       angular_speed_limit_rad_s=self.angular_speed_limit),
-            ik_projection=dict(max_allowed_weighted_residual=self.ik_max_residual,
+            ik_projection=(dict(applicable=False,reason="Direct joint position targets; no Cartesian IK is called")
+                           if self.action_space=='joint' else dict(applicable=True,max_allowed_weighted_residual=self.ik_max_residual,
                                max_attempted_residual=self.max_attempted_ik_residual,
-                               metric="norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"),
+                               metric="norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved")),
+            joint_limit_projection=dict(maximum_rad=self.max_joint_limit_projection,
+                frames=self.joint_limit_projected_frames,margin_rad=.005),
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
             final_tilt_rad=env.metrics()["bottle_tilt_rad"],geometry_audit=self.geometry_report,
-            inference_seconds=self.latencies,executed_dimensions=list(range(10,21))+[22],ignored_dimensions=list(range(10))+[21],
-            observation_inputs=("Three RGB cameras and 26D robot proprioception including base x/y/yaw" if self.with_odometry else
+            inference_seconds=self.latencies,
+            executed_dimensions=(list(range(9)) if self.action_space=='joint' else list(range(10,21))+[22]),
+            ignored_dimensions=(list(range(9,26)) if self.action_space=='joint' else list(range(10))+[21]),
+            observation_inputs=("Three RGB cameras and 18D robot joint positions/velocities, aperture, base velocity/odometry" if self.action_space=='joint' else
+                                "Three RGB cameras and 26D robot proprioception including base x/y/yaw" if self.with_odometry else
                                 "Three RGB cameras and 23D robot proprioception")+"; no object pose, phase or fill value",
             base_odometry=self.with_odometry,
             exact_input_images_recorded=bool(self.writers),
-            low_level_controller="Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction")
+            low_level_controller=("Official joint limits with original5mrad margin and rate-limited joint position servos; no object-pose correction"
+                if self.action_space=='joint' else "Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction"))
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
@@ -266,12 +306,15 @@ class CylinderTrial:
             hold_actuator_ids=self.hold_actuator_ids,
             hold_targets=np.array([r["hold_targets"] for r in self.recovery_states]),
             applied_base_action=np.array([r["applied_base_action"] for r in self.recovery_states]))
+        extra=(dict(ik_residual=np.array([r['ik_residual'] for r in self.rows])) if self.action_space=='cartesian' else
+               dict(joint_limit_projection_rad=np.array([r['joint_projection'] for r in self.rows]),
+                    robot_joint_state=np.array([r['joint_state'] for r in self.rows]),
+                    joint_command=np.array([r['joint_command'] for r in self.rows])))
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             unfiltered_model_action=np.array([r["raw_action"] for r in self.rows]),
-            ik_residual=np.array([r["ik_residual"] for r in self.rows]),
             slip=np.array([r["slip"] for r in self.rows]),tilt=np.array([r["tilt"] for r in self.rows]),
-            contacts=np.array([r["contacts"] for r in self.rows]),phase=np.array(["wall_policy"]*len(self.rows)))
+            contacts=np.array([r["contacts"] for r in self.rows]),phase=np.array(["wall_policy"]*len(self.rows)),**extra)
         env.close();return summary
 
 
@@ -334,6 +377,7 @@ def main():
                          state_embedding_precision=args.state_embedding_precision,
                          gripper_open_confirmations=args.gripper_open_confirmations,
                          gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
+                         action_space=policy.action_space,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
@@ -355,13 +399,20 @@ def main():
                 trial.chunks.append(chunk);trial.latencies.append(float(latency))
                 if args.prediction_samples>1:trial.sampled_chunks.append(samples)
             print(json.dumps(dict(active=len(active),chunk=len(active[0].chunks),inference_seconds=time.monotonic()-inference_start,
-                                  first_right_action=chunks[0][0,10:20].tolist())),flush=True)
+                                  action_space=policy.action_space,
+                                  first_right_action=(chunks[0][0,:9] if policy.action_space=='joint' else chunks[0][0,10:20]).tolist())),flush=True)
             if args.probe_only:
                 for trial in active:trial.fail("probe_only_no_execution")
                 break
             for trial,chunk,observation in zip(active,chunks,observations):
-                try:absolute=relative_to_absolute(chunk,observation["state"][:23])
+                try:absolute=(absolute_joint_chunk(chunk,observation['state']) if policy.action_space=='joint'
+                              else relative_to_absolute(chunk,observation["state"][:23]))
                 except ValueError as error:trial.fail(str(error));continue
+                if policy.action_space=='joint':
+                    for action in absolute[:args.execute_steps]:
+                        trial.step(action)
+                        if trial.done:break
+                    continue
                 guarded=trial.opening_guard(absolute,args.execute_steps)
                 trial.temporal_ensemble.add(int(round(trial.env.data.time/CONTROL_DT)),guarded)
                 for raw_action,action in zip(absolute[:args.execute_steps],guarded[:args.execute_steps]):
@@ -380,6 +431,7 @@ def main():
     finally:
         results=[trial.finish() for trial in trials]
         report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
+                    action_space=policy.action_space,
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
                     flow_steps=args.flow_steps,
@@ -387,7 +439,7 @@ def main():
                     action_filter_seconds=args.action_filter_seconds,
                     robot_servo_envelope=dict(cartesian_speed_limit_m_s=args.cartesian_speed_limit,
                                              angular_speed_limit_rad_s=args.angular_speed_limit),
-                    ik_max_residual=args.ik_max_residual,
+                    ik_max_residual=(None if policy.action_space=='joint' else args.ik_max_residual),
                     temporal_ensemble_predictions=args.temporal_ensemble,
                     prediction_samples_per_observation=args.prediction_samples,
                     state_embedding_precision=args.state_embedding_precision,

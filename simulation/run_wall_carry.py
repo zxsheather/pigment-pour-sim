@@ -36,6 +36,15 @@ class CarryWallPolicy(QwenVLActInferAdapter):
     def _training_adapter(cls):
         return Qwen2_5Adapter
 
+    @staticmethod
+    def _validate_robot_layouts(config):
+        # Keep velocity in exactly the carry pretraining slots20:23.
+        for layout in (config["dof_config"], config["agent_pos_config"]):
+            keys = list(layout)
+            if (sum(list(layout.values())[:6]) != 20 or keys[6] != "velocity_decomposed"
+                    or layout[keys[6]] != 3 or sum(layout.values()) != 26):
+                raise ValueError(f"Unsupported carry layout: {layout}")
+
     def __init__(self, checkpoint: Path, train_config: Path, norm_key: str):
         checkpoint, train_config = checkpoint.resolve(), train_config.resolve()
         self._device = "cuda"
@@ -53,12 +62,7 @@ class CarryWallPolicy(QwenVLActInferAdapter):
         self._action_horizon = int(config.get("data", {}).get("action_horizon_flow", 32))
         self._action_dim = sum(config["dof_config"].values())
         self._robot_id = "10000"
-        # Keep velocity in exactly the pretraining slots 20:23.
-        for layout in (config["dof_config"], config["agent_pos_config"]):
-            keys = list(layout)
-            if (sum(list(layout.values())[:6]) != 20 or keys[6] != "velocity_decomposed"
-                    or layout[keys[6]] != 3 or sum(layout.values()) != 26):
-                raise ValueError(f"Unsupported carry layout: {layout}")
+        self._validate_robot_layouts(config)
         model_config = Qwen2_5Adapter.config_class().from_json_file(str(checkpoint / "config.json"))
         model_config.update_model_config(config)
         model_config._attn_implementation = "sdpa"
