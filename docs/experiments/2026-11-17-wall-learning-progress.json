@@ -288,5 +288,34 @@
       "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
     },
     "decision": "No grasp; a looser IK execution rejection did not solve the model trajectory error; keep default .002"
+  },
+  "odometry": [
+    {
+      "step": 255,
+      "success": false,
+      "reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16']]",
+      "seconds": 16.500000000006896,
+      "held": false,
+      "max_lifted_m": 0.043214751345465485,
+      "displacement_is_collision_not_valid_lift": true,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": -0.052688200102420146,
+        "camera_distance_m": 0.752479515769453,
+        "linear_speed_m_s": 0.2887737028927979,
+        "angular_speed_rad_s": 6.66605449994025
+      }
+    }
+  ],
+  "odometry_development_prefix_collection": {
+    "kind": "two_short_25sec_policy_visited_state_rollouts_for_training_recoveries",
+    "source": "runs/cylinder-odometry-step255-recovery-rollouts-v1",
+    "not_original8_or_independent12_benchmark": true
   }
 }
