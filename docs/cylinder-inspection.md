@@ -15,7 +15,7 @@
 | 程序教师：原 8 组 | 8/8 | 10.58 mm | 0.246 mL |
 | 程序教师：额外开发 12 组，seed 500..511 | 12/12 | 15.31 mm | 0.134 mL |
 | 程序教师：训练数据采集 | 44/48 | 保留逐条记录 | 4 条读数阶段失败被排除 |
-| Wall 模型：真实闭环任务 | 待测 | 待测 | 前向接口检查不计任务成功 |
+| 微调 Wall 模型：真实闭环任务 | 待测 | 待测 | 前向接口检查不计任务成功 |
 
 两套教师验证的松爪下落、空白/遮色标/遮液面/旋转图像拒绝读数与旧搬运回归均通过。结果见 [原 8 组](experiments/2026-11-17-official-teacher-original-v1.json)、[额外 12 组](experiments/2026-11-17-official-teacher-development-v1.json)。后者用于开发，不再称为最终独立测试。
 
@@ -40,6 +40,33 @@ MUJOCO_GL=egl ../.venv-sim/bin/python simulation/validate_cylinder.py \
 
 # 首轮实际模型训练和评测说明随检查点结果继续更新。
 ```
+
+在服务器研究目录 `/data/hlou/pigment-pour-study` 中，已导出的训练集为 `datasets/cylinder-official-bc-v2`。新实验目录必须不存在；下面的配置与首轮一致。现有 Wall 源码已经应用 `patch_wall_train_only.py`、`patch_wall_checkpoint_resize.py`，补丁记录在 `results/wall-*-patch.json`；重新安装固定版本源码时先应用这两个补丁，不重复应用到已修改的文件。
+
+```bash
+.venv-wall/bin/python pigment-pour-sim/simulation/prepare_wall_config.py \
+  --dataset datasets/cylinder-official-bc-v2 --model models/wall-oss-0.5 \
+  --output runs/my-cylinder-bc --steps 1021 --batch-size 2 --learning-rate 3e-5 \
+  --save-every 255 --horizon 16 --front-resolution 448 --train-episode-fraction 1.0
+.venv-wall/bin/python pigment-pour-sim/simulation/compute_cylinder_norm_stats.py \
+  --config runs/my-cylinder-bc/train.yml
+PYTHONPATH=wall-x .venv-wall/bin/python -m torch.distributed.run \
+  --nproc_per_node=1 --master_port=29876 pigment-pour-sim/simulation/validate_wall_data.py \
+  --config runs/my-cylinder-bc/train.yml --output runs/my-cylinder-bc/data-validation.json
+PYTHONPATH=wall-x .venv-wall/bin/python -m torch.distributed.run \
+  --nproc_per_node=1 --master_port=29877 wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py \
+  --config runs/my-cylinder-bc/train.yml
+
+# 等该检查点保存完成，再执行；不是只做前向接口检查。
+MUJOCO_GL=egl PYTHONPATH=wall-x .venv-wall/bin/python pigment-pour-sim/simulation/run_wall_cylinder.py \
+  --model runs/my-cylinder-bc/checkpoints/0_255 --config runs/my-cylinder-bc/train.yml \
+  --norm-key cylinder_official_v2 --policy-batch-size 1 --execute-steps 8 \
+  --controller-config pigment-pour-sim/simulation/configs/cylinder_official_teacher_dev_v1.json \
+  --cases pigment-pour-sim/simulation/configs/cylinder_policy_original_cases.json \
+  --output runs/my-cylinder-eval-original
+```
+
+训练与评测日志、失败案例、检查点保存在研究目录下的 `results` 与 `runs`。录制图像和完整示范保存在 `simulation/generated/fixed-official-training-v1`，没有将失败案例覆盖成成功案例。推理期间仿真暂停，20 Hz 是动作标签的采样频率，不代表模型达到真机 20 Hz 实时控制。
 
 ## 几何恢复基线（2026-11-17，优化前）
 
