@@ -1,0 +1,22 @@
+{
+  "kind": "evaluation_runtime_interruption",
+  "policy_result": "undetermined",
+  "reason": "Native stack in NVIDIA EGL library, continuous CPU/memory-map work, no rollout progress after neural chunk26",
+  "last_observed_simulated_seconds": 10.0,
+  "last_observed_held": false,
+  "partial_rgb_observations_retained": true,
+  "full_numeric_trajectory_not_flushed": false,
+  "stack_file": "results/cylinder-odometry765-egl-stall-native-stack.txt",
+  "trainer_unchanged": true,
+  "recorded_at": 1794930396.2187808,
+  "native_stall_required_termination": false,
+  "interruption_saved_final_simulated_seconds": 13.200000000004641,
+  "interruption_saved_failure_reason": "evaluation_interrupted:KeyboardInterrupt",
+  "graceful_finally_saved": [
+    "trajectory.npz",
+    "predicted_chunks.npy",
+    "model_observations.npz",
+    "recovery_physics.npz"
+  ],
+  "source_issue": "CarryEnv.render closed and recreated the only Renderer on each 448/768 switch; native stack in EGL during context churn; caching per resolution to test exact RGB parity"
+}

@@ -167,6 +167,7 @@ class CarryEnv:
         self.image_size = image_size
         self.max_seconds = max_seconds
         self.renderer = None
+        self._renderers = {}
         self.robot_root = self.model.body("robot_planar_root").id
         self.gripper_body = self.model.body("right_arm_gripper_base_link").id
         self.finger_bodies = {
@@ -383,10 +384,12 @@ class CarryEnv:
 
     def render(self, camera: str = "overview", *, width: int | None = None) -> np.ndarray:
         size = width or self.image_size
-        if self.renderer is None or self.renderer.width != size:
-            if self.renderer is not None:
-                self.renderer.close()
-            self.renderer = mujoco.Renderer(self.model, height=size, width=size)
+        # Model observations and scoring/video use different resolutions.
+        # Recreating an EGL context on every switch can stall in the driver.
+        # Each renderer makes its own context current in Renderer.render().
+        if size not in self._renderers:
+            self._renderers[size] = mujoco.Renderer(self.model, height=size, width=size)
+        self.renderer = self._renderers[size]
         self.renderer.update_scene(self.data, camera=camera)
         return self.renderer.render().copy()
 
@@ -398,9 +401,10 @@ class CarryEnv:
         return observation
 
     def close(self):
-        if self.renderer is not None:
-            self.renderer.close()
-            self.renderer = None
+        for renderer in self._renderers.values():
+            renderer.close()
+        self._renderers.clear()
+        self.renderer = None
 
 
 class WaypointTeacher:

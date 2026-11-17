@@ -100,6 +100,16 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 对上述第 20 s 同一持筒起点，仅将教师最终侧向观察位置从 0.14 m 改为 0.18 m 再试，32.85 s 时仍因色标不可见失败，新增滑移 15.61 mm，见 [失败记录](experiments/2026-11-17-odometry-held-read18-failure.json)。这次更改未采用，失败示范不导出为训练成功样本；不能因同一设置曾帮助另一个起点而推断普遍有效。
 
+基于重复前向中的采样变化，新增可选 `--prediction-samples`，默认 1 保持原始单次 flow 预测；大于 1 时对完全相同的当前观测独立采样后平均，旋转重新正交化，不使用过往观测的预测。所有独立输出另存 `sampled_chunks.npy`，平均后的输出保存在 `predicted_chunks.npy`。在实际保存的神经网络输出上，[检查](experiments/2026-11-17-same-observation-average-validation.json) 确认默认值及数据顺序逐值不变、平均旋转有效。这只是准备好的解码实验；此处没有多采样平均的物理任务成绩，基线评测继续使用 1。
+
+里程计 `0_765` 权重核验通过（258 个可训练张量变化、581 个冻结张量不变），但首轮闭环在第 10 s 附近出现数分钟无进展。对本任务进程的原生调用栈检查落在 NVIDIA EGL 库的释放/内存映射中，不能把它计为模型物理失败。中断后 `finally` 完整保存了截至 13.2 s 的动作、机器人观测、物理恢复状态和视频；当时尚无有效夹持，见 [中断记录](experiments/2026-11-17-odometry765-renderer-interruption.json)。主训练未停止。
+
+`CarryEnv.render` 原先只有一个 Renderer，每次 448px 模型观测与 768px 录像/评分交替都会关闭并重建。现按分辨率缓存 Renderer，退出时全部关闭，模型、录像和评分仍使用原分辨率。对两个保存物理状态、三路相机和两种分辨率做 [12 组对照](experiments/2026-11-17-renderer-cache-validation.json)，integration state 逐值不变，头部 RGB 读数结果相同，额外 40 次分辨率切换没有重新创建渲染器。图像并非逐像素完全一致：先前严格逐值/1 灰度级检查失败，保留 [初始检查](experiments/2026-11-17-renderer-cache-initial-tolerance-failure.json) 和 [重复渲染诊断](experiments/2026-11-17-egl-repeat-pixel-variation.json)；同一个未经修改的 EGL Renderer 重复输出也有稀疏的 2 灰度级变化，因此图像检查采用最大 2/255、变化像素不超过 0.1%，且读数必须完全相同。这个容差只用于渲染回归检查，物理任务成功条件没有改变。
+
+该检查点已在新目录 `runs/cylinder-odometry-step765-single-v2` 重新开始完整评测；后续检查点队列为 `results/cylinder-odometry-later-evaluations-v2.py`，所有新评测仍为单次采样、原高斯 flow、前 8 帧执行。不能将缓存检查或中断时的位移当作任务完成。
+
+这次重跑使用同一检查点和相同 Torch seed 47，但不是完全相同输入的数值重放：[前 17 组预测对照](experiments/2026-11-17-renderer-cache-neural-prefix-comparison.json) 中，首步位置分量差最大约 0.275 mm，随闭环状态分化后最大约 2.82 mm。因此不能把重跑动作变化称为模型学习改善或严格配对的控制消融；真实任务结果仍需完整运行并使用后续固定案例验证。
+
 另修正推理补齐约定：训练 collator 在归一化后补三个 0，推理原先却将它们归一化成 -1。现在显式还原为 0。相同检查点、相同随机种子和上述十组教师观测的配对诊断没有发现预测数值变化，故没有将该修正当作本轮成功率改善或主要失败原因。
 
 输入数据快照在 `/data/hlou/pigment-pour-study/snapshots/cylinder-official-bc-v2-inputs-20261117`（约 1.06 GiB，923 个文件附 SHA256）：含源码归档、实际 Wall Python 源码、48 条完整采集记录、44 条训练导出和训练配置。它冻结训练输入，模型最终结果仍以 `runs` 中的后续闭环记录为准。时间步再减半到 0.25 ms 的单例检查仍成功，滑移 8.75 mm、读数误差 0.061 mL，见 [数值检查](experiments/2026-11-17-official-dt-convergence-025-v1.json)；不是大样本真机结论。
