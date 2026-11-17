@@ -1,0 +1,65 @@
+{
+  "source": "pigment-pour-sim/simulation/generated/cylinder-odometry765-recovery-v1/snapshot_033/summary.json",
+  "result": {
+    "success": true,
+    "failure_reason": null,
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step765-single-v1/episode_000",
+      "snapshot_index": 33,
+      "source_simulated_seconds": 13.200000000004641,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": false,
+      "recovery_stage": "transport_or_grasp"
+    },
+    "simulated_seconds": 27.249999999981842,
+    "max_slip_m": 0.005886993647057727,
+    "max_held_tilt_rad": 0.02920585351209218,
+    "absolute_reading_error_ml": 0.0,
+    "geometry_audit_passed": true,
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.14,
+      "read_distance_m": 0.35,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "reading": {
+      "valid": true,
+      "volume_ml": 25.0,
+      "liquid_y": 384.0,
+      "liquid_x": 548,
+      "y20": 412.0,
+      "y35": 328.0,
+      "anchor_x": 552.0,
+      "liquid_bbox": [
+        537,
+        384,
+        23,
+        137
+      ],
+      "boundary_support_columns": 19,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    "source_sha256": {
+      "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+      "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+      "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+      "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+      "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+      "scene_config.json": "cbebc6bb5c88431a38d2990d8961b36e0698e128c7c602d2f8ddb2415c7adeef"
+    },
+    "final_linear_speed_m_s": 0.00031532201335118424,
+    "final_angular_speed_rad_s": 0.0013150607839152188
+  },
+  "role": "Privileged teacher training recovery from actual interrupted policy prefix; NOT policy success",
+  "exported": false,
+  "current51_training_changed": false
+}

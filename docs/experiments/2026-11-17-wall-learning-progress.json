@@ -333,6 +333,30 @@
         "angular_speed_rad_s": 0.7755318535973754
       },
       "geometry_audit_passed": true
+    },
+    {
+      "step": 765,
+      "success": false,
+      "reason": "Unreachable model action:0.00333",
+      "seconds": 50.60000000005958,
+      "held": false,
+      "max_lifted_m": 0.011946511240563562,
+      "displacement_is_not_valid_held_lift": true,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.0622801115617031,
+        "camera_distance_m": 0.7181286627534522,
+        "linear_speed_m_s": 8.509210052354052e-14,
+        "angular_speed_rad_s": 4.0878090118635204e-15
+      },
+      "geometry_audit_passed": true,
+      "runtime_renderer": "Cached448/768; old interrupted attempt excluded"
     }
   ],
   "odometry_development_prefix_collection": {
@@ -362,5 +386,13 @@
     },
     "geometry_audit_passed": true,
     "decision": "Not selected: failed by tilt before baseline lost-grasp time"
+  },
+  "same_observation4_sampling_experiment": {
+    "checkpoint_step": 510,
+    "run": "runs/cylinder-odometry-step510-sameobs4-v2",
+    "status": "running_no_task_result",
+    "prediction_samples": 4,
+    "model_batch_size": 1,
+    "first_driver_launch_failure_not_policy_score": true
   }
 }

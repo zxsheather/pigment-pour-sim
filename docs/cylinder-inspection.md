@@ -2,7 +2,7 @@
 
 搬运阶段已经独立保存：Git 提交 `67c86c1`、标签 `carry-v1-20261115`；服务器快照在 `/data/hlou/pigment-pour-study/snapshots/carry-v1-20261115`，包含代码、实验数据与录像归档、大权重路径和 SHA256 清单。过程见 `docs/experiments/2026-11-15-carry.md`。
 
-## 当前优化与 Wall 训练进度（2026-11-17）
+## 当前优化与 Wall 训练进度（2026-11-17–18）
 
 本轮保持官方手指 STL/URDF 几何、滑动轴、行程、20 N 执行器力限不变；不新增指垫，不提高摩擦系数，不启用 NoSlip。每次成功示范及模型评测都审计实际运行环境中的手指几何。
 
@@ -24,6 +24,7 @@
 | 里程计＋32 帧窗口：256 次更新，25 mL / seed 100 | 0/1 | 未建立抓取 | 16.50 s 非指部碰撞；碰撞位移不计有效抬起 |
 | 同一分支：511 次更新，25 mL / seed 100 | 0/1 | 25.05 mm | 有效夹持并抬起 15.48 cm，41.10 s 滑移超限 |
 | 同一检查点：重叠预测平均 4 组 | 0/1 | 10.41 mm | 25.85 s 倾斜超限，未采用 |
+| 里程计分支：766 次更新，渲染缓存后完整重跑 | 0/1 | 未建立有效夹持 | 50.60 s 动作不可达；之前的运行中断另记 |
 | 微调 Wall：原 8 组与独立 12 组 | 待验 | 待验 | 前向接口检查不计任务成功 |
 
 两套教师验证的松爪下落、空白/遮色标/遮液面/旋转图像拒绝读数与旧搬运回归均通过。结果见 [原 8 组](experiments/2026-11-17-official-teacher-original-v1.json)、[额外 12 组](experiments/2026-11-17-official-teacher-development-v1.json)。后者用于开发，不再称为最终独立测试。
@@ -106,9 +107,24 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 `CarryEnv.render` 原先只有一个 Renderer，每次 448px 模型观测与 768px 录像/评分交替都会关闭并重建。现按分辨率缓存 Renderer，退出时全部关闭，模型、录像和评分仍使用原分辨率。对两个保存物理状态、三路相机和两种分辨率做 [12 组对照](experiments/2026-11-17-renderer-cache-validation.json)，integration state 逐值不变，头部 RGB 读数结果相同，额外 40 次分辨率切换没有重新创建渲染器。图像并非逐像素完全一致：先前严格逐值/1 灰度级检查失败，保留 [初始检查](experiments/2026-11-17-renderer-cache-initial-tolerance-failure.json) 和 [重复渲染诊断](experiments/2026-11-17-egl-repeat-pixel-variation.json)；同一个未经修改的 EGL Renderer 重复输出也有稀疏的 2 灰度级变化，因此图像检查采用最大 2/255、变化像素不超过 0.1%，且读数必须完全相同。这个容差只用于渲染回归检查，物理任务成功条件没有改变。
 
-该检查点已在新目录 `runs/cylinder-odometry-step765-single-v2` 重新开始完整评测；后续检查点队列为 `results/cylinder-odometry-later-evaluations-v2.py`，所有新评测仍为单次采样、原高斯 flow、前 8 帧执行。不能将缓存检查或中断时的位移当作任务完成。
+该检查点在新目录 `runs/cylinder-odometry-step765-single-v2` 完整重跑仍失败：未建立双侧夹持，50.60 s 时目标 IK 残差 0.00333 超过原 0.002 限值，见 [闭环结果](experiments/2026-11-18-odometry765-closed-loop.json)、[权重核验](experiments/2026-11-18-odometry765-weight-audit.json)。约 11.95 mm 的物体位移和 0 mm 滑移不能证明有效提起或稳定抓持。之前的运行中断不再计一次模型失败。后续队列为 `results/cylinder-odometry-later-evaluations-v2.py`，仍为单次采样、原高斯 flow、前 8 帧执行。
 
 这次重跑使用同一检查点和相同 Torch seed 47，但不是完全相同输入的数值重放：[前 17 组预测对照](experiments/2026-11-17-renderer-cache-neural-prefix-comparison.json) 中，首步位置分量差最大约 0.275 mm，随闭环状态分化后最大约 2.82 mm。因此不能把重跑动作变化称为模型学习改善或严格配对的控制消融；真实任务结果仍需完整运行并使用后续固定案例验证。
+
+当前额外测试 `runs/cylinder-odometry-step510-sameobs4-v2`：使用能建立夹持的 `0_510`，对同一观测的 4 次独立预测平均，模型微批量仍为 1、执行前 8 帧，其余滤波关闭；物理参数和评分保持开发配置。尚无完成成绩。首次启动因当前内核未提供 `/proc/.../children` 而未运行模型，启动失败日志保留，不计任务失败；修正进程检查后重新启动。该额外测试期间只暂缓后续神经网络评测队列，主训练继续，测试结束由协调脚本恢复队列。
+
+另从 `0_765` 运行中断前第 13.2 s 的真实物理状态补采教师恢复：重新张开、对准并抓持，27.25 s 完成拿近和读数，新增滑移 5.89 mm，RGB 估读 25.0 mL，见 [记录](experiments/2026-11-18-odometry765-grasp-recovery.json)。这仍是使用仿真物体位姿的教师示范，尚未导出或训练，不计模型成功；正在训练的 51 条输入保持冻结。
+
+后续五个完整模型检查点预计还需约 42 GiB，而研究目录剩余空间一度约 56 GiB。对 6 份未采用的早期权重进行无损 VCDIFF 差分归档，保留配置、日志、轨迹及共享的完整基准权重；当前训练的全部检查点、父检查点和已有最好模型保持完整。归档工具只解包到任务目录 `.tools/xdelta3`，没有安装系统包。[小文件验证](experiments/2026-11-18-checkpoint-archive-validation.json) 覆盖逐字节恢复、默认保留原文件、拒绝覆盖、错误基准和损坏差分拒绝恢复（包括 Python `-O`）。每份真实 8.36 GiB 权重也必须先流式解码得到与原文件相同的完整 SHA256 和长度，再允许移除原文件；[当前归档记录](experiments/2026-11-18-checkpoint-archives.json) 保存各份原始／基准／重建哈希。归档不改动任何权重数值，不产生模型训练成绩。
+
+需要重新加载归档的旧检查点时，先运行其目录中 `model.safetensors.xdelta-archive/RESTORE.txt` 的命令；恢复工具会核验基准、差分和完整原始文件。必须保留清单列出的共享基准。示例在研究根目录运行：
+
+```bash
+.venv-sim/bin/python pigment-pour-sim/simulation/archive_wall_checkpoint.py restore \
+  --archive runs/cylinder-official-bc-v2/checkpoints/0_765/model.safetensors.xdelta-archive \
+  --xdelta .tools/xdelta3/usr/bin/xdelta3 \
+  --output runs/cylinder-official-bc-v2/checkpoints/0_765/model.safetensors
+```
 
 另修正推理补齐约定：训练 collator 在归一化后补三个 0，推理原先却将它们归一化成 -1。现在显式还原为 0。相同检查点、相同随机种子和上述十组教师观测的配对诊断没有发现预测数值变化，故没有将该修正当作本轮成功率改善或主要失败原因。
 
