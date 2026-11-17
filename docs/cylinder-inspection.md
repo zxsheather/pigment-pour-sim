@@ -4,6 +4,8 @@
 
 ## 当前优化与 Wall 训练进度（2026-11-17–18）
 
+**2026-11-18 存储清理：** 按用户要求删除旧权重、旧优化器、重复数据导出、旧帧缓存及冗余录像，项目约从 129 GiB 降到 40 GiB，磁盘可用约 189 GiB。[清理记录](experiments/2026-11-18-storage-cleanup.json) 列出当前保留项；下文多数历史导出和旧模型路径已删除，只保留其配置、日志和数值实验记录。当前 51 条训练导出逐文件 SHA256 不变，56 条当前／下一轮所需原始示范仍保留，官方手指资产检查通过。训练及评测已恢复。
+
 本轮保持官方手指 STL/URDF 几何、滑动轴、行程、20 N 执行器力限不变；不新增指垫，不提高摩擦系数，不启用 NoSlip。每次成功示范及模型评测都审计实际运行环境中的手指几何。
 
 固定配置见 `simulation/configs/cylinder_official_teacher_dev_v1.json`。改动是抓取工具点沿手指方向从 135 mm 调到 115 mm、闭合半开度命令从 10 mm 调到 3 mm；同时将 MuJoCo 时间步从 2 ms 改为 0.5 ms、`impratio` 从 1 改为 10。抓取高度仍为 225 mm，`condim=3`、摩擦 `[1,0.005,0.0001]`、`noslip_iterations=0`。闭合命令只是位置伺服目标，不会穿过刚体，实际接触仍受 20 N 力限约束。可选力控制和持续真值扶正曾试验但未被此配置采用。
@@ -111,19 +113,23 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 这次重跑使用同一检查点和相同 Torch seed 47，但不是完全相同输入的数值重放：[前 17 组预测对照](experiments/2026-11-17-renderer-cache-neural-prefix-comparison.json) 中，首步位置分量差最大约 0.275 mm，随闭环状态分化后最大约 2.82 mm。因此不能把重跑动作变化称为模型学习改善或严格配对的控制消融；真实任务结果仍需完整运行并使用后续固定案例验证。
 
-当前额外测试 `runs/cylinder-odometry-step510-sameobs4-v2`：使用能建立夹持的 `0_510`，对同一观测的 4 次独立预测平均，模型微批量仍为 1、执行前 8 帧，其余滤波关闭；物理参数和评分保持开发配置。尚无完成成绩。首次启动因当前内核未提供 `/proc/.../children` 而未运行模型，启动失败日志保留，不计任务失败；修正进程检查后重新启动。该额外测试期间只暂缓后续神经网络评测队列，主训练继续，测试结束由协调脚本恢复队列。
+额外测试 `runs/cylinder-odometry-step510-sameobs4-v2` 使用能建立夹持的 `0_510`，对同一观测的 4 次独立预测平均，模型微批量仍为 1、执行前 8 帧，其余滤波关闭。最终未建立抓持，29.95 s 时动作不可达，见 [结果](experiments/2026-11-18-odometry510-sameobs4.json)；该解码方式未采用，基线继续单次采样。首次启动因当前内核未提供 `/proc/.../children` 而未运行模型，不计一次任务失败。评测协调队列已经恢复，主训练继续。
 
-另从 `0_765` 运行中断前第 13.2 s 的真实物理状态补采教师恢复：重新张开、对准并抓持，27.25 s 完成拿近和读数，新增滑移 5.89 mm，RGB 估读 25.0 mL，见 [记录](experiments/2026-11-18-odometry765-grasp-recovery.json)。这仍是使用仿真物体位姿的教师示范，尚未导出或训练，不计模型成功；正在训练的 51 条输入保持冻结。
+另从 `0_765` 运行中断前第 13.2 s 的真实物理状态补采教师恢复：重新张开、对准并抓持，27.25 s 完成拿近和读数，新增滑移 5.89 mm，RGB 估读 25.0 mL，见 [记录](experiments/2026-11-18-odometry765-grasp-recovery.json)。这仍是使用仿真物体位姿的教师示范，不计模型成功。曾单独导出候选数据并检查加载，重复导出现已清理，原始示范保留；没有加入正在训练的 51 条输入。
 
-后续五个完整模型检查点预计还需约 42 GiB，而研究目录剩余空间一度约 56 GiB。对 6 份未采用的早期权重进行无损 VCDIFF 差分归档，保留配置、日志、轨迹及共享的完整基准权重；当前训练的全部检查点、父检查点和已有最好模型保持完整。归档工具只解包到任务目录 `.tools/xdelta3`，没有安装系统包。[小文件验证](experiments/2026-11-18-checkpoint-archive-validation.json) 覆盖逐字节恢复、默认保留原文件、拒绝覆盖、错误基准和损坏差分拒绝恢复（包括 Python `-O`）。每份真实 8.36 GiB 权重也必须先流式解码得到与原文件相同的完整 SHA256 和长度，再允许移除原文件；[当前归档记录](experiments/2026-11-18-checkpoint-archives.json) 保存各份原始／基准／重建哈希。归档不改动任何权重数值，不产生模型训练成绩。
+空间一度仅余约 56 GiB，先对 6 份早期权重做过经 SHA256 流式重建验证的无损归档。随后用户明确要求删除不需要的旧实验，这 6 份旧差分归档及不用的完整基准也已清理；[历史归档记录与当前可用性](experiments/2026-11-18-checkpoint-archives.json) 保留哈希记录，不能再据此恢复已删除的旧版本。当前只保留一份关键历史模型 `cylinder-continuous-state-bc-v1/0_1020` 的 0.68 GiB 差分备份，依赖仍完整保留的当前最好模型 `cylinder-odometry-bc-v1/0_510`。
 
-需要重新加载归档的旧检查点时，先运行其目录中 `model.safetensors.xdelta-archive/RESTORE.txt` 的命令；恢复工具会核验基准、差分和完整原始文件。必须保留清单列出的共享基准。示例在研究根目录运行：
+完整权重保留官方预训练模型、当前最好／最新模型及训练核验所需的父模型；优化器只保留当前最好／最新两份。最新检查点 `0_1020` 完整保存并核验后，已删除无有效抓持的旧 `0_765` 权重和优化器。后续继续清理已评测淘汰的旧版本，保留待评测和候选模型，避免实验目录重新堆积。
+
+归档工具解包在任务目录 `.tools/xdelta3`。[小文件验证](experiments/2026-11-18-checkpoint-archive-validation.json) 覆盖逐字节恢复、默认保留原文件、拒绝覆盖、错误基准和损坏差分拒绝恢复（包括 Python `-O`）。保留的历史模型也已逐字节重建核验，不改变任何权重数值。
+
+需要重新加载这份历史备份时，运行其目录中 `model.safetensors.xdelta-archive/RESTORE.txt` 的命令；恢复工具会核验基准、差分和完整原始文件。必须保留清单列出的共享基准。在研究根目录运行：
 
 ```bash
 .venv-sim/bin/python pigment-pour-sim/simulation/archive_wall_checkpoint.py restore \
-  --archive runs/cylinder-official-bc-v2/checkpoints/0_765/model.safetensors.xdelta-archive \
+  --archive runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive \
   --xdelta .tools/xdelta3/usr/bin/xdelta3 \
-  --output runs/cylinder-official-bc-v2/checkpoints/0_765/model.safetensors
+  --output runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors
 ```
 
 另修正推理补齐约定：训练 collator 在归一化后补三个 0，推理原先却将它们归一化成 -1。现在显式还原为 0。相同检查点、相同随机种子和上述十组教师观测的配对诊断没有发现预测数值变化，故没有将该修正当作本轮成功率改善或主要失败原因。

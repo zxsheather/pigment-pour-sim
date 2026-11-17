@@ -1,0 +1,97 @@
+{
+  "completed": true,
+  "deleted_targets": 1751,
+  "estimated_deleted_bytes": 86872297472,
+  "free_before_direct_delete": 116592852992,
+  "free_after_delete": 203055501312,
+  "project_bytes_before_direct_delete": 129913544704,
+  "project_bytes_after_delete": 43090665472,
+  "retained_full_weights": [
+    "models/wall-oss-0.5/model.safetensors",
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/model.safetensors",
+    "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors"
+  ],
+  "retained_optimizer_states": [
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_510/optimizer.pt",
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/optimizer.pt"
+  ],
+  "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
+  "fallback_original_bytes": 8978728704,
+  "fallback_patch_bytes": 725816456,
+  "fallback_reconstruction_sha256": "b4f77587de4bdd7f60edd6fa747a12b0a45bcb20385e1993978b20081a7061c2",
+  "active_dataset": "datasets/cylinder-recovery-odometry-v1",
+  "active_dataset_files": 12,
+  "active_dataset_sha256_unchanged": true,
+  "raw_current_and_future_training_episodes_preserved": 56,
+  "old_unused_archived_checkpoints_permanently_deleted": true,
+  "experiment_json_logs_and_numeric_rollout_records_retained": true,
+  "deleted_manifest": "/data/hlou/pigment-pour-study/results/storage-cleanup-20261118/deleted.jsonl",
+  "future_dataset_rebuild_recipe": "/data/hlou/pigment-pour-study/results/storage-cleanup-20261118/retained-training-sources.json",
+  "official_gripper_assets_audit_passed": true,
+  "resumed_processes": [
+    1974731,
+    2878224
+  ],
+  "resumed_at": 1794934999.852898,
+  "post_cleanup_training_state": "resumed without resetting in-memory training progress",
+  "retired_after_new_checkpoint_saved": [
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_765/model.safetensors",
+      "reason": "Evaluated no-grasp failure superseded by fully saved/audited checkpoint1020",
+      "estimated_allocated_bytes": 8978728728,
+      "deleted_at": 1794935558.99105
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_765/optimizer.pt",
+      "reason": "Evaluated no-grasp failure superseded by fully saved/audited checkpoint1020",
+      "estimated_allocated_bytes": 1613290955,
+      "deleted_at": 1794935559.0153732
+    }
+  ],
+  "retention_policy": "Keep pretrained, required parent, selected best, latest complete and pending/candidate checkpoints; prune older evaluated no-grasp failures, review held failures before pruning.",
+  "training_progress_confirmed": "2026-11-18 01:12:36,010 - [rank0] - INFO -  epoch   0/1000 | iter   1056/  7478 | loss 0.008763 | flow_loss 0.008763 | lr 0.000030 | time_current_backward_step 10.872992s |",
+  "categories": {
+    "duplicate or superseded exported dataset; current51 and raw future5 retained": {
+      "targets": 10,
+      "estimated_bytes": 4401147904
+    },
+    "temporary compression test fixture": {
+      "targets": 1,
+      "estimated_bytes": 10559488
+    },
+    "unused old model weights": {
+      "targets": 6,
+      "estimated_bytes": 53871566848
+    },
+    "redundant old rollout video": {
+      "targets": 51,
+      "estimated_bytes": 342564864
+    },
+    "superseded snapshot data payload; source/config/manifest retained": {
+      "targets": 1545,
+      "estimated_bytes": 2470326272
+    },
+    "redundant RGB frame cache for old rollout": {
+      "targets": 22,
+      "estimated_bytes": 394338304
+    },
+    "obsolete intermediate simulation video": {
+      "targets": 95,
+      "estimated_bytes": 269942784
+    },
+    "obsolete optimizer state": {
+      "targets": 13,
+      "estimated_bytes": 20968583168
+    },
+    "unused old differential checkpoint archive": {
+      "targets": 6,
+      "estimated_bytes": 4143267840
+    }
+  },
+  "project_gib_before_cleanup": 128.68,
+  "project_gib_after_cleanup": 40.13,
+  "free_gib_after_cleanup": 189.11,
+  "approximate_net_project_gib_freed": 88.55,
+  "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning."
+}
