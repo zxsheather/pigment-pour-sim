@@ -29,12 +29,16 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
 
 
 class CylinderWallPolicy(CarryWallPolicy):
-    def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random"):
+    def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random",
+                 state_embedding_precision="training"):
         if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
         super().__init__(checkpoint,train_config,norm_key)
         self.flow_steps=flow_steps
         self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
         self.state_width=26 if self.with_odometry else 23
+        if state_embedding_precision not in ("training","native"):
+            raise ValueError("Invalid state embedding precision contract")
+        self.state_embedding_precision=state_embedding_precision
         if flow_noise not in ("random","zero"):raise ValueError("Invalid flow noise mode")
         if flow_noise=="zero":
             # Pinned Wall-X inference hook. Rebuild the FIRST flow token too;
@@ -54,7 +58,9 @@ class CylinderWallPolicy(CarryWallPolicy):
             self._model._prepare_flow_action_inputs=prepare_zero_noise
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
-                                flow_noise=flow_noise)
+                                flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
+                                state_precision_alignment_applies=not self._model.config.use_state_string_representation,
+                                token_embedding_dtype=str(self._model.model.embed_tokens.weight.dtype))
 
     @torch.inference_mode()
     def predict_many(self,observations,instruction=CYLINDER_INSTRUCTION):
@@ -74,6 +80,14 @@ class CylinderWallPolicy(CarryWallPolicy):
         # explicit robot-odometry experiment.
         padding[...,23:]=0
         inputs["proprioception"][...,self.state_width:]=0
+        if self.state_embedding_precision=="training" and not self._model.config.use_state_string_representation:
+            # Training's scatter_proprioception_embeddings first rounds state
+            # and mask to the token-embedding dtype, then projects in FP32.
+            # Native generate_flow_action omits that first cast. Align the
+            # actual model boundary, beyond the common preprocessing tensors.
+            dtype=self._model.model.embed_tokens.weight.dtype
+            inputs["proprioception"]=inputs["proprioception"].to(dtype)
+            inputs["agent_pos_mask"]=inputs["agent_pos_mask"].to(dtype)
         output=self._model.generate_flow_action(action_horizon=self._action_horizon,action_dim=26,
             num_inference_timesteps=self.flow_steps,padding_action=padding,**inputs)
         actions=output["predict_action"].float().cpu().numpy()
@@ -84,7 +98,8 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
-                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1):
+                 cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
+                 state_embedding_precision="training"):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -101,6 +116,7 @@ class CylinderTrial:
         self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
         self.prediction_samples=prediction_samples;self.sampled_chunks=[]
+        self.state_embedding_precision=state_embedding_precision
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -202,6 +218,7 @@ class CylinderTrial:
             action_filter_seconds=self.action_filter.seconds,
             temporal_ensemble_predictions=self.temporal_ensemble.max_predictions,
             prediction_samples_per_observation=self.prediction_samples,
+            state_embedding_precision=self.state_embedding_precision,
             sampled_action_decoding=("single model draw" if self.prediction_samples==1 else
                                      "same-observation independent flow draws averaged; rotations projected to SO(3)"),
             robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
@@ -266,6 +283,8 @@ def main():
                    help="Average overlapping forecasts for the same tick; newest gripper retained; 0 disables.")
     p.add_argument("--prediction-samples",type=int,default=1,choices=range(1,9),
                    help="Average independent flow draws at the SAME current observation; 1 preserves baseline decoding.")
+    p.add_argument("--state-embedding-precision",choices=("training","native"),default="training",
+                   help="Match training's state rounding before projection; native preserves the earlier Wall inference path.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -278,7 +297,8 @@ def main():
     controller=json.loads(args.controller_config.read_text())
     torch.manual_seed(47)
     policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key,
-                              flow_steps=args.flow_steps,flow_noise=args.flow_noise)
+                              flow_steps=args.flow_steps,flow_noise=args.flow_noise,
+                              state_embedding_precision=args.state_embedding_precision)
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
     if args.policy_batch_size<1:p.error("Policy batch size must be positive")
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
@@ -288,7 +308,8 @@ def main():
                          action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
                          cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
                          ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble,
-                         prediction_samples=args.prediction_samples) for index,case in enumerate(cases)]
+                         prediction_samples=args.prediction_samples,
+                         state_embedding_precision=args.state_embedding_precision) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -343,6 +364,7 @@ def main():
                     ik_max_residual=args.ik_max_residual,
                     temporal_ensemble_predictions=args.temporal_ensemble,
                     prediction_samples_per_observation=args.prediction_samples,
+                    state_embedding_precision=args.state_embedding_precision,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

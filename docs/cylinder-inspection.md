@@ -87,6 +87,10 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 为排查接口偏差，新增 `validate_wall_input_parity.py`：对三条完全相同的解码 RGB／机器人状态，分别运行真实训练 collator 与推理预处理，逐项比较 token、attention、图像张量、图像网格、归一化状态、两种 mask 和 MoE 路由；[结果全部逐值一致](experiments/2026-11-17-wall-input-parity.json)。该检查不加载模型权重或执行机器人动作。实际闭环记录另确认模型输入为 26 维、输出窗口为 32 帧，未复用旧模型配置。
 
+进一步加载真实权重检查模型内部状态 token，发现上述预处理一致没有覆盖投影前的精度转换：实际训练先将状态和 mask 转成 token 的 BF16，再由 FP32 状态投影处理；原生 flow 推理直接投影 FP32 状态。[原生差异记录](experiments/2026-11-18-state-embedding-native-discrepancy.json) 在两帧中确认差异。现在 `run_wall_cylinder.py` 默认 `--state-embedding-precision training`，在模型边界补上同样的转换；`native` 保留旧路径以供对照，字符串状态模型不受影响。新脚本 `validate_wall_state_embedding.py` 使用保存的同一 RGB／机器人状态、真实训练 scatter 方法和相同随机种子检查生产推理路径：[两帧状态 token 均逐值一致](experiments/2026-11-18-state-embedding-alignment.json)，原生路径分别有 332/200 个分量不一致；同输入重复原生前向逐值一致。`0_510` 前 8 帧右末端位置变化最大约 0.52/0.70 mm。该检查不推进物理，不计任务成功。
+
+修复精度后，同一 `0_510`、25 mL / seed 100 的完整闭环在 16.55 s 因倾斜失败，抬起仅 11.93 mm，[结果](experiments/2026-11-18-odometry510-training-precision.json) 没有达到有效抬起条件。后续 `0_1275` 使用相同新精度约定，建立夹持并有效抬起 6.94 cm，但 20.80 s 丢失抓持，最大滑移 50.79 mm，[结果](experiments/2026-11-18-odometry1275-training-precision.json) 仍失败。更早记录默认走原生精度，不能把跨约定的动作变化全部归因于继续训练。几何、物理参数、51 条训练输入和验收门槛不变；尚无模型完整通过单例，最终独立测试仍未使用。
+
 另外使用该检查点采集 15/35 mL、seed 101 的两段短开发轨迹，最大 25 s，仅供从实际访问状态补充恢复示范；分别于 18.4/21.4 s 碰撞终止。它们不算原 8 组或最终独立 12 组成绩。从各自第 4/10 s 状态得到的四条教师恢复均通过，新增滑移 10.15–10.38 mm、最终读数误差 0.061–0.183 mL，见 [恢复记录](experiments/2026-11-17-multivolume-recoveries.json)。这些特权教师结果只用于训练，不计模型成功。
 
 四条恢复另存为 `datasets/cylinder-recovery-odometry-v2`，共 55 条、33,795 帧，正在训练的 51 条输入不变。[追加校验](experiments/2026-11-17-odometry55-append-coverage.json) 证实原 31,488 帧的状态、动作、索引与来源逐值不变；沿用旧归一化时，新状态没有越界，新相对动作的两个分量分别有约 0.27%/0.68% 超出旧边界，其余为零。没有重新定义数值尺度以掩盖模型误差。新增 `--target-recovery-fraction .5` 将恢复组总抽样概率固定为一半，并保留组内 64/8/2 时间优先级；[实际官方加载检查](experiments/2026-11-17-odometry55-data-validation.json) 在排除验证帧后约为 49.91%，[权重清单](experiments/2026-11-17-odometry55-sampling-weights.json) 保存 SHA256。这里只验证了下一轮候选数据，尚未用它训练模型。
@@ -120,6 +124,8 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 空间一度仅余约 56 GiB，先对 6 份早期权重做过经 SHA256 流式重建验证的无损归档。随后用户明确要求删除不需要的旧实验，这 6 份旧差分归档及不用的完整基准也已清理；[历史归档记录与当前可用性](experiments/2026-11-18-checkpoint-archives.json) 保留哈希记录，不能再据此恢复已删除的旧版本。当前只保留一份关键历史模型 `cylinder-continuous-state-bc-v1/0_1020` 的 0.68 GiB 差分备份，依赖仍完整保留的当前最好模型 `cylinder-odometry-bc-v1/0_510`。
 
 完整权重保留官方预训练模型、当前最好／最新模型及训练核验所需的父模型；优化器只保留当前最好／最新两份。最新检查点 `0_1020` 完整保存并核验后，已删除无有效抓持的旧 `0_765` 权重和优化器。后续继续清理已评测淘汰的旧版本，保留待评测和候选模型，避免实验目录重新堆积。
+
+`0_1275` 完整保存、权重核验及物理评测完成后，又删除旧 `0_1020` 的权重和优化器（约 9.86 GiB）：该版本倾斜失败且抬起仅 7.12 mm，表现低于保留的 `0_510` 和最新版本。项目当前约 40.09 GiB，磁盘可用约 189.06 GiB，[清理清单摘要](experiments/2026-11-18-storage-cleanup.json) 保存删除理由和保留项。当前唯一完整训练导出为 `datasets/cylinder-recovery-odometry-v1`；原始 56 条当前／后续候选示范保留。下文较早的独立导出和输入快照属于历史记录，其重复数据载荷已删除，不能再当作完整可用副本；小型配置、哈希和实验结果仍保留。
 
 归档工具解包在任务目录 `.tools/xdelta3`。[小文件验证](experiments/2026-11-18-checkpoint-archive-validation.json) 覆盖逐字节恢复、默认保留原文件、拒绝覆盖、错误基准和损坏差分拒绝恢复（包括 Python `-O`）。保留的历史模型也已逐字节重建核验，不改变任何权重数值。
 

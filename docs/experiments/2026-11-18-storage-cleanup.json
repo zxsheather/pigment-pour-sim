@@ -9,12 +9,12 @@
   "retained_full_weights": [
     "models/wall-oss-0.5/model.safetensors",
     "runs/cylinder-odometry-bc-v1/checkpoints/0_510/model.safetensors",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/model.safetensors",
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1275/model.safetensors",
     "runs/cylinder-recovery-centered-bc-v1/checkpoints/0_510/model.safetensors"
   ],
   "retained_optimizer_states": [
     "runs/cylinder-odometry-bc-v1/checkpoints/0_510/optimizer.pt",
-    "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/optimizer.pt"
+    "runs/cylinder-odometry-bc-v1/checkpoints/0_1275/optimizer.pt"
   ],
   "retained_key_fallback_archive": "runs/cylinder-continuous-state-bc-v1/checkpoints/0_1020/model.safetensors.xdelta-archive",
   "fallback_original_bytes": 8978728704,
@@ -47,6 +47,18 @@
       "reason": "Evaluated no-grasp failure superseded by fully saved/audited checkpoint1020",
       "estimated_allocated_bytes": 1613290955,
       "deleted_at": 1794935559.0153732
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/model.safetensors",
+      "reason": "Superseded by fully saved and audited1275; evaluated1020 had no valid4cm lift and performed worse than retained510 and latest1275",
+      "estimated_allocated_bytes": 8978739200,
+      "deleted_at": 1794938081.2758904
+    },
+    {
+      "path": "runs/cylinder-odometry-bc-v1/checkpoints/0_1020/optimizer.pt",
+      "reason": "Superseded by fully saved and audited1275; evaluated1020 had no valid4cm lift and performed worse than retained510 and latest1275",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794938082.410869
     }
   ],
   "retention_policy": "Keep pretrained, required parent, selected best, latest complete and pending/candidate checkpoints; prune older evaluated no-grasp failures, review held failures before pruning.",
@@ -93,5 +105,12 @@
   "project_gib_after_cleanup": 40.13,
   "free_gib_after_cleanup": 189.11,
   "approximate_net_project_gib_freed": 88.55,
-  "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning."
+  "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
+  "latest_retention_check": {
+    "time": 1794938082.5172517,
+    "removed_this_check_bytes": 10592034816,
+    "project_gib": 40.09,
+    "free_gib": 189.06,
+    "training_continues": true
+  }
 }
