@@ -1,0 +1,94 @@
+{
+  "scope": "Training-only first8 teacher commands versus recorded first8 neural forecasts at the initial robot state. Diagnostic, not task success or a paired image-conditioned ground truth test.",
+  "training_full_episodes": 44,
+  "teacher_initial_forward_min_max_m_s": [
+    0.0,
+    0.0
+  ],
+  "teacher_initial_yaw_min_max_rad_s": [
+    0.0,
+    0.0
+  ],
+  "teacher_initial_joint_delta_absmax_rad": [
+    0.00021772799664177,
+    0.0009455680847167969,
+    0.005090951919555664,
+    0.005857348442077637,
+    0.00021772799664177,
+    1.6054568698770089e-12
+  ],
+  "teacher_initial_gripper_fraction_min_max": [
+    0.6974359154701233,
+    0.6974359154701233
+  ],
+  "model_forecasts": [
+    {
+      "step": 128,
+      "robot_joint_anchor_max_abs_difference_from44teachers": 0.0,
+      "initial_full_robot_state_max_abs_difference_from44teachers": 0.0,
+      "first8_forward_m_s": [
+        -0.002237774431705475,
+        -0.0016758143901824951,
+        -0.006038233637809753,
+        0.0051169320940971375,
+        -0.0075944289565086365,
+        0.004858262836933136,
+        -0.004599511623382568,
+        0.0008134320378303528
+      ],
+      "first8_joint_delta_absmax_rad": [
+        0.07105225324630737,
+        0.05010348558425903,
+        0.037330031394958496,
+        0.10807251930236816,
+        0.1016497015953064,
+        0.004500161856412888
+      ],
+      "first8_gripper_fraction": [
+        0.44724297523498535,
+        0.45797669887542725,
+        0.45147740840911865,
+        0.3836137652397156,
+        0.3694973587989807,
+        0.46069636940956116,
+        0.36222606897354126,
+        0.3772031366825104
+      ],
+      "first8_forward_outside_teacher_range_count": 8
+    },
+    {
+      "step": 256,
+      "robot_joint_anchor_max_abs_difference_from44teachers": 0.0,
+      "initial_full_robot_state_max_abs_difference_from44teachers": 0.0,
+      "first8_forward_m_s": [
+        0.0013082921504974365,
+        5.40316104888916e-05,
+        -0.0017578303813934326,
+        0.00861356407403946,
+        -0.0036807656288146973,
+        0.00897730141878128,
+        0.0007018223404884338,
+        0.005155198276042938
+      ],
+      "first8_joint_delta_absmax_rad": [
+        0.08496063947677612,
+        0.04391777515411377,
+        0.04283726215362549,
+        0.10199707746505737,
+        0.08718842267990112,
+        0.0032746121287345886
+      ],
+      "first8_gripper_fraction": [
+        0.42094874382019043,
+        0.4326733648777008,
+        0.4335177540779114,
+        0.38083726167678833,
+        0.35113662481307983,
+        0.42820388078689575,
+        0.3520609140396118,
+        0.3579426407814026
+      ],
+      "first8_forward_outside_teacher_range_count": 8
+    }
+  ]
+}

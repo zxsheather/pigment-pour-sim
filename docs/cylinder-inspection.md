@@ -173,7 +173,32 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 [已记录输出的 CPU 诊断](experiments/2026-11-18-joint-position128-failure-analysis.json) 检查 225 次观测、1,800 个执行帧：接触数全部为零；前 8 帧执行前缀中的相对动作均处于训练声明边界内。实际绝对关节目标有 555 帧触发合法范围投影，首次在 25.30 s，最大 0.1180 rad。唯一超出状态声明边界的是底盘航向角，在 82.40 s 后出现 19 次，不能用这个晚期现象解释先前始终未抓住。这里测量的是失败轨迹中的现象，未证明关节投影或晚期状态裁剪的因果作用；不据此新增滤波、改材料或放宽验收。诊断源码与原始 JSON 一并保存。
 
-关节 `0_256` 已完整保存并通过 [同一权重审计](experiments/2026-11-18-joint-position256-weight-audit.json)：258 个动作／状态张量更新，581 个冻结张量不变；真实模型闭环已经启动，尚无完整结果。[训练来源采样检查](experiments/2026-11-18-joint-position-sampling-phase-audit.json) 确认 31,797 帧中的 12 类教师阶段均有正采样概率；恢复示范占预期采样质量的 50%，靠近／闭合／抬起分别约 21.74%／3.39%／4.34%。阶段只用于这份离线统计，不进入策略输入；这份统计不证明当前采样配比最优，也未据此更改正在训练的数据或权重。
+关节 `0_256` 已完整保存并通过 [同一权重审计](experiments/2026-11-18-joint-position256-weight-audit.json)：258 个动作／状态张量更新，581 个冻结张量不变。[完整模型闭环](experiments/2026-11-18-joint-position256-closed-loop.json) 仍是 0/1：未建立夹持、抬起为零，52.65 s 因触桌失败；底盘独自后退 27.66 cm 不计任务完成。[记录诊断](experiments/2026-11-18-joint-position256-failure-analysis.json) 中，1,053 帧接触均为零，132 次 18D 观测都处于现有归一化边界内；546 帧绝对关节目标触发限位投影，最大 0.2390 rad。恢复 52.40 s 的实际物理状态并重放末尾 5 帧有界指令，[数值回放](experiments/2026-11-18-joint-position256-collision-replay.json) 的 23D 机器人状态差异为零，复现右臂 `right_arm_link3` 与桌面约 1.125 mm 的穿入，超过原有 1 mm 禁入阈值；未放宽该阈值。这不是新增模型试跑或成功成绩。
+
+[初始动作对照](experiments/2026-11-18-joint-position-initial-forecast-coverage.json) 确认两份模型的初始 18D 机器人状态与 44 条完整教师示范逐值一致。教师首 8 帧夹爪开度比例均为 0.6974，底盘速度为零，关节相对增量最大约 5.86 mrad；模型相应关节输出最大约 0.10–0.11 rad、夹爪约 0.35–0.46。这里不是相同 RGB 条件下的逐帧专家真值对照，只说明当前早期预测尚未接近这批训练起点的动作分布；初始机器人状态没有缺失覆盖。实际 Wall 生成路径在 `_finalize_flow_action_output` 中已执行反归一化，没有据上述数值另加一次变换。
+
+[训练来源采样检查](experiments/2026-11-18-joint-position-sampling-phase-audit.json) 确认 31,797 帧中的 12 类教师阶段均有正采样概率；恢复示范占预期采样质量的 50%，靠近／闭合／抬起分别约 21.74%／3.39%／4.34%。阶段只用于这份离线统计，不进入策略输入；这份统计不证明当前采样配比最优，也未据此更改正在训练的数据或权重。
+
+随后关节 `0_384` 完整保存并通过 [权重审计](experiments/2026-11-18-joint-position384-weight-audit.json)，但 [真实完整闭环](experiments/2026-11-18-joint-position384-closed-loop.json) 仍是 0/1：90.00 s 超时，未建立夹持，抬起为零，底盘独自后退 42.92 cm。其 [记录诊断](experiments/2026-11-18-joint-position384-failure-analysis.json) 中，1,800 帧接触数全部为零，636 帧关节目标触发限位投影，最大 0.2562 rad；仅航向状态在 86.80 s 后 8 次超出归一化边界，仍不能解释之前未抓住。训练继续到后续检查点，没有据此运行原 8／开发 12／独立 12 组。[保留记录](experiments/2026-11-18-joint-position384-retention-and-new-source.json) 表明，在新模型实际加载后已删除失败 `0_256` 的旧权重／优化器约 9.86 GiB，保留其失败轨迹、预测和诊断，以及 `0_128` 暂定参考、最新 `0_384`、父模型 `0_768` 与官方预训练；优化器只保留最新一份。
+
+为下一轮准备纠正数据，从真实 `0_256` 的 10.0 s 状态恢复完整物理状态、速度、伺服缓存和接触求解器状态，仅将新示范时钟归零。固定几何和现有教师用 28.25 s 完成完整动作，最大抬起 11.94 cm、后退 23.35 cm、最大滑移 9.66 mm、距相机 37.30 cm，三次读数均为 24.939 mL（误差 0.061 mL）。[565 帧关节重建](experiments/2026-11-18-joint-position256-grasp-reconstruction.json) 对机器人状态、量筒位置与姿态的差异均为零；[原始数据检查](experiments/2026-11-18-joint-position256-grasp-recovery-validation.json) 验证初始 18D 策略观测逐值不变、三路 448px 视频各 565 帧且时间对齐，以及全部 H32／首 8 帧动作和状态均位于当前关节归一化边界内。这是**程序教师纠正示范，不是神经网络成功**。当前 52 条训练数据的 21 个文件 SHA256 未变；新示范只登记为后续候选，尚未导出或训练。原始成功示范现共 60 条，候选配方为原 52 条加额外 6 条，另有 2 条历史未选示范。
+
+`validate_raw_cylinder_recovery.py --joint-reconstruction PATH` 支持上述 18D／9D 数据；传入关节配置时必须同时提供已通过的同源重建。[旧笛卡尔恢复回归](experiments/2026-11-18-raw-validator-cartesian-regression.json) 仍验证 309 帧、26D／23D 和三路视频，不改变其归一化。没有新增完整数据集副本。
+
+## 完整神经网络候选的验收
+
+新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：
+
+```bash
+cd /data/hlou/pigment-pour-study
+.venv-wall/bin/python pigment-pour-sim/simulation/evaluate_cylinder_joint_candidate.py \
+  --candidate runs/cylinder-joint-position-bc-v1/candidate-ready.json \
+  --output runs/cylinder-joint-position-bc-v1-acceptance
+```
+
+脚本先核验真实单例的完整物理与三次 RGB 读数、官方几何、执行源码与已审计权重，再依次运行原 8 组、开发 12 组和独立 12 组；前一套失败就停止。独立测试只在前两套全部通过后预定，并在 `runs/cylinder-policy-independent-suite-ledger.jsonl` 中先持久化记录，防止中断后或改模型后悄悄复用。同一集合已预定／使用时会拒绝再次启动；若其失败被用于调参，须预先定义新的最终集合。完整套件只保存数值记录和最终图，复用单例成功录像，避免积累逐帧图片缓存。配置、代码、权重和测试配置哈希均保留；即便 32 组全部通过，脚本也只生成待最终审计的证据，不自动完成目标。
+
+[拒绝路径检查](experiments/2026-11-18-joint-candidate-acceptance-negative-validation.json) 使用真实失败的关节 `0_128`／`0_256`，两者均在启动任何套件前被拒绝，独立测试账本未变；另在临时账本用原 8 组配置的语义哈希及虚拟模型标识检查重复预定被拒绝，案例重排或展开默认参数不改变集合身份，没有调用真实独立案例。当前没有完整成功的神经网络候选，因此成功路径和 32 组真实验收仍待实际执行，不能将这些脚本检查计作模型任务通过。
 
 另外使用该检查点采集 15/35 mL、seed 101 的两段短开发轨迹，最大 25 s，仅供从实际访问状态补充恢复示范；分别于 18.4/21.4 s 碰撞终止。它们不算原 8 组或最终独立 12 组成绩。从各自第 4/10 s 状态得到的四条教师恢复均通过，新增滑移 10.15–10.38 mm、最终读数误差 0.061–0.183 mL，见 [恢复记录](experiments/2026-11-17-multivolume-recoveries.json)。这些特权教师结果只用于训练，不计模型成功。
 

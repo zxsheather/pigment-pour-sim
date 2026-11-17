@@ -15,6 +15,7 @@ import yaml
 
 from compute_cylinder_norm_stats import relative_chunks
 from validate_recovery_append import coverage
+from cylinder_joint_actions import joint_observation,joint_command_action,relative_joint_chunks
 
 
 def require(condition,message):
@@ -25,6 +26,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--episode',type=Path,required=True)
     parser.add_argument('--config',type=Path,required=True)
+    parser.add_argument('--joint-reconstruction',type=Path,
+        help='Verified robot joint reconstruction, required for a joint-policy config')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     require(not args.output.exists(),'Refusing to overwrite validation')
@@ -35,6 +38,10 @@ def main():
     require(provenance['kind']=='expert_recovery_training_only','Expected recovery provenance')
     geometry=json.loads((args.episode/'geometry_audit.json').read_text())
     require(geometry['passed'] and geometry['custom_pads']==0,'Geometry audit failed')
+    cfg=yaml.safe_load(args.config.read_text());normpath=Path(cfg['data']['norm_stats_path'])
+    joint='follow_right_arm_joint_position_relative' in cfg['task']['dof_config']
+    require(joint==(args.joint_reconstruction is not None),
+            'Joint configs require a verified joint reconstruction; Cartesian configs do not use it')
     with np.load(args.episode/'starting_integration_state.npz') as start, np.load(
             Path(provenance['policy_episode'])/'recovery_physics.npz') as source:
         index=provenance['snapshot_index']
@@ -45,10 +52,26 @@ def main():
                     ('applied_base_action',source['applied_base_action'][index])]:
             require(np.array_equal(start[a],b),f'Restored source mismatch: {a}')
     with np.load(args.episode/'trajectory.npz') as data:
-        states=np.concatenate([data['state'],data['base_pose']],axis=1).astype(np.float32).astype(np.float64)
-        actions=data['action'].astype(np.float32).astype(np.float64)
         count=metadata['frames']
-        require(count>0 and states.shape==(count,26) and actions.shape==(count,23),'Feature shape mismatch')
+        if joint:
+            replay=json.loads((args.joint_reconstruction/'summary.json').read_text())
+            require(replay['passed'] and replay['source']==str(args.episode.resolve())
+                    and replay['frames_reconstructed']==count
+                    and replay['trajectory_sha256']==hashlib.sha256((args.episode/'trajectory.npz').read_bytes()).hexdigest(),
+                    'Joint reconstruction does not match this recovery')
+            with np.load(args.joint_reconstruction/'robot_joint_observations.npz') as joints:
+                states=joint_observation(joints['right_qpos'],joints['right_qvel'],data['state'],data['base_pose']).astype(np.float64)
+            actions=joint_command_action(data['joint_command']).astype(np.float64)
+            state_width,action_width=18,9
+            with np.load(Path(provenance['policy_episode'])/'model_observations.npz') as observed:
+                require(observed['state'].shape[1]==18,'Expected a joint-policy recovery source')
+                require(np.array_equal(states[0],observed['state'][provenance['snapshot_index']]),
+                        'Initial joint-policy observation changed during recovery')
+        else:
+            states=np.concatenate([data['state'],data['base_pose']],axis=1).astype(np.float32).astype(np.float64)
+            actions=data['action'].astype(np.float32).astype(np.float64)
+            state_width,action_width=26,23
+        require(count>0 and states.shape==(count,state_width) and actions.shape==(count,action_width),'Feature shape mismatch')
         require(np.isfinite(states).all() and np.isfinite(actions).all(),'Nonfinite robot features')
         require(metadata['fps']==20 and np.allclose(data['timestamp'],np.arange(count)/20),'Numeric timestamps mismatch')
     videos={}
@@ -67,20 +90,20 @@ def main():
             require(decoded==count,'Decoded video frame count mismatch')
         videos[camera]=dict(frames=count,width=448,height=448,
             sha256=hashlib.sha256(path.read_bytes()).hexdigest(),bytes=path.stat().st_size)
-    cfg=yaml.safe_load(args.config.read_text());normpath=Path(cfg['data']['norm_stats_path'])
     norm=json.loads(normpath.read_text())['norm_stats'];horizon=cfg['task']['action_horizon_flow']
-    chunks=relative_chunks(states,actions,horizon)
+    chunks=(relative_joint_chunks(states,actions,horizon) if joint else relative_chunks(states,actions,horizon))
     require(np.isfinite(chunks).all(),'Nonfinite relative labels')
     report=dict(kind='raw_recovery_training_candidate_validation',episode=str(args.episode.resolve()),
-        frames=count,robot_state_dimensions=26,action_dimensions=23,
+        frames=count,robot_state_dimensions=state_width,action_dimensions=action_width,
+        action_space='joint' if joint else 'cartesian',
         success_is_privileged_teacher_only=True,source_integration_state_and_controller_exactly_preserved=True,
         no_duplicate_export_created=True,training_not_modified_by_this_check=True,
         source_provenance=provenance,teacher_result=result,video_alignment=videos,
         trajectory_sha256=hashlib.sha256((args.episode/'trajectory.npz').read_bytes()).hexdigest(),
         norm_stats_sha256=hashlib.sha256(normpath.read_bytes()).hexdigest(),horizon=horizon,
         state_coverage=coverage(states,norm['observation.state']),
-        horizon_action_coverage=coverage(chunks.reshape(-1,23),norm['action']),
-        first8_action_coverage=coverage(chunks[:,:8].reshape(-1,23),norm['action']),
+        horizon_action_coverage=coverage(chunks.reshape(-1,action_width),norm['action']),
+        first8_action_coverage=coverage(chunks[:,:8].reshape(-1,action_width),norm['action']),
         source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     report['data_integrity_passed']=True
     report['normalization_covers_all_labels']=(report['state_coverage']['maximum_bound_excess']==0
