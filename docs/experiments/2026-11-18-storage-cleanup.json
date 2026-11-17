@@ -13,8 +13,7 @@
     "models/wall-oss-0.5/model.safetensors"
   ],
   "retained_optimizer_states": [
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/optimizer.pt",
-    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_256/optimizer.pt"
+    "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384/optimizer.pt"
   ],
   "retained_key_fallback_archive": null,
   "fallback_original_bytes": 8978728704,
@@ -119,6 +118,12 @@
       "reason": "New128 complete weights and optimizer saved/audited; old2040 optimizer no longer needed. Parent2040 weights retained for all future audits.",
       "estimated_allocated_bytes": 1613295616,
       "deleted_at": 1794946058.3592985
+    },
+    {
+      "path": "runs/cylinder-hold-correction-bc-v1/checkpoints/0_256/optimizer.pt",
+      "estimated_allocated_bytes": 1613295616,
+      "deleted_at": 1794948441.5179343,
+      "reason": "Latest384 model+optimizer completely saved and weight audit passed; retain256 model weights only, latest384 optimizer supports restart"
     }
   ],
   "retention_policy": "Keep pretrained, required current parent, current best/latest/pending weights; only latest optimizer; historical unsuccessful fallback and archive base retired together.",
@@ -167,12 +172,14 @@
   "approximate_net_project_gib_freed": 88.55,
   "policy_after_cleanup": "Keep one active dataset export plus raw episodes needed to rebuild the next dataset; retain pretrained, required parent, best/latest and pending/candidate checkpoints. Prune older evaluated no-grasp failures and review held failures before pruning.",
   "latest_retention_check": {
-    "time": 1794948214.9897206,
-    "project_gib": 39.744,
-    "free_gib": 188.815,
+    "time": 1794948441.606536,
+    "project_gib": 38.262,
+    "free_gib": 190.296,
     "training_continues": true,
     "active_dataset_sha256_unchanged": true,
-    "retired_historical_fallback": true
+    "retired_historical_fallback": true,
+    "latest_restart": "hold-correction384",
+    "latest384_weight_audit_passed": true
   },
   "subsequent_redundant_payload_removals": [
     {
@@ -233,5 +240,6 @@
     "free_after_gib": 188.815,
     "active_dataset_file_count": 17,
     "dataset_sha256_before_after_identical": true
-  }
+  },
+  "latest_additional_cleanup_allocated_gib": 10.5406
 }
