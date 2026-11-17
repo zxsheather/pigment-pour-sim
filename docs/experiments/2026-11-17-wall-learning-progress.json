@@ -201,5 +201,51 @@
       "angular_speed_rad_s": 8.19648820189569e-16
     },
     "decision": "Not selected: failed to establish grasp; filtering changes deployment distribution"
+  },
+  "recovery_centered": [
+    {
+      "step": 255,
+      "success": false,
+      "reason": "Unreachable model action:0.00224",
+      "seconds": 10.100000000000852,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.008462727358144129,
+        "camera_distance_m": 0.661687063012002,
+        "linear_speed_m_s": 8.506448682564119e-14,
+        "angular_speed_rad_s": 2.9929220422413047e-15
+      }
+    }
+  ],
+  "centered255_servo_envelope": {
+    "success": false,
+    "reason": "Unreachable model action:0.00207",
+    "seconds": 32.549999999973394,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "settings": {
+      "cartesian_speed_limit_m_s": 0.04,
+      "angular_speed_limit_rad_s": 0.1
+    },
+    "final_task_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.17153041037676153,
+      "camera_distance_m": 0.8203008911875452,
+      "linear_speed_m_s": 8.506471633095385e-14,
+      "angular_speed_rad_s": 1.7173638959697259e-15
+    },
+    "decision": "Did not establish grasp; not selected as a successful policy"
   }
 }

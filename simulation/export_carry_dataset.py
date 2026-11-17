@@ -43,6 +43,8 @@ def main():
                         help="Copy validated source H.264 videos without a second lossy encoding.")
     parser.add_argument("--base-dataset",type=Path,
                         help="Copy an immutable existing dataset, then append new successful episodes.")
+    parser.add_argument("--include-base-odometry",action="store_true",
+                        help="Append recorded robot base x/y/yaw to the 23D state; action stays 23D.")
     args = parser.parse_args()
     if args.output.exists():
         parser.error("output must be a new directory")
@@ -59,9 +61,14 @@ def main():
         with np.load(episode / "trajectory.npz") as data:
             state, action = data["state"].copy(), data["action"].copy()
             timestamps = data["timestamp"].copy()
+            odometry=data["base_pose"].copy() if args.include_base_odometry else None
         count = metadata["frames"]
         if state.shape != (count, 23) or action.shape != state.shape:
             raise ValueError(f"Unexpected vector dimensions: {episode}")
+        if odometry is not None:
+            if odometry.shape!=(count,3) or not np.isfinite(odometry).all():
+                raise ValueError(f"Invalid robot odometry: {episode}")
+            state=np.concatenate([state,odometry],axis=1)
         if not np.isfinite(state).all() or not np.isfinite(action).all():
             raise ValueError(f"Nonfinite demonstration: {episode}")
         if metadata["fps"] != 20 or not np.allclose(timestamps, np.arange(count) / 20):
@@ -80,7 +87,8 @@ def main():
              for field, axes in (("position", range(3)), ("rotation_row", range(6)),
                                  ("gripper", range(1))) for axis in axes]
     names += ["base_vx", "base_vy", "base_yaw_rate"]
-    features = {"observation.state": {"dtype": "float32", "shape": (23,), "names": names},
+    state_names=names+(["base_odometry_x","base_odometry_y","base_odometry_yaw"] if args.include_base_odometry else [])
+    features = {"observation.state": {"dtype": "float32", "shape": (len(state_names),), "names": state_names},
                 "action": {"dtype": "float32", "shape": (23,), "names": names}}
     for camera in CAMERAS:
         features[f"observation.images.{camera}"] = {
@@ -135,6 +143,7 @@ def main():
                     raise ValueError(f"Extra video frames: {episode}/{camera}")
         dataset.save_episode(parallel_encoding=False)
         provenance.append({"source": str(episode.resolve()), "metadata": metadata,
+                           "observation_state_fields":state_names,
                            "video_export": "source_h264_stream_copy" if args.reuse_source_videos else "lerobot_reencode",
                            "source_video_sha256": {key: hashlib.sha256(path.read_bytes()).hexdigest()
                                                    for key, path in source_videos.items()},
@@ -149,6 +158,7 @@ def main():
     assert reopened.num_frames==old_frames+sum(len(item[2]) for item in validated)
     assert len(reopened.hf_dataset)==reopened.num_frames
     item = reopened[0]
+    assert item["observation.state"].shape == (len(state_names),)
     assert item["action"].shape == (23,)
     for camera in CAMERAS:
         assert item[f"observation.images.{camera}"].shape[0] == 3

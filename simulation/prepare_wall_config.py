@@ -24,6 +24,8 @@ def main():
     parser.add_argument("--train-episode-fraction",type=float,default=.75,
                         help="Official loader selects this leading fraction of episodes; use 1 for a train-only export.")
     parser.add_argument("--state-representation",choices=("string","continuous"),default="string")
+    parser.add_argument("--base-odometry",action="store_true",
+                        help="Use robot base x/y/yaw in the three previously masked state slots.")
     parser.add_argument("--state-projection-lr",type=float,default=3e-4)
     parser.add_argument("--seed",type=int,default=42)
     parser.add_argument("--frame-sampling-weights",type=Path,
@@ -47,6 +49,10 @@ def main():
               "follow_right_ee_rotation_6D_relative": 6, "follow_right_gripper": 1,
               "velocity_decomposed": 3, "action_padding": 3}
     state = {key.removesuffix("_relative"): value for key, value in action.items()}
+    if args.base_odometry:
+        state.pop("action_padding");state["base_odometry"]=3
+    info=json.loads((dataset/"meta/info.json").read_text())
+    assert info["features"]["observation.state"]["shape"]==[26 if args.base_odometry else 23]
     config = {
         "model_type": "qwen2_5",
         "task": {"dof_config": action, "ar_dof_config": dict(action), "agent_pos_config": state,

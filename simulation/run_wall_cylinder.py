@@ -20,7 +20,7 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
-from robot_action_filter import RobotActionFilter
+from robot_action_filter import RobotActionFilter,limit_pose_step
 
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
@@ -29,30 +29,51 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
 
 
 class CylinderWallPolicy(CarryWallPolicy):
-    def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10):
+    def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random"):
         if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
         super().__init__(checkpoint,train_config,norm_key)
         self.flow_steps=flow_steps
-        self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0)
+        self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
+        self.state_width=26 if self.with_odometry else 23
+        if flow_noise not in ("random","zero"):raise ValueError("Invalid flow noise mode")
+        if flow_noise=="zero":
+            # Pinned Wall-X inference hook. Rebuild the FIRST flow token too;
+            # replacing just the integration tensor would leave random noise
+            # in the prefill embedding and would not be deterministic.
+            prepare=self._model._prepare_flow_action_inputs
+            def prepare_zero_noise(*args,**kwargs):
+                ctx=prepare(*args,**kwargs)
+                ctx["noise"]=torch.zeros_like(ctx["noise"])
+                ctx["noisy_action"]=ctx["noise"].clone()
+                time=ctx["times"][0].expand(ctx["batch_size"])
+                embedding,condition=self._model.action_preprocessor.step(
+                    timestep=time,noisy_action=ctx["noisy_action"],dof_mask=ctx["dof_mask"])
+                ctx["inputs_embeds"][ctx["flow_action_mask"]]=embedding.reshape(-1,ctx["inputs_embeds"].shape[-1]).to(ctx["inputs_embeds"].dtype)
+                ctx["adarms_cond"]=condition
+                return ctx
+            self._model._prepare_flow_action_inputs=prepare_zero_noise
+        self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
+                                robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
+                                flow_noise=flow_noise)
 
     @torch.inference_mode()
     def predict_many(self,observations,instruction=CYLINDER_INSTRUCTION):
         encoded=[]
         for obs in observations:
-            state=np.zeros((1,1,26),np.float32);state[...,:23]=obs["state"]
-            mask=np.zeros_like(state);mask[...,:23]=1
+            assert obs["state"].shape==(self.state_width,)
+            state=np.zeros((1,1,26),np.float32);state[...,:self.state_width]=obs["state"]
+            mask=np.zeros_like(state);mask[...,:self.state_width]=1
             dof=np.zeros((1,self._action_horizon,26),np.float32);dof[...,:23]=1
             encoded.append(dict(proprioception=state,agent_pos_mask=mask,dof_mask=dof,**obs["images"]))
         prefix,postfix=self._get_flow_prompt(instruction)
         inputs=self._construct_model_input(encoded,[prefix]*len(encoded),[postfix]*len(encoded))
         padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
                                         inputs["dataset_names"]).to("cuda")
-        # The official normalizer is padded to 26 dimensions, so normalizing
-        # an all-zero vector turns its virtual tail into -1. The training
-        # collator pads AFTER normalization and supplies zeros instead. These
-        # masked values still enter w1 alongside the mask: match training.
+        # Match the training collator's zero padding after normalization.
+        # The action tail is masked; the state tail is observed only for the
+        # explicit robot-odometry experiment.
         padding[...,23:]=0
-        inputs["proprioception"][...,23:]=0
+        inputs["proprioception"][...,self.state_width:]=0
         output=self._model.generate_flow_action(action_horizon=self._action_horizon,action_dim=26,
             num_inference_timesteps=self.flow_steps,padding_action=padding,**inputs)
         actions=output["predict_action"].float().cpu().numpy()
@@ -62,7 +83,8 @@ class CylinderWallPolicy(CarryWallPolicy):
 
 
 class CylinderTrial:
-    def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.):
+    def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
+                 cartesian_speed_limit=0.,angular_speed_limit=0.):
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
         if set(options)-{"grasp_x","grasp_height","solver_impratio","physics_dt","grip_force_target"}:
@@ -74,6 +96,8 @@ class CylinderTrial:
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
         self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
+        self.with_odometry=with_odometry
+        self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
@@ -91,6 +115,8 @@ class CylinderTrial:
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
+        if self.with_odometry:
+            observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
         physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
         mujoco.mj_getState(self.env.model,self.env.data,physics,self.recovery_spec)
@@ -110,6 +136,7 @@ class CylinderTrial:
         env=self.env;state=env.state_vector();t=float(env.data.time)
         before_metrics=env.metrics()
         raw_action=action.copy();action=self.action_filter(action)
+        action=limit_pose_step(action,state,self.cartesian_speed_limit*CONTROL_DT,self.angular_speed_limit*CONTROL_DT)
         try:
             joints,opening,forward,yaw=cartesian_to_joint_target(env,action)
         except ValueError as error:
@@ -167,12 +194,16 @@ class CylinderTrial:
             evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
             final_task_gates=self.task_gates,
             action_filter_seconds=self.action_filter.seconds,
+            robot_servo_envelope=dict(cartesian_speed_limit_m_s=self.cartesian_speed_limit,
+                                      angular_speed_limit_rad_s=self.angular_speed_limit),
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
             final_tilt_rad=env.metrics()["bottle_tilt_rad"],geometry_audit=self.geometry_report,
             inference_seconds=self.latencies,executed_dimensions=list(range(10,21))+[22],ignored_dimensions=list(range(10))+[21],
-            observation_inputs="Three RGB cameras and 23D robot proprioception; no object pose, phase or fill value",
+            observation_inputs=("Three RGB cameras and 26D robot proprioception including base x/y/yaw" if self.with_odometry else
+                                "Three RGB cameras and 23D robot proprioception")+"; no object pose, phase or fill value",
+            base_odometry=self.with_odometry,
             exact_input_images_recorded=bool(self.writers),
             low_level_controller="Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction")
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
@@ -207,23 +238,31 @@ def main():
     p.add_argument("--policy-batch-size",type=int,default=1,
                    help="Limit inference microbatch size for Thor memory and latency.")
     p.add_argument("--flow-steps",type=int,default=10,choices=range(1,101))
+    p.add_argument("--flow-noise",choices=("random","zero"),default="random",
+                   help="Diagnostic deterministic zero-latent decoding versus standard Gaussian sampling.")
     p.add_argument("--action-filter-seconds",type=float,default=0.,
                    help="Optional robot-command low-pass time constant; no object/task feedback.")
+    p.add_argument("--cartesian-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback translation limit, m/s; 0 disables.")
+    p.add_argument("--angular-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback rotation limit, rad/s; 0 disables.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
+    if any(not np.isfinite(x) or x<0 for x in [args.cartesian_speed_limit,args.angular_speed_limit]):
+        p.error("Cartesian servo limits must be finite and nonnegative")
     args.output.mkdir(parents=True,exist_ok=False)
     cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
     controller=json.loads(args.controller_config.read_text())
     torch.manual_seed(47)
-    policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key,flow_steps=args.flow_steps)
+    policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key,
+                              flow_steps=args.flow_steps,flow_noise=args.flow_noise)
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
     if args.policy_batch_size<1:p.error("Policy batch size must be positive")
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
     (args.output/"model_load.json").write_text(json.dumps(policy.load_report,indent=2)+"\n")
     trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
                          max_seconds=args.max_seconds,image_size=args.image_size,
-                         action_filter_seconds=args.action_filter_seconds) for index,case in enumerate(cases)]
+                         action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
+                         cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit) for index,case in enumerate(cases)]
     try:
         while True:
             active=[trial for trial in trials if not trial.done]
@@ -242,7 +281,7 @@ def main():
                 for trial in active:trial.fail("probe_only_no_execution")
                 break
             for trial,chunk,observation in zip(active,chunks,observations):
-                try:absolute=relative_to_absolute(chunk,observation["state"])
+                try:absolute=relative_to_absolute(chunk,observation["state"][:23])
                 except ValueError as error:trial.fail(str(error));continue
                 for action in absolute[:args.execute_steps]:
                     trial.step(action)
@@ -262,7 +301,10 @@ def main():
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
                     flow_steps=args.flow_steps,
+                    flow_noise=args.flow_noise,
                     action_filter_seconds=args.action_filter_seconds,
+                    robot_servo_envelope=dict(cartesian_speed_limit_m_s=args.cartesian_speed_limit,
+                                             angular_speed_limit_rad_s=args.angular_speed_limit),
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")

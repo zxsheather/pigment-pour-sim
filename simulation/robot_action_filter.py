@@ -9,6 +9,28 @@ from scipy.spatial.transform import Rotation
 from cylinder_actions import rotation_from_rows
 
 
+def limit_pose_step(command, robot_state, translation=0., rotation=0.):
+    """Bound a Cartesian command relative to measured robot pose before IK.
+
+    A zero bound disables that limit. Base/gripper outputs pass through.
+    This is a generic robot servo envelope, independent of task/object state.
+    """
+    output=np.asarray(command,dtype=float).copy()
+    state=np.asarray(robot_state,dtype=float)
+    if output.shape!=(23,) or state.shape!=(23,) or translation<0 or rotation<0:
+        raise ValueError("Invalid Cartesian servo envelope")
+    if translation:
+        delta=output[10:13]-state[10:13];size=np.linalg.norm(delta)
+        if size>translation:output[10:13]=state[10:13]+delta*(translation/size)
+    if rotation:
+        before=rotation_from_rows(state[13:19]);target=rotation_from_rows(output[13:19])
+        delta=Rotation.from_matrix(target@before.T).as_rotvec();size=np.linalg.norm(delta)
+        if size>rotation:
+            target=Rotation.from_rotvec(delta*(rotation/size)).as_matrix()@before
+            output[13:19]=target[:2].reshape(6)
+    return output
+
+
 class RobotActionFilter:
     def __init__(self, initial_state, seconds=0., dt=.05):
         if not np.isfinite(seconds) or seconds < 0 or dt <= 0:

@@ -1,0 +1,33 @@
+{
+  "kind": "real_forward_deterministic_decoding_check_no_physics_execution",
+  "flow_noise": "zero",
+  "shape": [
+    1,
+    16,
+    26
+  ],
+  "different_rng_seeds_same_output": true,
+  "max_difference": 0.0,
+  "model_load": {
+    "missing_keys": [],
+    "unexpected_keys": [
+      "action_preprocessor.normalizer_action.delta./data/hlou/pigment-pour-study/datasets/cylinder-official-bc-v2",
+      "action_preprocessor.normalizer_action.min./data/hlou/pigment-pour-study/datasets/cylinder-official-bc-v2",
+      "action_preprocessor.normalizer_propri.delta./data/hlou/pigment-pour-study/datasets/cylinder-official-bc-v2",
+      "action_preprocessor.normalizer_propri.min./data/hlou/pigment-pour-study/datasets/cylinder-official-bc-v2"
+    ],
+    "norm_key": "cylinder_official_v2",
+    "cameras": [
+      "face_view",
+      "left_wrist_view",
+      "right_wrist_view"
+    ],
+    "attention": "sdpa",
+    "torch": "2.9.0+cu130",
+    "flow_steps": 10,
+    "virtual_tail_after_normalization": 0,
+    "robot_state_dimensions": 23,
+    "base_odometry": false,
+    "flow_noise": "zero"
+  }
+}

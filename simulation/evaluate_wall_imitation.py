@@ -38,8 +38,10 @@ def main():
     results=[]
     for index in indices:
         observation=dict(state=data["state"][index],images=images[index])
+        if policy.with_odometry:
+            observation["state"]=np.r_[observation["state"],data["base_pose"][index]].astype(np.float32)
         prediction=policy.predict_many([observation],meta["instruction"])[0]
-        absolute=relative_to_absolute(prediction,observation["state"])
+        absolute=relative_to_absolute(prediction,observation["state"][:23])
         future=np.minimum(index+np.arange(len(absolute)),len(data["action"])-1)
         expected=data["action"][future]
         position=np.linalg.norm(absolute[:,10:13]-expected[:,10:13],axis=-1)

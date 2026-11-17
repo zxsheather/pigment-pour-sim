@@ -71,7 +71,11 @@ def main():
         assert batch["dof_mask"][..., 20:23].bool().all(), "Base actions were masked out"
         assert not batch["dof_mask"][..., 23:].bool().any(), "Padding contributes to loss"
         assert (batch["action_chunk"][...,23:]==0).all()
-        assert (batch["proprioception"][...,23:]==0).all()
+        with_odometry="base_odometry" in cfg.task.agent_pos_config
+        if with_odometry:
+            assert batch["agent_pos_mask"].bool().all()
+            assert raw["observation.state"].shape[-1]==26
+        else:assert (batch["proprioception"][...,23:]==0).all()
         sampling = {"sampler": type(loader.sampler).__name__}
         weights_path = cfg.data.lerobot_config.get("frame_sampling_weights_path")
         if weights_path:
@@ -84,13 +88,14 @@ def main():
                 expected_recovery_fraction=float(selected[selected>1].sum()/selected.sum()))
         report = {"shapes": shapes, "training_iterations_per_epoch": iters,
                   "sampling": sampling,
+                  "base_odometry_observed":with_odometry,
                   "active_base_dimensions": [20, 21, 22], "padding_dimensions": [23, 24, 25],
                   "finite": True, "dataset_names": batch.get("dataset_names"),
                   "state_unchanged_and_base_labels_preserved": True,
                   "relative_rotations_match_loader": True,
                   "episode_end_actions_repeat_last": True,
                   "selected_training_episodes": inner.hf_dataset.episodes,
-                  "virtual_action_and_state_tail": "zero after normalization",
+                  "virtual_action_and_state_tail":("Only action tail is padded; all 26 robot-state dimensions observed" if with_odometry else "zero after normalization"),
                   "note": "Data-path validation only; no model forward/backward."}
         args.output.write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report), flush=True)

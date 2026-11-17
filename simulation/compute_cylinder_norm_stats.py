@@ -54,7 +54,8 @@ def main():
     episodes=np.asarray(table["episode_index"]);frames=np.asarray(table["frame_index"])
     state=np.asarray(table["observation.state"].to_pylist(),dtype=np.float64)
     action=np.asarray(table["action"].to_pylist(),dtype=np.float64)
-    assert state.shape==action.shape and state.shape[1]==23
+    assert state.shape[0]==action.shape[0] and action.shape[1]==23 and state.shape[1] in (23,26)
+    assert state.shape[1]==(26 if "base_odometry" in cfg["task"]["agent_pos_config"] else 23)
     horizon=cfg["task"]["action_horizon_flow"];chunks=[];counts={}
     for episode in sorted(set(episodes)):
         selected=np.flatnonzero(episodes==episode);selected=selected[np.argsort(frames[selected])]
@@ -82,8 +83,14 @@ def main():
             low[start:start+9]=center-width/2;high[start:start+9]=center+width/2
             low[start+9]=0.;high[start+9]=1.
         low[20:23]=[-.12,-.12,-.3];high[20:23]=[.12,.12,.3]
+        if state.shape[1]==26:
+            center=(low[23:26]+high[23:26])/2
+            width=np.maximum(high[23:26]-low[23:26]+[.10,.10,.20],[.5,.5,.5])
+            low[23:26]=center-width/2;high[23:26]=center+width/2
         values["q01"]=low.tolist();values["q99"]=high.tolist()
         report["provenance"]["state_bounds"]="q01/q99 slots store robust bounds: training min/max plus 30mm position and 0.1 rotation-component margins per side, spans >=100mm/0.5; grippers [0,1], bounded base velocities. Not empirical percentiles."
+        if state.shape[1]==26:
+            report["provenance"]["robot_odometry_bounds"]="Training min/max plus 50mm x/y and 0.1rad yaw per side, minimum spans 0.5m/0.5rad; robot joint coordinates only"
     else:report["provenance"]["state_bounds"]="Empirical 1st/99th percentiles"
     if a.action_profile=="zero_centered":
         values=report["norm_stats"]["action"]
