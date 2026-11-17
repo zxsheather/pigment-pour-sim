@@ -4,6 +4,7 @@ Only robot kinematics and joint feedback enter the execution controller.
 Object truth and the calibrated RGB reader are used by the evaluator only.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import time
@@ -19,6 +20,10 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
+
+SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
+               for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
+                            "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
@@ -58,6 +63,7 @@ class CylinderTrial:
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
         self.next_read=0.;self.good_readings=[];self.latencies=[];self.writers={}
+        self.evaluation_interrupted=False
         if record:
             for cam in ("cylinder_overview","face_view"):
                 self.writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
@@ -72,14 +78,14 @@ class CylinderTrial:
     def step(self,action):
         env=self.env;state=env.state_vector();t=float(env.data.time)
         before_metrics=env.metrics()
-        for cam,writer in self.writers.items():writer.append_data(env.render(cam))
         try:
             joints,opening,forward,yaw=cartesian_to_joint_target(env,action)
-            _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
         except ValueError as error:
             self.fail(str(error));return
+        for cam,writer in self.writers.items():writer.append_data(env.render(cam))
         self.rows.append(dict(time=t,state=state,action=action.copy(),slip=before_metrics["bottle_slip_m"],
                               tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
+        _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
         if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
         if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
@@ -120,6 +126,7 @@ class CylinderTrial:
         rgb=env.render("face_view");reading=read_volume(rgb)
         imageio.imwrite(self.output/"final_face.png",rgb)
         summary=dict(policy="wall_oss_full_cylinder",success=self.success,failure_reason=self.reason,
+            evaluation_interrupted=self.evaluation_interrupted,source_sha256=SOURCE_SHA256,
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
@@ -145,12 +152,16 @@ def main():
     p.add_argument("--output",type=Path,required=True);p.add_argument("--execute-steps",type=int,default=4)
     p.add_argument("--max-seconds",type=float,default=90);p.add_argument("--probe-only",action="store_true")
     p.add_argument("--record",action="store_true");p.add_argument("--image-size",type=int,default=448)
+    p.add_argument("--policy-batch-size",type=int,default=1,
+                   help="Limit inference microbatch size for Thor memory and latency.")
     args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
     cases=json.loads(args.cases.read_text()) if args.cases else [dict(volume=args.volume,seed=args.seed,jitter=.004)]
     controller=json.loads(args.controller_config.read_text())
     torch.manual_seed(47)
     policy=CylinderWallPolicy(args.model,args.config or args.model/"config.yml",args.norm_key)
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
+    if args.policy_batch_size<1:p.error("Policy batch size must be positive")
+    if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
     (args.output/"model_load.json").write_text(json.dumps(policy.load_report,indent=2)+"\n")
     trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
                          max_seconds=args.max_seconds,image_size=args.image_size) for index,case in enumerate(cases)]
@@ -159,11 +170,15 @@ def main():
             active=[trial for trial in trials if not trial.done]
             if not active:break
             observations=[trial.observation() for trial in active]
-            start=time.monotonic();chunks=policy.predict_many(observations);torch.cuda.synchronize()
-            latency=time.monotonic()-start
-            for trial,chunk in zip(active,chunks):trial.chunks.append(chunk);trial.latencies.append(latency)
-            print(json.dumps(dict(active=len(active),chunk=len(active[0].chunks),inference_seconds=latency,
-                                  first_right_action=chunks[0,0,10:20].tolist())),flush=True)
+            chunks=[];latencies=[];inference_start=time.monotonic()
+            for first in range(0,len(active),args.policy_batch_size):
+                start=time.monotonic()
+                predicted=policy.predict_many(observations[first:first+args.policy_batch_size]);torch.cuda.synchronize()
+                latency=time.monotonic()-start
+                chunks.extend(predicted);latencies.extend([latency]*len(predicted))
+            for trial,chunk,latency in zip(active,chunks,latencies):trial.chunks.append(chunk);trial.latencies.append(latency)
+            print(json.dumps(dict(active=len(active),chunk=len(active[0].chunks),inference_seconds=time.monotonic()-inference_start,
+                                  first_right_action=chunks[0][0,10:20].tolist())),flush=True)
             if args.probe_only:
                 for trial in active:trial.fail("probe_only_no_execution")
                 break
@@ -173,10 +188,17 @@ def main():
                 for action in absolute[:args.execute_steps]:
                     trial.step(action)
                     if trial.done:break
+    except BaseException as error:
+        for trial in trials:
+            if not trial.done:
+                trial.evaluation_interrupted=True;trial.fail(f"evaluation_interrupted:{type(error).__name__}")
+        raise
     finally:
         results=[trial.finish() for trial in trials]
         report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
                     controller=controller,probe_only=args.probe_only,episodes=results,
+                    execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
+                    evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")
         print(json.dumps(dict(successes=report["successes"],total=report["total"])),flush=True)
