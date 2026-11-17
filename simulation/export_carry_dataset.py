@@ -89,7 +89,10 @@ def main():
         }
     dataset_class = SourceVideoDataset if args.reuse_source_videos else LeRobotDataset
     if args.base_dataset:
-        shutil.copytree(args.base_dataset,args.output)
+        # Derived per-frame sampling arrays no longer match after append.
+        # Keep the base export immutable and require fresh output weights.
+        shutil.copytree(args.base_dataset,args.output,
+            ignore=shutil.ignore_patterns("frame-sampling-weights*.npy","frame-sampling-weights*.json"))
         dataset=dataset_class(args.repo_id,root=args.output,video_backend="pyav",vcodec="h264")
         assert dataset.meta.info["robot_type"]==validated[0][1].get("robot_type","quanta_x1_planar_carry")
         for key,feature in features.items():
