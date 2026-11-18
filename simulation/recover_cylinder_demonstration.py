@@ -24,6 +24,8 @@ def main():
     p.add_argument("--reading-only",action="store_true",help="Held recovery after the robot already retreated: teach presentation/stopping/readout.")
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
+    p.add_argument("--lift-off-recovery",action="store_true",
+                   help="Teach a vertical lift from a stable loaded grasp at tray height.")
     p.add_argument("--eye-alignment-target-px",type=float,default=2.,
                    help="Teacher centering target before stable reads; acceptance remains at most2 pixels.")
     p.add_argument("--read-lateral-retries", type=float, nargs="+", default=[],
@@ -34,6 +36,8 @@ def main():
         p.error("Held recovery lift must be within [0,0.10] m")
     if a.held_initial_lift_m and (not a.start_holding or a.reading_only):
         p.error("Initial lift requires --start-holding without --reading-only")
+    if a.lift_off_recovery and (not a.start_holding or a.reading_only or a.held_initial_lift_m < .04):
+        p.error("Lift-off recovery requires --start-holding and an initial vertical lift of at least 0.04 m")
     if not np.isfinite(a.eye_alignment_target_px) or not .5<=a.eye_alignment_target_px<=2.:
         p.error("Eye alignment target must be within [0.5,2] pixels")
     if not all(np.isfinite(view) for view in a.read_lateral_retries):
@@ -96,11 +100,16 @@ def collect(a, controller, output):
         source_time=float(env.data.time)
         metrics=env.metrics();axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
         dof=env.model.joint("cylinder_free").dofadr[0]
-        recoverable=(metrics["grip_contacts"]<2 and abs(env.data.xpos[env.cylinder_body,2]-original_height)<.015
+        height=float(env.data.xpos[env.cylinder_body,2]-original_height)
+        recoverable=(metrics["grip_contacts"]<2 and abs(height)<.015
                      and axis[2]>np.cos(.10) and np.linalg.norm(env.data.qvel[dof:dof+3])<.02)
         if a.start_holding:
-            recoverable=(metrics["grip_contacts"]==2 and env.data.xpos[env.cylinder_body,2]-original_height>.02
-                         and axis[2]>np.cos(.12))
+            recoverable=metrics["grip_contacts"]==2 and height>.02 and axis[2]>np.cos(.12)
+        if a.lift_off_recovery:
+            recoverable=(metrics["grip_contacts"]==2 and abs(height)<=.005 and axis[2]>np.cos(.10)
+                         and np.linalg.norm(env.data.qvel[dof:dof+3])<.02
+                         and np.linalg.norm(env.data.qvel[dof+3:dof+6])<.30
+                         and not metrics["forbidden_contacts"])
         if a.reading_only:
             # After retreat the held cylinder can be below its original tray
             # height. That is a useful recovery state, not a task success.
@@ -117,6 +126,9 @@ def collect(a, controller, output):
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
+        if a.lift_off_recovery:
+            provenance["recovery_stage"]="lift_off_from_loaded_tray_grasp"
+            provenance["initial_cylinder_height_relative_to_tray_reset_m"]=height
         if "source_motion" in source:
             assert source["source_motion"]["kind"]=="bounded_joint_command_prefix_replay_training_only"
             provenance["source_motion"]=source["source_motion"]
