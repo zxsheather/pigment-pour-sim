@@ -242,9 +242,9 @@
     },
     "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000",
     "train_source_commit": "34725ab96946dd3d21066914385efad9bc4f094d",
-    "latest_logged_optimizer_step": 10,
+    "latest_logged_optimizer_step": 150,
     "first_gradient_log": "2026-11-19 01:56:03,747 - [rank0] - INFO - [FSDP Train] Step 0: {'train_loss': 0.002681884914636612, 'lr_group/action': 3e-05, 'visual_param_norm': 0.0, 'lr_group/state_projection': 0.0003, 'org_vlm_param_norm': 523.174560546875, 'grad_norm': 0.5087081789970398, 'action_expert_param_norm': 61.77717971801758, 'flow_loss': 0.002681884914636612, 'channel_loss_/data/hlou/pigment-pour-study/datasets/cylinder-joint-wrist-cue-v23_flow': 0.002681884914636612, 'total_param_norm': 526.8092651367188, 'lr': 3e-05}",
-    "latest_gradient_log": "2026-11-19 01:56:29,982 - [rank0] - INFO - [FSDP Train] Step 10: {'train_loss': 0.003636308258865029, 'lr_group/action': 3.0000000000000004e-05, 'lr_group/state_projection': 0.0003, 'grad_norm': 0.5351356208324433, 'flow_loss': 0.003636308258865029, 'channel_loss_/data/hlou/pigment-pour-study/datasets/cylinder-joint-wrist-cue-v23_flow': 0.0036363082420494824, 'lr': 3.0000000000000004e-05}",
+    "latest_gradient_log": "2026-11-19 02:02:54,029 - [rank0] - INFO - [FSDP Train] Step 150: {'train_loss': 0.0023075497359968723, 'lr_group/action': 3.0000000000000004e-05, 'lr_group/state_projection': 0.0003, 'grad_norm': 0.34795562326908114, 'flow_loss': 0.0023075497359968723, 'channel_loss_/data/hlou/pigment-pour-study/datasets/cylinder-joint-wrist-cue-v23_flow': 0.0023075497191813255, 'lr': 3.0000000000000004e-05}",
     "train_updates_observed": true,
     "first_formal_checkpoint_step": 128,
     "train_log": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000/driver.log",
@@ -308,6 +308,105 @@
     "archived_observation_replay_exact": true,
     "extra_dataset_bytes": 13426688,
     "local_cue_ablation_job": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/first-checkpoint-evidence.sh",
-    "first_formal_result_observed": false
+    "first_formal_result_observed": false,
+    "development_reset_cue_coverage": {
+      "full_coverage_json": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/development-cue-coverage.json",
+      "initial_rgb_only": true,
+      "full_suite_rollout_scores_measured": false,
+      "existing_single_anchor_has_cue": false,
+      "selection_rule": "First valid cue in fixed original ordering, then development ordering, then calibration resets",
+      "suites": {
+        "original": {
+          "detected": 3,
+          "total": 8,
+          "max_diagnostic_xy_error_mm": 0.3648152567500682
+        },
+        "dev": {
+          "detected": 12,
+          "total": 12,
+          "max_diagnostic_xy_error_mm": 3.9901011990651267
+        },
+        "separate_development_rgb_calibration": {
+          "detected": 4,
+          "total": 6,
+          "max_diagnostic_xy_error_mm": 1.2970070712766717
+        }
+      },
+      "selected": {
+        "case": {
+          "volume": 8,
+          "seed": 101,
+          "jitter": 0.004,
+          "yaw_jitter": 0,
+          "friction_scale": 1,
+          "mass_scale": 1
+        },
+        "xy_diagnostic_error_mm": 0.3648152567500682,
+        "camera": "right_wrist_view",
+        "resolution": 1024,
+        "rgb_sha256": "1c1bd983c54d0d6339c23f56825f3033b6da9c5419e51844ae35e5c0ba504b6d",
+        "marker_pair_gap_m": 0.0008363315336893787,
+        "world_xy_m": [
+          0.8837230721535989,
+          0.29855516380360875
+        ]
+      },
+      "valid_archive_reconstruction_exact": true,
+      "supplemental_rollout_driver": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/valid-development-rollout.sh",
+      "independent_cases_read": false
+    },
+    "first_checkpoint": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000/checkpoints/0_128",
+      "weight_audit": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000/checkpoint-128-weight-audit.json",
+      "passed": true,
+      "checkpoint_sha256": "d3314d39df0cb9f403a69aaf2da0a7219c8471415433fd076f848772b01990a8",
+      "base_sha256": "9f14782593b3e2fff58329c34f7f79efda014deae9a56ab04b6eacd8b8f9de95",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "single_stage": "neural_evaluation_128",
+      "first_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000-step128-single",
+      "model_loaded": true,
+      "model_load_reports_wrist_input": true,
+      "generated_action_chunks_so_far": 5,
+      "completed_episode_report": false
+    },
+    "paired_cue_ablation": {
+      "report": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/paired-cue-probe/report.json",
+      "samples": 10,
+      "same_neural_weights_and_flow_seed": true,
+      "trained_snapshot_only": true,
+      "branches": {
+        "model": {
+          "double_load": 40,
+          "available_frames": 48,
+          "observed_frames": 42,
+          "mean_gripper_error_mm_held": 7.519304427551106,
+          "mean_arm_error_rad_pregrasp": 0.032922088823397644
+        },
+        "model_missing_cue": {
+          "double_load": 43,
+          "available_frames": 48,
+          "observed_frames": 44,
+          "mean_gripper_error_mm_held": 6.5784366556908935,
+          "mean_arm_error_rad_pregrasp": 0.030691076264095802
+        },
+        "model_arm_teacher_gripper": {
+          "double_load": 44,
+          "available_frames": 48,
+          "observed_frames": 44
+        },
+        "teacher": {
+          "double_load": 48,
+          "available_frames": 48,
+          "observed_frames": 48
+        }
+      },
+      "loaded_held_window_phase_frames": [
+        205,
+        213,
+        308
+      ],
+      "all_changed_with_missing_cue": true
+    }
   }
 }
