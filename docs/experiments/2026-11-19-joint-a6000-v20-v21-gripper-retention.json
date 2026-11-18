@@ -1,0 +1,962 @@
+{
+  "kind": "first_servo_checkpoint_and_gripper_retention_penalty",
+  "time": "2026-11-19T01:10:53.276991+08:00",
+  "previous_goal_turn": "progress",
+  "host": "4A6000",
+  "project": "/data/hlou/pigment-pour-study",
+  "official_geometry_and_task_gates_exact": true,
+  "new_runtime_commit": "092214091a499a10cc3fe9a890af3005746a7e9a",
+  "servo_projection_changes": {
+    "kind": "joint_servo_projection_checkpoint_audit",
+    "same_audited_parent": true,
+    "baseline_checkpoint": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000/checkpoints/0_128",
+    "new_checkpoint": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000/checkpoints/0_128",
+    "changes": {
+      "v19": {
+        "added_signal": {
+          "l2": 0,
+          "changed_nonzero": 0,
+          "max_abs": 0
+        },
+        "added_mask": {
+          "l2": 0,
+          "changed_nonzero": 0,
+          "max_abs": 0
+        },
+        "preceding_signal": {
+          "l2": 0.6468566656112671,
+          "changed_nonzero": 36864,
+          "max_abs": 0.015722982585430145
+        }
+      },
+      "v20": {
+        "added_signal": {
+          "l2": 0.6839900016784668,
+          "changed_nonzero": 16384,
+          "max_abs": 0.01766607165336609
+        },
+        "added_mask": {
+          "l2": 0.29725390672683716,
+          "changed_nonzero": 16384,
+          "max_abs": 0.008001815527677536
+        },
+        "preceding_signal": {
+          "l2": 0.8828597068786621,
+          "changed_nonzero": 36864,
+          "max_abs": 0.017660073935985565
+        }
+      }
+    },
+    "v20_history_slots_updated": true,
+    "v19_weight_audit_passed": true,
+    "v20_weight_audit_passed": true,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-servo-observation-v20/first-checkpoint-comparison/column-changes.json",
+      "sha256": "047793026d807320a0bd97da98503b0ea99e63e2aa389c1098dbb307097321b1"
+    }
+  },
+  "v20_real_contact_timeline": {
+    "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000-step128-single",
+    "terminal_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+    "raw_peak": {
+      "height_m": 0.001368519432090598,
+      "time_s": 7.499999999998563,
+      "loaded_fingers": 1,
+      "established_hold": false,
+      "tilt_rad": 0.06833995089908465
+    },
+    "max_supported_lift_m": 0,
+    "established_hold": false,
+    "loaded_finger_counts_after_command": [
+      148,
+      2,
+      0
+    ],
+    "longest_consecutive_double_load_frames": 0,
+    "longest_consecutive_double_load_seconds": 0,
+    "first_sustained_hold_s": null,
+    "first_supported_lift_40mm_s": null,
+    "observations_and_bounded_commands_exact": true,
+    "checkpoint_inference_rerun": false,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000-step128-single/physical-lift-audit/held-lift-audit.json",
+      "sha256": "4d97fede40b3a8d465e3c6a203a4a022860ec0e395d3b7e9b9625d3d3622008f"
+    }
+  },
+  "v20_real_terminal_collision": {
+    "kind": "recorded_joint_terminal_collision_replay",
+    "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000-step128-single",
+    "snapshot_index": 18,
+    "source_time_s": 7.199999999998729,
+    "replayed_frames": 6,
+    "final_time_s": 7.499999999998563,
+    "joint_observations_exact": true,
+    "recorded_failure_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+    "penetrating_contacts": [
+      {
+        "geom_ids": [
+          139,
+          156
+        ],
+        "geom_names": [
+          "target_tray_floor",
+          "cylinder_base"
+        ],
+        "body_names": [
+          "target_tray",
+          "measuring_cylinder"
+        ],
+        "penetration_m": 0.0011821751358245473
+      }
+    ],
+    "physics_timestep_s": 0.0005,
+    "solver_impratio": 10,
+    "neural_weights_loaded": false,
+    "independent_cases_read": false,
+    "learned_policy_task_success_measured": false,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000-step128-single/terminal-collision-replay.json",
+      "sha256": "1754e66230af4a93987126268058d1c4bfd98f34bfee91f101c76841165d72a6"
+    }
+  },
+  "v18_reference_contact_timeline": {
+    "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v15-near-grasp-bc-v18-a6000-step512-single",
+    "terminal_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+    "raw_peak": {
+      "height_m": 0.01362000039502731,
+      "time_s": 8.049999999998347,
+      "loaded_fingers": 1,
+      "established_hold": false,
+      "tilt_rad": 0.32287045292327743
+    },
+    "max_supported_lift_m": 0,
+    "established_hold": false,
+    "loaded_finger_counts_after_command": [
+      158,
+      5,
+      3
+    ],
+    "longest_consecutive_double_load_frames": 3,
+    "longest_consecutive_double_load_seconds": 0.15000000000000002,
+    "first_sustained_hold_s": null,
+    "first_supported_lift_40mm_s": null,
+    "observations_and_bounded_commands_exact": true,
+    "checkpoint_inference_rerun": false,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-servo-observation-v20/first-checkpoint-comparison/v18-512-streak/held-lift-audit.json",
+      "sha256": "b84c0bec20ab81118d6e49ab6a4116b212779a66484f9f554369d8c66d0e9695"
+    }
+  },
+  "paired_counterfactual": {
+    "kind": "same_teacher_inputs_comparison",
+    "order": [
+      "V19",
+      "V20",
+      "V20 numeric history zeroed"
+    ],
+    "matching_image_robot_state_prior_command_and_seed": true,
+    "paired_training_samples": 10,
+    "selected_contact_and_held_windows": 6,
+    "post_grasp_double_load_frame_sum": [
+      29,
+      31,
+      28
+    ],
+    "teacher_post_grasp_double_load_frame_sum": 48,
+    "post_grasp_failures": [
+      5,
+      5,
+      5
+    ],
+    "post_grasp_mean_abs_grip_error_mm": [
+      9.706871734233573,
+      9.512259192997591
+    ],
+    "post_grasp_mean_abs_arm_error_rad": [
+      0.027192556253996573,
+      0.025147715758066624
+    ],
+    "phase_rows": {
+      "176": [
+        {
+          "seed": 9202,
+          "phase": "advance",
+          "frame": 176,
+          "double_load_frames": [
+            0,
+            0,
+            0
+          ],
+          "failures": [
+            null,
+            null,
+            null
+          ],
+          "end_grasp_dist_mm": [
+            17.509518731473978,
+            12.201920463904687,
+            17.586033299835265
+          ],
+          "teacher_double_load_frames": 0,
+          "grip_swap_double_load_frames": [
+            0,
+            0
+          ],
+          "mean_abs_grip_mm": [
+            20.077851573005322,
+            22.300297524780035
+          ],
+          "mean_abs_arm_rad": [
+            0.03847405704436824,
+            0.03617156399801994
+          ]
+        },
+        {
+          "seed": 9205,
+          "phase": "advance",
+          "frame": 176,
+          "double_load_frames": [
+            0,
+            0,
+            0
+          ],
+          "failures": [
+            null,
+            null,
+            null
+          ],
+          "end_grasp_dist_mm": [
+            12.101743516037265,
+            10.549273460975828,
+            10.12868539023162
+          ],
+          "teacher_double_load_frames": 0,
+          "grip_swap_double_load_frames": [
+            0,
+            0
+          ],
+          "mean_abs_grip_mm": [
+            21.607307195663452,
+            24.37461644411087
+          ],
+          "mean_abs_arm_rad": [
+            0.028873992482355487,
+            0.027669533252871286
+          ]
+        }
+      ],
+      "195": [
+        {
+          "seed": 9202,
+          "phase": "close",
+          "frame": 195,
+          "double_load_frames": [
+            0,
+            0,
+            0
+          ],
+          "failures": [
+            null,
+            null,
+            null
+          ],
+          "end_grasp_dist_mm": [
+            18.704988828827556,
+            17.008350363396076,
+            16.563572058628292
+          ],
+          "teacher_double_load_frames": 0,
+          "grip_swap_double_load_frames": [
+            0,
+            0
+          ],
+          "mean_abs_grip_mm": [
+            6.352846724912524,
+            7.805186184123159
+          ],
+          "mean_abs_arm_rad": [
+            0.025694985097895067,
+            0.025470314974275727
+          ]
+        },
+        {
+          "seed": 9205,
+          "phase": "close",
+          "frame": 195,
+          "double_load_frames": [
+            0,
+            0,
+            0
+          ],
+          "failures": [
+            null,
+            null,
+            null
+          ],
+          "end_grasp_dist_mm": [
+            18.1869538361818,
+            14.717005826119435,
+            15.56921004640032
+          ],
+          "teacher_double_load_frames": 1,
+          "grip_swap_double_load_frames": [
+            2,
+            0
+          ],
+          "mean_abs_grip_mm": [
+            4.177498240023851,
+            5.012674843892455
+          ],
+          "mean_abs_arm_rad": [
+            0.02947696663128833,
+            0.026307224470656365
+          ]
+        }
+      ],
+      "205": [
+        {
+          "seed": 9202,
+          "phase": "close",
+          "frame": 205,
+          "double_load_frames": [
+            8,
+            8,
+            3
+          ],
+          "failures": [
+            null,
+            null,
+            "collision:[['target_tray_floor', 'cylinder_base']]"
+          ],
+          "end_grasp_dist_mm": [
+            25.44260332214243,
+            22.63483087108976,
+            27.087663315755446
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            8,
+            8
+          ],
+          "mean_abs_grip_mm": [
+            8.164881519041955,
+            7.880433783866466
+          ],
+          "mean_abs_arm_rad": [
+            0.02940563535472999,
+            0.02697346720378846
+          ]
+        },
+        {
+          "seed": 9205,
+          "phase": "close",
+          "frame": 205,
+          "double_load_frames": [
+            5,
+            5,
+            5
+          ],
+          "failures": [
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]"
+          ],
+          "end_grasp_dist_mm": [
+            31.044754097555504,
+            28.026526988632757,
+            26.876842128455422
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            8,
+            8
+          ],
+          "mean_abs_grip_mm": [
+            10.472728949971497,
+            10.372059331275524
+          ],
+          "mean_abs_arm_rad": [
+            0.024385791621170938,
+            0.022441578990158934
+          ]
+        }
+      ],
+      "213": [
+        {
+          "seed": 9202,
+          "phase": "lift",
+          "frame": 213,
+          "double_load_frames": [
+            4,
+            5,
+            7
+          ],
+          "failures": [
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+            "lost_grasp",
+            null
+          ],
+          "end_grasp_dist_mm": [
+            47.45066546738842,
+            46.46273705412607,
+            34.79650816207826
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            8,
+            8
+          ],
+          "mean_abs_grip_mm": [
+            9.833458419889212,
+            9.748030789196493
+          ],
+          "mean_abs_arm_rad": [
+            0.03542493869705746,
+            0.03532192200267067
+          ]
+        },
+        {
+          "seed": 9205,
+          "phase": "lift",
+          "frame": 213,
+          "double_load_frames": [
+            3,
+            4,
+            3
+          ],
+          "failures": [
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+            "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]"
+          ],
+          "end_grasp_dist_mm": [
+            15.213732691978867,
+            14.273426220084147,
+            14.59612663529421
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            4,
+            4
+          ],
+          "mean_abs_grip_mm": [
+            10.646600537002088,
+            10.270960573107004
+          ],
+          "mean_abs_arm_rad": [
+            0.022695118755412597,
+            0.022126076083319884
+          ]
+        }
+      ],
+      "308": [
+        {
+          "seed": 9202,
+          "phase": "lift",
+          "frame": 308,
+          "double_load_frames": [
+            6,
+            6,
+            6
+          ],
+          "failures": [
+            "lost_grasp",
+            "lost_grasp",
+            "lost_grasp"
+          ],
+          "end_grasp_dist_mm": [
+            60.48004521933328,
+            59.16700496370384,
+            56.444678857537184
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            8,
+            8
+          ],
+          "mean_abs_grip_mm": [
+            8.416058550355956,
+            8.10532597708516
+          ],
+          "mean_abs_arm_rad": [
+            0.022570814665717382,
+            0.01934981644929697
+          ]
+        },
+        {
+          "seed": 9205,
+          "phase": "lift",
+          "frame": 308,
+          "double_load_frames": [
+            3,
+            3,
+            4
+          ],
+          "failures": [
+            "lost_grasp",
+            "lost_grasp",
+            "lost_grasp"
+          ],
+          "end_grasp_dist_mm": [
+            42.10336751730033,
+            52.55236324255668,
+            81.95177854014432
+          ],
+          "teacher_double_load_frames": 8,
+          "grip_swap_double_load_frames": [
+            8,
+            8
+          ],
+          "mean_abs_grip_mm": [
+            10.707502429140732,
+            10.696744703454899
+          ],
+          "mean_abs_arm_rad": [
+            0.02867303842989107,
+            0.02467343381916483
+          ]
+        }
+      ]
+    },
+    "full_task_attempted": false,
+    "independent_cases_used": false,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-servo-observation-v20/first-checkpoint-comparison/matched-snapshot-comparison.json",
+      "sha256": "8fa13772964ff766d748293e4fa3e158bec64d8e6252cbda8a384ac65bd09ebf"
+    }
+  },
+  "paired_baseline_raw": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-servo-observation-v20/first-checkpoint-comparison/v19-probes/report.json",
+    "sha256": "a59c20aaf57cbacf33b1fbbdee2f1281375de34b272f1786e51484c64c0dba49"
+  },
+  "paired_servo_raw": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-servo-observation-v20/first-checkpoint-comparison/v20-probes/report.json",
+    "sha256": "decda1bbd6b795de7791bcbfc38b877dbf74cbb4e6b0b02eaad2fdb9c8e16a2d"
+  },
+  "isolated_processor_patch": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/wall-x/wall_x/model/core/action/processor.py",
+    "before_sha256": "1501535c5ff1ff93a458976836253a120e699c3d647150dbb5e543305bfb9ee5",
+    "after_sha256": "1679bca73a406dcbabb871ce76f60fa705cf1c2e99c2f385d7c1a485bdb9099c",
+    "configuration_key": "joint_closed_gripper_overopening_weight",
+    "evaluated_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "gripper_action_index": 6,
+    "teacher_max_full_aperture_m": 0.02,
+    "full_aperture_normalization_m": [
+      0,
+      0.0975
+    ],
+    "uses_predicted_denoised_action": true,
+    "normal_wall_loss_preserved": true,
+    "previous_action_labels_unchanged": true,
+    "serving_model_changed": false,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/patch.json",
+      "sha256": "66391755fea0288639573436bc61cdb3a99c319ab0dcfba8e34ba2bbc7856097"
+    }
+  },
+  "action_loss_validation": {
+    "text_key": "joint_closed_gripper_overopening_weight",
+    "multiplier": 8,
+    "tested_sparse_overshoot_and_gradients": true,
+    "masked_invalid_targets_match_stock": true,
+    "batch_supported_live_configuration": "32x26",
+    "nominal_closed_label_fraction_first8": 0.5691387229732049,
+    "nominal_anchors_with_at_least_one_closed_target": 0.5764567218453387,
+    "selected_training_episodes": 106,
+    "paired_parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v15-near-grasp-data-check-v18/parent-v15-step384/model.safetensors",
+    "includes_no_independent_cases": true,
+    "normalizer_aperture_q01_q99": [
+      0,
+      1
+    ],
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/loss-validation.json",
+      "sha256": "416b8f729ec6ba5daf5f0ad7a25494ca45ed39f112cf22945cbe4779a5fdb670"
+    }
+  },
+  "actual_adapter_config_validation": {
+    "effective_multiplier": 8,
+    "model_config_class": "Qwen2_5_VLConfig",
+    "checked_actual_wall_adapter_build": true,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/effective-model-config.json",
+      "sha256": "83552de8f2926cf559b9a5edb63b300c5189b2f3b4f655837809ec8f411b7151"
+    }
+  },
+  "v21_launch": {
+    "started_utc": "2026-11-18T17:06:48.045325+00:00",
+    "physical_gpu": 0,
+    "matched_v20_config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000/train.yml",
+    "source_patch": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/patch.json",
+    "training_wall_copy": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/wall-x",
+    "transform_config": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/architecture.json",
+    "command_loss_check": "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/loss-validation.json",
+    "data_port": 29993,
+    "train_port": 29994,
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closed-gripper-bc-v21-a6000/launch.json",
+      "sha256": "968fa135ddc61aeefb0556132223291b174cba88f481f3166e914457a64691c7"
+    }
+  },
+  "current_curves": {
+    "cylinder-cartesian-epoch-resume-bc-v17-a6000": {
+      "current_stage": "training",
+      "driver_live": true,
+      "trainer_live": true,
+      "latest_audited_step": 1536,
+      "trainer_exit_code": null,
+      "training_argv": [
+        "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--nproc_per_node=1",
+        "--master_port=29990",
+        "wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py",
+        "--config",
+        "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000/train.yml"
+      ],
+      "latest_gradient": {
+        "step": 1680,
+        "grad_norm": 0.1500723734498024,
+        "flow_loss": 0.002386627090163529
+      },
+      "candidate_ready": false,
+      "closed_loop": [
+        {
+          "step": 768,
+          "success": false,
+          "failure_reason": "Unreachable model action:0.00267",
+          "time_seconds": 9.700000000000363,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": 0.05815314250157344,
+            "camera_distance_m": 0.708253365420207,
+            "linear_speed_m_s": 8.51155822516361e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.14315645234153643,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000-step768-single/summary.json",
+            "sha256": "5d49987e54e95c81b99e380558cb00da17cc551615b49e4ce57e199dee65a059"
+          }
+        },
+        {
+          "step": 1024,
+          "success": false,
+          "failure_reason": "Unreachable model action:0.00228",
+          "time_seconds": 0.20000000000000015,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": -0.0003074539844615254,
+            "camera_distance_m": 0.6561417229490273,
+            "linear_speed_m_s": 0.000056892040993437435,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.3788930714805187,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000-step1024-single/summary.json",
+            "sha256": "feda3264283e8ea3ec7ca0d672d3f2b3d2eb32c2f82504e4035aca78f3967281"
+          }
+        },
+        {
+          "step": 1280,
+          "success": false,
+          "failure_reason": "Unreachable model action:0.00528",
+          "time_seconds": 2.199999999999902,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": 0.00871950935529181,
+            "camera_distance_m": 0.6637038943172379,
+            "linear_speed_m_s": 8.512330027848005e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.37598444134935055,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000-step1280-single/summary.json",
+            "sha256": "0b473a061d618dea461220fcb7321c3eea53ba48b7d36ba6d2660ee1e4fdcf6d"
+          }
+        },
+        {
+          "step": 1536,
+          "success": false,
+          "failure_reason": "Unreachable model action:0.00634",
+          "time_seconds": 16.25000000000748,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": 0.02675056878240012,
+            "camera_distance_m": 0.6770212236329386,
+            "linear_speed_m_s": 8.509660689108859e-14,
+            "angular_speed_rad_s": 2.864366481329838e-15
+          },
+          "nearest_grasp_error_m": 0.07772170751404471,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000-step1536-single/summary.json",
+            "sha256": "6ebaf60325029fa9cef1e029083bdbd3c19d99249b05e5de82d57b4310fc4c1d"
+          }
+        }
+      ]
+    },
+    "cylinder-joint-coherent-full-routine-bc-v19-a6000": {
+      "current_stage": "neural_evaluation_768",
+      "driver_live": true,
+      "trainer_live": true,
+      "latest_audited_step": 640,
+      "trainer_exit_code": null,
+      "training_argv": [
+        "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--nproc_per_node=1",
+        "--master_port=29988",
+        "wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py",
+        "--config",
+        "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000/train.yml"
+      ],
+      "latest_gradient": {
+        "step": 820,
+        "grad_norm": 0.42684795558452604,
+        "flow_loss": 0.00522975130006671
+      },
+      "candidate_ready": false,
+      "closed_loop": [
+        {
+          "step": 128,
+          "success": false,
+          "failure_reason": "collision:[['', '']]",
+          "time_seconds": 12.70000000000403,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": -0.0025228937593649303,
+            "camera_distance_m": 0.652125380486027,
+            "linear_speed_m_s": 8.511083020376947e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.07375365194352465,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000-step128-single/summary.json",
+            "sha256": "af6824c7a4dc920efd29f81cc5b52d162457d224c67e55ebc3ea90b08ae0dbbe"
+          }
+        },
+        {
+          "step": 256,
+          "success": false,
+          "failure_reason": "collision:[['', '']]",
+          "time_seconds": 14.700000000006474,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": 0.00046980902922472145,
+            "camera_distance_m": 0.6553307592616545,
+            "linear_speed_m_s": 8.510793226931589e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.0773472109511079,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000-step256-single/summary.json",
+            "sha256": "821c389ae8d78479b162f998b8d718805a41a11e23d796da2dcc6e2d03afbc11"
+          }
+        },
+        {
+          "step": 384,
+          "success": false,
+          "failure_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+          "time_seconds": 20.649999999997224,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": -0.03404112222196426,
+            "camera_distance_m": 0.6203151016985774,
+            "linear_speed_m_s": 8.514654683482096e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.11850264096940354,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000-step384-single/summary.json",
+            "sha256": "b1f70a2b0c3916f05045af2b0b157a7e38ff5ee6d2b13f00df2e24477c1a80f4"
+          }
+        },
+        {
+          "step": 512,
+          "success": false,
+          "failure_reason": "timeout",
+          "time_seconds": 90.00000000024771,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": -0.043772800007300716,
+            "camera_distance_m": 0.6063754389008359,
+            "linear_speed_m_s": 8.517068167449709e-14,
+            "angular_speed_rad_s": 0
+          },
+          "nearest_grasp_error_m": 0.08379514473440047,
+          "max_sampled_loaded_contacts": 0,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000-step512-single/summary.json",
+            "sha256": "040a183e5b03f749222aa3b9ca6aafec8ae75c184bfbc4a5aed138f60b3ea8f7"
+          }
+        },
+        {
+          "step": 640,
+          "success": false,
+          "failure_reason": "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+          "time_seconds": 5.599999999999616,
+          "raw_peak_m": 0,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": false,
+            "base_retreat_m": -0.012035594522748938,
+            "camera_distance_m": 0.6448832982927915,
+            "linear_speed_m_s": 0.017802782155887185,
+            "angular_speed_rad_s": 0.0665698126918468
+          },
+          "nearest_grasp_error_m": 0.08000000193960666,
+          "max_sampled_loaded_contacts": 1,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-coherent-full-routine-bc-v19-a6000-step640-single/summary.json",
+            "sha256": "c184a707c4a2db7aaed013021431ad64cb600e89698e3a154af3796844042589"
+          }
+        }
+      ]
+    },
+    "cylinder-joint-servo-state-bc-v20-a6000": {
+      "current_stage": "neural_evaluation_256",
+      "driver_live": true,
+      "trainer_live": true,
+      "latest_audited_step": 128,
+      "trainer_exit_code": null,
+      "training_argv": [
+        "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--nproc_per_node=1",
+        "--master_port=29992",
+        "wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py",
+        "--config",
+        "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000/train.yml"
+      ],
+      "latest_gradient": {
+        "step": 340,
+        "grad_norm": 0.3489021137356758,
+        "flow_loss": 0.004765755776315927
+      },
+      "candidate_ready": false,
+      "closed_loop": [
+        {
+          "step": 128,
+          "success": false,
+          "failure_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+          "time_seconds": 7.499999999998563,
+          "raw_peak_m": 0.001368519432090598,
+          "physical_gates": {
+            "held": false,
+            "lifted": false,
+            "retreated": false,
+            "close_to_head": false,
+            "upright": true,
+            "still": false,
+            "base_retreat_m": 0.0048371053380519835,
+            "camera_distance_m": 0.6605401073970565,
+            "linear_speed_m_s": 0.012412758828913831,
+            "angular_speed_rad_s": 0.29634665758736717
+          },
+          "nearest_grasp_error_m": 0.08366287281730979,
+          "max_sampled_loaded_contacts": 1,
+          "summary": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-state-bc-v20-a6000-step128-single/summary.json",
+            "sha256": "610d65a60a487a033e4186d36c415618d74fc36cd3a3afbcc5815aba826f5095"
+          }
+        }
+      ]
+    },
+    "cylinder-joint-closed-gripper-bc-v21-a6000": {
+      "current_stage": "training",
+      "driver_live": true,
+      "trainer_live": true,
+      "latest_audited_step": null,
+      "trainer_exit_code": null,
+      "training_argv": [
+        "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+        "-m",
+        "torch.distributed.run",
+        "--nproc_per_node=1",
+        "--master_port=29994",
+        "/data/hlou/pigment-pour-study/runs/cylinder-closed-gripper-loss-v21/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py",
+        "--config",
+        "/data/hlou/pigment-pour-study/runs/cylinder-joint-closed-gripper-bc-v21-a6000/train.yml"
+      ],
+      "latest_gradient": {
+        "step": 20,
+        "grad_norm": 0.47829601019620893,
+        "flow_loss": 0.008132816362194716
+      },
+      "candidate_ready": false,
+      "closed_loop": []
+    }
+  },
+  "independent_cases_started": false
+}
