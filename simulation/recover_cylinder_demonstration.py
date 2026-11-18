@@ -26,6 +26,8 @@ def main():
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
     p.add_argument("--eye-alignment-target-px",type=float,default=2.,
                    help="Teacher centering target before stable reads; acceptance remains at most2 pixels.")
+    p.add_argument("--read-lateral-retries", type=float, nargs="+", default=[],
+                   help="Alternate camera-relative lateral positions in metres, tried after an RGB reading failure.")
     a=p.parse_args()
     if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
     if not np.isfinite(a.held_initial_lift_m) or not 0<=a.held_initial_lift_m<=.10:
@@ -34,9 +36,44 @@ def main():
         p.error("Initial lift requires --start-holding without --reading-only")
     if not np.isfinite(a.eye_alignment_target_px) or not .5<=a.eye_alignment_target_px<=2.:
         p.error("Eye alignment target must be within [0.5,2] pixels")
-    a.output.mkdir(parents=True,exist_ok=False)
+    if not all(np.isfinite(view) for view in a.read_lateral_retries):
+        p.error("Lateral positions must be finite")
+    controller = json.loads(a.controller_config.read_text())
+    if not a.read_lateral_retries:
+        return collect(a, controller, a.output)
+
+    a.output.mkdir(parents=True, exist_ok=False)
+    teacher = controller.get("teacher", {})
+    views = dict.fromkeys([teacher.get("read_lateral", .14), *a.read_lateral_retries])
+    attempts = []
+    for index, view in enumerate(views):
+        output = a.output / f"view_{index:02d}"
+        variant = controller | {"teacher": teacher | {"read_lateral": view}}
+        status = collect(a, variant, output)
+        evidence = output / ("source_rejected.json" if status == 2 else "summary.json")
+        record = json.loads(evidence.read_text())
+        failure = record.get("failure_reason", record.get("reason"))
+        attempts.append(dict(output=str(output.resolve()), read_lateral_m=view,
+                             exit_code=status, failure_reason=failure))
+        temporary = a.output / "view-attempts.json.tmp"
+        temporary.write_text(json.dumps(dict(attempts=attempts,
+            selected_demonstration=str(output.resolve()) if status == 0 else None), indent=2) + "\n")
+        temporary.replace(a.output / "view-attempts.json")
+        if status != 1 or not reading_failure(failure):
+            return status
+    return status
+
+
+def reading_failure(reason):
+    return (reason is not None and
+            (reason.startswith(("unreadable:", "unstable_reading:")) or reason in {
+                "liquid_boundary_occluded", "eye_alignment_timeout", "unstable_boundary_visibility",
+                "eye_alignment_drift", "reading_not_stable", "reading_inaccurate"}))
+
+
+def collect(a, controller, output):
+    output.mkdir(parents=True, exist_ok=False)
     source=json.loads((a.policy_episode/"summary.json").read_text());case=source["case"]
-    controller=json.loads(a.controller_config.read_text())
     aggregate=json.loads((a.policy_episode.parent/"summary.json").read_text())
     assert aggregate["controller"]["environment"]==controller["environment"],"Physics/controller mismatch"
     env=CylinderEnv(case["volume"],image_size=768,**controller["environment"],
@@ -84,12 +121,12 @@ def main():
             assert source["source_motion"]["kind"]=="bounded_joint_command_prefix_replay_training_only"
             provenance["source_motion"]=source["source_motion"]
             provenance["physical_state"]="Recorded replay-visited integration state and controller cache; no pose reset"
-        (a.output/"recovery_source.json").write_text(json.dumps(provenance,indent=2)+"\n")
+        (output/"recovery_source.json").write_text(json.dumps(provenance,indent=2)+"\n")
         if not recoverable:
-            (a.output/"source_rejected.json").write_text(json.dumps(dict(reason="initial_state_not_suitable_for_selected_recovery_mode",
+            (output/"source_rejected.json").write_text(json.dumps(dict(reason="initial_state_not_suitable_for_selected_recovery_mode",
                 source_time=source_time,contacts=metrics["grip_contacts"]),indent=2)+"\n")
-            raise SystemExit(2)
-        np.savez_compressed(a.output/"starting_integration_state.npz",state=state,state_spec=spec,
+            return 2
+        np.savez_compressed(output/"starting_integration_state.npz",state=state,state_spec=spec,
                             hold_actuator_ids=ids,hold_targets=[env.hold_targets[i] for i in ids],
                             applied_base_action=env.applied_action)
         env.data.time=0.;env.grasp_point_reference=None
@@ -98,10 +135,10 @@ def main():
                     reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding,
                     skip_retreat=a.reading_only,held_initial_lift_m=a.held_initial_lift_m,
                     eye_alignment_target_px=a.eye_alignment_target_px)
-        result=run_inspection(env,a.output,seed=case["seed"],jitter=case.get("jitter",.004),
+        result=run_inspection(env,output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
-        if not result["success"]:raise SystemExit(1)
+        return 0 if result["success"] else 1
     finally:env.close()
 
 
-if __name__=="__main__":main()
+if __name__=="__main__":raise SystemExit(main())
