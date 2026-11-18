@@ -14,7 +14,11 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
-from cylinder_joint_actions import JOINT_ACTION_LAYOUT, absolute_joint_chunk, joint_state_width, require
+from carry_env import CONTROL_DT
+from cylinder_joint_actions import (
+    ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, absolute_joint_chunk,
+    joint_action_representation, joint_state_width, require,
+)
 from wall_x.config.loader import load_config
 from wall_x.data.backends.lerobot.build import load_lerobot_normalizers
 from wall_x.model.qact.qwen2_5.adapter import Qwen2_5Adapter
@@ -34,8 +38,9 @@ def main():
     dist.init_process_group('gloo')
     try:
         cfg = load_config(str(args.config))
-        require(list(cfg.task.dof_config.items()) == list(JOINT_ACTION_LAYOUT.items()),
-                'Unexpected joint action configuration')
+        representation = joint_action_representation(cfg.task.dof_config)
+        require(representation, 'Unexpected joint action configuration')
+        increments = representation == JOINT_SERVO_INCREMENT
         state_width = joint_state_width(cfg.task.agent_pos_config)
         horizon = cfg.task.action_horizon_flow
         require(8 <= horizon <= 32, 'Joint flow horizon must cover the eight executed actions')
@@ -84,15 +89,21 @@ def main():
                 raw_state = source['observation.state'].numpy()
                 require(raw_action.shape == (horizon, 9), 'Wrong source action window shape')
                 expected = raw_action.astype(np.float64)
-                expected[:, :6] -= raw_state[:6]
+                if increments:
+                    require(np.abs(expected[:, :6]).max() <= ARM_SERVO_RATE_RAD_S * CONTROL_DT + 1e-8,
+                            'Training increment is outside the actuator budget')
+                    expected[source['action_is_pad'].numpy(), :6] = 0.
+                else:
+                    expected[:, :6] -= raw_state[:6]
                 require(torch.equal(sample['agent_pos'], source['observation.state']),
                         'Robot state changed during processing')
                 require(np.array_equal(sample['action'].numpy(), expected.astype(np.float32)),
-                        'Relative joint actions differ from source')
+                        'Prepared joint action labels differ from the expected source')
                 require(np.array_equal(sample['action'].numpy()[:, 6:], raw_action[:, 6:]),
                         'Absolute gripper/base labels changed')
-                require(np.allclose(absolute_joint_chunk(sample['action'].numpy(), raw_state),
-                                    raw_action, rtol=0, atol=2e-7), 'Relative joint decoding mismatch')
+                if not increments:
+                    require(np.allclose(absolute_joint_chunk(sample['action'].numpy(), raw_state),
+                                        raw_action, rtol=0, atol=2e-7), 'Relative joint decoding mismatch')
                 collated = loader.collate_fn([sample])
                 require(bool(collated['dof_mask'][..., :9].bool().all())
                         and not bool(collated['dof_mask'][..., 9:].bool().any()), 'Wrong action mask')
@@ -118,15 +129,18 @@ def main():
                                            served_state[..., :state_width], atol=1e-6),
                         'Checkpoint-serving normalizer factory differs from training')
                 checks.append(dict(episode=episode, frame=int(frames[source_index]),
-                                   relative_joint_labels_exact=True, robot_state_exact=True,
-                                   gripper_and_base_absolute=True, decode_matches_source=True,
+                                   action_labels_exact=True, robot_state_exact=True, gripper_and_base_absolute=True,
                                    normalization_matches_inference=True, masks_and_padding_correct=True))
+                if increments:
+                    checks[-1]['zero_arm_increments_at_padded_steps'] = True
+                else:
+                    checks[-1].update(relative_joint_labels_exact=True, decode_matches_source=True)
             boundary = int(np.flatnonzero(ids == episode)[-1])
             end = inner.hf_dataset[boundary]['action']
             require(torch.equal(end, end[0].expand_as(end)), 'Episode end enters another episode')
         weights = np.load(cfg.data.lerobot_config['frame_sampling_weights_path'])
         require(np.array_equal(loader.sampler.weights.numpy(), weights[train_indices]), 'Sampling weights misaligned')
-        report = dict(kind='official_wall_joint_data_contract', passed=True,
+        report = dict(kind='official_wall_joint_data_contract', passed=True, action_representation=representation,
             dataset=str(cfg.data.lerobot_config['root']),
             episodes=len(inner.hf_dataset.episodes), frames=len(raw_frame),
             flow_horizon=horizon,

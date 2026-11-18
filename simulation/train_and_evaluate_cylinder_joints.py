@@ -16,7 +16,7 @@ import yaml
 
 from audit_cylinder_grasp_approach import measure_rollout
 from audit_wall_checkpoint import saved_checkpoint_position
-from cylinder_joint_actions import JOINT_ACTION_LAYOUT, joint_state_width, require
+from cylinder_joint_actions import joint_action_representation, joint_state_width, require
 
 
 def checkpoint_position(checkpoint):
@@ -68,7 +68,7 @@ def main():
     cfg = yaml.safe_load(config.read_text())
     action_space = args.action_space
     if action_space == 'joint':
-        require(list(cfg['task']['dof_config'].items()) == list(JOINT_ACTION_LAYOUT.items()),
+        require(joint_action_representation(cfg['task']['dof_config']),
                 'Expected the joint action schema')
         joint_state_width(cfg['task']['agent_pos_config'])
         validator = 'validate_wall_cylinder_joints.py'
@@ -118,11 +118,11 @@ def main():
     def save():
         (run/'execution-status.json').write_text(json.dumps(state, indent=2)+'\n')
 
-    def call(argv, stage):
+    def call(argv, stage, *, env=None):
         nonlocal active_call
         state['stage'] = stage
         print('START', argv, flush=True)
-        process = subprocess.Popen(argv)
+        process = subprocess.Popen(argv, env=env)
         active_call = process
         row = dict(stage=stage, argv=argv, pid=process.pid, started=time.time())
         state['history'].append(row);save()
@@ -152,7 +152,8 @@ def main():
         call([python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
               f'--master_port={args.data_port}', str(scripts/validator),
               '--config', str(config), '--check-episode', '0', '--check-episode', str(episodes//2),
-              '--check-episode', str(episodes-1), '--output', str(run/'data-validation.json')], 'data_validation')
+              '--check-episode', str(episodes-1), '--output', str(run/'data-validation.json')],
+             'data_validation', env=trainer_env)
         training = [python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
                     f'--master_port={args.train_port}', str(trainer_entry),
                     '--config', str(config)]

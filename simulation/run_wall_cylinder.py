@@ -17,9 +17,9 @@ import torch
 from audit_gripper import audit
 from carry_env import CAMERAS,CONTROL_DT
 from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
-from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,JOINT_WRIST_CUE_STATE_LAYOUT,
+from cylinder_joint_actions import (JOINT_SERVO_INCREMENT,JOINT_SERVO_STATE_WIDTH,JOINT_WRIST_CUE_STATE_LAYOUT,
     absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
-    with_joint_wrist_cue_state)
+    joint_action_representation,servo_increment_targets,with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
 from cylinder_tray_vision import TRAY_CUE_PROTOCOLS, capture_initial_tray_cue, with_tray_cue_state
 from cylinder_reader import read_volume
@@ -41,9 +41,7 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
 class CylinderWallPolicy(CarryWallPolicy):
     @staticmethod
     def _validate_robot_layouts(config):
-        if 'follow_right_arm_joint_position_relative' in config['dof_config']:
-            if list(config['dof_config'].items())!=list(JOINT_ACTION_LAYOUT.items()):
-                raise ValueError('Unsupported cylinder joint action layout')
+        if joint_action_representation(config['dof_config']):
             joint_state_width(config['agent_pos_config'])
         else:CarryWallPolicy._validate_robot_layouts(config)
 
@@ -52,8 +50,8 @@ class CylinderWallPolicy(CarryWallPolicy):
         if not 1<=flow_steps<=100:raise ValueError("Flow steps must be in [1,100]")
         super().__init__(checkpoint,train_config,norm_key)
         self.flow_steps=flow_steps
-        self.action_space=('joint' if 'follow_right_arm_joint_position_relative' in
-                           self._train_config['dof_config'] else 'cartesian')
+        self.joint_action_representation=joint_action_representation(self._train_config['dof_config'])
+        self.action_space='joint' if self.joint_action_representation else 'cartesian'
         self.action_width=9 if self.action_space=='joint' else 23
         self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
         self.state_width=(joint_state_width(self._train_config['agent_pos_config']) if self.action_space=='joint'
@@ -64,6 +62,10 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.progress_protocol=getattr(self._model.config,'joint_progress_protocol',None)
         if self.progress_protocol is not None and (self.progress_protocol!=PROGRESS_PROTOCOL or not self.joint_servo_state):
             raise ValueError('Unsupported progress protocol or robot state layout')
+        if self.joint_action_representation==JOINT_SERVO_INCREMENT and (
+                not self.progress_protocol or joint_action_representation(
+                    getattr(self._model.config,'dof_config',{}) or {})!=JOINT_SERVO_INCREMENT):
+            raise ValueError('Servo increments require a matching model checkpoint and joint progress')
         self.tray_cue_protocol=getattr(self._model.config,'joint_initial_tray_cue',None)
         if self.tray_cue_protocol is not None and (
                 self.tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not self.joint_wrist_cue or not self.progress_protocol):
@@ -93,7 +95,8 @@ class CylinderWallPolicy(CarryWallPolicy):
                 return ctx
             self._model._prepare_flow_action_inputs=prepare_zero_noise
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
-                                action_space=self.action_space,active_action_dimensions=self.action_width,
+                                action_space=self.action_space,joint_action_representation=self.joint_action_representation,
+                                active_action_dimensions=self.action_width,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
                                 joint_servo_state=self.joint_servo_state,joint_wrist_cue=self.joint_wrist_cue,
                                 progress_protocol=self.progress_protocol,tray_cue_protocol=self.tray_cue_protocol,
@@ -145,12 +148,14 @@ class CylinderTrial:
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
                  gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
-                 joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None):
+                 joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None,servo_increments=False):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
         if progress_protocol is not None and (progress_protocol!=PROGRESS_PROTOCOL or not joint_servo_state):
             raise ValueError('Unsupported progress protocol or robot state layout')
+        if servo_increments and (action_space!='joint' or not progress_protocol):
+            raise ValueError('Servo increments require joint targets and recorded servo progress')
         if tray_cue_protocol is not None and (
                 tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
@@ -158,6 +163,7 @@ class CylinderTrial:
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
             raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
         self.action_space=action_space
+        self.servo_increments=servo_increments
         self.joint_servo_state=joint_servo_state
         self.max_joint_limit_projection=0.;self.joint_limit_projected_frames=0
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
@@ -257,6 +263,8 @@ class CylinderTrial:
         joint_projection=0.;ik_residual=None
         try:
             if self.action_space=='joint':
+                if self.servo_increments:
+                    action=servo_increment_targets(action,bounded_joint_command(env),CONTROL_DT)
                 joints,opening,forward,yaw,joint_projection=joint_action_to_targets(env,action)
                 self.max_joint_limit_projection=max(self.max_joint_limit_projection,joint_projection)
                 self.joint_limit_projected_frames+=int(joint_projection>0)
@@ -364,6 +372,8 @@ class CylinderTrial:
         if self.progress_router is not None:
             summary.update(progress_protocol=PROGRESS_PROTOCOL,prompt_changes=self.progress_changes,
                            progress_initial_joint_command=self.progress_initial_joint_command)
+        if self.servo_increments:
+            summary['joint_action_representation']=JOINT_SERVO_INCREMENT
         if self.tray_cue_protocol:
             summary.update(tray_cue_protocol=self.tray_cue_protocol,initial_tray_cue=self.initial_tray_cue,
                            initial_tray_images=self.initial_tray_images,
@@ -458,6 +468,7 @@ def main():
                          gripper_open_confirmations=args.gripper_open_confirmations,
                          gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
                          action_space=policy.action_space,joint_servo_state=policy.joint_servo_state,
+                         servo_increments=policy.joint_action_representation==JOINT_SERVO_INCREMENT,
                          joint_wrist_cue=policy.joint_wrist_cue,
                          progress_protocol=policy.progress_protocol,tray_cue_protocol=policy.tray_cue_protocol,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
@@ -487,17 +498,23 @@ def main():
                 for trial in active:trial.fail("probe_only_no_execution")
                 break
             for trial,chunk,observation in zip(active,chunks,observations):
-                try:absolute=(absolute_joint_chunk(chunk,observation['state']) if policy.action_space=='joint'
-                              else relative_to_absolute(chunk,observation["state"][:23]))
+                try:
+                    if trial.servo_increments:
+                        commands=chunk[:,:9]
+                        if not np.isfinite(commands).all():raise ValueError('Nonfinite servo increment')
+                    elif policy.action_space=='joint':
+                        commands=absolute_joint_chunk(chunk,observation['state'])
+                    else:
+                        commands=relative_to_absolute(chunk,observation["state"][:23])
                 except ValueError as error:trial.fail(str(error));continue
                 if policy.action_space=='joint':
-                    for action in absolute[:args.execute_steps]:
+                    for action in commands[:args.execute_steps]:
                         trial.step(action)
                         if trial.done:break
                     continue
-                guarded=trial.opening_guard(absolute,args.execute_steps)
+                guarded=trial.opening_guard(commands,args.execute_steps)
                 trial.temporal_ensemble.add(int(round(trial.env.data.time/CONTROL_DT)),guarded)
-                for raw_action,action in zip(absolute[:args.execute_steps],guarded[:args.execute_steps]):
+                for raw_action,action in zip(commands[:args.execute_steps],guarded[:args.execute_steps]):
                     command=trial.temporal_ensemble.command(int(round(trial.env.data.time/CONTROL_DT)),action)
                     trial.step(command,raw_model_action=raw_action)
                     if trial.done:break
@@ -514,6 +531,7 @@ def main():
         results=[trial.finish() for trial in trials]
         report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
                     action_space=policy.action_space,progress_protocol=policy.progress_protocol,
+                    joint_action_representation=policy.joint_action_representation,
                     tray_cue_protocol=policy.tray_cue_protocol,
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,

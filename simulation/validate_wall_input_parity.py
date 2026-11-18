@@ -15,7 +15,7 @@ import yaml
 
 from run_wall_cylinder import CylinderWallPolicy
 from run_wall_carry import build_data_config,normalize_train_config_for_inference,register_data_backend
-from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_ACTION_WIDTH, joint_state_width, require
+from cylinder_joint_actions import JOINT_ACTION_WIDTH, joint_action_representation, joint_state_width, require
 from cylinder_progress_prompts import PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from wall_x._vendor.harrix.utils.normalizer import build_normalizers
 from wall_x.config.loader import load_config
@@ -38,7 +38,7 @@ def main():
     try:
         cfg=load_config(str(a.config));adapter=Qwen2_5Adapter(cfg=cfg,logger=logging.getLogger("input_parity"))
         dof_config=dict(cfg.task.dof_config)
-        joint=dof_config==JOINT_ACTION_LAYOUT
+        joint=joint_action_representation(dof_config) is not None
         action_width=JOINT_ACTION_WIDTH if joint else 23
         configured_joint_width=joint_state_width(cfg.task.agent_pos_config) if joint else None
         act,state,*_=load_lerobot_normalizers(cfg);adapter.normalizer_action,adapter.normalizer_propri=act,state

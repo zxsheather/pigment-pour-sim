@@ -17,6 +17,14 @@ JOINT_ACTION_LAYOUT = {
     'velocity_decomposed': 2,
     'action_padding': 17,
 }
+JOINT_SERVO_INCREMENT = 'servo_increment'
+JOINT_RELATIVE_POSITION = 'relative_position'
+JOINT_INCREMENT_ACTION_KEY = 'follow_right_arm_servo_increment'
+JOINT_INCREMENT_ACTION_LAYOUT = {
+    JOINT_INCREMENT_ACTION_KEY: 6,
+    **{name: width for name, width in JOINT_ACTION_LAYOUT.items() if name != 'follow_right_arm_joint_position_relative'},
+}
+ARM_SERVO_RATE_RAD_S = .65
 JOINT_STATE_LAYOUT = {
     'follow_right_arm_joint_position': 6,
     'follow_right_gripper': 1,
@@ -56,6 +64,15 @@ WRIST_CUE_STATE_NAMES = ('initial_cylinder_forward_in_current_base_frame_m',
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def joint_action_representation(layout):
+    items = list(layout.items())
+    if items == list(JOINT_ACTION_LAYOUT.items()):
+        return JOINT_RELATIVE_POSITION
+    if items == list(JOINT_INCREMENT_ACTION_LAYOUT.items()):
+        return JOINT_SERVO_INCREMENT
+    return None
 
 
 def joint_state_width(layout):
@@ -145,6 +162,19 @@ def absolute_joint_chunk(actions, anchor_state):
     result = actions[:, :JOINT_ACTION_WIDTH].astype(np.float64)
     result[:, :6] += state[:6]
     return result
+
+
+def servo_increment_targets(actions, prior_commands, dt):
+    """Decode each model increment from the most recently applied servo setpoint."""
+    actions = np.asarray(actions, dtype=np.float64)
+    previous = np.asarray(prior_commands, dtype=np.float64)
+    require(actions.ndim > 0 and actions.shape[-1] == JOINT_ACTION_WIDTH
+            and actions.shape == previous.shape and np.isfinite(actions).all()
+            and np.isfinite(previous).all() and np.isfinite(dt) and dt > 0, 'Invalid joint increment or prior command')
+    limit = ARM_SERVO_RATE_RAD_S * dt
+    targets = actions.copy()
+    targets[..., :6] = previous[..., :6] + np.clip(actions[..., :6], -limit, limit)
+    return targets
 
 
 def robot_joint_observation(env, *, servo_state=False):

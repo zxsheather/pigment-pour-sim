@@ -7,9 +7,10 @@ import mujoco
 import numpy as np
 import imageio.v2 as imageio
 
-from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, require,
+from carry_env import CONTROL_DT
+from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_INCREMENT, JOINT_SERVO_STATE_WIDTH, require,
                                     bounded_joint_command, robot_joint_observation, with_joint_servo_state,
-                                    with_joint_wrist_cue_state)
+                                    servo_increment_targets, with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
                                   estimate_from_robot_views, with_tray_cue_state)
@@ -35,6 +36,22 @@ def verify_progress_prompts(initial_base, initial_command, episode, observations
                for i in np.flatnonzero(np.diff(phase, prepend=-1))]
     reported = [row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
     require(reported == changes, 'Recorded prompt changes do not match robot progress')
+
+
+def verify_servo_increments(directory, initial_command, observations, trajectory):
+    chunks = np.load(directory/'predicted_chunks.npy', allow_pickle=False)
+    times = trajectory['timestamp']
+    sample_indices = np.searchsorted(times, observations['timestamp'])
+    require(chunks.ndim == 3 and chunks.shape[2] == 26 and len(chunks) == len(sample_indices)
+            and len(times) and len(chunks) and sample_indices[0] == 0, 'Missing model chunk evidence')
+    ends = np.r_[sample_indices[1:], len(times)]
+    command_counts = ends - sample_indices
+    require(np.all((command_counts > 0) & (command_counts <= chunks.shape[1])), 'Invalid chunk-to-command alignment')
+    np.testing.assert_array_equal(times[sample_indices], observations['timestamp'])
+    raw = np.concatenate([chunk[:count, :9] for chunk, count in zip(chunks, command_counts, strict=True)])
+    np.testing.assert_array_equal(raw, trajectory['unfiltered_model_action'])
+    previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
+    np.testing.assert_array_equal(servo_increment_targets(raw, previous, CONTROL_DT), trajectory['action'])
 
 
 def wrist_pose_breakdown(env, local_error, initial_base):
@@ -81,6 +98,10 @@ def measure_rollout(folder, *, pose_breakdown=False):
         initial_base = env.base_pose().copy()
         progress = episode.get('progress_protocol')
         require(progress == summary.get('progress_protocol'), 'Progress protocol differs between episode and rollout')
+        increment = summary.get('joint_action_representation') == JOINT_SERVO_INCREMENT
+        if increment:
+            require(progress and episode['joint_action_representation'] == JOINT_SERVO_INCREMENT,
+                    'Episode and rollout must agree on the increment action layout')
         tray_protocol = episode.get('tray_cue_protocol')
         tray_cue = episode.get('initial_tray_cue')
         require(tray_protocol == summary.get('tray_cue_protocol'), 'Tray protocol differs between episode and rollout')
@@ -102,6 +123,8 @@ def measure_rollout(folder, *, pose_breakdown=False):
               np.load(directory / 'trajectory.npz') as trajectory):
             if progress:
                 verify_progress_prompts(initial_base, bounded_joint_command(env), episode, observations, trajectory)
+            if increment:
+                verify_servo_increments(directory, bounded_joint_command(env), observations, trajectory)
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
                     'Snapshot and observation counts differ')
             spec = int(physics['state_spec'])
@@ -149,6 +172,7 @@ def measure_rollout(folder, *, pose_breakdown=False):
                     robot_observations_reproduced_exactly=max_state_error == 0.,
                     robot_observations_max_abs_difference=max_state_error,
                     progress_prompts_reproduced_exactly=bool(progress),
+                    model_servo_increment_decode_exact=increment,
                     maximum_recorded_loaded_contacts=maximum_contacts,
                     nearest=min(snapshots, key=lambda row: row['grasp_distance_m']), first=snapshots[0],
                     last=snapshots[-1], failure_reason=episode['failure_reason'])
