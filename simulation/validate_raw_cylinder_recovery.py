@@ -51,6 +51,7 @@ def main():
                     ('hold_targets',source['hold_targets'][index]),
                     ('applied_base_action',source['applied_base_action'][index])]:
             require(np.array_equal(start[a],b),f'Restored source mismatch: {a}')
+    source_observation_width = None
     with np.load(args.episode/'trajectory.npz') as data:
         count=metadata['frames']
         if joint:
@@ -64,9 +65,21 @@ def main():
             actions=joint_command_action(data['joint_command']).astype(np.float64)
             state_width,action_width=18,9
             with np.load(Path(provenance['policy_episode'])/'model_observations.npz') as observed:
-                require(observed['state'].shape[1]==18,'Expected a joint-policy recovery source')
-                require(np.array_equal(states[0],observed['state'][provenance['snapshot_index']]),
-                        'Initial joint-policy observation changed during recovery')
+                source_observation_width = observed['state'].shape[1]
+                # The restored integration state contains the same joint data
+                # even if the source policy used Cartesian observations.
+                if source_observation_width == 18:
+                    restored = states[0]
+                elif source_observation_width == 23:
+                    restored = data['state'][0]
+                elif source_observation_width == 26:
+                    restored = np.concatenate([data['state'][0], data['base_pose'][0]]).astype(np.float32)
+                else:
+                    raise ValueError(f'Unsupported policy observation width: {source_observation_width}')
+                require(np.array_equal(restored, observed['state'][index]),
+                        'Initial recorded policy observation changed during recovery')
+                require(abs(float(observed['timestamp'][index]) - provenance['source_simulated_seconds']) < 1e-6,
+                        'Recovery timestamp differs from the recorded policy observation')
         else:
             states=np.concatenate([data['state'],data['base_pose']],axis=1).astype(np.float32).astype(np.float64)
             actions=data['action'].astype(np.float32).astype(np.float64)
@@ -96,6 +109,7 @@ def main():
     report=dict(kind='raw_recovery_training_candidate_validation',episode=str(args.episode.resolve()),
         frames=count,robot_state_dimensions=state_width,action_dimensions=action_width,
         action_space='joint' if joint else 'cartesian',
+        source_policy_robot_state_dimensions=source_observation_width,
         success_is_privileged_teacher_only=True,source_integration_state_and_controller_exactly_preserved=True,
         no_duplicate_export_created=True,training_not_modified_by_this_check=True,
         source_provenance=provenance,teacher_result=result,video_alignment=videos,
