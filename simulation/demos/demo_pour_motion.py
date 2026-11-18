@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from simulation.motion.motion import BottlePose, PourMotion
-from simulation.benchmarks.setup_pour_pose import IDLE_ARM_JOINTS
+from simulation.benchmarks.scenarios.build_pour_scenes import IDLE_ARM_JOINTS
 from simulation.world_model.paths import ROOT
 from simulation.world_model.collision import workspace_contacts
 

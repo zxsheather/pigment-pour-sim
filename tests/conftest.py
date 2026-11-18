@@ -3,7 +3,7 @@ import json
 import mujoco
 import pytest
 
-from simulation.benchmarks.setup_pour_pose import build_pour_scenes
+from simulation.benchmarks.scenarios.build_pour_scenes import build_pour_scenes
 from simulation.world_model.build_scene import build
 from simulation.world_model.paths import ROOT, SCENE_CONFIG
 

@@ -2,7 +2,7 @@
 import json
 
 from simulation.world_model.paths import ROOT, SCENE_CONFIG
-from simulation.benchmarks.pose import set_display_pose
+from simulation.benchmarks.scenarios.robot_pose import set_display_pose
 
 import mujoco
 import numpy as np

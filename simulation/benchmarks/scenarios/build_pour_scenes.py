@@ -10,7 +10,7 @@ from PIL import Image
 from simulation.world_model.collision import workspace_contacts
 from simulation.world_model.build_scene import camera, element, fmt
 from simulation.world_model.paths import ROOT, SCENE_CONFIG
-from simulation.benchmarks.pose import set_display_pose
+from simulation.benchmarks.scenarios.robot_pose import set_display_pose
 from simulation.world_model.actuators import ARM_JOINTS, FINGER_JOINTS, SERVO_SETTINGS, write_pour_actuators
 
 

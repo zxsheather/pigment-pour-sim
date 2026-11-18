@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from simulation.world_model.actuators import FINGER_JOINTS
-from simulation.benchmarks.setup_pour_pose import GRIPPER
+from simulation.benchmarks.scenarios.build_pour_scenes import GRIPPER
 from simulation.world_model.paths import ROOT
 from simulation.world_model.collision import workspace_contacts
 

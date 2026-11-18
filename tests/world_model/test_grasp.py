@@ -1,7 +1,7 @@
 import mujoco
 import numpy as np
 
-from simulation.benchmarks.setup_pour_pose import GRIPPER
+from simulation.benchmarks.scenarios.build_pour_scenes import GRIPPER
 from simulation.world_model.actuators import FINGER_JOINTS
 
 
