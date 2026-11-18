@@ -17,8 +17,8 @@ import torch
 from audit_gripper import audit
 from carry_env import CAMERAS,CONTROL_DT
 from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
-from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_STATE_LAYOUT,
-    absolute_joint_chunk,joint_action_to_targets,robot_joint_observation,bounded_joint_command)
+from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,
+    absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command)
 from cylinder_reader import read_volume
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
@@ -36,9 +36,9 @@ class CylinderWallPolicy(CarryWallPolicy):
     @staticmethod
     def _validate_robot_layouts(config):
         if 'follow_right_arm_joint_position_relative' in config['dof_config']:
-            if (list(config['dof_config'].items())!=list(JOINT_ACTION_LAYOUT.items()) or
-                    list(config['agent_pos_config'].items())!=list(JOINT_STATE_LAYOUT.items())):
-                raise ValueError('Unsupported cylinder joint layout')
+            if list(config['dof_config'].items())!=list(JOINT_ACTION_LAYOUT.items()):
+                raise ValueError('Unsupported cylinder joint action layout')
+            joint_state_width(config['agent_pos_config'])
         else:CarryWallPolicy._validate_robot_layouts(config)
 
     def __init__(self,checkpoint,train_config,norm_key,*,flow_steps=10,flow_noise="random",
@@ -50,7 +50,9 @@ class CylinderWallPolicy(CarryWallPolicy):
                            self._train_config['dof_config'] else 'cartesian')
         self.action_width=9 if self.action_space=='joint' else 23
         self.with_odometry="base_odometry" in self._train_config["agent_pos_config"]
-        self.state_width=18 if self.action_space=='joint' else 26 if self.with_odometry else 23
+        self.state_width=(joint_state_width(self._train_config['agent_pos_config']) if self.action_space=='joint'
+                          else 26 if self.with_odometry else 23)
+        self.joint_servo_state=self.action_space=='joint' and self.state_width==JOINT_SERVO_STATE_WIDTH
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
@@ -78,6 +80,7 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
                                 action_space=self.action_space,active_action_dimensions=self.action_width,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
+                                joint_servo_state=self.joint_servo_state,
                                 flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
                                 unclipped_robot_state=unclipped_robot_state,
                                 state_precision_alignment_applies=not self._model.config.use_state_string_representation,
@@ -97,8 +100,7 @@ class CylinderWallPolicy(CarryWallPolicy):
         padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
                                         inputs["dataset_names"]).to("cuda")
         # Match the training collator's zero padding after normalization.
-        # Zero every virtual action/state slot after normalization. Cartesian
-        # odometry uses all26 state slots; the joint variant observes18.
+        # Zero every virtual action/state slot after normalization.
         padding[...,self.action_width:]=0
         inputs["proprioception"][...,self.state_width:]=0
         if self.state_embedding_precision=="training" and not self._model.config.use_state_string_representation:
@@ -121,12 +123,14 @@ class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
-                 gripper_open_confirmation_mode="prefix-median",action_space="cartesian"):
+                 gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
+        if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
             raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
         self.action_space=action_space
+        self.joint_servo_state=joint_servo_state
         self.max_joint_limit_projection=0.;self.joint_limit_projected_frames=0
         self.case=case;self.output=output;output.mkdir(parents=True,exist_ok=False)
         options=controller.get("environment",{})
@@ -165,7 +169,8 @@ class CylinderTrial:
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
-        if self.action_space=='joint':observation['state']=robot_joint_observation(self.env)
+        if self.action_space=='joint':
+            observation['state']=robot_joint_observation(self.env,servo_state=self.joint_servo_state)
         elif self.with_odometry:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
@@ -377,7 +382,7 @@ def main():
                          state_embedding_precision=args.state_embedding_precision,
                          gripper_open_confirmations=args.gripper_open_confirmations,
                          gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
-                         action_space=policy.action_space,
+                         action_space=policy.action_space,joint_servo_state=policy.joint_servo_state,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:

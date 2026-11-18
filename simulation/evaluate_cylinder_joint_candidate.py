@@ -162,7 +162,11 @@ def main():
     hashes = single['episodes'][0]['source_sha256']
     require(all(digest(scripts / name) == sha for name, sha in hashes.items()), 'Candidate execution source is stale')
     verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes, action_space=action_space)
-    require(model.parent.parent == run and model.name == f"0_{candidate['step']}", 'Unexpected checkpoint location')
+    from audit_wall_checkpoint import saved_checkpoint_position
+
+    require(model.parent == run / 'checkpoints', 'Unexpected checkpoint location')
+    _, saved_step = saved_checkpoint_position(model)
+    require(saved_step == candidate['step'], 'Candidate step differs from saved checkpoint metadata')
     require((model / 'model.safetensors').is_file(), 'Candidate weights missing')
     require(not args.output.exists(), 'Output already exists; inspect it rather than silently rerunning suites')
     require(audit['checkpoint_sha256'] == digest(model / 'model.safetensors'), 'Audited weights changed')

@@ -18,6 +18,20 @@ ACTION_KEYS=("action_preprocessor","moe.experts.1","qkv_proj_experts.1","o_proj_
 PROPRIO_PROJECTION = "action_preprocessor.propri_proj.weight"
 
 
+def saved_checkpoint_position(checkpoint):
+    """Check that Wall's saved epoch and global step match the directory name."""
+    epoch_file = checkpoint / "current_epoch.pth"
+    step_file = checkpoint / "global_step.pth"
+    if not epoch_file.is_file() or not step_file.is_file():
+        raise ValueError(f"Missing checkpoint position metadata: {checkpoint}")
+    epoch = torch.load(epoch_file, map_location="cpu", weights_only=True)["current_epoch"]
+    step = torch.load(step_file, map_location="cpu", weights_only=True)["global_step"]
+    if (type(epoch) is not int or type(step) is not int or epoch < 0 or step < 0
+            or checkpoint.name != f"{epoch}_{step}"):
+        raise ValueError(f"Invalid checkpoint position: {checkpoint}")
+    return epoch, step
+
+
 def file_hash(path):
     digest=hashlib.sha256()
     with path.open("rb") as stream:

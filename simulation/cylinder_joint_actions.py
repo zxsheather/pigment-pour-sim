@@ -10,6 +10,7 @@ import numpy as np
 APERTURE_SCALE_M = .0975
 JOINT_ACTION_WIDTH = 9
 JOINT_STATE_WIDTH = 18
+JOINT_SERVO_STATE_WIDTH = 26
 JOINT_ACTION_LAYOUT = {
     'follow_right_arm_joint_position_relative': 6,
     'follow_right_gripper': 1,
@@ -24,16 +25,33 @@ JOINT_STATE_LAYOUT = {
     'base_odometry': 3,
     'action_padding': 8,
 }
+JOINT_SERVO_STATE_LAYOUT = {
+    **{name: width for name, width in JOINT_STATE_LAYOUT.items() if name != 'action_padding'},
+    'right_arm_tracking_error': 6,
+    'right_gripper_tracking_error': 1,
+    'base_forward_command': 1,
+}
 JOINT_ACTION_NAMES = ([f'right_joint_position_{i}' for i in range(1, 7)]
                       + ['right_gripper_opening_fraction', 'base_vx', 'base_yaw_rate'])
 JOINT_STATE_NAMES = (JOINT_ACTION_NAMES
                      + [f'right_joint_velocity_{i}' for i in range(1, 7)]
                      + ['base_odometry_x', 'base_odometry_y', 'base_odometry_yaw'])
+JOINT_SERVO_STATE_NAMES = (JOINT_STATE_NAMES
+                           + [f'right_joint_tracking_error_{i}' for i in range(1, 7)]
+                           + ['right_gripper_tracking_error_fraction', 'previous_base_forward_command'])
 
 
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+
+def joint_state_width(layout):
+    items = list(layout.items())
+    if items == list(JOINT_STATE_LAYOUT.items()):
+        return JOINT_STATE_WIDTH
+    require(items == list(JOINT_SERVO_STATE_LAYOUT.items()), 'Unsupported cylinder joint state layout')
+    return JOINT_SERVO_STATE_WIDTH
 
 
 def joint_observation(qpos, qvel, robot_state23, base_pose):
@@ -60,9 +78,19 @@ def joint_command_action(commands):
     return action.astype(np.float32)
 
 
+def with_joint_servo_state(observation, previous_command):
+    """Append tracked actuator state from the preceding applied control tick."""
+    state = np.asarray(observation, dtype=np.float32)
+    command = joint_command_action(previous_command)
+    require(state.shape == (*command.shape[:-1], JOINT_STATE_WIDTH) and np.isfinite(state).all(),
+            'Expected measured joint state and a matching previous command')
+    tracking_error = command[..., :7] - state[..., :7]
+    return np.concatenate((state, tracking_error, command[..., 7:8]), axis=-1)
+
+
 def relative_joint_chunks(states, actions, horizon):
     states, actions = np.asarray(states), np.asarray(actions)
-    require(states.shape == (len(actions), JOINT_STATE_WIDTH)
+    require(states.shape in ((len(actions), JOINT_STATE_WIDTH), (len(actions), JOINT_SERVO_STATE_WIDTH))
             and actions.shape == (len(actions), JOINT_ACTION_WIDTH)
             and len(actions) > 0 and horizon > 0, 'Invalid joint demonstration')
     indices = np.minimum(np.arange(len(actions))[:, None] + np.arange(horizon),
@@ -75,7 +103,7 @@ def relative_joint_chunks(states, actions, horizon):
 def absolute_joint_chunk(actions, anchor_state):
     actions, state = np.asarray(actions), np.asarray(anchor_state)
     require(actions.ndim == 2 and actions.shape[1] in (9, 26)
-            and state.shape == (JOINT_STATE_WIDTH,)
+            and state.shape in ((JOINT_STATE_WIDTH,), (JOINT_SERVO_STATE_WIDTH,))
             and np.isfinite(actions).all() and np.isfinite(state).all(),
             'Invalid joint action forecast or anchor state')
     result = actions[:, :JOINT_ACTION_WIDTH].astype(np.float64)
@@ -83,9 +111,10 @@ def absolute_joint_chunk(actions, anchor_state):
     return result
 
 
-def robot_joint_observation(env):
-    return joint_observation(env.data.qpos[env.arm_addresses], env.data.qvel[env.arm_dofs],
-                             env.state_vector(), env.base_pose())
+def robot_joint_observation(env, *, servo_state=False):
+    observation = joint_observation(env.data.qpos[env.arm_addresses], env.data.qvel[env.arm_dofs],
+                                    env.state_vector(), env.base_pose())
+    return with_joint_servo_state(observation, bounded_joint_command(env)) if servo_state else observation
 
 
 def joint_action_to_targets(env, action):

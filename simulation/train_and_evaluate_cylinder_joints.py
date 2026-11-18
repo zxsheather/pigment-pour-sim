@@ -15,20 +15,14 @@ import time
 import yaml
 
 from audit_cylinder_grasp_approach import measure_rollout
-from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_STATE_LAYOUT, require
+from audit_wall_checkpoint import saved_checkpoint_position
+from cylinder_joint_actions import JOINT_ACTION_LAYOUT, joint_state_width, require
 
 
 def checkpoint_position(checkpoint):
-    import torch
-
-    for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt',
-                 'global_step.pth', 'current_epoch.pth'):
+    for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt'):
         require((checkpoint/name).is_file(), f'Missing checkpoint component: {checkpoint/name}')
-    epoch = torch.load(checkpoint/'current_epoch.pth', map_location='cpu', weights_only=True)['current_epoch']
-    step = torch.load(checkpoint/'global_step.pth', map_location='cpu', weights_only=True)['global_step']
-    require(type(epoch) is int and type(step) is int and epoch >= 0 and step >= 0
-            and checkpoint.name == f'{epoch}_{step}', f'Invalid checkpoint position: {checkpoint}')
-    return epoch, step
+    return saved_checkpoint_position(checkpoint)
 
 
 def checkpoint_saved_at(log, step):
@@ -74,9 +68,9 @@ def main():
     cfg = yaml.safe_load(config.read_text())
     action_space = args.action_space
     if action_space == 'joint':
-        require(list(cfg['task']['dof_config'].items()) == list(JOINT_ACTION_LAYOUT.items())
-                and list(cfg['task']['agent_pos_config'].items()) == list(JOINT_STATE_LAYOUT.items()),
-                'Expected the joint action/state schema')
+        require(list(cfg['task']['dof_config'].items()) == list(JOINT_ACTION_LAYOUT.items()),
+                'Expected the joint action schema')
+        joint_state_width(cfg['task']['agent_pos_config'])
         validator = 'validate_wall_cylinder_joints.py'
         norm_key = 'cylinder_joint_v1'
     else:

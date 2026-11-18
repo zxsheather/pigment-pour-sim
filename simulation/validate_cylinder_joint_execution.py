@@ -13,8 +13,8 @@ import numpy as np
 import pyarrow.parquet as pq
 
 from cylinder_joint_actions import (
-    JOINT_ACTION_WIDTH, JOINT_STATE_WIDTH, absolute_joint_chunk, relative_joint_chunks,
-    robot_joint_observation, require,
+    JOINT_ACTION_WIDTH, JOINT_STATE_WIDTH, JOINT_SERVO_STATE_WIDTH, absolute_joint_chunk,
+    relative_joint_chunks, robot_joint_observation, require,
 )
 from run_wall_cylinder import CylinderTrial
 
@@ -80,7 +80,7 @@ def joint_replay_raw(source, reconstruction, validation_file, output):
 
 def replay_joint_labels(raw_source, result, states, actions, output, *, episode=None):
     require(result['grip_force_target_n'] is None, 'Replay requires position servos')
-    require(states.shape == (len(actions), JOINT_STATE_WIDTH)
+    require(states.shape in ((len(actions), JOINT_STATE_WIDTH), (len(actions), JOINT_SERVO_STATE_WIDTH))
             and actions.shape == (len(states), JOINT_ACTION_WIDTH)
             and len(states) > 0, 'Invalid joint replay arrays')
     controller = dict(grasp_x=result['controller_parameters']['grasp_x_m'],

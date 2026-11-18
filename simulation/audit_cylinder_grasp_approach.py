@@ -6,7 +6,7 @@ from pathlib import Path
 import mujoco
 import numpy as np
 
-from cylinder_joint_actions import APERTURE_SCALE_M, require, robot_joint_observation
+from cylinder_joint_actions import APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, require, robot_joint_observation
 from inspect_cylinder import CylinderEnv
 
 
@@ -57,12 +57,17 @@ def measure_rollout(folder, *, pose_breakdown=False):
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
                     'Snapshot and observation counts differ')
             spec = int(physics['state_spec'])
-            for state, timestamp, observed in zip(physics['full_state'], observations['timestamp'],
-                                                  observations['state']):
+            for i, (state, timestamp, observed) in enumerate(zip(
+                    physics['full_state'], observations['timestamp'], observations['state'])):
                 mujoco.mj_setState(env.model, env.data, state, spec)
                 mujoco.mj_forward(env.model, env.data)
                 if action_space == 'joint':
-                    reproduced = robot_joint_observation(env)
+                    servo_state = len(observed) == JOINT_SERVO_STATE_WIDTH
+                    if servo_state:
+                        env.hold_targets = dict(zip(physics['hold_actuator_ids'].tolist(),
+                                                    physics['hold_targets'][i].tolist()))
+                        env.applied_action[:] = physics['applied_base_action'][i]
+                    reproduced = robot_joint_observation(env, servo_state=servo_state)
                     np.testing.assert_array_equal(reproduced, observed)
                 else:
                     reproduced = env.state_vector()

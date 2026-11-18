@@ -14,8 +14,7 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
-from cylinder_joint_actions import (JOINT_ACTION_LAYOUT, JOINT_STATE_LAYOUT,
-                                    absolute_joint_chunk, require)
+from cylinder_joint_actions import JOINT_ACTION_LAYOUT, absolute_joint_chunk, joint_state_width, require
 from wall_x.config.loader import load_config
 from wall_x.data.backends.lerobot.build import load_lerobot_normalizers
 from wall_x.model.qact.qwen2_5.adapter import Qwen2_5Adapter
@@ -35,9 +34,9 @@ def main():
     dist.init_process_group('gloo')
     try:
         cfg = load_config(str(args.config))
-        require(list(cfg.task.dof_config.items()) == list(JOINT_ACTION_LAYOUT.items())
-                and list(cfg.task.agent_pos_config.items()) == list(JOINT_STATE_LAYOUT.items()),
-                'Unexpected joint configuration')
+        require(list(cfg.task.dof_config.items()) == list(JOINT_ACTION_LAYOUT.items()),
+                'Unexpected joint action configuration')
+        state_width = joint_state_width(cfg.task.agent_pos_config)
         torch.manual_seed(cfg.hyperparams.seed)
         adapter = Qwen2_5Adapter(cfg=cfg, logger=logging.getLogger('joint_data'))
         action_norm, state_norm, *_ = load_lerobot_normalizers(cfg)
@@ -94,24 +93,26 @@ def main():
                 collated = loader.collate_fn([sample])
                 require(bool(collated['dof_mask'][..., :9].bool().all())
                         and not bool(collated['dof_mask'][..., 9:].bool().any()), 'Wrong action mask')
-                require(bool(collated['agent_pos_mask'][..., :18].bool().all())
-                        and not bool(collated['agent_pos_mask'][..., 18:].bool().any()), 'Wrong state mask')
+                require(bool(collated['agent_pos_mask'][..., :state_width].bool().all())
+                        and not bool(collated['agent_pos_mask'][..., state_width:].bool().any()), 'Wrong state mask')
                 require(bool((collated['action_chunk'][..., 9:] == 0).all())
-                        and bool((collated['proprioception'][..., 18:] == 0).all()), 'Nonzero virtual padding')
+                        and bool((collated['proprioception'][..., state_width:] == 0).all()), 'Nonzero virtual padding')
                 action_input = torch.zeros(1, len(raw_action), 26)
                 state_input = torch.zeros(1, 1, 26)
                 action_input[..., :9] = sample['action']
-                state_input[..., :18] = sample['agent_pos']
+                state_input[..., :state_width] = sample['agent_pos']
                 expected_action = _normalize_real_prefix(action_norm, action_input, collated['dataset_names'])
                 expected_state = _normalize_real_prefix(state_norm, state_input, collated['dataset_names'])
                 served_action = _normalize_real_prefix(serving_action, action_input, [serving_key])
                 served_state = _normalize_real_prefix(serving_state, state_input, [serving_key])
                 require(torch.allclose(collated['action_chunk'][..., :9], expected_action[..., :9], atol=1e-6),
                         'Inference/training action normalizers differ')
-                require(torch.allclose(collated['proprioception'][..., :18], expected_state[..., :18], atol=1e-6),
+                require(torch.allclose(collated['proprioception'][..., :state_width],
+                                       expected_state[..., :state_width], atol=1e-6),
                         'Inference/training robot state normalizers differ')
                 require(torch.allclose(collated['action_chunk'][..., :9], served_action[..., :9], atol=1e-6)
-                        and torch.allclose(collated['proprioception'][..., :18], served_state[..., :18], atol=1e-6),
+                        and torch.allclose(collated['proprioception'][..., :state_width],
+                                           served_state[..., :state_width], atol=1e-6),
                         'Checkpoint-serving normalizer factory differs from training')
                 checks.append(dict(episode=episode, frame=int(frames[source_index]),
                                    relative_joint_labels_exact=True, robot_state_exact=True,
@@ -128,7 +129,7 @@ def main():
             training_iterations_per_epoch=iterations,
             batch_shapes={k: list(v.shape) for k, v in batch.items() if torch.is_tensor(v)},
             checks=checks, episode_end_repeats_last=True,
-            action_active_dimensions=list(range(9)), robot_state_active_dimensions=list(range(18)),
+            action_active_dimensions=list(range(9)), robot_state_active_dimensions=list(range(state_width)),
             sampling_weights_match_source_indices=True, processor_loaded=True,
             checkpoint_serving_normalizer_factory_matches_training=True,
             serving_normalizer_key=serving_key,

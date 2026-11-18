@@ -15,7 +15,7 @@ import yaml
 
 from run_wall_cylinder import CylinderWallPolicy
 from run_wall_carry import build_data_config,normalize_train_config_for_inference,register_data_backend
-from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_ACTION_WIDTH, JOINT_STATE_WIDTH, require
+from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_ACTION_WIDTH, joint_state_width, require
 from wall_x._vendor.harrix.utils.normalizer import build_normalizers
 from wall_x.config.loader import load_config
 from wall_x.data.backends.lerobot.build import load_lerobot_normalizers
@@ -39,6 +39,7 @@ def main():
         dof_config=dict(cfg.task.dof_config)
         joint=dof_config==JOINT_ACTION_LAYOUT
         action_width=JOINT_ACTION_WIDTH if joint else 23
+        configured_joint_width=joint_state_width(cfg.task.agent_pos_config) if joint else None
         act,state,*_=load_lerobot_normalizers(cfg);adapter.normalizer_action,adapter.normalizer_propri=act,state
         processors=adapter.load_processor(None);model_config=adapter.build_model_config()
         dataset,loader,_=adapter.load_dataset(load_trainer_data_config(cfg),processors["processor"],rank=0,world_size=1,
@@ -73,7 +74,7 @@ def main():
             raw=inner.hf_dataset[int(indices[index])]
             processed=inner[index];train=loader.collate_fn([processed])
             values=raw["observation.state"].numpy();width=len(values)
-            require(not joint or width==JOINT_STATE_WIDTH,"Wrong joint observation width")
+            require(not joint or width==configured_joint_width,"Wrong joint observation width")
             proprio=np.zeros((1,1,26),np.float32);proprio[...,:width]=values
             mask=np.zeros_like(proprio);mask[...,:width]=1
             dof=np.zeros((1,policy._action_horizon,26),np.float32);dof[...,:action_width]=1
