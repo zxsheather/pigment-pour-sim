@@ -43,6 +43,7 @@ case "$variant" in
     old=$root/datasets/cylinder-joint-near-tray-recovery-v7
     data=$root/datasets/cylinder-joint-pose-recovery-v8
     stage=$root/runs/cylinder-joint-pose-recovery-data-check-v8
+    group_pattern='^cylinder-joint-(wrist-recovery|v5-step256-correction)-v1$'
     names=("$@")
     ;;
   unilateral)
@@ -55,8 +56,22 @@ case "$variant" in
     checked=$root/runs/cylinder-joint-v7-unilateral-recovery-v1-validation
     names=(volume_17_seed_9061_snapshot_18 volume_36_seed_9063_snapshot_15)
     ;;
+  v8-contact)
+    shift
+    if [ "$#" -eq 0 ]; then
+      printf 'Pass verified recovery-group/episode paths for the V8 contact stage\n' >&2
+      exit 2
+    fi
+    live=$root/runs/cylinder-joint-unilateral-recovery-data-check-v9
+    live_weights=$live/grasp-weights.npy
+    old=$root/datasets/cylinder-joint-unilateral-recovery-v9
+    data=$root/datasets/cylinder-joint-contact-release-recovery-v10
+    stage=$root/runs/cylinder-joint-contact-release-recovery-data-check-v10
+    group_pattern='^cylinder-joint-v8-contact-(teacher|slow-approach)-v1$'
+    names=("$@")
+    ;;
   *)
-    printf 'Expected drift, near-tray, wrist or unilateral\n' >&2
+    printf 'Expected drift, near-tray, wrist, unilateral or v8-contact\n' >&2
     exit 2
     ;;
 esac
@@ -68,10 +83,10 @@ reconstructions=()
 checks=()
 episode_index=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["total_episodes"])' "$old/meta/info.json")
 for name in "${names[@]}"; do
-  if [ "$variant" = wrist ]; then
+  if [[ "$variant" == wrist || "$variant" == v8-contact ]]; then
     group=${name%%/*}
     name=${name#*/}
-    if [[ ! "$group" =~ ^cylinder-joint-(wrist-recovery|v5-step256-correction)-v1$ ||
+    if [[ ! "$group" =~ $group_pattern ||
           ! "$name" =~ ^volume_[0-9]+_seed_[0-9]+_snapshot_[0-9]+(_[a-z_]+)?$ ]]; then
       printf 'Unexpected recovery path: %s/%s\n' "$group" "$name" >&2
       exit 2
@@ -79,7 +94,7 @@ for name in "${names[@]}"; do
     raw=$sim/generated/$group
     checked=$root/runs/$group-validation
   fi
-  if [[ "$variant" == wrist || "$variant" == unilateral ]]; then
+  if [[ "$variant" == wrist || "$variant" == unilateral || "$variant" == v8-contact ]]; then
     "$python" -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["demonstration_replay_success"] and d["geometry_audit_passed"] and not d["neural_weights_loaded"]' \
       "$checked/$name/decoder/decoder-replay.json"
   fi
@@ -160,7 +175,7 @@ for index in range(base_count, len(new_provenance)):
     replays.append({k: replay[k] for k in ('episode', 'demonstration_frames', 'executed_frames',
         'demonstration_replay_success', 'max_slip_m', 'max_lifted_m', 'geometry_audit_passed')})
 assert all(r['demonstration_replay_success'] and r['geometry_audit_passed'] for r in replays)
-kind = 'staged_joint_recovery_corrections' if variant in {'wrist', 'unilateral'} else 'staged_joint_drift_corrections'
+kind = 'staged_joint_recovery_corrections' if variant in {'wrist', 'unilateral', 'v8-contact'} else 'staged_joint_drift_corrections'
 report = dict(kind=kind, dataset=str(data), base_dataset=str(old),
     episodes=len(new_provenance), frames=len(full), new_frames=len(full)-len(base), exact_unchanged_base_rows=len(base),
     norm_sha256=hashlib.sha256((data / 'joint_norm_stats.json').read_bytes()).hexdigest(),

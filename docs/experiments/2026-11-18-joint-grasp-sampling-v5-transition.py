@@ -23,6 +23,7 @@ FIRST_APPROACH = None
 OLD_PIDS = {1868039: 'train_and_evaluate_cylinder_joints.py',
             1872486: 'torch.distributed.run', 1872691: 'train_fsdp.py'}
 TARGET_STEP = 256
+FIRST_STEP = 128
 STATE = dict(pid=os.getpid(), target_step=TARGET_STEP, old_driver_pid=1868039)
 
 
@@ -55,17 +56,27 @@ def intact():
 
 
 def configure():
-    global OLD, STAGED, NEW, LOG, STATUS, DIAGNOSTIC, FIRST_APPROACH, OLD_PIDS
+    global OLD, STAGED, NEW, LOG, STATUS, DIAGNOSTIC, FIRST_APPROACH, OLD_PIDS, FIRST_STEP, TARGET_STEP
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--active-run', type=Path)
     parser.add_argument('--staged-run', type=Path)
     parser.add_argument('--new-run', type=Path)
     first = parser.add_mutually_exclusive_group()
     first.add_argument('--diagnostics', type=Path)
-    first.add_argument('--first-approach', type=Path, help='Use a verified step-128 approach report for a data-only change')
+    first.add_argument('--first-approach', type=Path, help='Use a verified approach report for a data-only change')
+    parser.add_argument('--first-step', type=int, default=128)
+    parser.add_argument('--target-step', type=int, default=256)
     parser.add_argument('--status', type=Path)
     parser.add_argument('--trainer-pid', type=int)
     args = parser.parse_args()
+    if not 0 < args.first_step < args.target_step:
+        parser.error('Expected positive checkpoint steps in increasing order')
+    if (args.first_step, args.target_step) != (128, 256) and args.first_approach is None:
+        parser.error('Nondefault checkpoint steps require --first-approach')
+    FIRST_STEP, TARGET_STEP = args.first_step, args.target_step
+    STATE['target_step'] = TARGET_STEP
+    if FIRST_STEP != 128:
+        STATE['first_step'] = FIRST_STEP
     overrides = (args.active_run, args.staged_run, args.new_run, args.diagnostics or args.first_approach,
                  args.status, args.trainer_pid)
     if all(value is None for value in overrides):
@@ -95,7 +106,7 @@ def first_rollout():
     assert not report['new_policy_inference_run'] and not report['independent_cases_read']
     row, = report['policy_results']
     if FIRST_APPROACH:
-        rollout = ROOT / 'runs' / f'{OLD.name}-step128-single'
+        rollout = ROOT / 'runs' / f'{OLD.name}-step{FIRST_STEP}-single'
         summary = read(rollout / 'summary.json')
         case, = summary['episodes']
         assert row['rollout'] == str(rollout) and row['robot_observations_reproduced_exactly']
@@ -103,7 +114,7 @@ def first_rollout():
         assert case['geometry_audit']['passed'] and case['geometry_audit']['custom_pads'] == 0
         assert not case['success'] and not case['final_task_gates']['held'] and case['max_lifted_m'] < .04
         assert row['failure_reason'] == case['failure_reason']
-        assert read(OLD / 'checkpoint-128-weight-audit.json')['passed']
+        assert read(OLD / f'checkpoint-{FIRST_STEP}-weight-audit.json')['passed']
     return row
 
 
@@ -144,7 +155,7 @@ def main():
             save('kept_active_reopen_bias_not_repeated', **evidence)
             return
         first = first_rollout()
-    save('waiting_for_active_256_closed_loop', **evidence)
+    save(f'waiting_for_active_{TARGET_STEP}_closed_loop', **evidence)
     for _ in range(540):
         state = read(OLD / 'execution-status.json')
         if (OLD / 'candidate-ready.json').exists() or state['stage'] == 'candidate_requires_full_suites':
@@ -168,7 +179,7 @@ def main():
     if case['success'] or case['final_task_gates']['held'] or case['max_lifted_m'] >= .04:
         save('kept_active_physical_grasp_progress')
         return
-    output = STATUS.with_name(f"{OLD.name.replace('-bc-', '-')}-step256-approach.json")
+    output = STATUS.with_name(f"{OLD.name.replace('-bc-', '-')}-step{TARGET_STEP}-approach.json")
     subprocess.run([str(ROOT / '.venv-sim/bin/python'), str(SCRIPTS / 'audit_cylinder_grasp_approach.py'),
         '--rollouts', str(rollout), '--dataset', str(dataset), '--reference-volume', '25',
         '--output', str(output)], cwd=ROOT, check=True, timeout=45,
@@ -194,7 +205,7 @@ def main():
         save('kept_active_state_changed', observed=state['stage'])
         return
     assert intact()
-    save('stopping_active_after_completed_256', parent=str(parent), parent_sha256=audit['checkpoint_sha256'],
+    save(f'stopping_active_after_completed_{TARGET_STEP}', parent=str(parent), parent_sha256=audit['checkpoint_sha256'],
          approach=str(output), nearest_distances_m=[r['nearest']['grasp_distance_m'] for r in (first, second)])
     os.kill(STATE['old_driver_pid'], signal.SIGTERM)
     for _ in range(45):

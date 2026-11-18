@@ -55,7 +55,7 @@ def grasp_groups(dataset):
         # Production takes the first eight outputs of a 32-action prediction.
         # Each episode pads its endpoint with its final command.
         future = np.minimum(frames[:, None] + np.arange(8), len(phase) - 1)
-        approaching = np.isin(phase, ('approach', 'advance'))
+        approaching = np.isin(phase, ('release_contact', 'withdraw_from_contact', 'approach', 'advance'))
         requested = actions[selected, 6][future].mean(axis=1)
         widening_mm = (requested - states[selected, 6]) * APERTURE_SCALE_M * 1000
         reopen[selected] = approaching[future].all(axis=1) & (widening_mm >= 10)

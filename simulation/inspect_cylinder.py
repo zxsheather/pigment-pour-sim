@@ -267,7 +267,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
-                   held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None):
+                   held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
+                   release_single_contact=False,release_retreat_m=0.):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -275,6 +276,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Held recovery lift must be within [0,0.10] m")
     if held_initial_lift_m and (not start_holding or skip_retreat):
         raise ValueError("Initial lift requires a held transport recovery")
+    if release_single_contact and (reset_scene or start_holding):
+        raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
+    if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
+        raise ValueError("Release retreat must be within [0,0.10] m")
+    if release_retreat_m and not release_single_contact:
+        raise ValueError("Release retreat requires single-contact recovery")
     if not np.isfinite(eye_alignment_target_px) or not .5<=eye_alignment_target_px<=2.:
         raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
     geometry_report=None
@@ -352,7 +359,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # require the cylinder and image reading to be still at the end.
             if lost_seconds>.2 or metrics["bottle_slip_m"]>.025:raise InspectionFailure("lost_grasp")
             if metrics["bottle_tilt_rad"]>.12:raise InspectionFailure("cylinder_tilt")
-    def move(phase,point,seconds=2.0,opening=None,*,scale=None):
+    def move(phase,point,seconds=2.0,opening=None,*,scale=None,straight=False):
         if opening is None:opening=grip_opening
         q0=env.data.qpos[env.arm_addresses].copy()
         p0=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@env.grasp_offset
@@ -368,7 +375,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         print(json.dumps(phase_log[-1]),flush=True)
         for step in range(1,count+1):
             s=step/count;s=10*s**3-15*s**4+6*s**5
-            if held:
+            if held or straight:
                 target=p0+(np.asarray(point)-p0)*s
                 if angle>1e-8:
                     quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,rotvec/angle,angle*s)
@@ -380,7 +387,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 q0=q
             else:q=q0+(q1-q0)*s
             tick(phase,q,opening)
-        if held:q1=q
+        if held or straight:q1=q
         for _ in range(10):tick(phase,q1,opening)
         return q1
     reason=None
@@ -395,6 +402,37 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 move("lift_from_partial_grasp",point,2)
             q=env.data.qpos[env.arm_addresses].copy() if skip_retreat else move("retract",point+[0,-.15,0],3)
         else:
+            if release_single_contact:
+                if env.metrics()["grip_contacts"] != 1:
+                    raise InspectionFailure("release_requires_one_loaded_finger")
+                q = env.data.qpos[env.arm_addresses].copy()
+                cylinder_dof = env.model.joint("cylinder_free").dofadr[0]
+                stationary_ticks = 0
+                for tick_index in range(30):
+                    if tick_index == 12 and release_retreat_m and env.metrics()["grip_contacts"]:
+                        nominal_rotation = rotation
+                        rotation = env.data.xmat[env.gripper_body].reshape(3, 3).copy()
+                        tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
+                        away = -(rotation @ (env.grip_point_relative() - env.grasp_offset))
+                        away[2] = 0.
+                        distance = np.linalg.norm(away)
+                        if distance <= .001:
+                            raise InspectionFailure("single_contact_retreat_direction_undefined")
+                        q = move("withdraw_from_contact", tip + release_retreat_m * away / distance,
+                                 seconds=1.5, opening=.034, straight=True)
+                        rotation = nominal_rotation
+                    tick("release_contact", q, .034)
+                    metrics = env.metrics()
+                    settled = (tick_index >= 11 and metrics["grip_contacts"] == 0
+                               and metrics["bottle_tilt_rad"] < .10
+                               and np.linalg.norm(env.data.qvel[cylinder_dof:cylinder_dof + 3]) < .01
+                               and np.linalg.norm(env.data.qvel[cylinder_dof + 3:cylinder_dof + 6]) < .2)
+                    stationary_ticks = stationary_ticks + 1 if settled else 0
+                    if stationary_ticks == 3:
+                        break
+                else:
+                    raise InspectionFailure("single_contact_release_did_not_settle")
+                cylinder = env.data.xpos[env.cylinder_body].copy()
             approach=cylinder+[0,-.10,env.grasp_height]
             move("approach",approach,opening=.034,scale=approach_motion_scale)
             q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
@@ -537,6 +575,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  liquid_model="Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics")
     if approach_motion_scale is not None:
         summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
+    if release_single_contact:
+        summary["controller_parameters"]["release_single_contact"]=True
+        summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
         if reason is None and summary["absolute_reading_error_ml"]>.5:

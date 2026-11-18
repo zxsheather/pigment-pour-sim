@@ -1,0 +1,149 @@
+{
+  "kind": "recorded_joint_policy_geometric_approach_diagnostic",
+  "metric": "Distance from cylinder grasp point to the intended offset in the gripper frame",
+  "reference": "Recorded close phase of full training demonstrations, for descriptive comparison",
+  "teacher_references": [
+    {
+      "seed": 25,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_25",
+      "close_distance_m_min": 5.811681027008765e-07,
+      "close_distance_m_max": 0.00043116548887318766,
+      "initial_close_distance_m": 0.000107210962111806
+    },
+    {
+      "seed": 27,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "close_distance_m_min": 5.7154692391794e-07,
+      "close_distance_m_max": 0.00042882924914595965,
+      "initial_close_distance_m": 0.00010914935255803407
+    },
+    {
+      "seed": 28,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_28",
+      "close_distance_m_min": 8.541438699938408e-07,
+      "close_distance_m_max": 0.0004448215458262387,
+      "initial_close_distance_m": 0.00011374513252759884
+    },
+    {
+      "seed": 29,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_29",
+      "close_distance_m_min": 5.367753222379693e-07,
+      "close_distance_m_max": 0.00046450260843578975,
+      "initial_close_distance_m": 0.00011136599672432523
+    }
+  ],
+  "policy_results": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-pose-recovery-bc-v8-step128-single",
+      "snapshots": 26,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 1,
+      "nearest": {
+        "time_s": 5.999999999999394,
+        "grasp_distance_m": 0.091046877849816,
+        "grasp_point_error_components_m": [
+          0.013936319484512003,
+          -0.08293888284981495,
+          -0.03487771031833363
+        ],
+        "aperture_m": 0.058849383145570755,
+        "base_retreat_m": 0.024156158404890493,
+        "pose_breakdown": {
+          "error_world_m": [
+            0.07561683198372006,
+            0.040613015744011,
+            -0.030367937683054565
+          ],
+          "base_xy_delta_m": [
+            0.0001441826988480832,
+            -0.024156158404890493
+          ],
+          "base_yaw_delta_deg": 0.23510245588697506,
+          "wrist_shaft_error_deg": 18.06737686254579,
+          "error_with_reset_base_rigid_pose_m": [
+            0.07303675240636576,
+            0.01725405387850798,
+            -0.03036793768305457
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.04617723512653804,
+            0.034942649891556266,
+            -0.010234849642455801
+          ]
+        }
+      },
+      "first": {
+        "time_s": 0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0,
+        "pose_breakdown": {
+          "error_world_m": [
+            0.005179853044015889,
+            0.35326814302765147,
+            -0.13687493510565976
+          ],
+          "base_xy_delta_m": [
+            0,
+            0
+          ],
+          "base_yaw_delta_deg": 0,
+          "wrist_shaft_error_deg": 0,
+          "error_with_reset_base_rigid_pose_m": [
+            0.005179853044015914,
+            0.35326814302765147,
+            -0.13687493510565973
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.005179853044015914,
+            0.35326814302765147,
+            -0.13687493510565973
+          ]
+        }
+      },
+      "last": {
+        "time_s": 10.00000000000073,
+        "grasp_distance_m": 0.19007354827837514,
+        "grasp_point_error_components_m": [
+          -0.024160654862424982,
+          -0.13338821882423563,
+          0.13323587951692448
+        ],
+        "aperture_m": 0.045452509075403214,
+        "base_retreat_m": 0.03778351908257849,
+        "pose_breakdown": {
+          "error_world_m": [
+            0.13284158859641473,
+            0.005951796173116766,
+            0.13581473490246318
+          ],
+          "base_xy_delta_m": [
+            -0.00040392285798451777,
+            -0.03778351908257849
+          ],
+          "base_yaw_delta_deg": -1.1037371111220804,
+          "wrist_shaft_error_deg": 30.342895950379006,
+          "error_with_reset_base_rigid_pose_m": [
+            0.14641680716587524,
+            -0.035582624209556046,
+            0.1358147349024632
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.08089201771832322,
+            -0.0098011819931772,
+            0.16181994097205654
+          ]
+        }
+      },
+      "failure_reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_25'], ['', 'cylinder_wall_25'], ['', 'cylinder_wall_26'], ['', 'cylinder_wall_26'], ['', 'cylinder_wall_27'], ['', 'cylinder_wall_27'], ['', 'cylinder_wall_28'], ['', 'cylinder_wall_28'], ['', 'cylinder_wall_29'], ['', 'cylinder_wall_29'], ['', 'cylinder_wall_30'], ['', 'cylinder_wall_30'], ['', 'cylinder_wall_31'], ['', 'cylinder_wall_31']]"
+    }
+  ],
+  "new_policy_inference_run": false,
+  "independent_cases_read": false,
+  "pose_breakdown_method": "Measured world-space error and rigid-pose projections at the same snapshot. Neither projection advances physics or scores a policy."
+}

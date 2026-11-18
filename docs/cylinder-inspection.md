@@ -279,6 +279,16 @@ V7 第 256 步仍为 0/1，最近距离回退至 11.91 cm，从 8.00 秒逐值�
 
 V8 完成实际更新后，清理已归档评测的 V5 第 256 步权重和 V8 未加载的 V7 第 256 步优化器，释放约 9.86 GiB。V7 第 256 步父模型、V7 第 128 步最近距离较小的参考模型、两版数据与诊断留存。[V8 清理记录](experiments/2026-11-18-joint-storage-cleanup-v8.json)
 
+V8 第 128 步的完整模型闭环仍为 0/1，最近距离为 9.10 cm。逐帧复算的 206 条原指令中，7.65、9.20 和 9.95 秒各出现一次单指承载，双指夹持始终未建立。10.30 秒处量筒与托盘碰撞时，筒体约倾斜 92.6°，两根手指承载力均为零，高度增量达到 4.31 cm。碰撞回放重现的最大穿入约 11.56 mm。V8 因出现承载接触继续训练。[权重核验](experiments/2026-11-18-joint-pose-v8-step128-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-pose-v8-step128-closed-loop.json) · [位姿](experiments/2026-11-18-joint-pose-v8-step128-approach.json) · [逐帧接触](experiments/2026-11-18-joint-pose-v8-step128-grasp-contacts.json) · [碰撞回放](experiments/2026-11-18-joint-pose-v8-step128-collision.json)
+
+按 V8 真实有界指令在四个训练专用种子上取得单指承载起点。24 mL 的教师直接恢复通过。19、31、38 mL 的首次试跑在靠近阶段把量筒推移约 12–14 cm，随后在旧目标处未建立夹持。原地张爪试跑在 1.50 秒内仍有接触。保持当前腕部朝向退出 7 cm、等量筒停稳并重新测量中心后，19 和 38 mL 完成完整教师任务。其第 2 关节在重新靠近时的 32 帧相对动作略超现有范围。将这一段时长乘以 1.12 后两条均通过原有归一化和正式关节回放。31 mL 的托盘碰撞及各次失败保留。未启用恢复选项时，24 mL 默认教师复跑的 576 帧指令和轨迹逐值相同。[各次恢复与失败](experiments/2026-11-18-joint-v8-single-contact-teacher-diagnostics.json) · [默认教师回归](experiments/2026-11-18-joint-v8-stock-teacher-regression.json)
+
+19、24、38 mL 三条合格示范已追加到 V10，共 74 条、45,284 帧。原 43,440 帧逐值相同，全部视频沿用源文件存储，三条新增示范均通过 Wall 加载器和导出后回放。回放最大滑移在 8.60–9.52 mm，官方平行指垫几何通过审计。恢复阶段的张爪窗口纳入原有的 8% 重新张爪抽样组。[V10 导出审计](experiments/2026-11-18-joint-contact-release-v10-data-audit.json) · [V10 加载器](experiments/2026-11-18-joint-contact-release-v10-loader.json) · [抽样记录](experiments/2026-11-18-joint-contact-release-v10-sampling.json)
+
+V8 第 256 步正式闭环仍为 0/1，最近距离 9.01 cm，承载接触和抬升均为零。原指令最后四帧在 13.00 秒重现右臂第 3 连杆撞托盘，穿入约 1.06 mm。训练继续到第 384 步。切换任务仅在第 256 和第 384 步均超过 5 cm 且无承载接触、夹持或有效抬升时接续 V10，复用届时核验的权重。正式评测通过完整单例后再进入原 8 组等验收。[第 256 步权重](experiments/2026-11-18-joint-pose-v8-step256-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-pose-v8-step256-closed-loop.json) · [碰撞回放](experiments/2026-11-18-joint-pose-v8-step256-collision.json) · [V10 切换状态](experiments/2026-11-18-joint-contact-release-v10-transition-armed.json)
+
+另在固定 Wall-X 源码副本上验证了训练用的执行窗口损失。可选倍率 2.0 只作用于前八步的夹爪开度、底盘前进和转向三维，损失按有效权重归一化。原版和加权版的掩码与梯度均匹配计算结果，71 条数据通过实际加载器。该配置目前完成加载和损失验证，闭环成绩仍待训练后实测。[损失检查](experiments/2026-11-18-joint-executed-control-loss-validation.json)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：

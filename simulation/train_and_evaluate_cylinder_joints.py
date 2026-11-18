@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--log', type=Path, required=True)
     parser.add_argument('--data-port', type=int, default=29946)
     parser.add_argument('--train-port', type=int, default=29948)
+    parser.add_argument('--training-wall-root', type=Path,
+                        help='Wall-X source copy used by the trainer subprocess.')
     args = parser.parse_args()
     run, parent = args.run.resolve(), args.parent.resolve()
     config = run/'train.yml'
@@ -42,6 +44,13 @@ def main():
     python = str(root/'.venv-wall/bin/python')
     os.environ.update(PYTHONPATH=str(root/'wall-x'), MUJOCO_GL='egl', OPENBLAS_NUM_THREADS='1',
                        TOKENIZERS_PARALLELISM='false')
+    trainer_entry = Path('wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py')
+    trainer_env = None
+    if args.training_wall_root is not None:
+        training_wall = args.training_wall_root.resolve()
+        trainer_entry = training_wall / 'wall_x/trainer/fsdp_trainer/train_fsdp.py'
+        require(trainer_entry.is_file(), 'Missing training entry point in the Wall-X source copy')
+        trainer_env = os.environ | dict(PYTHONPATH=str(training_wall))
     state = dict(stage='data_validation', started=time.time(), driver_pid=os.getpid(),
                  parent=str(parent), action_space='joint', history=[], goal_complete=False)
     trainer = None
@@ -86,9 +95,9 @@ def main():
               '--config', str(config), '--check-episode', '0', '--check-episode', str(episodes//2),
               '--check-episode', str(episodes-1), '--output', str(run/'data-validation.json')], 'data_validation')
         training = [python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
-                    f'--master_port={args.train_port}', 'wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py',
+                    f'--master_port={args.train_port}', str(trainer_entry),
                     '--config', str(config)]
-        trainer = subprocess.Popen(training)
+        trainer = subprocess.Popen(training, env=trainer_env)
         state.update(stage='training', training_pid=trainer.pid, training_argv=training);save()
         visited = []
         best = None
