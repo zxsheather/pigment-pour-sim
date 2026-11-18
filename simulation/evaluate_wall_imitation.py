@@ -14,11 +14,14 @@ import pyarrow.dataset as arrow
 import torch
 
 from cylinder_actions import relative_to_absolute,rotation_from_rows
-from cylinder_joint_actions import APERTURE_SCALE_M, absolute_joint_chunk, joint_command_action, require
+from cylinder_joint_actions import (
+    APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, JOINT_STATE_WIDTH, absolute_joint_chunk,
+    joint_command_action, require,
+)
 from run_wall_cylinder import CylinderWallPolicy
 
 
-def load_joint_episode(dataset, episode, data):
+def load_joint_episode(dataset, episode, data, *, state_width=JOINT_STATE_WIDTH):
     provenance = json.loads((dataset / 'demonstration_provenance.json').read_text())
     matches = [(i, row) for i, row in enumerate(provenance)
                if Path(row['source']).resolve() == episode.resolve()]
@@ -35,9 +38,10 @@ def load_joint_episode(dataset, episode, data):
             'Joint dataset frames differ from teacher timeline')
     state = np.asarray(frames['observation.state'].to_pylist(), dtype=np.float32)
     action = np.asarray(frames['action'].to_pylist(), dtype=np.float32)
-    require(state.shape == (count, 18) and np.isfinite(state).all()
+    require(state_width in (JOINT_STATE_WIDTH, JOINT_SERVO_STATE_WIDTH)
+            and state.shape == (count, state_width) and np.isfinite(state).all()
             and np.array_equal(action, joint_command_action(data['joint_command'])),
-            'Expected verified 18D observations and bounded teacher commands')
+            'Expected the configured observations and bounded teacher commands')
     return state, action
 
 
@@ -73,7 +77,7 @@ def evaluate_episode(policy, episode, requested_frames, joint_dataset):
     require(len(set(indices))==len(indices) and all(0<=i<len(data['state']) for i in indices),
             'Teacher frame indices must be unique and in range')
     if joint_dataset:
-        joint_states, joint_actions = load_joint_episode(joint_dataset,episode,data)
+        joint_states, joint_actions = load_joint_episode(joint_dataset, episode, data, state_width=policy.state_width)
     images={i:{} for i in indices}
     last=max(indices)
     for camera in meta["recorded_cameras"]:

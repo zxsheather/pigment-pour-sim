@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
+from carry_env import CONTROL_DT
 from cylinder_joint_actions import require, robot_joint_observation
 from run_wall_cylinder import CylinderTrial
 
@@ -23,6 +24,8 @@ def audit(rollout, output):
     max_supported_lift = 0.
     raw_peak = dict(height_m=0., time_s=0., loaded_fingers=0, established_hold=False)
     contact_counts = [0, 0, 0]
+    double_frames = longest_double = 0
+    first_hold = first_supported_40mm = None
     try:
         require(trial.geometry_report['passed'] and trial.geometry_report['custom_pads'] == 0,
                 'Expected official collision geometry')
@@ -36,13 +39,20 @@ def audit(rollout, output):
                 metrics = trial.env.metrics()
                 fingers = metrics['grip_contacts']
                 contact_counts[fingers] += 1
+                double_frames = double_frames + 1 if fingers == 2 else 0
+                longest_double = max(longest_double, double_frames)
+                time = float(trial.env.data.time)
+                if trial.held and first_hold is None:
+                    first_hold = time
                 elevation = float(trial.env.data.xpos[trial.env.cylinder_body, 2] - trial.initial_cylinder[2])
                 if elevation > raw_peak['height_m']:
-                    raw_peak = dict(height_m=elevation, time_s=float(trial.env.data.time),
+                    raw_peak = dict(height_m=elevation, time_s=time,
                                     loaded_fingers=fingers, established_hold=trial.held,
                                     tilt_rad=metrics['bottle_tilt_rad'])
                 if trial.held and fingers == 2 and not metrics['forbidden_contacts']:
                     max_supported_lift = max(max_supported_lift, elevation)
+                    if elevation >= .04 and first_supported_40mm is None:
+                        first_supported_40mm = time
         require(trial.reason == case['failure_reason'] and trial.success == case['success'],
                 'Terminal outcome did not reproduce')
         require(abs(raw_peak['height_m'] - case['max_lifted_m']) < 1e-9,
@@ -50,6 +60,9 @@ def audit(rollout, output):
         result = dict(rollout=str(rollout.resolve()), terminal_reason=trial.reason, raw_peak=raw_peak,
                       max_supported_lift_m=max_supported_lift, established_hold=trial.held,
                       loaded_finger_counts_after_command=contact_counts,
+                      longest_consecutive_double_load_frames=longest_double,
+                      longest_consecutive_double_load_seconds=longest_double * CONTROL_DT,
+                      first_sustained_hold_s=first_hold, first_supported_lift_40mm_s=first_supported_40mm,
                       observations_and_bounded_commands_exact=True, checkpoint_inference_rerun=False)
         (output / 'held-lift-audit.json').write_text(json.dumps(result, indent=2) + '\n')
         return result
