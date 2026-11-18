@@ -287,6 +287,8 @@ V8 第 128 步的完整模型闭环仍为 0/1，最近距离为 9.10 cm。逐帧
 
 V8 第 256 步正式闭环仍为 0/1，最近距离 9.01 cm，承载接触和抬升均为零。原指令最后四帧在 13.00 秒重现右臂第 3 连杆撞托盘，穿入约 1.06 mm。训练继续到第 384 步。切换任务仅在第 256 和第 384 步均超过 5 cm 且无承载接触、夹持或有效抬升时接续 V10，复用届时核验的权重。正式评测通过完整单例后再进入原 8 组等验收。[第 256 步权重](experiments/2026-11-18-joint-pose-v8-step256-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-pose-v8-step256-closed-loop.json) · [碰撞回放](experiments/2026-11-18-joint-pose-v8-step256-collision.json) · [V10 切换状态](experiments/2026-11-18-joint-contact-release-v10-transition-armed.json)
 
+V8 第 384 步仍为 0/1。最近距离 7.20 cm，7.25、7.70 和 7.95 秒分别出现一次单指承载。量筒在 8.40 秒碰撞时抬高 4.31 cm，筒轴倾斜约 93.1°，两指承载力均为零。原切换任务根据高度尖峰继续 V8。核对第 128 和第 384 步的逐帧轨迹后，按重复的单指失稳模式切换到 V10。调度验证两次均未建立夹持，并在 V8 进程退出后使用第 384 步核验权重启动 V10。新运行采用 74 条数据及原损失配置，已完成实际反向传播。备选的执行窗口加权仍留作单独实验。[第 384 步正式闭环](experiments/2026-11-18-joint-pose-v8-step384-closed-loop.json) · [接触及高度峰值](experiments/2026-11-18-joint-pose-v8-step384-grasp-contacts.json) · [原切换记录](experiments/2026-11-18-joint-contact-release-v10-original-guard-result.json) · [接续 V10](experiments/2026-11-18-joint-contact-release-v10-transition.json) · [实际更新](experiments/2026-11-18-joint-contact-release-v10-first-update.json)
+
 另在固定 Wall-X 源码副本上验证了训练用的执行窗口损失。可选倍率 2.0 只作用于前八步的夹爪开度、底盘前进和转向三维，损失按有效权重归一化。原版和加权版的掩码与梯度均匹配计算结果，71 条数据通过实际加载器。该配置目前完成加载和损失验证，闭环成绩仍待训练后实测。[损失检查](experiments/2026-11-18-joint-executed-control-loss-validation.json)
 
 ## 完整神经网络候选的验收

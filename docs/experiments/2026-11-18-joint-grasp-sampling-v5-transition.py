@@ -24,6 +24,7 @@ OLD_PIDS = {1868039: 'train_and_evaluate_cylinder_joints.py',
             1872486: 'torch.distributed.run', 1872691: 'train_fsdp.py'}
 TARGET_STEP = 256
 FIRST_STEP = 128
+REPEATED_SINGLE_CONTACT = False
 STATE = dict(pid=os.getpid(), target_step=TARGET_STEP, old_driver_pid=1868039)
 
 
@@ -56,7 +57,7 @@ def intact():
 
 
 def configure():
-    global OLD, STAGED, NEW, LOG, STATUS, DIAGNOSTIC, FIRST_APPROACH, OLD_PIDS, FIRST_STEP, TARGET_STEP
+    global OLD, STAGED, NEW, LOG, STATUS, DIAGNOSTIC, FIRST_APPROACH, OLD_PIDS, FIRST_STEP, TARGET_STEP, REPEATED_SINGLE_CONTACT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--active-run', type=Path)
     parser.add_argument('--staged-run', type=Path)
@@ -66,6 +67,8 @@ def configure():
     first.add_argument('--first-approach', type=Path, help='Use a verified approach report for a data-only change')
     parser.add_argument('--first-step', type=int, default=128)
     parser.add_argument('--target-step', type=int, default=256)
+    parser.add_argument('--repeated-single-contact', action='store_true',
+                        help='Use two verified single-finger collision replays to select a contact-recovery dataset.')
     parser.add_argument('--status', type=Path)
     parser.add_argument('--trainer-pid', type=int)
     args = parser.parse_args()
@@ -73,6 +76,9 @@ def configure():
         parser.error('Expected positive checkpoint steps in increasing order')
     if (args.first_step, args.target_step) != (128, 256) and args.first_approach is None:
         parser.error('Nondefault checkpoint steps require --first-approach')
+    if args.repeated_single_contact and args.first_approach is None:
+        parser.error('Single-contact transition requires --first-approach')
+    REPEATED_SINGLE_CONTACT = args.repeated_single_contact
     FIRST_STEP, TARGET_STEP = args.first_step, args.target_step
     STATE['target_step'] = TARGET_STEP
     if FIRST_STEP != 128:
@@ -100,6 +106,21 @@ def configure():
     STATE.update(old_driver_pid=active['driver_pid'], active_run=str(OLD), staged_run=str(STAGED))
 
 
+def single_contact_evidence(rollout, step, case):
+    stem = OLD.name.replace('-bc-', '-')
+    path = ROOT / 'results' / f'{stem}-step{step}-grasp-contacts.json'
+    replay = read(path)
+    peak = replay['peak_cylinder_height']
+    assert replay['source'] == str(rollout) and replay['geometry_audit_passed']
+    assert replay['all_precommand_robot_observations_exact'] and replay['max_loaded_fingers'] == 1
+    assert not case['success'] and not case['final_task_gates']['held']
+    assert (case['failure_reason'] or '').startswith('collision:')
+    assert peak['loaded_fingers'] == 0 and peak['cylinder_tilt_rad'] > .20
+    assert abs(peak['cylinder_height_change_m'] - case['max_lifted_m']) < 1e-8
+    assert abs(replay['terminal_contact']['time_s'] - case['simulated_seconds']) < 1e-8
+    return str(path)
+
+
 def first_rollout():
     path = FIRST_APPROACH or DIAGNOSTIC / 'approach.json'
     report = read(path)
@@ -112,7 +133,11 @@ def first_rollout():
         assert row['rollout'] == str(rollout) and row['robot_observations_reproduced_exactly']
         assert summary['evaluation_complete'] and summary['action_space'] == 'joint' and summary['total'] == 1
         assert case['geometry_audit']['passed'] and case['geometry_audit']['custom_pads'] == 0
-        assert not case['success'] and not case['final_task_gates']['held'] and case['max_lifted_m'] < .04
+        assert not case['success'] and not case['final_task_gates']['held']
+        if REPEATED_SINGLE_CONTACT:
+            STATE['first_contact_replay'] = single_contact_evidence(rollout, FIRST_STEP, case)
+        else:
+            assert case['max_lifted_m'] < .04
         assert row['failure_reason'] == case['failure_reason']
         assert read(OLD / f'checkpoint-{FIRST_STEP}-weight-audit.json')['passed']
     return row
@@ -140,7 +165,10 @@ def main():
     if FIRST_APPROACH:
         first = first_rollout()
         evidence = dict(first_approach=str(FIRST_APPROACH), first_nearest_m=first['nearest']['grasp_distance_m'])
-        if first['maximum_recorded_loaded_contacts'] or evidence['first_nearest_m'] <= .05:
+        if REPEATED_SINGLE_CONTACT:
+            assert first['maximum_recorded_loaded_contacts'] == 1
+            evidence['decision'] = 'repeated_single_finger_contact_followed_by_cylinder_collision'
+        elif first['maximum_recorded_loaded_contacts'] or evidence['first_nearest_m'] <= .05:
             save('kept_active_contact_or_close_approach', **evidence)
             return
     else:
@@ -176,7 +204,9 @@ def main():
     assert summary['evaluation_complete'] and summary['action_space'] == 'joint' and summary['total'] == 1
     case = summary['episodes'][0]
     assert case['geometry_audit']['passed'] and case['geometry_audit']['custom_pads'] == 0
-    if case['success'] or case['final_task_gates']['held'] or case['max_lifted_m'] >= .04:
+    if REPEATED_SINGLE_CONTACT:
+        STATE['target_contact_replay'] = single_contact_evidence(rollout, TARGET_STEP, case)
+    elif case['success'] or case['final_task_gates']['held'] or case['max_lifted_m'] >= .04:
         save('kept_active_physical_grasp_progress')
         return
     output = STATUS.with_name(f"{OLD.name.replace('-bc-', '-')}-step{TARGET_STEP}-approach.json")
@@ -185,8 +215,10 @@ def main():
         '--output', str(output)], cwd=ROOT, check=True, timeout=45,
         env=os.environ | dict(MUJOCO_GL='egl', OPENBLAS_NUM_THREADS='1'))
     second = read(output)['policy_results'][0]
-    if any(row['maximum_recorded_loaded_contacts'] or row['nearest']['grasp_distance_m'] <= .05
-           for row in (first, second)):
+    if REPEATED_SINGLE_CONTACT:
+        assert second['maximum_recorded_loaded_contacts'] == 1
+    elif any(row['maximum_recorded_loaded_contacts'] or row['nearest']['grasp_distance_m'] <= .05
+             for row in (first, second)):
         save('kept_active_contact_or_close_approach', approach=str(output))
         return
     parent = OLD / f'checkpoints/0_{TARGET_STEP}'
