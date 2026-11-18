@@ -1,4 +1,4 @@
-"""Train the configured Wall joint policy and evaluate complete checkpoints.
+"""Train a Wall cylinder policy and evaluate complete checkpoints.
 
 Keeps parent, latest and best development-case weights, one latest optimizer,
 and all small experiment records. A full single-case candidate stops training
@@ -36,15 +36,27 @@ def main():
     parser.add_argument('--log', type=Path, required=True)
     parser.add_argument('--data-port', type=int, default=29946)
     parser.add_argument('--train-port', type=int, default=29948)
+    parser.add_argument('--action-space', choices=('joint', 'cartesian'), default='joint')
     parser.add_argument('--training-wall-root', type=Path,
                         help='Wall-X source copy used by the trainer subprocess.')
     args = parser.parse_args()
     run, parent = args.run.resolve(), args.parent.resolve()
     config = run/'train.yml'
     cfg = yaml.safe_load(config.read_text())
-    require(list(cfg['task']['dof_config'].items()) == list(JOINT_ACTION_LAYOUT.items())
-            and list(cfg['task']['agent_pos_config'].items()) == list(JOINT_STATE_LAYOUT.items()),
-            'Expected the joint action/state schema')
+    action_space = args.action_space
+    if action_space == 'joint':
+        require(list(cfg['task']['dof_config'].items()) == list(JOINT_ACTION_LAYOUT.items())
+                and list(cfg['task']['agent_pos_config'].items()) == list(JOINT_STATE_LAYOUT.items()),
+                'Expected the joint action/state schema')
+        validator = 'validate_wall_cylinder_joints.py'
+        norm_key = 'cylinder_joint_v1'
+    else:
+        require(cfg['task']['dof_config'].get('follow_right_ee_cartesian_pos_relative') == 3
+                and cfg['task']['dof_config'].get('follow_right_ee_rotation_6D_relative') == 6
+                and cfg['task']['agent_pos_config'].get('base_odometry') == 3,
+                'Expected Cartesian targets with base odometry')
+        validator = 'validate_wall_data.py'
+        norm_key = 'cylinder_cartesian_v1'
     require(Path(cfg['checkpoint']['resume_from']).resolve() == parent/'model.safetensors',
             'Parent/config mismatch')
     steps = cfg['hyperparams']['scheduler']['num_training_steps']
@@ -64,7 +76,7 @@ def main():
         require(trainer_entry.is_file(), 'Missing training entry point in the Wall-X source copy')
         trainer_env = os.environ | dict(PYTHONPATH=str(training_wall))
     state = dict(stage='data_validation', started=time.time(), driver_pid=os.getpid(),
-                 parent=str(parent), action_space='joint', history=[], goal_complete=False)
+                 parent=str(parent), action_space=action_space, history=[], goal_complete=False)
     trainer = None
     active_call = None
 
@@ -103,7 +115,7 @@ def main():
     try:
         episodes=json.loads((Path(cfg['data']['lerobot_config']['root'])/'meta/info.json').read_text())['total_episodes']
         call([python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
-              f'--master_port={args.data_port}', str(scripts/'validate_wall_cylinder_joints.py'),
+              f'--master_port={args.data_port}', str(scripts/validator),
               '--config', str(config), '--check-episode', '0', '--check-episode', str(episodes//2),
               '--check-episode', str(episodes-1), '--output', str(run/'data-validation.json')], 'data_validation')
         training = [python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
@@ -125,12 +137,12 @@ def main():
                   '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')],
                  f'audit_{step}')
             call([python, str(scripts/'run_wall_cylinder.py'), '--model', str(checkpoint),
-                  '--config', str(config), '--norm-key', 'cylinder_joint_v1',
+                  '--config', str(config), '--norm-key', norm_key,
                   '--controller-config', str(scripts/'configs/cylinder_official_teacher_dev_v1.json'),
                   '--volume', '25', '--seed', '100', '--execute-steps', '8', '--max-seconds', '90',
                   '--record', '--output', str(output)], f'neural_evaluation_{step}')
             report = json.loads((output/'summary.json').read_text())
-            require(report['evaluation_complete'] and report['action_space'] == 'joint'
+            require(report['evaluation_complete'] and report['action_space'] == action_space
                     and report['total'] == 1 and report['gripper_open_confirmations'] == 0,
                     'Incomplete or unexpected policy evaluation')
             approach = measure_rollout(output)
@@ -156,7 +168,7 @@ def main():
                         with (run/'checkpoint-retention.jsonl').open('a') as log:log.write(json.dumps(row)+'\n')
             state.update(stage='training', latest_evaluated_step=step, best_model=str(best));save()
             if report['successes']:
-                (run/'candidate-ready.json').write_text(json.dumps(dict(model=str(checkpoint), step=step,
+                (run/'candidate-ready.json').write_text(json.dumps(dict(model=str(checkpoint), step=step, action_space=action_space,
                     single_summary=str(output/'summary.json'), goal_complete=False,
                     requires=['original8', 'development12', 'untouched_independent12']), indent=2)+'\n')
                 state['stage'] = 'candidate_requires_full_suites';save()

@@ -1,4 +1,4 @@
-"""Measure approach error on saved joint-policy rollouts and teacher traces."""
+"""Measure approach error on saved neural rollouts and teacher traces."""
 import argparse
 import json
 from pathlib import Path
@@ -37,8 +37,9 @@ def measure_rollout(folder, *, pose_breakdown=False):
     summary = json.loads((folder / 'summary.json').read_text())
     require(summary['evaluation_complete'] and summary['total'] == 1, 'Expected one completed rollout')
     episode = summary['episodes'][0]
-    require(episode['action_space'] == 'joint' and episode['geometry_audit']['passed'],
-            'Expected an audited joint rollout')
+    action_space = episode['action_space']
+    require(action_space in ('joint', 'cartesian') and episode['geometry_audit']['passed'],
+            'Expected an audited neural rollout')
     case = episode['case']
     env = CylinderEnv(case['volume'], friction_scale=case.get('friction_scale', 1),
                       mass_scale=case.get('mass_scale', 1), **summary['controller']['environment'])
@@ -58,12 +59,20 @@ def measure_rollout(folder, *, pose_breakdown=False):
                                                   observations['state']):
                 mujoco.mj_setState(env.model, env.data, state, spec)
                 mujoco.mj_forward(env.model, env.data)
-                np.testing.assert_array_equal(robot_joint_observation(env), observed)
+                if action_space == 'joint':
+                    reproduced = robot_joint_observation(env)
+                    aperture_index = 6
+                else:
+                    reproduced = env.state_vector()
+                    if len(observed) == 26:
+                        reproduced = np.r_[reproduced, env.base_pose()].astype(np.float32)
+                    aperture_index = 19
+                np.testing.assert_array_equal(reproduced, observed)
                 require(abs(env.data.time - timestamp) < 1e-9, 'Snapshot clock mismatch')
                 error = env.grip_point_relative() - env.grasp_offset
                 row = dict(time_s=float(timestamp), grasp_distance_m=float(np.linalg.norm(error)),
                                       grasp_point_error_components_m=error.tolist(),
-                                      aperture_m=float(observed[6] * APERTURE_SCALE_M),
+                                      aperture_m=float(observed[aperture_index] * APERTURE_SCALE_M),
                                       base_retreat_m=float(initial_base[1] - env.base_pose()[1]))
                 if pose_breakdown:
                     row['pose_breakdown'] = wrist_pose_breakdown(env, error, initial_base)

@@ -58,9 +58,10 @@ def case_set_digest(cases):
     return hashlib.sha256(json.dumps(sorted(normalized)).encode()).hexdigest()
 
 
-def verify_report(report, cases, model, config, controller, source_hashes):
+def verify_report(report, cases, model, config, controller, source_hashes, *, action_space='joint'):
     require(report['evaluation_complete'] and not report['probe_only'], 'Incomplete/probe evaluation')
-    require(report['action_space'] == 'joint', 'Only the joint policy is accepted here')
+    require(action_space in ('joint', 'cartesian') and report['action_space'] == action_space,
+            'Unexpected neural action space')
     require(report['model'] == str(model) and report['config'] == str(config), 'Candidate/config mismatch')
     require(report['controller'] == controller, 'Physical controller configuration changed')
     settings = dict(execution_prefix=8, policy_batch_size=1, flow_steps=10, flow_noise='random',
@@ -68,14 +69,20 @@ def verify_report(report, cases, model, config, controller, source_hashes):
                     prediction_samples_per_observation=1, state_embedding_precision='training',
                     gripper_open_confirmations=0, unclipped_robot_state=False)
     require(all(report[k] == v for k, v in settings.items()), 'Unexpected neural execution settings')
-    require(report['ik_max_residual'] is None, 'Joint policy must report IK as inapplicable')
+    expected_ik_limit = None if action_space == 'joint' else .002
+    require(report['ik_max_residual'] == expected_ik_limit, 'Unexpected inverse kinematics setting')
     require(report['robot_servo_envelope'] == dict(cartesian_speed_limit_m_s=0., angular_speed_limit_rad_s=0.),
             'Unexpected extra servo envelope')
     require(report['total'] == len(cases) == len(report['episodes']), 'Case count mismatch')
     require(report['successes'] == len(cases), 'A full task case failed; later suites will not run')
     for case, result in zip(cases, report['episodes']):
-        require(result['policy'] == 'wall_oss_full_cylinder' and result['action_space'] == 'joint',
-                'Expected genuine neural joint-policy output')
+        require(result['policy'] == 'wall_oss_full_cylinder' and result['action_space'] == action_space,
+                'Expected genuine neural policy output')
+        if action_space == 'cartesian':
+            ik = result['ik_projection']
+            require(ik['applicable'] and ik['max_allowed_weighted_residual'] == expected_ik_limit
+                    and 0 <= ik['max_attempted_residual'] <= expected_ik_limit,
+                    'Cartesian inverse kinematics gate failed')
         require(canonical_case(result['case']) == canonical_case(case), 'Case order/parameters changed')
         require(result['success'] and not result['evaluation_interrupted']
                 and result['failure_reason'] is None, 'Case did not complete successfully')
@@ -146,13 +153,15 @@ def main():
     controller_path = scripts / 'configs/cylinder_official_teacher_dev_v1.json'
     controller = json.loads(controller_path.read_text())
     single = json.loads(Path(candidate['single_summary']).read_text())
+    action_space = single['action_space']
+    require(candidate.get('action_space', 'joint') == action_space, 'Candidate action space changed')
     require(candidate.get('goal_complete') is False, 'Expected a provisional candidate')
     require(candidate['requires'] == ['original8', 'development12', 'untouched_independent12'], 'Acceptance scope mismatch')
     audit = json.loads((run / f"checkpoint-{candidate['step']}-weight-audit.json").read_text())
     require(audit['passed'] and audit['checkpoint'] == str(model), 'Successful weight audit required')
     hashes = single['episodes'][0]['source_sha256']
     require(all(digest(scripts / name) == sha for name, sha in hashes.items()), 'Candidate execution source is stale')
-    verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes)
+    verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes, action_space=action_space)
     require(model.parent.parent == run and model.name == f"0_{candidate['step']}", 'Unexpected checkpoint location')
     require((model / 'model.safetensors').is_file(), 'Candidate weights missing')
     require(not args.output.exists(), 'Output already exists; inspect it rather than silently rerunning suites')
@@ -175,6 +184,7 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     state = dict(model=str(model), model_sha256=audit['checkpoint_sha256'], suite_sha256=suite_hashes,
+                 action_space=action_space,
                  source_sha256=hashes, acceptance_source_sha256=digest(Path(__file__)),
                  config_sha256=digest(config), controller_sha256=digest(controller_path),
                  status='running', completed_suites=[], goal_complete=False)
@@ -198,15 +208,16 @@ def main():
                                     suite_file_sha=suite_hashes[name])
             state['active_suite'] = name
             save()
+            norm_key = 'cylinder_joint_v1' if action_space == 'joint' else 'cylinder_cartesian_v1'
             argv = [sys.executable, str(scripts / 'run_wall_cylinder.py'), '--model', str(model),
-                    '--config', str(config), '--norm-key', 'cylinder_joint_v1',
+                    '--config', str(config), '--norm-key', norm_key,
                     '--controller-config', str(controller_path), '--cases', str(case_path),
                     '--execute-steps', '8', '--max-seconds', '90', '--policy-batch-size', '1',
                     '--output', str(output / name)]
             with (output / f'{name}.log').open('w') as log:
                 subprocess.run(argv, env=env, cwd=root, stdout=log, stderr=subprocess.STDOUT, check=True)
             report = json.loads((output / name / 'summary.json').read_text())
-            verify_report(report, cases, model, config, controller, hashes)
+            verify_report(report, cases, model, config, controller, hashes, action_space=action_space)
             state['completed_suites'].append(dict(name=name, successes=count, total=count,
                 summary=str(output / name / 'summary.json'), summary_sha256=digest(output / name / 'summary.json')))
             save()
