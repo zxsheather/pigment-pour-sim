@@ -227,9 +227,9 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 三条纠正示范分别含 636、586、801 帧。采集、关节观测重建、时间对齐、三路图像和现有归一化边界逐条通过校验，起始夹爪开度为 33.46、42.94、35.35 mm。纠正示范的结果计为教师数据质量。模型验收仍沿用独立的闭环评分。[恢复示范校验](experiments/2026-11-18-joint-reopen-training-validation-status.json)
 
-加入三条纠正示范后，候选版 `datasets/cylinder-joint-reopen-recovery-v4` 共 59 条、36,082 帧。保留了上一版全部 34,059 帧与原归一化，导出视频与已有视频或原始采集视频共用文件。Wall 加载器通过新示范的首、中、末帧校验。三条示范的关节指令回放均达到完整门槛，最大滑移为 9.30–9.95 mm，最大抬升约 11.93–11.95 cm。按实际训练帧子集和相同抽样权重规则，靠近时重新张爪的可用锚点由 27 增至 60 个，预计占采样的 2.67% 和 3.41%。59 条数据已就绪，当前模型仍在训练 53 条版本。两轮模型闭环及教师回放单独记录。[导出与回放审计](experiments/2026-11-18-joint-reopen-v4-data-audit.json) · [Wall 加载器验证](experiments/2026-11-18-joint-reopen-v4-official-loader.json)
+加入三条纠正示范后，候选版 `datasets/cylinder-joint-reopen-recovery-v4` 共 59 条、36,082 帧。保留了上一版全部 34,059 帧与原归一化，导出视频与已有视频或原始采集视频共用文件。Wall 加载器通过新示范的首、中、末帧校验。三条示范的关节指令回放均达到完整门槛，最大滑移为 9.30–9.95 mm，最大抬升约 11.93–11.95 cm。按实际训练帧子集和相同抽样权重规则，靠近时重新张爪的可用锚点由 27 增至 60 个，预计采样占比由 2.67% 增至 3.41%。[导出与回放审计](experiments/2026-11-18-joint-reopen-v4-data-audit.json) · [Wall 加载器验证](experiments/2026-11-18-joint-reopen-v4-official-loader.json)
 
-已启动第 512 步后的条件切换任务。它等待当前版正式闭环结束，并检查四次完整结果。如果出现承载接触、夹持、有效抬升或单例任务成功，保留当前路线。如果四次均无承载接触和抬升进展，保留第 512 步权重，从该权重接续 59 条数据的新训练。双方沿用相同几何、9 维动作与正式闭环配置。[切换脚本](experiments/2026-11-18-joint-reopen-v4-transition.py)
+第 512 步在 7.60 秒处距离预定抓取点 14.53 cm，15.85 秒碰撞结束。四次正式闭环没有承载接触、夹持或抬升。切换任务保留已审计的第 512 步权重，确认旧训练退出后，从该权重启动 59 条数据版。新一轮沿用相同几何、9 维动作、归一化与闭环门槛，已通过加载器检查并完成最初的反向传播。新版首次真实闭环安排在第 128 步。[第 512 步正式结果](experiments/2026-11-18-joint-grasp-recovery-v2-step512-closed-loop.json) · [距离记录](experiments/2026-11-18-joint-grasp-recovery-v2-step512-approach-distance.json) · [切换记录](experiments/2026-11-18-joint-reopen-v4-transition.json) · [新训练配置](experiments/2026-11-18-joint-reopen-v4-train.yml) · [首轮反向传播](experiments/2026-11-18-joint-reopen-v4-first-update.json)
 
 ## 完整神经网络候选的验收
 

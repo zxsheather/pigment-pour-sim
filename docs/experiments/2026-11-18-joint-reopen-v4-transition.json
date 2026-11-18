@@ -1,0 +1,54 @@
+{
+  "pid": 1812547,
+  "target_step": 512,
+  "old_driver_pid": 1422335,
+  "stage": "v4_driver_started",
+  "time": 1794967628.0291753,
+  "results": [
+    {
+      "step": 128,
+      "success": false,
+      "reason": "timeout",
+      "held": false,
+      "max_loaded_contacts": 0,
+      "max_lift_m": 0.0
+    },
+    {
+      "step": 256,
+      "success": false,
+      "reason": "collision:[['right_right_official_collision_1_0', '']]",
+      "held": false,
+      "max_loaded_contacts": 0,
+      "max_lift_m": 0.0
+    },
+    {
+      "step": 384,
+      "success": false,
+      "reason": "collision:[['right_right_official_collision_1_0', 'target_tray_floor']]",
+      "held": false,
+      "max_loaded_contacts": 0,
+      "max_lift_m": 0.0
+    },
+    {
+      "step": 512,
+      "success": false,
+      "reason": "collision:[['right_right_official_collision_1_0', '']]",
+      "held": false,
+      "max_loaded_contacts": 0,
+      "max_lift_m": 0.0
+    }
+  ],
+  "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2/checkpoints/0_512",
+  "parent_sha256": "826882d892c65935c61d29145879023e18d204a9cf5a777dd0e419cc1cbb44db",
+  "driver_pid": 1868039,
+  "argv": [
+    "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+    "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/train_and_evaluate_cylinder_joints.py",
+    "--run",
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-reopen-bc-v4",
+    "--parent",
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2/checkpoints/0_512",
+    "--log",
+    "/data/hlou/pigment-pour-study/results/cylinder-joint-reopen-bc-v4.log"
+  ]
+}
