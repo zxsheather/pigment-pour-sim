@@ -13,12 +13,20 @@ from cylinder_joint_actions import (
     WRIST_CUE_STATE_NAMES, require, with_joint_wrist_cue_state,
 )
 from cylinder_progress_prompts import PROGRESS_PROMPTS, PROGRESS_PROTOCOL
+from cylinder_tray_vision import (
+    TRAY_CENTER_CUE_NAMES, TRAY_CENTER_CUE_PROTOCOL, TRAY_CENTER_CUE_RADIUS_M,
+    TRAY_CUE_PROTOCOL, TRAY_CUE_PROTOCOLS, with_tray_cue_state,
+)
 from export_cylinder_joint_dataset import digest, statistics
 from export_cylinder_joint_wrist_cue_view import FEATURE, write_view
 
 
-def export(base, ledger_path, output):
+def export(base, ledger_path, output, protocol=TRAY_CUE_PROTOCOL):
     require(not output.exists(), 'Output exists')
+    require(protocol in TRAY_CUE_PROTOCOLS, 'Unknown tray cue protocol')
+    centered = protocol == TRAY_CENTER_CUE_PROTOCOL
+    names = TRAY_CENTER_CUE_NAMES if centered else WRIST_CUE_STATE_NAMES
+    radius = TRAY_CENTER_CUE_RADIUS_M if centered else None
     info = json.loads((base/'meta/info.json').read_text())
     provenance_path = base/'demonstration_provenance.json'
     demos = json.loads(provenance_path.read_text())
@@ -56,7 +64,8 @@ def export(base, ledger_path, output):
         if row['estimate'] is not None:
             require(row['reset_frame'] and row['rgb_sha256'], 'Cue requires a recorded reset observation')
             approach = select & (tasks == 0)
-            states[approach] = with_joint_wrist_cue_state(original[approach], row['estimate']['world_xy_m'])
+            states[approach] = with_tray_cue_state(
+                original[approach], row['estimate'], row['tray_center_xy_m'], protocol)
             valid[approach] = True
         episode_stats.append(statistics(states[select]))
 
@@ -66,16 +75,19 @@ def export(base, ledger_path, output):
     np.testing.assert_array_equal(cue[:, 2], valid)
     require(np.all(cue[~valid] == 0) and np.all(tasks[valid] == 0), 'Cue leaked outside valid approach')
     provenance = dict(source_dataset=str(base), ledger=str(ledger_path), ledger_sha256=digest(ledger_path),
-                      state_indices=WRIST_CUE_STATE_INDICES, state_names=WRIST_CUE_STATE_NAMES,
+                      state_indices=WRIST_CUE_STATE_INDICES, state_names=names, tray_cue_protocol=protocol,
+                      normalization_radius_m=radius, cue_origin='tray_center' if centered else 'current_base',
                       prompts_protocol=PROGRESS_PROTOCOL, enabled_task_index=0,
                       episodes=len(demos), valid_episodes=int(np.unique(episodes[valid]).size),
                       frames=len(states), valid_frames=int(valid.sum()),
-                      source_only_initial_RGB_and_current_odometry=True)
+                      source_only_initial_RGB_and_current_odometry=True,
+                      static_tray_calibration_used=centered)
     with TemporaryDirectory(prefix=f'.{output.name}-', dir=output.parent) as staging:
         staged = Path(staging)/'dataset'
         staged.mkdir()
         videos, video_bytes = write_view(base, staged, info, states, episode_stats, provenance,
-                                         norm_provenance_key='initial_tray_vision')
+                                         norm_provenance_key='initial_tray_vision', state_names=names,
+                                         normalization_radius_m=radius)
         report = dict(kind='joint_initial_tray_cue_observation_view', **provenance, output=str(output),
                       other_state_fields_actions_and_prompts_exact=True, shared_video_files=videos,
                       shared_video_bytes=video_bytes, independent_cases_read=False)
@@ -89,8 +101,10 @@ def main():
     parser.add_argument('--base-dataset', type=Path, required=True)
     parser.add_argument('--cue-ledger', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--protocol', choices=TRAY_CUE_PROTOCOLS, default=TRAY_CUE_PROTOCOL)
     args = parser.parse_args()
-    print(json.dumps(export(args.base_dataset.resolve(), args.cue_ledger.resolve(), args.output.resolve())))
+    print(json.dumps(export(args.base_dataset.resolve(), args.cue_ledger.resolve(),
+                            args.output.resolve(), args.protocol)))
 
 
 if __name__ == '__main__':

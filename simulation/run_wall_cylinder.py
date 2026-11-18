@@ -21,7 +21,7 @@ from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,
     absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
     with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
-from cylinder_tray_vision import TRAY_CUE_PROTOCOL, capture_initial_tray_cue
+from cylinder_tray_vision import TRAY_CUE_PROTOCOLS, capture_initial_tray_cue, with_tray_cue_state
 from cylinder_reader import read_volume
 from cylinder_wrist_cue import capture_initial_wrist_cue
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
@@ -66,7 +66,7 @@ class CylinderWallPolicy(CarryWallPolicy):
             raise ValueError('Unsupported progress protocol or robot state layout')
         self.tray_cue_protocol=getattr(self._model.config,'joint_initial_tray_cue',None)
         if self.tray_cue_protocol is not None and (
-                self.tray_cue_protocol!=TRAY_CUE_PROTOCOL or not self.joint_wrist_cue or not self.progress_protocol):
+                self.tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not self.joint_wrist_cue or not self.progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
@@ -152,7 +152,7 @@ class CylinderTrial:
         if progress_protocol is not None and (progress_protocol!=PROGRESS_PROTOCOL or not joint_servo_state):
             raise ValueError('Unsupported progress protocol or robot state layout')
         if tray_cue_protocol is not None and (
-                tray_cue_protocol!=TRAY_CUE_PROTOCOL or not joint_wrist_cue or not progress_protocol):
+                tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
@@ -223,8 +223,8 @@ class CylinderTrial:
             observation['state']=robot_joint_observation(self.env,servo_state=self.joint_servo_state)
             if self.tray_cue_protocol:
                 estimate=self.initial_tray_cue if self.progress_router.index==0 else None
-                xy=None if estimate is None else estimate['world_xy_m']
-                observation['state']=with_joint_wrist_cue_state(observation['state'],xy)
+                observation['state']=with_tray_cue_state(observation['state'],estimate,
+                    self.env.config['target_tray']['center_xy'],self.tray_cue_protocol)
             elif self.initial_wrist_cue is not None:
                 observation['state']=with_joint_wrist_cue_state(observation['state'],self.initial_wrist_cue['world_xy_m'])
         elif self.with_odometry:
@@ -368,7 +368,7 @@ class CylinderTrial:
             summary.update(tray_cue_protocol=self.tray_cue_protocol,initial_tray_cue=self.initial_tray_cue,
                            initial_tray_images=self.initial_tray_images,
                            observation_inputs="Three RGB cameras, measured robot progress and joint/servo state "
-                           "with the reset RGB tray position expressed in current base coordinates during approach")
+                           "with the reset RGB tray cue projected along the current base axes during approach")
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))

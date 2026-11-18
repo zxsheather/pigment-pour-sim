@@ -101,8 +101,8 @@ def with_joint_servo_state(observation, previous_command):
     return np.concatenate((state, tracking_error, command[..., 7:8]), axis=-1)
 
 
-def with_joint_wrist_cue_state(servo_state, initial_world_xy):
-    """Project the initial RGB measurement into the current robot base frame."""
+def with_joint_wrist_cue_state(servo_state, initial_world_xy, *, origin_world_xy=None):
+    """Project the displacement from the current base or a calibrated world origin."""
     state = np.asarray(servo_state, dtype=np.float32).copy()
     require(state.ndim > 0 and state.shape[-1] == JOINT_SERVO_STATE_WIDTH and np.isfinite(state).all(),
             'Expected the current measured servo state')
@@ -112,7 +112,11 @@ def with_joint_wrist_cue_state(servo_state, initial_world_xy):
     xy = np.asarray(initial_world_xy, dtype=np.float64)
     require(xy.shape == (2,) and np.isfinite(xy).all(), 'Invalid initial wrist location')
     pose = state[..., 15:18].astype(np.float64)
-    dx, dy = np.moveaxis(xy - pose[..., :2], -1, 0)
+    origin = pose[..., :2]
+    if origin_world_xy is not None:
+        origin = np.asarray(origin_world_xy, dtype=np.float64)
+        require(origin.shape == (2,) and np.isfinite(origin).all(), 'Invalid cue origin')
+    dx, dy = np.moveaxis(xy - origin, -1, 0)
     c, s = np.cos(pose[..., 2]), np.sin(pose[..., 2])
     state[..., 18] = c * dx + s * dy
     state[..., 22] = -s * dx + c * dy

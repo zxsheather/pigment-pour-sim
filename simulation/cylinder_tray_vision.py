@@ -5,6 +5,7 @@ import itertools
 import cv2
 import numpy as np
 
+from cylinder_joint_actions import require, with_joint_wrist_cue_state
 from cylinder_reader import components
 from cylinder_wrist_cue import MARKER_OFFSET_XY_M, capture_initial_wrist_cue, cue_from_wrist_rgb, pixel_on_plane
 from inspect_cylinder import CAPACITY_ML, SCALE_SPAN, SCALE_ZERO
@@ -13,7 +14,23 @@ from inspect_cylinder import CAPACITY_ML, SCALE_SPAN, SCALE_ZERO
 TRAY_VISION_CAMERAS = ('face_view', 'right_wrist_view')
 TRAY_VISION_IMAGE_SIZE = 768
 TRAY_CUE_PROTOCOL = 'blue_bearings_and_scale_at_reset_v1'
+TRAY_CENTER_CUE_PROTOCOL = 'blue_bearings_and_scale_from_tray_center_v1'
+TRAY_CUE_PROTOCOLS = (TRAY_CUE_PROTOCOL, TRAY_CENTER_CUE_PROTOCOL)
+TRAY_CENTER_CUE_NAMES = (
+    'initial_cylinder_from_tray_center_forward_m',
+    'initial_cylinder_from_tray_center_left_m',
+    'initial_rgb_detection_valid',
+)
+TRAY_CENTER_CUE_RADIUS_M = .04
 TRAY_FALLBACK_VIEW = 'right_wrist_view_1024'
+
+
+def with_tray_cue_state(servo_state, estimate, tray_center_xy, protocol):
+    require(protocol in TRAY_CUE_PROTOCOLS, 'Unknown tray cue protocol')
+    origin = tray_center_xy if protocol == TRAY_CENTER_CUE_PROTOCOL else None
+    require(protocol != TRAY_CENTER_CUE_PROTOCOL or origin is not None, 'Tray center calibration required')
+    xy = None if estimate is None else estimate['world_xy_m']
+    return with_joint_wrist_cue_state(servo_state, xy, origin_world_xy=origin)
 
 
 def liquid_direction(mask, origin, axes, focal, bottom_z, on_tray):

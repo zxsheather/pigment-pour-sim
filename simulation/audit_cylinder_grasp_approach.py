@@ -11,8 +11,8 @@ from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, r
                                     bounded_joint_command, robot_joint_observation, with_joint_servo_state,
                                     with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
-from cylinder_tray_vision import (TRAY_CUE_PROTOCOL, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
-                                  estimate_from_robot_views)
+from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
+                                  estimate_from_robot_views, with_tray_cue_state)
 from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
 
@@ -85,7 +85,7 @@ def measure_rollout(folder, *, pose_breakdown=False):
         tray_cue = episode.get('initial_tray_cue')
         require(tray_protocol == summary.get('tray_cue_protocol'), 'Tray protocol differs between episode and rollout')
         if tray_protocol:
-            require(tray_protocol == TRAY_CUE_PROTOCOL and progress == PROGRESS_PROTOCOL and wrist_cue is None,
+            require(tray_protocol in TRAY_CUE_PROTOCOLS and progress == PROGRESS_PROTOCOL and wrist_cue is None,
                     'Unexpected tray cue configuration')
             if episode['exact_input_images_recorded']:
                 names = set(episode['initial_tray_images'])
@@ -118,8 +118,8 @@ def measure_rollout(folder, *, pose_breakdown=False):
                     reproduced = robot_joint_observation(env, servo_state=servo_state)
                     if tray_protocol:
                         approach = observations['instruction'][i] == PROGRESS_PROMPTS[0]
-                        xy = tray_cue['world_xy_m'] if approach and tray_cue is not None else None
-                        reproduced = with_joint_wrist_cue_state(reproduced, xy)
+                        reproduced = with_tray_cue_state(reproduced, tray_cue if approach else None,
+                                                         env.config['target_tray']['center_xy'], tray_protocol)
                     elif wrist_cue is not None:
                         if i == 0 and wrist_rgb.is_file():
                             require(cue_from_wrist_rgb(env, imageio.imread(wrist_rgb)) == wrist_cue,

@@ -73,6 +73,16 @@ def wrist_pose_with_base_motion_loss(predicted, labels, proprioception, calibrat
     valid_prefix = valid.cumprod(dim=1).bool()
     loss = (squared_error * emphasis * (calibration['weight'] / calibration['position_scale_m'] ** 2)
             ).masked_fill(~valid_prefix, 0.)
+    rate = calibration.get('arm_joint_rate_penalty')
+    if rate is not None:
+        lower, upper = reference.new_tensor(calibration['action_affine_rad']).unbind(0)
+        normalized_limit = (2 * rate['rad_per_second'] * calibration['base_control_dt_s']) / (upper - lower)
+        # A chunk has a common measured joint anchor, so differencing its
+        # relative targets gives the displacement between adjacent setpoints.
+        excess = (forecast[..., :6].diff(dim=1).abs() - normalized_limit).clamp_min(0.)
+        adjacent_valid = valid[:, :-1] & valid[:, 1:]
+        rate_loss = (rate['weight'] * excess.square().sum(-1)).masked_fill(~adjacent_valid, 0.)
+        loss = loss + torch.nn.functional.pad(rate_loss, (1, 0))
     return torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
 
 
