@@ -15,7 +15,8 @@ import yaml
 
 from compute_cylinder_norm_stats import relative_chunks
 from validate_recovery_append import coverage
-from cylinder_joint_actions import joint_observation,joint_command_action,relative_joint_chunks
+from cylinder_joint_actions import (joint_observation,joint_command_action,relative_joint_chunks,
+    with_joint_servo_state,with_joint_wrist_cue_state)
 
 
 def require(condition,message):
@@ -42,8 +43,9 @@ def main():
     joint='follow_right_arm_joint_position_relative' in cfg['task']['dof_config']
     require(joint==(args.joint_reconstruction is not None),
             'Joint configs require a verified joint reconstruction; Cartesian configs do not use it')
+    source_episode=Path(provenance['policy_episode'])
     with np.load(args.episode/'starting_integration_state.npz') as start, np.load(
-            Path(provenance['policy_episode'])/'recovery_physics.npz') as source:
+            source_episode/'recovery_physics.npz') as source:
         index=provenance['snapshot_index']
         require(int(start['state_spec'])==int(source['state_spec']),'State specification mismatch')
         for a,b in [('state',source['full_state'][index]),
@@ -64,7 +66,7 @@ def main():
                 states=joint_observation(joints['right_qpos'],joints['right_qvel'],data['state'],data['base_pose']).astype(np.float64)
             actions=joint_command_action(data['joint_command']).astype(np.float64)
             state_width,action_width=18,9
-            with np.load(Path(provenance['policy_episode'])/'model_observations.npz') as observed:
+            with np.load(source_episode/'model_observations.npz') as observed:
                 source_observation_width = observed['state'].shape[1]
                 # The restored integration state contains the same joint data
                 # even if the source policy used Cartesian observations.
@@ -73,7 +75,18 @@ def main():
                 elif source_observation_width == 23:
                     restored = data['state'][0]
                 elif source_observation_width == 26:
-                    restored = np.concatenate([data['state'][0], data['base_pose'][0]]).astype(np.float32)
+                    summary_path = source_episode/'summary.json'
+                    source_result = json.loads(summary_path.read_text()) if summary_path.is_file() else {}
+                    if source_result.get('action_space') == 'joint':
+                        from export_cylinder_joint_servo_view import initial_command
+
+                        previous, _ = initial_command(args.episode, result, states[0])
+                        restored = with_joint_servo_state(states[0], previous)
+                        cue = source_result.get('initial_wrist_cue')
+                        if cue is not None:
+                            restored = with_joint_wrist_cue_state(restored, cue['world_xy_m'])
+                    else:
+                        restored = np.concatenate([data['state'][0], data['base_pose'][0]]).astype(np.float32)
                 else:
                     raise ValueError(f'Unsupported policy observation width: {source_observation_width}')
                 require(np.array_equal(restored, observed['state'][index]),
