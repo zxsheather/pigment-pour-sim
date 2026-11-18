@@ -47,8 +47,10 @@ def align_runtime_padding(key,original,target):
 
 def trained_proprio_projection(base_config, checkpoint, tensor):
     config = json.loads((checkpoint / "config.json").read_text())
-    train = yaml.safe_load((checkpoint / "config.yml").read_text())
-    state = train["task"]["agent_pos_config"]
+    # The trainer writes Python tuple tags for optimizer settings. Read only
+    # scalar layout fields without constructing tagged Python objects.
+    train = yaml.load((checkpoint / "config.yml").read_text(), Loader=yaml.BaseLoader)
+    state = {name: int(width) for name, width in train["task"]["agent_pos_config"].items()}
     assert base_config.get("use_state_string_representation") is not False
     assert config["use_state_string_representation"] is False and state.get("base_odometry") == 3
     assert sum(state.values()) == 26 and tuple(tensor.shape) == (config["hidden_size"], 52)
