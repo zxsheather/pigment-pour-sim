@@ -42,27 +42,36 @@ def verify_joint_reconstruction(episode, reconstruction, trajectory, frames):
     return state, joint_command_action(trajectory['joint_command'])
 
 
-def share_immutable_videos(base, output, original_hashes):
-    """Use independent files while LeRobot is writing, then share verified bytes."""
-    shared = []
-    for relative, expected in original_hashes.items():
-        source, target = base / relative, output / relative
-        require(file_digest(source) == expected and file_digest(target) == expected,
-                f'Prior episode video changed during append: {relative}')
-        with tempfile.TemporaryDirectory(dir=target.parent) as temporary:
-            link = Path(temporary) / 'verified.mp4'
-            os.link(source, link)
-            link.replace(target)
-        shared.append(dict(path=str(relative), sha256=expected, bytes=source.stat().st_size))
-    return shared
+def share_immutable_video(source, target, expected):
+    """Share verified bytes after LeRobot has finished writing."""
+    require(file_digest(source) == expected and file_digest(target) == expected,
+            f'Video bytes changed during append: {target}')
+    with tempfile.TemporaryDirectory(dir=target.parent) as temporary:
+        link = Path(temporary) / 'verified.mp4'
+        os.link(source, link)
+        link.replace(target)
+    require(os.path.samefile(source, target), f'Video hard link failed: {target}')
 
 
 class SourceVideoDataset(LeRobotDataset):
     """Keep validated source H.264 bitstreams instead of a second lossy encode.
 
     Frame decoding/add_frame still performs alignment validation and computes
-    dataset statistics. Only the synchronous temporary-video hook is replaced.
+    dataset statistics. Joint appends use one source file per episode.
     """
+    keep_source_files_separate = False
+
+    def _save_episode_video(self, video_key, episode_index, temp_path=None):
+        if not self.keep_source_files_separate:
+            return super()._save_episode_video(video_key, episode_index, temp_path)
+        size_limit = self.meta.info['video_files_size_in_mb']
+        # LeRobot opens a new file when the combined size reaches this limit.
+        self.meta.info['video_files_size_in_mb'] = 0
+        try:
+            return super()._save_episode_video(video_key, episode_index, temp_path)
+        finally:
+            self.meta.info['video_files_size_in_mb'] = size_limit
+
     def _encode_temporary_episode_video(self, video_key, episode_index):
         source = self.source_videos[video_key]
         target = Path(tempfile.mkdtemp(dir=self.root)) / f"{video_key}_{episode_index:03d}.mp4"
@@ -171,6 +180,8 @@ def main():
                                           "joint_export_validation.json") if joint else
                    shutil.ignore_patterns("frame-sampling-weights*.npy","frame-sampling-weights*.json"))
         dataset=dataset_class(args.repo_id,root=args.output,video_backend="pyav",vcodec="h264")
+        if joint:
+            dataset.keep_source_files_separate = True
         robot_type = 'quanta_x1_official_cylinder_joint_control' if joint else validated[0][1].get('robot_type','quanta_x1_planar_carry')
         assert dataset.meta.info['robot_type'] == robot_type
         for key,feature in features.items():
@@ -250,7 +261,24 @@ def main():
                     require(item[f'observation.images.{camera}'].shape == (3, *sample_image.shape[:2]),
                             'Appended sample has invalid RGB layout')
             offset += len(states)
-        shared = share_immutable_videos(args.base_dataset, args.output, original_videos)
+        shared = []
+        for relative, expected in original_videos.items():
+            source = args.base_dataset / relative
+            share_immutable_video(source, args.output / relative, expected)
+            shared.append(dict(path=str(relative), sha256=expected, bytes=source.stat().st_size))
+        shared_sources = []
+        used_paths = set(original_videos)
+        for index, record in enumerate(provenance[-len(validated):], start=len(provenance)-len(validated)):
+            for camera in CAMERAS:
+                key = f'observation.images.{camera}'
+                relative = reopened.meta.get_video_file_path(index, key)
+                require(relative not in used_paths, f'Expected a separate source video for {index}/{camera}')
+                used_paths.add(relative)
+                source = Path(record['source']) / f"{record['metadata'].get('video_prefix', '')}{camera}.mp4"
+                sha = record['source_video_sha256'][key]
+                share_immutable_video(source, args.output / relative, sha)
+                shared_sources.append(dict(episode_index=index, path=str(relative), source=str(source),
+                                           sha256=sha, bytes=source.stat().st_size))
         norm_path = args.output / 'joint_norm_stats.json'
         require(file_digest(norm_path) == file_digest(args.base_dataset / norm_path.name), 'Normalization changed')
         report = dict(kind='verified_joint_dataset_append', passed=True,
@@ -259,6 +287,7 @@ def main():
                       robot_state_dimensions=18, action_dimensions=9,
                       episode_provenance=provenance[-len(validated):],
                       base_frame_count=old_frames, shared_existing_videos=shared,
+                      shared_appended_source_videos=shared_sources,
                       fixed_normalizer_sha256=file_digest(norm_path),
                       fixed_normalizer_covers_appended_labels=True)
         (args.output / 'joint_export_validation.json').write_text(json.dumps(report, indent=2) + '\n')
