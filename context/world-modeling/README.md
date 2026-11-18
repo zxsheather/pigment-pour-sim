@@ -20,6 +20,6 @@ This records the implementation available for Step 1 of the [project plan](../Pl
 
 - The scene uses separate robot visual and collision geometry. Contact masks enable interactions between the robot and workspace props. Tables and trays use primitive shapes, and the cylinder wall is approximated by box segments. Current masks do not provide robot self-collision.
 - The pouring scenario adjusts robot-floor contact for the planar base. The [workspace contact checks](../../simulation/world_model/collision.py) inspect MuJoCo contacts between the robot or attached bottle and the environment, excluding the ground. The free-grasp demo separately checks finger-pad contacts and bottle motion.
-- The [motion layer](../../simulation/motion/pour_motion.py) checks sampled poses for workspace contact. The demos check contacts during simulated execution, and the motion demo includes a path through the cylinder that is expected to be rejected. Liquid collection uses geometric opening tests, with no physical interaction between parcels and cylinder walls.
+- The [motion layer](../../simulation/motion/motion.py) checks sampled poses for workspace contact. The demos check contacts during simulated execution, and the motion demo includes a path through the cylinder that is expected to be rejected. Liquid collection uses geometric opening tests, with no physical interaction between parcels and cylinder walls.
 
 The [remaining work](real-world-modeling-gaps.json) tracks validation, calibration, sensing, and integration.

@@ -1,0 +1,41 @@
+{
+  "status": "implemented",
+  "scope": "Bottle-pose motion in the attached-bottle MuJoCo scene.",
+  "request_move": {
+    "caller": "Pour controller",
+    "inputs": [
+      "Target bottle-mouth position and bottle orientation",
+      "Duration in seconds",
+      "Current MuJoCo state"
+    ],
+    "behavior": "Plan synchronously from measured position and velocity. Activate an accepted trajectory immediately, replacing any active move. A rejection preserves the active move.",
+    "statuses": [
+      "accepted",
+      "rejected"
+    ]
+  },
+  "update": {
+    "caller": "Robot control loop",
+    "inputs": [
+      "Control timestep in seconds",
+      "Current MuJoCo state with refreshed kinematics"
+    ],
+    "behavior": "Advance the active trajectory and write position servo targets. The caller steps physics.",
+    "statuses": [
+      "idle",
+      "executing",
+      "reached",
+      "failed"
+    ]
+  },
+  "completion": {
+    "position_tolerance_m": 0.005,
+    "orientation_tolerance_deg": 1,
+    "settling_timeout_s": 0.8
+  },
+  "verification": [
+    "Reject a path through the cylinder",
+    "Preserve the active move after a rejected replacement",
+    "Interrupt an active tilt with an upright request"
+  ]
+}
