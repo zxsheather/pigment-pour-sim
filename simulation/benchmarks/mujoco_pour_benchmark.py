@@ -1,6 +1,7 @@
 """Run and score a fixed-start pour using a caller-supplied controller."""
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from math import floor, isfinite
 from pathlib import Path
@@ -64,8 +65,9 @@ def run_episode(
     *,
     scene_path: Path = ROOT / "generated" / "pour_start.xml",
     timeout_s: float = 60.,
+    observe_frame: Callable[[mujoco.MjModel, mujoco.MjData, PourWater], None] | None = None,
 ) -> PourRun:
-    """Run one headless attached-bottle episode at a 50 ms control cadence."""
+    """Run an episode. The optional observer reads live state without changing it."""
     if not isfinite(requested_ml) or requested_ml <= 0:
         raise ValueError("Expected a finite positive requested volume")
     if not isfinite(timeout_s) or timeout_s <= 0:
@@ -95,6 +97,8 @@ def run_episode(
     water = PourWater(model, data, config)
     system.start(requested_ml)
     status = "contact" if contacts else "timeout"
+    if observe_frame is not None:
+        observe_frame(model, data, water)
 
     # Step only up to the deadline. No controller tick can occur at or after it.
     for _ in range(floor(timeout_s / dt + 1e-9)):
@@ -108,6 +112,8 @@ def run_episode(
         mujoco.mj_step(model, data)
         mujoco.mj_forward(model, data)
         water.step(data, dt)
+        if observe_frame is not None:
+            observe_frame(model, data, water)
         contacts.update(workspace_contacts(model, data))
         if contacts:
             status = "contact"
@@ -131,6 +137,8 @@ def run_episode(
     while water.parcels:
         water.advance_parcels(dt)
         settling_steps += 1
+    if observe_frame is not None:
+        observe_frame(model, data, water)
 
     return PourRun(
         status=status,
