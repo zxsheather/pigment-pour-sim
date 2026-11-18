@@ -1,0 +1,91 @@
+{
+  "kind": "grasp_event_training_sampling",
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-unilateral-recovery-v9",
+  "base_weights_sha256": "c3f5e2be48ad09dc23bbafcbfc3b95dea0eadab7f5d9276196becf40553653eb",
+  "weights_sha256": "10fb521b77c59de181de3fb7a9b0f6d3a2efa12959dc8b7c5e524cc78519a89a",
+  "frames": 43440,
+  "eligible_anchors": 41268,
+  "training_split_seed": 48,
+  "groups": {
+    "reopen": {
+      "total_anchors": 144,
+      "eligible_anchors": 136,
+      "base_share": 0.041870005599679294,
+      "multiplier": 1.9106756460670922,
+      "source_count": 18,
+      "new_share": 0.08000000000000002
+    },
+    "start_close": {
+      "total_anchors": 462,
+      "eligible_anchors": 433,
+      "base_share": 0.012795554640449045,
+      "multiplier": 4.689128504858181,
+      "source_count": 66,
+      "new_share": 0.06000000000000001
+    },
+    "other": {
+      "total_anchors": 42834,
+      "eligible_anchors": 40699,
+      "base_share": 0.9453344397598717,
+      "multiplier": 0.909730952168052,
+      "source_count": 71,
+      "new_share": 0.8600000000000001
+    }
+  },
+  "anchor_phase_shares": {
+    "advance": {
+      "base": 0.09740917095957306,
+      "new": 0.13697562574037891
+    },
+    "align_eye_level": {
+      "base": 0.08477371762636365,
+      "new": 0.07712127485505739
+    },
+    "approach": {
+      "base": 0.4083260812517208,
+      "new": 0.4133764346306995
+    },
+    "back_away": {
+      "base": 0.07429177644122334,
+      "new": 0.06758552852013015
+    },
+    "close": {
+      "base": 0.03781132071315217,
+      "new": 0.03439812879510751
+    },
+    "find_scale": {
+      "base": 0.022317787639616275,
+      "new": 0.020303182199672497
+    },
+    "hold_for_reading": {
+      "base": 0.018369943570466094,
+      "new": 0.016711706255633504
+    },
+    "lift": {
+      "base": 0.040898588664143934,
+      "new": 0.037206712007761156
+    },
+    "present": {
+      "base": 0.10311409698139987,
+      "new": 0.09380608562883776
+    },
+    "read_stable": {
+      "base": 0.012971042542232676,
+      "new": 0.011800158882557641
+    },
+    "retract": {
+      "base": 0.0962144786564584,
+      "new": 0.08752928928049261
+    },
+    "straighten": {
+      "base": 0.003501994953649648,
+      "new": 0.0031858732036714062
+    }
+  },
+  "executed_prefix": 8,
+  "reopen_min_full_width_difference_mm": 10,
+  "phase_labels_used_only_to_construct_offline_sampling_weights": true,
+  "original_dataset_modified": false,
+  "independent_cases_read": false,
+  "learned_policy_trained": false
+}

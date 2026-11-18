@@ -1,0 +1,366 @@
+{
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7/checkpoints/0_256",
+  "config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7/train.yml",
+  "action_space": "joint",
+  "controller": {
+    "environment": {
+      "grasp_x": 0.115,
+      "grasp_height": 0.225,
+      "solver_impratio": 10,
+      "physics_dt": 0.0005
+    },
+    "teacher": {
+      "grip_opening": 0.003
+    }
+  },
+  "probe_only": false,
+  "episodes": [
+    {
+      "policy": "wall_oss_full_cylinder",
+      "success": false,
+      "failure_reason": "collision:[['right_right_official_collision_1_0', '']]",
+      "action_space": "joint",
+      "evaluation_interrupted": false,
+      "source_sha256": {
+        "run_wall_cylinder.py": "7ab489e7d6ed384a6a07d31545359fe6ae69a0e57d31f8e6a44aa702866afe0a",
+        "run_wall_carry.py": "60d8945ef66d41d650fbb162e89e0cc26da10fc317c514b24c6b5e763b382352",
+        "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+        "inspect_cylinder.py": "057b0415a796fc17065c30180763226e71021497b0ffeeabc4e4525a5a7b4d31",
+        "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+        "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+        "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+        "robot_action_filter.py": "100e90bde69d7ec03d8699c214c592c9b1d3fb70ed266480ffd7a371f0088fa3",
+        "robot_state_normalization.py": "39f5ba5c9de98cc58fa532258f34f5d468761752f721c5dce3e1d3c777cdb487",
+        "cylinder_joint_actions.py": "81024a3d1ee64af3593b656215ee8faedffef93a3e4f8f954a010d65df2506a8"
+      },
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.024938825486692906,
+        "camera_distance_m": 0.6774798264374046,
+        "linear_speed_m_s": 8.505980577510204e-14,
+        "angular_speed_rad_s": 1.5708780896055821e-15
+      },
+      "action_filter_seconds": 0,
+      "temporal_ensemble_predictions": 0,
+      "prediction_samples_per_observation": 1,
+      "state_embedding_precision": "training",
+      "unclipped_robot_state": false,
+      "gripper_opening_confirmation": {
+        "forecasts": 0,
+        "mode": "prefix-median",
+        "abrupt_increase_threshold_m_per_finger": 0.005,
+        "decisions": []
+      },
+      "sampled_action_decoding": "single model draw",
+      "robot_servo_envelope": {
+        "cartesian_speed_limit_m_s": 0,
+        "angular_speed_limit_rad_s": 0
+      },
+      "ik_projection": {
+        "applicable": false,
+        "reason": "Direct joint position targets; no Cartesian IK is called"
+      },
+      "joint_limit_projection": {
+        "maximum_rad": 0,
+        "frames": 0,
+        "margin_rad": 0.005
+      },
+      "grip_profile": "official",
+      "case": {
+        "volume": 25,
+        "seed": 100,
+        "jitter": 0.004
+      },
+      "simulated_seconds": 8.049999999998347,
+      "max_slip_m": 0,
+      "max_held_tilt_rad": 0,
+      "max_lifted_m": 0,
+      "expected_volume_ml": 25,
+      "reading": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "reading_history": [
+        {
+          "time": 0.05000000000000004,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.3000000000000002,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.5999999999999893,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.8999999999999563,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.1999999999999234,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.4999999999998903,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.7999999999998573,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.0999999999998686,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.349999999999952,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.6000000000000356,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.850000000000119,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.1000000000002026,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.350000000000286,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.6000000000003696,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.850000000000453,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.15000000000042,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.450000000000253,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.750000000000087,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.049999999999921,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.3499999999997545,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.649999999999588,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.949999999999422,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.249999999999256,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.549999999999089,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.849999999998923,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.149999999998757,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.449999999998591,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.749999999998424,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        }
+      ],
+      "final_tilt_rad": 0,
+      "geometry_audit": {
+        "passed": true,
+        "default_profile": "official",
+        "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+        "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+        "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+        "custom_pads": 0,
+        "geometry_import": "Unchanged union of the source convex solids",
+        "fingers": [
+          {
+            "link": "left_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "left_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          },
+          {
+            "link": "right_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "right_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          }
+        ],
+        "contact_model": {
+          "friction": [
+            1,
+            0.005,
+            0.0001
+          ],
+          "condim": 3,
+          "noslip_iterations": 0,
+          "calibration": "Nominal simulator defaults; not measured hardware properties"
+        }
+      },
+      "inference_seconds": [
+        3.6823573559959186,
+        3.408674225996947,
+        3.0773719410062768,
+        3.1085010100068757,
+        2.9474100380029995,
+        2.9634272120019887,
+        2.9431907489924924,
+        2.824047985006473,
+        2.7846710339945275,
+        3.0830356730002677,
+        3.111288289001095,
+        3.1977115769986995,
+        3.3636209329997655,
+        3.086543290002737,
+        3.1334525129932445,
+        3.132616438000696,
+        3.1578178360068705,
+        3.195419759998913,
+        3.119532694996451,
+        3.4222485079953913,
+        3.098932409004192
+      ],
+      "executed_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "ignored_dimensions": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "observation_inputs": "Three RGB cameras and 18D robot joint positions/velocities, aperture, base velocity/odometry; no object pose, phase or fill value",
+      "base_odometry": true,
+      "exact_input_images_recorded": true,
+      "low_level_controller": "Official joint limits with original5mrad margin and rate-limited joint position servos; no object-pose correction"
+    }
+  ],
+  "execution_prefix": 8,
+  "policy_batch_size": 1,
+  "flow_steps": 10,
+  "flow_noise": "random",
+  "action_filter_seconds": 0,
+  "robot_servo_envelope": {
+    "cartesian_speed_limit_m_s": 0,
+    "angular_speed_limit_rad_s": 0
+  },
+  "ik_max_residual": null,
+  "temporal_ensemble_predictions": 0,
+  "prediction_samples_per_observation": 1,
+  "state_embedding_precision": "training",
+  "gripper_open_confirmations": 0,
+  "gripper_open_confirmation_mode": "prefix-median",
+  "unclipped_robot_state": false,
+  "evaluation_complete": true,
+  "successes": 0,
+  "total": 1
+}

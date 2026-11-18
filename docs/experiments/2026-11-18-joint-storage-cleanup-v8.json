@@ -1,0 +1,46 @@
+{
+  "completed": true,
+  "files": [
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-sampling-bc-v5/checkpoints/0_256/model.safetensors",
+      "bytes_on_disk": 8978735104,
+      "logical_bytes": 8978728744,
+      "inode": 27415227,
+      "reason": "Superseded V5 failed-checkpoint model",
+      "audited_weight_sha256": "1d277ce8952a4208704771c2b42f34fbf25e46a7a67bc944f3d22a757d15ebca"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7/checkpoints/0_256/optimizer.pt",
+      "bytes_on_disk": 1613295616,
+      "logical_bytes": 1613290955,
+      "inode": 27413452,
+      "reason": "V8 loads V7 weights without the V7 optimizer",
+      "audited_weight_sha256": null
+    }
+  ],
+  "allocated_bytes_reclaimed": 10592030720,
+  "free_bytes_before": 204118544384,
+  "free_bytes_after": 214710571008,
+  "protected_paths_verified": 9,
+  "preserved_v7_step128_weight": true,
+  "live_v8": {
+    "kind": "actual_wall_v8_started",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-pose-recovery-v8",
+    "episodes": 69,
+    "frames": 42011,
+    "driver_pid": 2589646,
+    "torchrun_pid": 2594683,
+    "trainer_pid": 2594861,
+    "stage": "training",
+    "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7/checkpoints/0_256",
+    "parent_sha256": "231919b789f0edf23e9b38e3c331208f893661c2a36a423c3b0b3333ea3b23ea",
+    "data_loader_passed": true,
+    "first_update": "2026-11-18 12:18:35,192 - [rank0] - INFO -  epoch   0/1000 | iter      0/  9977 | loss 0.002840 | flow_loss 0.002840 | lr 0.000030 | time_current_backward_step 13.342227s |",
+    "last_update": "2026-11-18 12:25:39,048 - [rank0] - INFO -  epoch   0/1000 | iter     52/  9977 | loss 0.002350 | flow_loss 0.002350 | lr 0.000030 | time_current_backward_step 8.174806s |",
+    "checked_at": 1794975947.4197245,
+    "actual_update_verified": true,
+    "neural_task_success_measured": false,
+    "independent_ledger_exists": false
+  },
+  "ledger": "/data/hlou/pigment-pour-study/results/storage-cleanup-v8-20261118"
+}

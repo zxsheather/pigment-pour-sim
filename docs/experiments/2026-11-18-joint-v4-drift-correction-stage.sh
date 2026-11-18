@@ -45,8 +45,18 @@ case "$variant" in
     stage=$root/runs/cylinder-joint-pose-recovery-data-check-v8
     names=("$@")
     ;;
+  unilateral)
+    live=$root/runs/cylinder-joint-pose-recovery-data-check-v8
+    live_weights=$live/grasp-weights.npy
+    old=$root/datasets/cylinder-joint-pose-recovery-v8
+    data=$root/datasets/cylinder-joint-unilateral-recovery-v9
+    stage=$root/runs/cylinder-joint-unilateral-recovery-data-check-v9
+    raw=$sim/generated/cylinder-joint-v7-unilateral-recovery-v1
+    checked=$root/runs/cylinder-joint-v7-unilateral-recovery-v1-validation
+    names=(volume_17_seed_9061_snapshot_18 volume_36_seed_9063_snapshot_15)
+    ;;
   *)
-    printf 'Expected drift, near-tray or wrist\n' >&2
+    printf 'Expected drift, near-tray, wrist or unilateral\n' >&2
     exit 2
     ;;
 esac
@@ -68,6 +78,8 @@ for name in "${names[@]}"; do
     fi
     raw=$sim/generated/$group
     checked=$root/runs/$group-validation
+  fi
+  if [[ "$variant" == wrist || "$variant" == unilateral ]]; then
     "$python" -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["demonstration_replay_success"] and d["geometry_audit_passed"] and not d["neural_weights_loaded"]' \
       "$checked/$name/decoder/decoder-replay.json"
   fi
@@ -148,7 +160,7 @@ for index in range(base_count, len(new_provenance)):
     replays.append({k: replay[k] for k in ('episode', 'demonstration_frames', 'executed_frames',
         'demonstration_replay_success', 'max_slip_m', 'max_lifted_m', 'geometry_audit_passed')})
 assert all(r['demonstration_replay_success'] and r['geometry_audit_passed'] for r in replays)
-kind = 'staged_joint_recovery_corrections' if variant == 'wrist' else 'staged_joint_drift_corrections'
+kind = 'staged_joint_recovery_corrections' if variant in {'wrist', 'unilateral'} else 'staged_joint_drift_corrections'
 report = dict(kind=kind, dataset=str(data), base_dataset=str(old),
     episodes=len(new_provenance), frames=len(full), new_frames=len(full)-len(base), exact_unchanged_base_rows=len(base),
     norm_sha256=hashlib.sha256((data / 'joint_norm_stats.json').read_bytes()).hexdigest(),

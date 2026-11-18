@@ -269,7 +269,15 @@ V5 第 256 步的 25 mL／seed 100 闭环仍未建立承载接触或抬升。最
 
 V7 第 128 步的完整 Wall 模型评测为 0/1。最近距离从 V5 第 256 步的 10.03 cm 缩短到 8.20 cm，出现在 7.60 秒，夹爪轴线偏差为 17.62°。随后右臂第 4 连杆在 14.70 秒碰撞托盘，承载接触与抬升均为零。末段六帧原指令重现约 1.08 mm 的穿入。权重审计确认 258 个动作或状态张量更新，581 个冻结张量保持一致。V7 继续训练，切换任务已等待第 256 步实测。仅在两次都无承载接触、有效抬升或夹持，且最近距离均超过 5 cm 时才接续 V8。完整套件仍等待真实模型单例成功。[V7 权重](experiments/2026-11-18-joint-tray-v7-step128-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-tray-v7-step128-closed-loop.json) · [位姿](experiments/2026-11-18-joint-tray-v7-step128-approach.json) · [碰撞回放](experiments/2026-11-18-joint-tray-v7-step128-collision.json) · [V8 切换状态](experiments/2026-11-18-joint-pose-v8-transition-armed.json)
 
+V7 的 10,944 帧夹持前教师指令中，最大后退指令约 0.79 cm/s。V5 和 V7 闭环前 10 秒中，超过 1 cm/s 的后退指令分别占 24.5% 和 32.5%。在 13 个配对教师观测上，V7 的前八步右臂平均绝对误差从 0.0321 rad 降至 0.0308 rad，平均开度仍比教师窄 16.44 mm，平均前进速度比教师低 6.47 mm/s。按每个物理控制步重放 V7 原轨迹，最近距离为 7.81 cm。保持原手臂和夹爪指令，仅消除底盘纵向指令时最近可达 6.63 cm，量筒先被一根手指触碰，随后出现禁止接触。仅消除转向指令时也只有一根手指承载。该回放提供接触初始状态和分量诊断，正式闭环沿用模型完整输出。[原轨迹数据分布](experiments/2026-11-18-joint-v5-v7-pregrasp-support.json) · [配对模型推理](experiments/2026-11-18-joint-v5-v7-paired-command-comparison.json) · [底盘分量回放](experiments/2026-11-18-joint-v5-v7-pregrasp-base-replay.json)
+
+V7 第 256 步仍为 0/1，最近距离回退至 11.91 cm，从 8.00 秒逐值恢复并回放最后一帧指令，在 8.05 秒重现右夹爪右指与托盘约 2.91 mm 的穿入。两次正式闭环都没有承载接触、抬升或夹持，调度在 V7 进程退出后从核验过的第 256 步权重启动 V8。V8 的 69 条数据已通过加载器检查并完成实际反向传播，首次闭环仍安排在第 128 步。[第 256 步权重](experiments/2026-11-18-joint-tray-v7-step256-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-tray-v7-step256-closed-loop.json) · [位姿](experiments/2026-11-18-joint-tray-v7-step256-approach.json) · [碰撞回放](experiments/2026-11-18-joint-tray-v7-step256-collision.json) · [V8 切换](experiments/2026-11-18-joint-pose-v8-transition.json) · [实际更新](experiments/2026-11-18-joint-pose-v8-first-update.json)
+
+从 V7 第 128 步原轨迹复现 227 帧机器人观测。三个训练专用种子的回放仅将底盘转向指令置零，两个种子产生满足教师起点条件的单指承载。17 mL 首次尝试在读数后因筒体未停稳失败，同一训练场景稍晚的物理快照通过。17 和 36 mL 两条示范通过 32 帧归一化覆盖检查及正式关节解码回放，最大滑移分别为 5.50 和 10.88 mm，抬升约 11.94 cm。两条示范已追加为 V9 备选数据，合计 71 条、43,440 帧，原 V8 帧逐值一致，官方指垫几何通过核验，视频共用原载荷。V8 当前训练仍采用 69 条数据。[单指恢复记录](experiments/2026-11-18-joint-v7-unilateral-contact-recoveries.json) · [V9 数据审计](experiments/2026-11-18-joint-unilateral-v9-data-audit.json) · [V9 加载器](experiments/2026-11-18-joint-unilateral-v9-loader.json)
+
 为节省空间，确认 V7 已开始更新后，清理旧失败模型、优化器和在 V7 中逐文件核对的重复训练载荷，释放约 35.14 GiB。V5 第 256 步模型和处理器供 V7 初始化及权重比较，四个旧模型的数值评测及权重哈希继续可查。[清理清单](experiments/2026-11-18-joint-storage-cleanup-retired.json)
+
+V8 完成实际更新后，清理已归档评测的 V5 第 256 步权重和 V8 未加载的 V7 第 256 步优化器，释放约 9.86 GiB。V7 第 256 步父模型、V7 第 128 步最近距离较小的参考模型、两版数据与诊断留存。[V8 清理记录](experiments/2026-11-18-joint-storage-cleanup-v8.json)
 
 ## 完整神经网络候选的验收
 

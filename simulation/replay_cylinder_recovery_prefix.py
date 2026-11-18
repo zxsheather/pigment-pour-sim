@@ -25,6 +25,8 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
         env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
                              yaw_jitter=case.get('yaw_jitter', 0.))
         initial_base_y = float(env.base_pose()[1])
+        initial_cylinder_z = env.data.xpos[env.cylinder_body, 2]
+        cylinder_dof = env.model.joint('cylinder_free').dofadr[0]
         geometry = audit(env)
         require(geometry['passed'] and geometry['custom_pads'] == 0, 'Official geometry audit failed')
         spec = int(mujoco.mjtState.mjSTATE_INTEGRATION)
@@ -44,6 +46,7 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
                 base.append(env.applied_action.copy())
                 observations.append(observation)
                 shaft_y = env.data.xmat[env.gripper_body].reshape(3, 3)[1, 0]
+                metrics = env.metrics()
                 notes.append(dict(index=len(notes), frame=frame, time_s=float(env.data.time),
                                   aperture_m=float(observation[6] * APERTURE_SCALE_M),
                                   base_retreat_m=initial_base_y - float(env.base_pose()[1]),
@@ -51,7 +54,11 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
                                   max_right_joint_speed_rad_s=float(abs(env.data.qvel[env.arm_dofs]).max()),
                                   grasp_distance_m=float(np.linalg.norm(env.grip_point_relative()
                                                                        - env.grasp_offset)),
-                                  loaded_contacts=env.metrics()['grip_contacts']))
+                                  loaded_contacts=metrics['grip_contacts'],
+                                  forbidden_contact=bool(metrics['forbidden_contacts']),
+                                  cylinder_height_delta_m=float(env.data.xpos[env.cylinder_body, 2] - initial_cylinder_z),
+                                  cylinder_tilt_rad=metrics['bottle_tilt_rad'],
+                                  cylinder_linear_speed_m_s=float(np.linalg.norm(env.data.qvel[cylinder_dof:cylinder_dof + 3]))))
             if frame < snapshot_frames[-1]:
                 command = commands[frame]
                 _, metrics = env.step_joints(command[:6], opening=float(command[6]),
@@ -88,6 +95,8 @@ def main():
     parser.add_argument('--cases', type=Path, required=True)
     parser.add_argument('--snapshot-frames', type=int, nargs='+', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--zero-base-axis', choices=('forward', 'yaw'), action='append',
+                        help='For training-only resets, zero a base axis while replaying the recorded arm and gripper targets.')
     args = parser.parse_args()
     frames = sorted(set(args.snapshot_frames))
     require(len(frames) == len(args.snapshot_frames) and frames[0] > 0,
@@ -120,6 +129,11 @@ def main():
     args.output.mkdir(parents=True)
     verification = save_case(args.output.resolve(), source_case, summary['controller'], source,
                              commands, frames, reference=reference)
+    if args.zero_base_axis:
+        source['replay_base_axes_zeroed'] = sorted(set(args.zero_base_axis))
+        commands = commands.copy()
+        columns = {'forward': 7, 'yaw': 8}
+        commands[:, [columns[axis] for axis in source['replay_base_axes_zeroed']]] = 0.
     outputs = [save_case(args.output.resolve(), case, summary['controller'], source, commands, frames)
                for case in cases]
     report = dict(source_motion=source, source_replay=verification, cases=outputs,

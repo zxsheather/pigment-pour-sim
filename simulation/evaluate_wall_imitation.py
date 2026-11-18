@@ -55,6 +55,10 @@ def joint_errors(absolute, expected, prefix):
                 mean_teacher_gripper_width_first8_mm=float(expected[:prefix, 6].mean() * APERTURE_SCALE_M * 1000),
                 base_vx_error_first8_m_s=float(np.abs(delta[:prefix, 7]).mean()),
                 base_vx_mean_signed_error_first8_m_s=float(delta[:prefix, 7].mean()),
+                base_vx_teacher_mean_first8_m_s=float(expected[:prefix, 7].mean()),
+                base_yaw_error_first8_rad_s=float(np.abs(delta[:prefix, 8]).mean()),
+                base_yaw_mean_signed_error_first8_rad_s=float(delta[:prefix, 8].mean()),
+                base_yaw_teacher_mean_first8_rad_s=float(expected[:prefix, 8].mean()),
                 first_predicted_right_action=absolute[0].tolist(),
                 first_teacher_right_action=expected[0].tolist())
 
