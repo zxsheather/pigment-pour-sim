@@ -18,10 +18,12 @@ from audit_gripper import audit
 from carry_env import CAMERAS,CONTROL_DT
 from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_joint_actions import (JOINT_SERVO_INCREMENT,JOINT_SERVO_STATE_WIDTH,JOINT_WRIST_CUE_STATE_LAYOUT,
+    JOINT_WRIST_TARGET_STATE_LAYOUT,
     absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
     joint_action_representation,servo_increment_targets,with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
-from cylinder_tray_vision import TRAY_CUE_PROTOCOLS, capture_initial_tray_cue, with_tray_cue_state
+from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL,
+                                  capture_initial_tray_cue, observed_tray_cue_state)
 from cylinder_reader import read_volume
 from cylinder_wrist_cue import capture_initial_wrist_cue
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
@@ -57,8 +59,9 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.state_width=(joint_state_width(self._train_config['agent_pos_config']) if self.action_space=='joint'
                           else 26 if self.with_odometry else 23)
         self.joint_servo_state=self.action_space=='joint' and self.state_width==JOINT_SERVO_STATE_WIDTH
-        self.joint_wrist_cue=(self.joint_servo_state and
-                             self._train_config['agent_pos_config']==JOINT_WRIST_CUE_STATE_LAYOUT)
+        layout=self._train_config['agent_pos_config']
+        self.joint_wrist_cue=self.joint_servo_state and layout in (
+            JOINT_WRIST_CUE_STATE_LAYOUT,JOINT_WRIST_TARGET_STATE_LAYOUT)
         self.progress_protocol=getattr(self._model.config,'joint_progress_protocol',None)
         if self.progress_protocol is not None and (self.progress_protocol!=PROGRESS_PROTOCOL or not self.joint_servo_state):
             raise ValueError('Unsupported progress protocol or robot state layout')
@@ -70,6 +73,8 @@ class CylinderWallPolicy(CarryWallPolicy):
         if self.tray_cue_protocol is not None and (
                 self.tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not self.joint_wrist_cue or not self.progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
+        if (layout==JOINT_WRIST_TARGET_STATE_LAYOUT)!=(self.tray_cue_protocol==WRIST_TARGET_CUE_PROTOCOL):
+            raise ValueError('Wrist target cues require matching observation layout')
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
@@ -229,8 +234,8 @@ class CylinderTrial:
             observation['state']=robot_joint_observation(self.env,servo_state=self.joint_servo_state)
             if self.tray_cue_protocol:
                 estimate=self.initial_tray_cue if self.progress_router.index==0 else None
-                observation['state']=with_tray_cue_state(observation['state'],estimate,
-                    self.env.config['target_tray']['center_xy'],self.tray_cue_protocol)
+                observation['state']=observed_tray_cue_state(
+                    self.env,observation['state'],estimate,self.tray_cue_protocol)
             elif self.initial_wrist_cue is not None:
                 observation['state']=with_joint_wrist_cue_state(observation['state'],self.initial_wrist_cue['world_xy_m'])
         elif self.with_odometry:

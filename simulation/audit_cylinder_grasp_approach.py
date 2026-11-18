@@ -13,7 +13,7 @@ from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_INCREMENT, JOI
                                     servo_increment_targets, with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
-                                  estimate_from_robot_views, with_tray_cue_state)
+                                  estimate_from_robot_views, observed_tray_cue_state)
 from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
 
@@ -141,8 +141,7 @@ def measure_rollout(folder, *, pose_breakdown=False):
                     reproduced = robot_joint_observation(env, servo_state=servo_state)
                     if tray_protocol:
                         approach = observations['instruction'][i] == PROGRESS_PROMPTS[0]
-                        reproduced = with_tray_cue_state(reproduced, tray_cue if approach else None,
-                                                         env.config['target_tray']['center_xy'], tray_protocol)
+                        reproduced = observed_tray_cue_state(env, reproduced, tray_cue if approach else None, tray_protocol)
                     elif wrist_cue is not None:
                         if i == 0 and wrist_rgb.is_file():
                             require(cue_from_wrist_rgb(env, imageio.imread(wrist_rgb)) == wrist_cue,

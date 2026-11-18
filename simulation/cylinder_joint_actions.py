@@ -48,6 +48,16 @@ JOINT_WRIST_CUE_STATE_LAYOUT = {
     'right_gripper_tracking_error': 1,
     'base_forward_command': 1,
 }
+JOINT_WRIST_TARGET_STATE_LAYOUT = {
+    **{name: width for name, width in JOINT_STATE_LAYOUT.items() if name != 'action_padding'},
+    'wrist_target_forward': 1,
+    'right_joint_2_3_tracking_error': 2,
+    'wrist_target_left': 1,
+    'wrist_target_up': 1,
+    'wrist_target_valid': 1,
+    'right_gripper_tracking_error': 1,
+    'base_forward_command': 1,
+}
 JOINT_ACTION_NAMES = ([f'right_joint_position_{i}' for i in range(1, 7)]
                       + ['right_gripper_opening_fraction', 'base_vx', 'base_yaw_rate'])
 JOINT_STATE_NAMES = (JOINT_ACTION_NAMES
@@ -79,7 +89,8 @@ def joint_state_width(layout):
     items = list(layout.items())
     if items == list(JOINT_STATE_LAYOUT.items()):
         return JOINT_STATE_WIDTH
-    require(items in (list(JOINT_SERVO_STATE_LAYOUT.items()), list(JOINT_WRIST_CUE_STATE_LAYOUT.items())),
+    require(items in (list(JOINT_SERVO_STATE_LAYOUT.items()), list(JOINT_WRIST_CUE_STATE_LAYOUT.items()),
+                      list(JOINT_WRIST_TARGET_STATE_LAYOUT.items())),
             'Unsupported cylinder joint state layout')
     return JOINT_SERVO_STATE_WIDTH
 

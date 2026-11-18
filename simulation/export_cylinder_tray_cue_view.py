@@ -15,7 +15,7 @@ from cylinder_joint_actions import (
 from cylinder_progress_prompts import PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_tray_vision import (
     TRAY_CENTER_CUE_NAMES, TRAY_CENTER_CUE_PROTOCOL, TRAY_CENTER_CUE_RADIUS_M,
-    TRAY_CUE_PROTOCOL, TRAY_CUE_PROTOCOLS, with_tray_cue_state,
+    TRAY_CUE_PROTOCOL, TRAY_POSITION_CUE_PROTOCOLS, with_tray_cue_state,
 )
 from export_cylinder_joint_dataset import digest, statistics
 from export_cylinder_joint_wrist_cue_view import FEATURE, write_view
@@ -23,7 +23,7 @@ from export_cylinder_joint_wrist_cue_view import FEATURE, write_view
 
 def export(base, ledger_path, output, protocol=TRAY_CUE_PROTOCOL):
     require(not output.exists(), 'Output exists')
-    require(protocol in TRAY_CUE_PROTOCOLS, 'Unknown tray cue protocol')
+    require(protocol in TRAY_POSITION_CUE_PROTOCOLS, 'Unknown tray cue protocol')
     centered = protocol == TRAY_CENTER_CUE_PROTOCOL
     names = TRAY_CENTER_CUE_NAMES if centered else WRIST_CUE_STATE_NAMES
     radius = TRAY_CENTER_CUE_RADIUS_M if centered else None
@@ -101,7 +101,7 @@ def main():
     parser.add_argument('--base-dataset', type=Path, required=True)
     parser.add_argument('--cue-ledger', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--protocol', choices=TRAY_CUE_PROTOCOLS, default=TRAY_CUE_PROTOCOL)
+    parser.add_argument('--protocol', choices=TRAY_POSITION_CUE_PROTOCOLS, default=TRAY_CUE_PROTOCOL)
     args = parser.parse_args()
     print(json.dumps(export(args.base_dataset.resolve(), args.cue_ledger.resolve(),
                             args.output.resolve(), args.protocol)))

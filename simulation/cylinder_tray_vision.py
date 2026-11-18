@@ -5,7 +5,7 @@ import itertools
 import cv2
 import numpy as np
 
-from cylinder_joint_actions import require, with_joint_wrist_cue_state
+from cylinder_joint_actions import JOINT_SERVO_STATE_WIDTH, require, with_joint_wrist_cue_state
 from cylinder_reader import components
 from cylinder_wrist_cue import MARKER_OFFSET_XY_M, capture_initial_wrist_cue, cue_from_wrist_rgb, pixel_on_plane
 from inspect_cylinder import CAPACITY_ML, SCALE_SPAN, SCALE_ZERO
@@ -15,22 +15,73 @@ TRAY_VISION_CAMERAS = ('face_view', 'right_wrist_view')
 TRAY_VISION_IMAGE_SIZE = 768
 TRAY_CUE_PROTOCOL = 'blue_bearings_and_scale_at_reset_v1'
 TRAY_CENTER_CUE_PROTOCOL = 'blue_bearings_and_scale_from_tray_center_v1'
-TRAY_CUE_PROTOCOLS = (TRAY_CUE_PROTOCOL, TRAY_CENTER_CUE_PROTOCOL)
+WRIST_TARGET_CUE_PROTOCOL = 'reset_rgb_target_from_current_wrist_v1'
+TRAY_POSITION_CUE_PROTOCOLS = (TRAY_CUE_PROTOCOL, TRAY_CENTER_CUE_PROTOCOL)
+TRAY_CUE_PROTOCOLS = (*TRAY_POSITION_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL)
 TRAY_CENTER_CUE_NAMES = (
     'initial_cylinder_from_tray_center_forward_m',
     'initial_cylinder_from_tray_center_left_m',
     'initial_rgb_detection_valid',
 )
 TRAY_CENTER_CUE_RADIUS_M = .04
+WRIST_TARGET_CUE_INDICES = (18, 21, 22, 23)
+WRIST_TARGET_CUE_NAMES = (
+    'wrist_to_cylinder_target_forward_asinh',
+    'wrist_to_cylinder_target_left_asinh',
+    'wrist_to_cylinder_target_up_asinh',
+    'initial_rgb_detection_valid',
+)
+WRIST_TARGET_NEAR_SCALE_M = .04
+TRAY_CYLINDER_BASE_HEIGHT_M = .016
 TRAY_FALLBACK_VIEW = 'right_wrist_view_1024'
 
 
 def with_tray_cue_state(servo_state, estimate, tray_center_xy, protocol):
-    require(protocol in TRAY_CUE_PROTOCOLS, 'Unknown tray cue protocol')
+    require(protocol in TRAY_POSITION_CUE_PROTOCOLS, 'Unknown tray position cue protocol')
     origin = tray_center_xy if protocol == TRAY_CENTER_CUE_PROTOCOL else None
     require(protocol != TRAY_CENTER_CUE_PROTOCOL or origin is not None, 'Tray center calibration required')
     xy = None if estimate is None else estimate['world_xy_m']
     return with_joint_wrist_cue_state(servo_state, xy, origin_world_xy=origin)
+
+
+def tray_grasp_height_m(scene, grasp_height_m):
+    return scene['table']['height'] + TRAY_CYLINDER_BASE_HEIGHT_M + grasp_height_m
+
+
+def with_wrist_target_state(servo_state, robot_state, estimate, *, grasp_x_m, grasp_target_height_m):
+    """Encode target minus measured wrist tip with target height relative to the base origin."""
+    state = np.asarray(servo_state, dtype=np.float32).copy()
+    require(state.ndim > 0 and state.shape[-1] == JOINT_SERVO_STATE_WIDTH and np.isfinite(state).all(),
+            'Expected the measured servo state')
+    if estimate is None:
+        state[..., WRIST_TARGET_CUE_INDICES] = 0.
+        return state
+    measured = np.asarray(robot_state, dtype=np.float64)
+    require(measured.shape == (*state.shape[:-1], 23) and np.isfinite(measured).all(),
+            'Expected measured wrist kinematics')
+    xy = np.asarray(estimate['world_xy_m'], dtype=np.float64)
+    require(xy.shape == (2,) and np.isfinite(xy).all() and np.isfinite([grasp_x_m, grasp_target_height_m]).all(),
+            'Invalid reset RGB estimate or grasp calibration')
+    pose = state[..., 15:18].astype(np.float64)
+    dx, dy = np.moveaxis(xy - pose[..., :2], -1, 0)
+    c, s = np.cos(pose[..., 2]), np.sin(pose[..., 2])
+    target = np.stack((c * dx + s * dy, -s * dx + c * dy,
+                       np.full_like(dx, grasp_target_height_m)), axis=-1)
+    row1, row2 = measured[..., 13:16], measured[..., 16:19]
+    wrist_axis = np.stack((row1[..., 0], row2[..., 0], np.cross(row1, row2)[..., 0]), axis=-1)
+    wrist_tip = measured[..., 10:13] + wrist_axis * grasp_x_m
+    state[..., WRIST_TARGET_CUE_INDICES[:-1]] = np.arcsinh((target - wrist_tip) / WRIST_TARGET_NEAR_SCALE_M)
+    state[..., WRIST_TARGET_CUE_INDICES[-1]] = 1.
+    return state
+
+
+def observed_tray_cue_state(env, servo_state, estimate, protocol):
+    if protocol == WRIST_TARGET_CUE_PROTOCOL:
+        target_z = tray_grasp_height_m(env.config, env.grasp_height) - env.data.xpos[env.robot_root, 2]
+        return with_wrist_target_state(
+            servo_state, env.state_vector(), estimate, grasp_x_m=env.grasp_offset[0],
+            grasp_target_height_m=target_z)
+    return with_tray_cue_state(servo_state, estimate, env.config['target_tray']['center_xy'], protocol)
 
 
 def liquid_direction(mask, origin, axes, focal, bottom_z, on_tray):
@@ -94,7 +145,7 @@ def estimate_tray_cylinder(images, calibrations, scene):
     """Use blue liquid bearings and ruler marks of known height, without fill volume."""
     tray = np.asarray(scene['target_tray']['center_xy'])
     half = np.asarray(scene['target_tray']['size_xy']) / 2
-    bottom_z = scene['table']['height'] + .016 + SCALE_ZERO
+    bottom_z = tray_grasp_height_m(scene, SCALE_ZERO)
 
     def on_tray(xy):
         return np.all(np.abs(xy - tray) <= half)

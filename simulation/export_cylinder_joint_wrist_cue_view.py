@@ -24,7 +24,7 @@ FEATURE = 'observation.state'
 
 def write_view(base, output, info, states, episode_stats, cue_provenance, *,
                norm_provenance_key='initial_wrist_cue', state_names=WRIST_CUE_STATE_NAMES,
-               normalization_radius_m=None):
+               state_indices=WRIST_CUE_STATE_INDICES, normalization_radius_m=None):
     shutil.copytree(base/'meta', output/'meta')
     shutil.copytree(base/'videos', output/'videos', copy_function=os.link)
     videos = list((base/'videos').rglob('*.mp4'))
@@ -47,7 +47,7 @@ def write_view(base, output, info, states, episode_stats, cue_provenance, *,
             values = pa.array([episode_stats[i][key] for i in ids], type=field.type)
             table = table.set_column(table.schema.get_field_index(name), field, values)
         pq.write_table(table, output/path.relative_to(base))
-    for index, name in zip(WRIST_CUE_STATE_INDICES, state_names, strict=True):
+    for index, name in zip(state_indices, state_names, strict=True):
         info['features'][FEATURE]['names'][index] = name
     (output/'meta/info.json').write_text(json.dumps(info, indent=2)+'\n')
     stats = json.loads((base/'meta/stats.json').read_text())
@@ -55,22 +55,22 @@ def write_view(base, output, info, states, episode_stats, cue_provenance, *,
     (output/'meta/stats.json').write_text(json.dumps(stats, indent=2)+'\n')
     shutil.copyfile(base/'demonstration_provenance.json', output/'demonstration_provenance.json')
 
-    cue = states[:, WRIST_CUE_STATE_INDICES]
+    cue = states[:, state_indices]
     extra = statistics(cue)
-    magnitudes = np.abs(cue[:, :2]).max(0)
+    magnitudes = np.abs(cue[:, :-1]).max(0)
     if normalization_radius_m is None:
         radius = np.maximum(magnitudes * 1.2, .65)
     else:
-        require(np.isfinite(normalization_radius_m) and normalization_radius_m > 0
-                and np.all(magnitudes <= normalization_radius_m), 'Cue exceeds its normalization interval')
-        radius = np.full(2, normalization_radius_m)
+        radius = np.broadcast_to(np.asarray(normalization_radius_m, dtype=float), magnitudes.shape)
+        require(np.isfinite(radius).all() and np.all(radius > 0)
+                and np.all(magnitudes <= radius), 'Cue exceeds its normalization interval')
     extra.update(q01=[*(-radius).tolist(), 0.], q99=[*radius.tolist(), 1.])
     norm = json.loads((base/'joint_norm_stats.json').read_text())
     for key, values in norm['norm_stats'][FEATURE].items():
         if key == 'count':
             continue
         require(len(values) == JOINT_SERVO_STATE_WIDTH, 'Expected joint-servo normalization')
-        for index, value in zip(WRIST_CUE_STATE_INDICES, extra[key], strict=True):
+        for index, value in zip(state_indices, extra[key], strict=True):
             values[index] = value
     norm['provenance'][norm_provenance_key] = cue_provenance
     (output/'joint_norm_stats.json').write_text(json.dumps(norm, indent=2)+'\n')
