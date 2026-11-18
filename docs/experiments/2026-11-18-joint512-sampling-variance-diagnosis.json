@@ -1,0 +1,43 @@
+{
+  "scope": "Same-observation Gaussian sampling diagnostic, not a policy/controller comparison or task success",
+  "rows": [
+    {
+      "snapshot": 0,
+      "time_s": 0.0,
+      "population_joint_std_rms_rad": 0.03229304047395161,
+      "gripper_half_gap_std_rms_m": 0.0023616367906054924,
+      "first_draw_max_abs_diff_from_original": 0.0,
+      "joint_deviation_from_training_initial_mean": {
+        "total_rms_rad": 0.04854533050005064,
+        "mean_deviation_rms_rad": 0.0362464984558077,
+        "population_std_rms_rad": 0.03229304047395161,
+        "variance_fraction": 0.442509857382129
+      },
+      "teacher_initial_gripper_fraction": 0.6974359154701233,
+      "sample_mean_gripper_fraction": 0.48333449801430106,
+      "sample_mean_gripper_half_gap_m": 0.02356255677819718,
+      "teacher_gripper_half_gap_m": 0.03400000087916851,
+      "gripper_mean_half_gap_difference_m": -0.010437444100971334,
+      "joint_per_dimension_mean_bias_rad": [
+        0.02191273083606119,
+        0.0015155813572081652,
+        0.053660542704164975,
+        -0.05544897778467699,
+        0.014987787625996394,
+        -0.00038080848744603943
+      ]
+    },
+    {
+      "snapshot": 20,
+      "time_s": 7.999999999998286,
+      "population_joint_std_rms_rad": 0.032060052795939244,
+      "gripper_half_gap_std_rms_m": 0.0017581592121251764,
+      "first_draw_max_abs_diff_from_original": 0.13923966884613037
+    }
+  ],
+  "samples_per_observation": 8,
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1/checkpoints/0_512",
+  "physics_advanced": false,
+  "reference": "Mean first8 labels from44trainingfullteachers; sameinitialrobotstate, NOT pairedRGB-conditioned groundtruth",
+  "note": "Variance is real conditional sampling variability. A nonzero mean difference persists after averaging. These statistics do not establish a safe execution filter or justify a task score."
+}
