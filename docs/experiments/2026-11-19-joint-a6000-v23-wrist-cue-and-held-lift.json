@@ -308,7 +308,7 @@
     "archived_observation_replay_exact": true,
     "extra_dataset_bytes": 13426688,
     "local_cue_ablation_job": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/first-checkpoint-evidence.sh",
-    "first_formal_result_observed": false,
+    "first_formal_result_observed": true,
     "development_reset_cue_coverage": {
       "full_coverage_json": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/development-cue-coverage.json",
       "initial_rgb_only": true,
@@ -368,7 +368,7 @@
       "model_loaded": true,
       "model_load_reports_wrist_input": true,
       "generated_action_chunks_so_far": 5,
-      "completed_episode_report": false
+      "completed_episode_report": true
     },
     "paired_cue_ablation": {
       "report": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/paired-cue-probe/report.json",
@@ -407,6 +407,124 @@
         308
       ],
       "all_changed_with_missing_cue": true
+    },
+    "first_full_single_results": [
+      {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-wrist-cue-bc-v23-a6000-step128-single/summary.json",
+        "complete": true,
+        "case": {
+          "volume": 25,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "success": false,
+        "failure_reason": "collision:[['target_tray_floor', 'cylinder_base'], ['target_tray_floor', 'cylinder_base']]",
+        "time_s": 17.500000000004565,
+        "cue_valid": false,
+        "official_geometry_passed": true,
+        "video_available": true,
+        "task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.012634646866047317,
+          "camera_distance_m": 0.6633579331756725,
+          "linear_speed_m_s": 0.009039924309609162,
+          "angular_speed_rad_s": 0.32362989680624005
+        },
+        "raw_peak_m": 0.0033645984115178162,
+        "exact_observation_replay": true,
+        "minimum_grasp_error_m": 0.08186934301908734,
+        "max_sampled_loaded_fingers": 0,
+        "contact_frame_counts": [
+          349,
+          1,
+          0
+        ],
+        "supported_lift_m": 0
+      },
+      {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-cue-v23/step128-valid-cue-single/summary.json",
+        "complete": true,
+        "case": {
+          "volume": 8,
+          "seed": 101,
+          "jitter": 0.004,
+          "yaw_jitter": 0,
+          "friction_scale": 1,
+          "mass_scale": 1
+        },
+        "success": false,
+        "failure_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "time_s": 16.200000000007595,
+        "cue_valid": true,
+        "official_geometry_passed": true,
+        "video_available": true,
+        "task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.020959752879876503,
+          "camera_distance_m": 0.6721837704833463,
+          "linear_speed_m_s": 8.520000225289148e-14,
+          "angular_speed_rad_s": 0
+        },
+        "raw_peak_m": 0,
+        "exact_observation_replay": true,
+        "minimum_grasp_error_m": 0.09586337358041713,
+        "max_sampled_loaded_fingers": 0,
+        "contact_frame_counts": [
+          323,
+          1,
+          0
+        ],
+        "supported_lift_m": 0
+      }
+    ],
+    "post_evaluation_training": {
+      "time": "2026-11-19T02:04:57.798592+08:00",
+      "active": {
+        "cylinder-joint-closed-gripper-bc-v21-a6000": {
+          "stage": "neural_evaluation_1024",
+          "latest_evaluated_step": 896,
+          "gradient": {
+            "step": 1020,
+            "grad_norm": 0.3711086541414261,
+            "flow_loss": 0.003907921561039984
+          }
+        },
+        "cylinder-joint-short-horizon-bc-v22-a6000": {
+          "stage": "neural_evaluation_512",
+          "latest_evaluated_step": 384,
+          "gradient": {
+            "step": 630,
+            "grad_norm": 0.23707664608955384,
+            "flow_loss": 0.0018707464507315308
+          }
+        },
+        "cylinder-joint-wrist-cue-bc-v23-a6000": {
+          "stage": "training",
+          "latest_evaluated_step": 128,
+          "gradient": {
+            "step": 180,
+            "grad_norm": 0.3012084424495697,
+            "flow_loss": 0.0021175740519538524
+          },
+          "forecast_chunks_seen": 44,
+          "primary_first_result": true,
+          "valid_case_neural_started": true,
+          "valid_case_result": true
+        }
+      },
+      "full_candidates": [],
+      "independent_suite_access_started": false
     }
-  }
+  },
+  "final_update_utc": "2026-11-18T18:05:26.867217+00:00"
 }
