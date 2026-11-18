@@ -20,6 +20,7 @@ from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
 from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,JOINT_WRIST_CUE_STATE_LAYOUT,
     absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
     with_joint_wrist_cue_state)
+from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
 from cylinder_reader import read_volume
 from cylinder_wrist_cue import capture_initial_wrist_cue
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
@@ -32,7 +33,7 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
                             "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
                             "robot_action_filter.py","robot_state_normalization.py","cylinder_joint_actions.py",
-                            "cylinder_wrist_cue.py","scene_config.json")}
+                            "cylinder_wrist_cue.py","cylinder_progress_prompts.py","scene_config.json")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
@@ -58,6 +59,9 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.joint_servo_state=self.action_space=='joint' and self.state_width==JOINT_SERVO_STATE_WIDTH
         self.joint_wrist_cue=(self.joint_servo_state and
                              self._train_config['agent_pos_config']==JOINT_WRIST_CUE_STATE_LAYOUT)
+        self.progress_protocol=getattr(self._model.config,'joint_progress_protocol',None)
+        if self.progress_protocol is not None and (self.progress_protocol!=PROGRESS_PROTOCOL or not self.joint_servo_state):
+            raise ValueError('Unsupported progress protocol or robot state layout')
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
@@ -86,6 +90,7 @@ class CylinderWallPolicy(CarryWallPolicy):
                                 action_space=self.action_space,active_action_dimensions=self.action_width,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
                                 joint_servo_state=self.joint_servo_state,joint_wrist_cue=self.joint_wrist_cue,
+                                progress_protocol=self.progress_protocol,
                                 flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
                                 unclipped_robot_state=unclipped_robot_state,
                                 state_precision_alignment_applies=not self._model.config.use_state_string_representation,
@@ -100,8 +105,13 @@ class CylinderWallPolicy(CarryWallPolicy):
             mask=np.zeros_like(state);mask[...,:self.state_width]=1
             dof=np.zeros((1,self._action_horizon,26),np.float32);dof[...,:self.action_width]=1
             encoded.append(dict(proprioception=state,agent_pos_mask=mask,dof_mask=dof,**obs["images"]))
-        prefix,postfix=self._get_flow_prompt(instruction)
-        inputs=self._construct_model_input(encoded,[prefix]*len(encoded),[postfix]*len(encoded))
+        if self.progress_protocol:
+            prompts=[self._get_flow_prompt(obs.get('instruction',instruction)) for obs in observations]
+            prefixes,postfixes=map(list,zip(*prompts,strict=True))
+        else:
+            prefix,postfix=self._get_flow_prompt(instruction)
+            prefixes,postfixes=[prefix]*len(encoded),[postfix]*len(encoded)
+        inputs=self._construct_model_input(encoded,prefixes,postfixes)
         padding=_normalize_real_prefix(self._normalizer_action,torch.zeros(len(encoded),1,26),
                                         inputs["dataset_names"]).to("cuda")
         # Match the training collator's zero padding after normalization.
@@ -129,10 +139,12 @@ class CylinderTrial:
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
                  gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
-                 joint_wrist_cue=False):
+                 joint_wrist_cue=False,progress_protocol=None):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
+        if progress_protocol is not None and (progress_protocol!=PROGRESS_PROTOCOL or not joint_servo_state):
+            raise ValueError('Unsupported progress protocol or robot state layout')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
             raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
@@ -153,6 +165,11 @@ class CylinderTrial:
             if record:imageio.imwrite(output/"initial_right_wrist_1024.png",rgb)
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
+        self.progress_router=CylinderProgressPrompts(self.initial_base) if progress_protocol else None
+        self.progress_changes=[]
+        if self.progress_router is not None:
+            self.progress_initial_joint_command=bounded_joint_command(self.env).tolist()
+            self.update_progress()
         self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
         self.with_odometry=with_odometry or action_space=='joint'
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
@@ -177,6 +194,11 @@ class CylinderTrial:
             for cam in ("cylinder_overview","face_view"):
                 self.writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
 
+    def update_progress(self):
+        current=self.progress_router.observe(robot_joint_observation(self.env,servo_state=True))
+        if not self.progress_changes or self.progress_changes[-1]['task_index']!=current:
+            self.progress_changes.append(dict(time_s=float(self.env.data.time),task_index=current))
+
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
@@ -186,7 +208,10 @@ class CylinderTrial:
                 observation['state']=with_joint_wrist_cue_state(observation['state'],self.initial_wrist_cue['world_xy_m'])
         elif self.with_odometry:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
-        self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
+        record=dict(time=float(self.env.data.time),state=observation["state"].copy())
+        if self.progress_router is not None:
+            observation['instruction']=record['instruction']=self.progress_router.instruction
+        self.observations.append(record)
         physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
         mujoco.mj_getState(self.env.model,self.env.data,physics,self.recovery_spec)
         self.recovery_states.append(dict(physics=physics,
@@ -231,6 +256,7 @@ class CylinderTrial:
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
         if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
         if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
+        if self.progress_router is not None:self.update_progress()
         if not self.held:
             self.contact_seconds=self.contact_seconds+CONTROL_DT if metrics["grip_contacts"]==2 and opening<.02 else 0.
             if self.contact_seconds>=.25:
@@ -302,24 +328,31 @@ class CylinderTrial:
             inference_seconds=self.latencies,
             executed_dimensions=(list(range(9)) if self.action_space=='joint' else list(range(10,21))+[22]),
             ignored_dimensions=(list(range(9,26)) if self.action_space=='joint' else list(range(10))+[21]),
-            observation_inputs=("Three RGB cameras, joint/servo state and initial RGB wrist localization" if self.initial_wrist_cue is not None else
+            observation_inputs=("Three RGB cameras, 26D joint/servo state and a prompt selected from measured robot progress; no simulator object state, teacher phase or fill value"
+                                if self.progress_router is not None else
+                                ("Three RGB cameras, joint/servo state and initial RGB wrist localization" if self.initial_wrist_cue is not None else
                                 "Three RGB cameras and 26D joint/servo state" if self.joint_servo_state else
                                 "Three RGB cameras and 18D robot joint positions/velocities, aperture, base velocity/odometry" if self.action_space=='joint' else
                                 "Three RGB cameras and 26D robot proprioception including base x/y/yaw" if self.with_odometry else
-                                "Three RGB cameras and 23D robot proprioception")+"; no simulator object state, phase or fill value",
+                                "Three RGB cameras and 23D robot proprioception")+"; no simulator object state, phase or fill value"),
             initial_wrist_cue=self.initial_wrist_cue,
             base_odometry=self.with_odometry,
             exact_input_images_recorded=bool(self.writers),
             low_level_controller=("Official joint limits with original5mrad margin and rate-limited joint position servos; no object-pose correction"
                 if self.action_space=='joint' else "Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction"))
+        if self.progress_router is not None:
+            summary.update(progress_protocol=PROGRESS_PROTOCOL,prompt_changes=self.progress_changes,
+                           progress_initial_joint_command=self.progress_initial_joint_command)
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
         if self.prediction_samples>1:
             np.save(self.output/"sampled_chunks.npy",np.asarray(self.sampled_chunks))
-        np.savez_compressed(self.output/"model_observations.npz",
-            timestamp=np.array([r["time"] for r in self.observations]),
-            state=np.array([r["state"] for r in self.observations]))
+        archive=dict(timestamp=np.array([r["time"] for r in self.observations]),
+                     state=np.array([r["state"] for r in self.observations]))
+        if self.progress_router is not None:
+            archive['instruction']=np.asarray([r['instruction'] for r in self.observations],dtype=str)
+        np.savez_compressed(self.output/"model_observations.npz",**archive)
         # Privileged simulator snapshots are separate from policy inputs. They
         # allow later expert-recovery demonstrations from policy-visited states.
         np.savez_compressed(self.output/"recovery_physics.npz",state_spec=self.recovery_spec,
@@ -400,6 +433,7 @@ def main():
                          gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
                          action_space=policy.action_space,joint_servo_state=policy.joint_servo_state,
                          joint_wrist_cue=policy.joint_wrist_cue,
+                         progress_protocol=policy.progress_protocol,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
@@ -453,7 +487,7 @@ def main():
     finally:
         results=[trial.finish() for trial in trials]
         report=dict(model=str(args.model.resolve()),config=str((args.config or args.model/"config.yml").resolve()),
-                    action_space=policy.action_space,
+                    action_space=policy.action_space,progress_protocol=policy.progress_protocol,
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
                     flow_steps=args.flow_steps,

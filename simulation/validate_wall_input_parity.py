@@ -16,6 +16,7 @@ import yaml
 from run_wall_cylinder import CylinderWallPolicy
 from run_wall_carry import build_data_config,normalize_train_config_for_inference,register_data_backend
 from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_ACTION_WIDTH, joint_state_width, require
+from cylinder_progress_prompts import PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from wall_x._vendor.harrix.utils.normalizer import build_normalizers
 from wall_x.config.loader import load_config
 from wall_x.data.backends.lerobot.build import load_lerobot_normalizers
@@ -42,6 +43,8 @@ def main():
         configured_joint_width=joint_state_width(cfg.task.agent_pos_config) if joint else None
         act,state,*_=load_lerobot_normalizers(cfg);adapter.normalizer_action,adapter.normalizer_propri=act,state
         processors=adapter.load_processor(None);model_config=adapter.build_model_config()
+        progress_protocol=getattr(model_config,"joint_progress_protocol",None)
+        require(progress_protocol in (None,PROGRESS_PROTOCOL),"Unsupported progress-prompt configuration")
         dataset,loader,_=adapter.load_dataset(load_trainer_data_config(cfg),processors["processor"],rank=0,world_size=1,
             normalizer_action=act,normalizer_propri=state,model_config=model_config,tokenizer_mixin=processors["tokenizer_mixin"])
         policy=object.__new__(CylinderWallPolicy)
@@ -72,6 +75,12 @@ def main():
         rows=[]
         for index in selected:
             raw=inner.hf_dataset[int(indices[index])]
+            prompt_evidence={}
+            if progress_protocol is not None:
+                task_index=int(raw["task_index"])
+                require(0<=task_index<len(PROGRESS_PROMPTS) and raw["task"]==PROGRESS_PROMPTS[task_index],
+                        "Loader language differs from the frame's progress task")
+                prompt_evidence=dict(task_index=task_index,instruction=raw["task"])
             processed=inner[index];train=loader.collate_fn([processed])
             values=raw["observation.state"].numpy();width=len(values)
             require(not joint or width==configured_joint_width,"Wrong joint observation width")
@@ -91,7 +100,8 @@ def main():
                 comparison[key]=dict(train_shape=list(x.shape),inference_shape=list(y.shape),max_absolute_difference=difference,
                                      equal=bool(same_shape and torch.allclose(x.float(),y.float(),rtol=0,atol=1e-6)))
             rows.append(dict(raw_frame=int(raw["index"]),episode=int(raw["episode_index"]),
-                             episode_frame=int(raw["frame_index"]),state_width=width,fields=comparison))
+                             episode_frame=int(raw["frame_index"]),state_width=width,fields=comparison,
+                             **prompt_evidence))
         report=dict(kind="training_inference_input_contract_no_model_execution",samples=rows,
                     passed=all(field["equal"] for row in rows for field in row["fields"].values()),
                     action_space="joint" if joint else "cartesian",action_width=action_width,

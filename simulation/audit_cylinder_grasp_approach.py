@@ -8,9 +8,31 @@ import numpy as np
 import imageio.v2 as imageio
 
 from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, require,
-                                    robot_joint_observation, with_joint_wrist_cue_state)
+                                    bounded_joint_command, robot_joint_observation, with_joint_servo_state,
+                                    with_joint_wrist_cue_state)
+from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
+
+
+def verify_progress_prompts(initial_base, initial_command, episode, observations, trajectory):
+    require(episode['progress_protocol'] == PROGRESS_PROTOCOL, 'Unknown recorded progress protocol')
+    np.testing.assert_array_equal(initial_command, episode['progress_initial_joint_command'])
+    times = trajectory['timestamp']
+    require(len(times) > 0, 'Progress audit requires an executed controller trace')
+    previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
+    states = with_joint_servo_state(trajectory['robot_joint_state'], previous)
+    router = CylinderProgressPrompts(initial_base)
+    phase = np.array([router.observe(state) for state in states])
+    sample_times = observations['timestamp']
+    sample_indices = np.searchsorted(times, sample_times)
+    require(np.all(sample_indices < len(times)), 'A language observation has no recorded robot state')
+    np.testing.assert_array_equal(times[sample_indices], sample_times)
+    np.testing.assert_array_equal(np.asarray(PROGRESS_PROMPTS)[phase[sample_indices]], observations['instruction'])
+    changes = [dict(time_s=float(times[i]), task_index=int(phase[i]))
+               for i in np.flatnonzero(np.diff(phase, prepend=-1))]
+    reported = [row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
+    require(reported == changes, 'Recorded prompt changes do not match robot progress')
 
 
 def wrist_pose_breakdown(env, local_error, initial_base):
@@ -55,12 +77,16 @@ def measure_rollout(folder, *, pose_breakdown=False):
         env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
                              yaw_jitter=case.get('yaw_jitter', 0))
         initial_base = env.base_pose().copy()
+        progress = episode.get('progress_protocol')
+        require(progress == summary.get('progress_protocol'), 'Progress protocol differs between episode and rollout')
         snapshots = []
         max_state_error = 0.
         aperture_index = 6 if action_space == 'joint' else 19
         with (np.load(directory / 'recovery_physics.npz') as physics,
               np.load(directory / 'model_observations.npz') as observations,
               np.load(directory / 'trajectory.npz') as trajectory):
+            if progress:
+                verify_progress_prompts(initial_base, bounded_joint_command(env), episode, observations, trajectory)
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
                     'Snapshot and observation counts differ')
             spec = int(physics['state_spec'])
@@ -103,6 +129,7 @@ def measure_rollout(folder, *, pose_breakdown=False):
         return dict(rollout=str(folder.resolve()), snapshots=len(snapshots),
                     robot_observations_reproduced_exactly=max_state_error == 0.,
                     robot_observations_max_abs_difference=max_state_error,
+                    progress_prompts_reproduced_exactly=bool(progress),
                     maximum_recorded_loaded_contacts=maximum_contacts,
                     nearest=min(snapshots, key=lambda row: row['grasp_distance_m']), first=snapshots[0],
                     last=snapshots[-1], failure_reason=episode['failure_reason'])

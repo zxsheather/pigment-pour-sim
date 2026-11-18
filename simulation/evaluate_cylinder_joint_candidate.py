@@ -58,12 +58,14 @@ def case_set_digest(cases):
     return hashlib.sha256(json.dumps(sorted(normalized)).encode()).hexdigest()
 
 
-def verify_report(report, cases, model, config, controller, source_hashes, *, action_space='joint'):
+def verify_report(report, cases, model, config, controller, source_hashes, *, action_space='joint',
+                  progress_protocol=None):
     require(report['evaluation_complete'] and not report['probe_only'], 'Incomplete/probe evaluation')
     require(action_space in ('joint', 'cartesian') and report['action_space'] == action_space,
             'Unexpected neural action space')
     require(report['model'] == str(model) and report['config'] == str(config), 'Candidate/config mismatch')
     require(report['controller'] == controller, 'Physical controller configuration changed')
+    require(report.get('progress_protocol') == progress_protocol, 'Language protocol changed')
     settings = dict(execution_prefix=8, policy_batch_size=1, flow_steps=10, flow_noise='random',
                     action_filter_seconds=0., temporal_ensemble_predictions=0,
                     prediction_samples_per_observation=1, state_embedding_precision='training',
@@ -78,6 +80,7 @@ def verify_report(report, cases, model, config, controller, source_hashes, *, ac
     for case, result in zip(cases, report['episodes']):
         require(result['policy'] == 'wall_oss_full_cylinder' and result['action_space'] == action_space,
                 'Expected genuine neural policy output')
+        require(result.get('progress_protocol') == progress_protocol, 'Episode language protocol changed')
         if action_space == 'cartesian':
             ik = result['ik_projection']
             require(ik['applicable'] and ik['max_allowed_weighted_residual'] == expected_ik_limit
@@ -154,6 +157,7 @@ def main():
     controller = json.loads(controller_path.read_text())
     single = json.loads(Path(candidate['single_summary']).read_text())
     action_space = single['action_space']
+    progress_protocol = single.get('progress_protocol')
     require(candidate.get('action_space', 'joint') == action_space, 'Candidate action space changed')
     require(candidate.get('goal_complete') is False, 'Expected a provisional candidate')
     require(candidate['requires'] == ['original8', 'development12', 'untouched_independent12'], 'Acceptance scope mismatch')
@@ -161,7 +165,8 @@ def main():
     require(audit['passed'] and audit['checkpoint'] == str(model), 'Successful weight audit required')
     hashes = single['episodes'][0]['source_sha256']
     require(all(digest(scripts / name) == sha for name, sha in hashes.items()), 'Candidate execution source is stale')
-    verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes, action_space=action_space)
+    verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes,
+                  action_space=action_space, progress_protocol=progress_protocol)
     from audit_wall_checkpoint import saved_checkpoint_position
 
     require(model.parent == run / 'checkpoints', 'Unexpected checkpoint location')
@@ -188,7 +193,7 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     state = dict(model=str(model), model_sha256=audit['checkpoint_sha256'], suite_sha256=suite_hashes,
-                 action_space=action_space,
+                 action_space=action_space, progress_protocol=progress_protocol,
                  source_sha256=hashes, acceptance_source_sha256=digest(Path(__file__)),
                  config_sha256=digest(config), controller_sha256=digest(controller_path),
                  status='running', completed_suites=[], goal_complete=False)
@@ -221,7 +226,8 @@ def main():
             with (output / f'{name}.log').open('w') as log:
                 subprocess.run(argv, env=env, cwd=root, stdout=log, stderr=subprocess.STDOUT, check=True)
             report = json.loads((output / name / 'summary.json').read_text())
-            verify_report(report, cases, model, config, controller, hashes, action_space=action_space)
+            verify_report(report, cases, model, config, controller, hashes,
+                          action_space=action_space, progress_protocol=progress_protocol)
             state['completed_suites'].append(dict(name=name, successes=count, total=count,
                 summary=str(output / name / 'summary.json'), summary_sha256=digest(output / name / 'summary.json')))
             save()
