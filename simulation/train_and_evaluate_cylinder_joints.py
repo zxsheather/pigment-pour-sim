@@ -18,6 +18,35 @@ from audit_cylinder_grasp_approach import measure_rollout
 from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_STATE_LAYOUT, require
 
 
+def checkpoint_position(checkpoint):
+    import torch
+
+    for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt',
+                 'global_step.pth', 'current_epoch.pth'):
+        require((checkpoint/name).is_file(), f'Missing checkpoint component: {checkpoint/name}')
+    epoch = torch.load(checkpoint/'current_epoch.pth', map_location='cpu', weights_only=True)['current_epoch']
+    step = torch.load(checkpoint/'global_step.pth', map_location='cpu', weights_only=True)['global_step']
+    require(type(epoch) is int and type(step) is int and epoch >= 0 and step >= 0
+            and checkpoint.name == f'{epoch}_{step}', f'Invalid checkpoint position: {checkpoint}')
+    return epoch, step
+
+
+def checkpoint_saved_at(log, step):
+    with log.open(errors='replace') as stream:
+        return any('save_checkpoint took ' in line and line.rstrip().endswith(f'at global_step={step}')
+                   for line in stream)
+
+
+def locate_saved_checkpoint(directory, step):
+    matches = [path for path in directory.glob(f'*_{step}')
+               if path.is_dir() and path.name.split('_', 1)[0].isdigit()]
+    require(len(matches) == 1, f'Expected one completed checkpoint at step {step}, found {matches}')
+    checkpoint = matches[0]
+    _, saved_step = checkpoint_position(checkpoint)
+    require(saved_step == step, f'Checkpoint step does not match the log: {checkpoint}')
+    return checkpoint
+
+
 def development_score(successes, case, approach):
     gates = case['final_task_gates']
     stages = ('held', 'lifted', 'retreated', 'close_to_head')
@@ -61,15 +90,13 @@ def main():
     interval = cfg['logging']['save_interval']
     require(steps > interval and (steps-1) % interval == 0, 'Final checkpoint must be scheduled')
     resume = Path(cfg['checkpoint']['resume_from']).resolve()
+    checkpoint_dir = Path(cfg['checkpoint']['save_path']).resolve()
+    require(checkpoint_dir == run/'checkpoints', 'Expected a run-specific checkpoint save directory')
     resume_step = 0
     if resume.is_dir():
-        import torch
-        for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt',
-                     'global_step.pth', 'current_epoch.pth'):
-            require((resume/name).is_file(), f'Missing resume checkpoint component: {name}')
-        resume_step = torch.load(resume/'global_step.pth', map_location='cpu', weights_only=True)['global_step']
-        require(0 < resume_step < steps-1 and resume_step % interval == 0 and resume.name == f'0_{resume_step}',
-                'Expected a complete scheduled checkpoint from epoch zero')
+        _, resume_step = checkpoint_position(resume)
+        require(0 < resume_step < steps-1 and resume_step % interval == 0,
+                'Expected a complete scheduled checkpoint')
         earlier = resume.parent.parent/f'checkpoint-{resume_step}-weight-audit.json'
         proof = json.loads(earlier.read_text())
         require(proof['passed'] and proof['checkpoint'] == str(resume), 'Resume checkpoint audit failed')
@@ -141,11 +168,11 @@ def main():
         best = None
         best_score = None
         for step in range(resume_step + interval, steps, interval):
-            while f'at global_step={step}' not in args.log.read_text(errors='replace'):
+            while not checkpoint_saved_at(args.log, step):
                 if trainer.poll() is not None:
                     raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
                 time.sleep(10)
-            checkpoint = run/f'checkpoints/0_{step}'
+            checkpoint = locate_saved_checkpoint(checkpoint_dir, step)
             output = root/f'runs/{run.name}-step{step}-single'
             audit = [python, str(scripts/'audit_wall_checkpoint.py'), '--base', str(parent),
                      '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')]
