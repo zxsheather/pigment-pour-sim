@@ -1,0 +1,40 @@
+{
+  "scope": "Pour water from a bottle held by the Quanta X1 robot into a graduated cylinder, then return the bottle upright.",
+  "groups": {
+    "water_stream_and_dynamics": {
+      "gaps": [
+        "Calibrated discharge and outlet velocity as functions of fill level, bottle geometry, tilt, motion, and air entering the bottle.",
+        "Physical interactions with the cylinder rim and walls, including splashing and dripping. The current model uses a geometric opening test.",
+        "Sloshing, shifting center of mass, and changing inertia. The rigid water proxy stays in the model and the load correction only offsets static weight."
+      ],
+      "validation": "Compare flow, shutoff timing, collected volume, and spill against measured physical pours across fill levels and tilt profiles."
+    },
+    "grasp_and_container": {
+      "gaps": [
+        "Actual finger and bottle geometry, contact, friction, grip force, and compliance.",
+        "Bottle movement relative to the gripper, including shifting, rotation, slip, and dropping during lift and tilt.",
+        "The effect of an uncertain or changing grasp on the bottle-mouth pose and motion commands.",
+        "Acquiring the grasp and opening the bottle if these are included in the full task."
+      ],
+      "validation": "Validate upright hold, lift, and slow tilt with the imported fingers and no cylinder support. Compare slip and retention with physical trials."
+    },
+    "robot_and_environment": {
+      "gaps": [
+        "Real actuator gains, force and speed limits, tracking error, delay, backlash, and gravity compensation behavior.",
+        "Sensor-based estimates of bottle and cylinder pose and delivered volume, including calibration error, noise, occlusion, and delay.",
+        "Complete collision and clearance behavior, including robot self-collision and motion between sampled planned poses.",
+        "Measured robot, gripper, bottle, cylinder, and workspace geometry and their actual positions.",
+        "Base positioning error, stability, and motion under load where relevant; the isolated pour currently assumes a parked base."
+      ],
+      "validation": "Measure geometry, actuator tracking, and sensor performance on the real setup; check collisions and clearances throughout motion."
+    }
+  },
+  "integration_gap": "Connect the scripted and learned controllers to the shared MuJoCo motion layer, then evaluate them with the parcel water model and validated free grasp.",
+  "references": [
+    "README.md",
+    "../Plan.json",
+    "../../docs/pour-benchmark.md",
+    "../../simulation/world_model/water.py",
+    "../../simulation/demos/demo_pour_water.py"
+  ]
+}
