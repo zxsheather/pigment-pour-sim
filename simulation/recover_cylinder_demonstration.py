@@ -80,6 +80,10 @@ def main():
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
+        if "source_motion" in source:
+            assert source["source_motion"]["kind"]=="bounded_joint_command_prefix_replay_training_only"
+            provenance["source_motion"]=source["source_motion"]
+            provenance["physical_state"]="Recorded replay-visited integration state and controller cache; no pose reset"
         (a.output/"recovery_source.json").write_text(json.dumps(provenance,indent=2)+"\n")
         if not recoverable:
             (a.output/"source_rejected.json").write_text(json.dumps(dict(reason="initial_state_not_suitable_for_selected_recovery_mode",

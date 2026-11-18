@@ -213,9 +213,19 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 53 条教师指令的完整审计中，44 条从桌面开始的示范全部通过，53 条合计通过 51 条。两条未通过的示范来自持筒后的纠正片段，原采集范围为伸到相机前、停稳、读数。按完整任务回放时，抬升分别为 37.94 和 21.32 mm，低于 40 mm 门槛。两条均有持续夹持，最大滑移为 3.54 和 2.51 mm，在现有 53 条抽样配置中合计预计占 10.21%。完整任务门槛适用于后续模型评测，原始片段及其采集范围保留。当前训练仍沿用既定抽样，等待新版模型轨迹判断瓶颈。[逐条教师回放](experiments/2026-11-18-joint-grasp-recovery-v2-teacher-replay-audit.json) · [两条片段的来源与抽样占比](experiments/2026-11-18-joint-grasp-recovery-v2-teacher-replay-interpretation.json)
 
-53 条训练版的 `0_128` 已完整保存并加载。权重检查显示 258 个动作或状态相关张量变化，581 个冻结张量保持一致。25 mL／seed 100 的真实模型闭环已启动，结果待运行结束。确认新检查点完整并实际加载后，淘汰旧版 `0_128` 的 8.36 GiB 权重，保留其失败轨迹、评测报告和新版引用的 `0_768` 父权重。[首个权重审计](experiments/2026-11-18-joint-grasp-recovery-v2-step128-weight-audit.json) · [保留记录](experiments/2026-11-18-joint-grasp-recovery-v2-checkpoint-retention.json)
+53 条训练版的 `0_128` 已完整保存并加载。权重检查显示 258 个动作或状态相关张量变化，581 个冻结张量保持一致。确认新检查点完整并实际加载后，淘汰旧版 `0_128` 的 8.36 GiB 权重，保留其失败轨迹、评测报告和新版引用的 `0_768` 父权重。[首个权重审计](experiments/2026-11-18-joint-grasp-recovery-v2-step128-weight-audit.json) · [保留记录](experiments/2026-11-18-joint-grasp-recovery-v2-checkpoint-retention.json)
 
 为区分示范动作拟合与闭环误差累积，`evaluate_wall_imitation.py` 增加了关节数据支持。用采集时的时间戳和轨迹哈希将三路视频与经过核验的 18 维观测、9 维命令对齐。选定一条 25 mL 完整训练示范上的七个时刻，覆盖起点、靠近、闭爪、抬升、退离和移近相机。比较同一教师输入下父模型 `0_768` 与新模型 `0_128` 的关节、夹爪和底盘预测，各自使用相同的随机种子及归一化。调度先等待正式闭环结束并测量轨迹的抓取点距离。仅在单例未通过且距离下一轮正式评测有足够时间时执行这个离线模型对照。它不推进物理，也不读取最终独立测试。[调度脚本](experiments/2026-11-18-joint-grasp-recovery-v2-teacher-comparison-job.py)
+
+第 128 步的真实模型在 90 秒超时。量筒抓取点在采样快照中最接近预定位置时仍相差 26.91 cm，全程没有承载接触或抬升。在七个配对教师观测中，三个靠近时刻的前 8 帧平均开度比教师目标窄 16.75–20.10 mm，选定的闭爪时刻则宽 10.78 mm。这些开度差来自一条训练示范上的独立预测。正式闭环保留了完整的轨迹和观测。[正式结果](experiments/2026-11-18-joint-grasp-recovery-v2-step128-closed-loop.json) · [抓取点距离](experiments/2026-11-18-joint-grasp-recovery-v2-step128-approach-distance.json) · [教师观测对比](experiments/2026-11-18-joint-grasp-recovery-v2-step128-teacher-comparison.json)
+
+第 256 步通过权重核验，在同一 25 mL／seed 100 正式闭环的 5.20 秒处将最近距离缩短到 16.32 cm。10.00 秒时右手指碰撞体与托盘碰撞，未建立承载接触或抬升。恢复 9.60 秒的物理状态并重放最后 8 条原始指令，机器人 23 维状态与记录逐值一致，重现约 1.99 mm 的穿入。两次闭环仍均未通过，当前训练继续。[第 256 步正式结果](experiments/2026-11-18-joint-grasp-recovery-v2-step256-closed-loop.json) · [距离记录](experiments/2026-11-18-joint-grasp-recovery-v2-step256-approach-distance.json) · [碰撞回放](experiments/2026-11-18-joint-grasp-recovery-v2-step256-collision.json)
+
+在 53 条数据的全部候选锚点中，只有 28 个同时满足随后 8 帧均处于靠近阶段且平均指令开度高于当前开度至少 10 mm。这 28 个锚点来自两条示范。为补充不同初始关节状态下的张爪纠正示范，`replay_cylinder_recovery_prefix.py` 先在源场景重放第 128 步失败轨迹的 152 条有界指令，恢复的前 153 帧机器人观测逐值一致。接着在三个新训练场景中执行同一前缀，分别从 1.60、4.80、7.60 秒保存的快照开始，由原程序教师完成抓取与读数。这批场景由采集配置指定，前缀过程没有运行模型前向。[训练场景](experiments/2026-11-18-joint-reopen-training-cases.json) · [前缀与初始状态](experiments/2026-11-18-joint-reopen-training-prefix.json)
+
+三条纠正示范分别含 636、586、801 帧。采集、关节观测重建、时间对齐、三路图像和现有归一化边界逐条通过校验，起始夹爪开度为 33.46、42.94、35.35 mm。纠正示范的结果计为教师数据质量。模型验收仍沿用独立的闭环评分。[恢复示范校验](experiments/2026-11-18-joint-reopen-training-validation-status.json)
+
+加入三条纠正示范后，候选版 `datasets/cylinder-joint-reopen-recovery-v4` 共 59 条、36,082 帧。保留了上一版全部 34,059 帧与原归一化，导出视频与已有视频或原始采集视频共用文件。Wall 加载器通过新示范的首、中、末帧校验。三条示范的关节指令回放均达到完整门槛，最大滑移为 9.30–9.95 mm，最大抬升约 11.93–11.95 cm。按实际训练帧子集和相同抽样权重规则，靠近时重新张爪的可用锚点由 27 增至 60 个，预计占采样的 2.67% 和 3.41%。59 条数据已就绪，当前模型仍在训练 53 条版本。两轮模型闭环及教师回放单独记录。[导出与回放审计](experiments/2026-11-18-joint-reopen-v4-data-audit.json) · [Wall 加载器验证](experiments/2026-11-18-joint-reopen-v4-official-loader.json)
 
 ## 完整神经网络候选的验收
 

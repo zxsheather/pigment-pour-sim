@@ -1,0 +1,177 @@
+{
+  "kind": "staged_pregrasp_reopen_teacher_data",
+  "active_training_modified": false,
+  "neural_training_started": false,
+  "learned_policy_task_success_measured": false,
+  "used_independent_cases": false,
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+  "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-multivolume-recovery-v3",
+  "frames": 36082,
+  "episodes": 59,
+  "added_frames": 2023,
+  "preserved_rows": 34059,
+  "verified_active_files": 24,
+  "verified_base_files": 35,
+  "norm_stats_sha256": "3abf687d02ca657b15724b63b2a0b83368463f9a0f56dabe380815ff02110947",
+  "same_inodes_for_all_videos": true,
+  "additional_export_video_payload_bytes": 0,
+  "export_nonvideo_allocated_bytes": 6144000,
+  "official_loader_checks": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reopen-data-check-v4/data-validation.json",
+  "decoder_replays": [
+    {
+      "episode": 56,
+      "demonstration_frames": 636,
+      "executed_frames": 609,
+      "demonstration_replay_success": true,
+      "max_slip_m": 0.009945309448820942,
+      "max_lifted_m": 0.11947354089005968,
+      "geometry_audit_passed": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.23422682103119297,
+        "camera_distance_m": 0.3763085207174133,
+        "linear_speed_m_s": 0.0009114612074045723,
+        "angular_speed_rad_s": 0.0032225298451219403
+      }
+    },
+    {
+      "episode": 57,
+      "demonstration_frames": 586,
+      "executed_frames": 561,
+      "demonstration_replay_success": true,
+      "max_slip_m": 0.009590541330053855,
+      "max_lifted_m": 0.11938879697077265,
+      "geometry_audit_passed": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.24245807263163044,
+        "camera_distance_m": 0.3739683775491207,
+        "linear_speed_m_s": 0.0009710624212800767,
+        "angular_speed_rad_s": 0.003552413710040142
+      }
+    },
+    {
+      "episode": 58,
+      "demonstration_frames": 801,
+      "executed_frames": 555,
+      "demonstration_replay_success": true,
+      "max_slip_m": 0.009299921470682787,
+      "max_lifted_m": 0.11928657311181645,
+      "geometry_audit_passed": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.2525065621143723,
+        "camera_distance_m": 0.374615866997825,
+        "linear_speed_m_s": 0.0014404128402547096,
+        "angular_speed_rad_s": 0.006323878978271554
+      }
+    }
+  ],
+  "reopen_metric": "All 8 executed labels are approach/advance; mean commanded full opening at least 10 mm above observed opening",
+  "split_seed": 48,
+  "exposure": [
+    {
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-grasp-recovery-v2",
+      "frames": 32362,
+      "train_eligible_frames": 30744,
+      "pregrasp_reopen_all_anchors": 28,
+      "pregrasp_reopen_eligible_anchors": 27,
+      "pregrasp_reopen_sampling_share": 0.0267408410337146,
+      "prefix_touches_close_sampling_share": 0.04196230703389301,
+      "sources": [
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_035",
+          "count": 17,
+          "eligible": 17
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint256-grasp-recovery-v1/snapshot_025",
+          "count": 11,
+          "eligible": 10
+        }
+      ]
+    },
+    {
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-multivolume-recovery-v3",
+      "frames": 34059,
+      "train_eligible_frames": 32357,
+      "pregrasp_reopen_all_anchors": 45,
+      "pregrasp_reopen_eligible_anchors": 43,
+      "pregrasp_reopen_sampling_share": 0.031132938632880074,
+      "prefix_touches_close_sampling_share": 0.046997103554673986,
+      "sources": [
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_035",
+          "count": 17,
+          "eligible": 17
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint256-grasp-recovery-v1/snapshot_025",
+          "count": 11,
+          "eligible": 11
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-odometry765-recovery-v1/snapshot_033",
+          "count": 17,
+          "eligible": 15
+        }
+      ]
+    },
+    {
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+      "frames": 36082,
+      "train_eligible_frames": 34278,
+      "pregrasp_reopen_all_anchors": 65,
+      "pregrasp_reopen_eligible_anchors": 60,
+      "pregrasp_reopen_sampling_share": 0.03413537241205573,
+      "prefix_touches_close_sampling_share": 0.04592699335006714,
+      "sources": [
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-recovery-v1/snapshot_035",
+          "count": 17,
+          "eligible": 15
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint256-grasp-recovery-v1/snapshot_025",
+          "count": 11,
+          "eligible": 10
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-odometry765-recovery-v1/snapshot_033",
+          "count": 17,
+          "eligible": 15
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_15_seed_8021",
+          "count": 8,
+          "eligible": 8
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_25_seed_8023",
+          "count": 5,
+          "eligible": 5
+        },
+        {
+          "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_35_seed_8025",
+          "count": 7,
+          "eligible": 7
+        }
+      ]
+    }
+  ]
+}
