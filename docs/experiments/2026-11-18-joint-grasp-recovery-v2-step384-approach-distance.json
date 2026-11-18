@@ -1,0 +1,79 @@
+{
+  "kind": "recorded_joint_policy_geometric_approach_diagnostic",
+  "metric": "Distance from cylinder grasp point to the intended offset in the gripper frame",
+  "reference": "Recorded close phase of full training demonstrations, for descriptive comparison",
+  "teacher_references": [
+    {
+      "seed": 25,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_25",
+      "close_distance_m_min": 5.811681027008765e-07,
+      "close_distance_m_max": 0.00043116548887318766,
+      "initial_close_distance_m": 0.000107210962111806
+    },
+    {
+      "seed": 27,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "close_distance_m_min": 5.7154692391794e-07,
+      "close_distance_m_max": 0.00042882924914595965,
+      "initial_close_distance_m": 0.00010914935255803407
+    },
+    {
+      "seed": 28,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_28",
+      "close_distance_m_min": 8.541438699938408e-07,
+      "close_distance_m_max": 0.0004448215458262387,
+      "initial_close_distance_m": 0.00011374513252759884
+    },
+    {
+      "seed": 29,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_29",
+      "close_distance_m_min": 5.367753222379693e-07,
+      "close_distance_m_max": 0.00046450260843578975,
+      "initial_close_distance_m": 0.00011136599672432523
+    }
+  ],
+  "policy_results": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2-step384-single",
+      "snapshots": 27,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 7.199999999998729,
+        "grasp_distance_m": 0.14032495845806678,
+        "grasp_point_error_components_m": [
+          0.09539690860736925,
+          -0.026173261398983415,
+          0.099526298947343
+        ],
+        "aperture_m": 0.0407426543533802,
+        "base_retreat_m": 0.04441605916126834
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 10.400000000001219,
+        "grasp_distance_m": 0.2533658437943191,
+        "grasp_point_error_components_m": [
+          0.11132242097566832,
+          0.028393741707995315,
+          0.2258215331219391
+        ],
+        "aperture_m": 0.04218611866235733,
+        "base_retreat_m": 0.0717845739709862
+      },
+      "failure_reason": "collision:[['right_right_official_collision_1_0', 'target_tray_floor']]"
+    }
+  ],
+  "new_policy_inference_run": false,
+  "independent_cases_read": false
+}
