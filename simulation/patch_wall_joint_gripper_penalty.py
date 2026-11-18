@@ -12,9 +12,10 @@ HELPER = '''
 
 def _closed_gripper_overopening_penalty(action_prediction, action_chunk, multiplier):
     """Apply to the first eight joint actions that request at most 20 mm."""
-    if action_chunk.ndim != 3 or action_chunk.shape[1:] != (32, 26):
-        raise ValueError("Gripper overopening penalty requires 32x26 joint chunks")
-    if action_prediction.shape != (action_chunk.shape[0] * 32, 26) or not 0 < multiplier <= 16:
+    if action_chunk.ndim != 3 or action_chunk.shape[2] != 26 or not 8 <= action_chunk.shape[1] <= 32:
+        raise ValueError("Gripper overopening penalty requires 8–32 joint actions with 26 slots")
+    batch, horizon, slots = action_chunk.shape
+    if action_prediction.shape != (batch * horizon, slots) or not 0 < multiplier <= 16:
         raise ValueError("Invalid gripper overopening penalty inputs")
     prediction = action_prediction.reshape_as(action_chunk)
     # The joint export maps full physical aperture [0, 0.0975] m to [-1, 1].
@@ -22,7 +23,9 @@ def _closed_gripper_overopening_penalty(action_prediction, action_chunk, multipl
     narrow = teacher <= (2 * .020 / .0975 - 1)
     excess = (prediction[:, :8, 6] - teacher).clamp_min(0)
     penalty = torch.zeros_like(prediction)
-    penalty[:, :8, 6] = multiplier * excess.square() * narrow
+    # The trainer averages loss across the whole chunk. Preserve the auxiliary
+    # term's contribution when that denominator changes with the horizon.
+    penalty[:, :8, 6] = (multiplier * horizon / 32) * excess.square() * narrow
     return penalty.reshape_as(action_prediction)
 '''
 TARGET = '''            if dof_mask is not None:
@@ -62,6 +65,7 @@ def main():
                        evaluated_steps=list(range(8)), gripper_action_index=6,
                        teacher_max_full_aperture_m=.020, full_aperture_normalization_m=[0., .0975],
                        uses_predicted_denoised_action=True, normal_wall_loss_preserved=True,
+                       auxiliary_weight_scaled_relative_to_horizon32=True,
                        previous_action_labels_unchanged=True, serving_model_changed=False)
         report.write(json.dumps(details, indent=2)+'\n')
 

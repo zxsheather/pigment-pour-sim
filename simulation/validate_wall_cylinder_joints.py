@@ -37,6 +37,8 @@ def main():
         require(list(cfg.task.dof_config.items()) == list(JOINT_ACTION_LAYOUT.items()),
                 'Unexpected joint action configuration')
         state_width = joint_state_width(cfg.task.agent_pos_config)
+        horizon = cfg.task.action_horizon_flow
+        require(8 <= horizon <= 32, 'Joint flow horizon must cover the eight executed actions')
         torch.manual_seed(cfg.hyperparams.seed)
         adapter = Qwen2_5Adapter(cfg=cfg, logger=logging.getLogger('joint_data'))
         action_norm, state_norm, *_ = load_lerobot_normalizers(cfg)
@@ -58,7 +60,7 @@ def main():
             normalizer_action=action_norm, normalizer_propri=state_norm,
             model_config=model_config, tokenizer_mixin=processors['tokenizer_mixin'])
         batch = next(iter(loader))
-        require(tuple(batch['action_chunk'].shape[-2:]) == (32, 26), 'Wrong action batch shape')
+        require(tuple(batch['action_chunk'].shape[-2:]) == (horizon, 26), 'Wrong action batch shape')
         require(tuple(batch['proprioception'].shape[-2:]) == (1, 26), 'Wrong state batch shape')
         for tensor in batch.values():
             if torch.is_tensor(tensor) and tensor.is_floating_point():
@@ -80,6 +82,7 @@ def main():
                 sample = inner[int(subset_index)]
                 raw_action = source['action'].numpy()
                 raw_state = source['observation.state'].numpy()
+                require(raw_action.shape == (horizon, 9), 'Wrong source action window shape')
                 expected = raw_action.astype(np.float64)
                 expected[:, :6] -= raw_state[:6]
                 require(torch.equal(sample['agent_pos'], source['observation.state']),
@@ -126,6 +129,7 @@ def main():
         report = dict(kind='official_wall_joint_data_contract', passed=True,
             dataset=str(cfg.data.lerobot_config['root']),
             episodes=len(inner.hf_dataset.episodes), frames=len(raw_frame),
+            flow_horizon=horizon,
             training_iterations_per_epoch=iterations,
             batch_shapes={k: list(v.shape) for k, v in batch.items() if torch.is_tensor(v)},
             checks=checks, episode_end_repeats_last=True,
