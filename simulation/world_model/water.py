@@ -50,9 +50,8 @@ class PourWater:
         offset = data.geom_xpos[self.water_geom] - data.xipos[self.body]
         data.xfrc_applied[self.body] = np.r_[force, np.cross(offset, force)]
 
-    def step(self, data, dt):
-        mouth = data.site(self.mouth).xpos.copy()
-        axis = data.body(self.body).xmat.reshape(3, 3)[:, 2]
+    def advance_parcels(self, dt):
+        """Advance water already discharged into the static workspace."""
         survivors = []
         for parcel in self.parcels:
             previous = parcel.xyz
@@ -83,6 +82,10 @@ class PourWater:
                 survivors.append(parcel)
         self.parcels = survivors
 
+    def step(self, data, dt):
+        self.advance_parcels(dt)
+        mouth = data.site(self.mouth).xpos.copy()
+        axis = data.body(self.body).xmat.reshape(3, 3)[:, 2]
         tilt = acos(np.clip(axis[2], -1., 1.))
         # Provisional discharge curve. Gravity and rim crossing are evaluated
         # in world space independently of this empirical flow-rate assumption.
