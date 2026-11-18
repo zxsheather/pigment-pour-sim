@@ -1,0 +1,279 @@
+{
+  "kind": "recorded_joint_policy_geometric_approach_diagnostic",
+  "metric": "Distance from cylinder grasp point to the intended offset in the gripper frame",
+  "reference": "Recorded close phase of full training demonstrations, for descriptive comparison",
+  "teacher_references": [
+    {
+      "seed": 25,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_25",
+      "close_distance_m_min": 5.811681027008765e-07,
+      "close_distance_m_max": 0.00043116548887318766,
+      "initial_close_distance_m": 0.000107210962111806
+    },
+    {
+      "seed": 27,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "close_distance_m_min": 5.7154692391794e-07,
+      "close_distance_m_max": 0.00042882924914595965,
+      "initial_close_distance_m": 0.00010914935255803407
+    },
+    {
+      "seed": 28,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_28",
+      "close_distance_m_min": 8.541438699938408e-07,
+      "close_distance_m_max": 0.0004448215458262387,
+      "initial_close_distance_m": 0.00011374513252759884
+    },
+    {
+      "seed": 29,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_29",
+      "close_distance_m_min": 5.367753222379693e-07,
+      "close_distance_m_max": 0.00046450260843578975,
+      "initial_close_distance_m": 0.00011136599672432523
+    }
+  ],
+  "policy_results": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step128-single",
+      "snapshots": 225,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 16.40000000000713,
+        "grasp_distance_m": 0.2051465121230252,
+        "grasp_point_error_components_m": [
+          0.17016305919436792,
+          -0.08143250676274999,
+          -0.08061247772020934
+        ],
+        "aperture_m": 0.03236374258995056,
+        "base_retreat_m": 0.08153345788240873
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 89.6000000002458,
+        "grasp_distance_m": 0.639596574895156,
+        "grasp_point_error_components_m": [
+          0.30827273094829705,
+          0.22532874741035422,
+          0.5131068675839123
+        ],
+        "aperture_m": 0.027506479993462563,
+        "base_retreat_m": 0.41730300022355493
+      },
+      "failure_reason": "timeout"
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step256-single",
+      "snapshots": 132,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 35.99999999998987,
+        "grasp_distance_m": 0.2801308461407039,
+        "grasp_point_error_components_m": [
+          -0.00879126586295459,
+          -0.1806144022233678,
+          0.21394962564475092
+        ],
+        "aperture_m": 0.02345539629459381,
+        "base_retreat_m": 0.18349523923656996
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 52.400000000068175,
+        "grasp_distance_m": 0.3562556476475543,
+        "grasp_point_error_components_m": [
+          0.11410697344907532,
+          -0.05606129607112373,
+          0.332798461796169
+        ],
+        "aperture_m": 0.019339269027113914,
+        "base_retreat_m": 0.27618175582310345
+      },
+      "failure_reason": "collision:[['', 'tabletop_1']]"
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step384-single",
+      "snapshots": 225,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 5.199999999999838,
+        "grasp_distance_m": 0.24995296908133152,
+        "grasp_point_error_components_m": [
+          0.1521235376422811,
+          -0.16287418581008076,
+          -0.11316764398216417
+        ],
+        "aperture_m": 0.03229925036430359,
+        "base_retreat_m": 0.02137101881815484
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 89.6000000002458,
+        "grasp_distance_m": 1.0948402109115816,
+        "grasp_point_error_components_m": [
+          -0.4970769790618473,
+          0.7103331095120653,
+          0.6685928789978132
+        ],
+        "aperture_m": 0.02555771730840206,
+        "base_retreat_m": 0.42722400063791066
+      },
+      "failure_reason": "timeout"
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step512-single",
+      "snapshots": 36,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 1.9999999999998352,
+        "grasp_distance_m": 0.26941864235623664,
+        "grasp_point_error_components_m": [
+          0.24079147816423352,
+          -0.08483085778863071,
+          -0.0860790012686387
+        ],
+        "aperture_m": 0.03627759963274002,
+        "base_retreat_m": -0.002835009485263218
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 14.000000000005619,
+        "grasp_distance_m": 0.6165696420832002,
+        "grasp_point_error_components_m": [
+          -0.559403964097148,
+          0.15990285218724337,
+          0.2040990111523985
+        ],
+        "aperture_m": 0.03899872675538063,
+        "base_retreat_m": 0.023050558095105533
+      },
+      "failure_reason": "collision:[['', 'tabletop_1']]"
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step640-single",
+      "snapshots": 18,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 3.6000000000003696,
+        "grasp_distance_m": 0.25814338261579456,
+        "grasp_point_error_components_m": [
+          0.25178281277841225,
+          -0.052240631292226045,
+          0.022679012763019413
+        ],
+        "aperture_m": 0.036391481757164,
+        "base_retreat_m": 0.03916272590155012
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 6.799999999998951,
+        "grasp_distance_m": 0.3625131599725582,
+        "grasp_point_error_components_m": [
+          0.09950127564194335,
+          -0.17784855123747223,
+          0.29980857246190906
+        ],
+        "aperture_m": 0.03041986934840679,
+        "base_retreat_m": 0.06816604803404502
+      },
+      "failure_reason": "collision:[['right_right_official_collision_1_0', '']]"
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1-step768-single",
+      "snapshots": 225,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 1.9999999999998352,
+        "grasp_distance_m": 0.34145459566182,
+        "grasp_point_error_components_m": [
+          0.31555370022431267,
+          -0.02311462716865508,
+          -0.12838542434472724
+        ],
+        "aperture_m": 0.025924308225512505,
+        "base_retreat_m": 0.014664107103190605
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 89.6000000002458,
+        "grasp_distance_m": 1.1541314761844175,
+        "grasp_point_error_components_m": [
+          -0.3910974074213853,
+          0.40693529248324906,
+          -1.0067104598440737
+        ],
+        "aperture_m": 0.022914983332157135,
+        "base_retreat_m": 0.6256058966718377
+      },
+      "failure_reason": "timeout"
+    }
+  ],
+  "new_policy_inference_run": false,
+  "independent_cases_read": false
+}
