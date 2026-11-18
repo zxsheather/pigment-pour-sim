@@ -10,7 +10,30 @@ from cylinder_joint_actions import APERTURE_SCALE_M, require, robot_joint_observ
 from inspect_cylinder import CylinderEnv
 
 
-def measure_rollout(folder):
+def wrist_pose_breakdown(env, local_error, initial_base):
+    rotation = env.data.xmat[env.gripper_body].reshape(3, 3)
+    origin = env.data.xpos[env.gripper_body]
+    current_tip = origin + rotation @ env.grasp_offset
+    error_world = rotation @ local_error
+    object_point = current_tip + error_world
+    base = env.base_pose()
+    angle = initial_base[2] - base[2]
+    c, s = np.cos(angle), np.sin(angle)
+    # Rigidly map the measured arm pose onto the reset base pose without a physics step.
+    reset_base_tip = current_tip.copy()
+    reset_base_tip[:2] = initial_base[:2] + np.array([[c, -s], [s, c]]) @ (current_tip[:2] - base[:2])
+    # The official teacher approaches along world +y. Tool roll does not change this axis.
+    nominal_shaft = np.array([0., 1., 0.])
+    official_tip = origin + nominal_shaft * env.grasp_offset[0]
+    return dict(error_world_m=error_world.tolist(),
+                base_xy_delta_m=(base[:2] - initial_base[:2]).tolist(),
+                base_yaw_delta_deg=float(-np.degrees(angle)),
+                wrist_shaft_error_deg=float(np.degrees(np.arccos(np.clip(rotation[:, 0] @ nominal_shaft, -1., 1.)))),
+                error_with_reset_base_rigid_pose_m=(object_point - reset_base_tip).tolist(),
+                error_with_teacher_shaft_same_wrist_origin_m=(object_point - official_tip).tolist())
+
+
+def measure_rollout(folder, *, pose_breakdown=False):
     summary = json.loads((folder / 'summary.json').read_text())
     require(summary['evaluation_complete'] and summary['total'] == 1, 'Expected one completed rollout')
     episode = summary['episodes'][0]
@@ -23,7 +46,7 @@ def measure_rollout(folder):
     try:
         env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
                              yaw_jitter=case.get('yaw_jitter', 0))
-        start_y = float(env.base_pose()[1])
+        initial_base = env.base_pose().copy()
         snapshots = []
         with (np.load(directory / 'recovery_physics.npz') as physics,
               np.load(directory / 'model_observations.npz') as observations,
@@ -38,10 +61,13 @@ def measure_rollout(folder):
                 np.testing.assert_array_equal(robot_joint_observation(env), observed)
                 require(abs(env.data.time - timestamp) < 1e-9, 'Snapshot clock mismatch')
                 error = env.grip_point_relative() - env.grasp_offset
-                snapshots.append(dict(time_s=float(timestamp), grasp_distance_m=float(np.linalg.norm(error)),
+                row = dict(time_s=float(timestamp), grasp_distance_m=float(np.linalg.norm(error)),
                                       grasp_point_error_components_m=error.tolist(),
                                       aperture_m=float(observed[6] * APERTURE_SCALE_M),
-                                      base_retreat_m=start_y - float(env.base_pose()[1])))
+                                      base_retreat_m=float(initial_base[1] - env.base_pose()[1]))
+                if pose_breakdown:
+                    row['pose_breakdown'] = wrist_pose_breakdown(env, error, initial_base)
+                snapshots.append(row)
             maximum_contacts = int(trajectory['contacts'].max(initial=0))
         require(bool(snapshots), 'No rollout snapshots')
         return dict(rollout=str(folder.resolve()), snapshots=len(snapshots),
@@ -78,13 +104,18 @@ def main():
     parser.add_argument('--dataset', type=Path, required=True)
     parser.add_argument('--reference-volume', type=float, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--pose-breakdown', action='store_true')
     args = parser.parse_args()
     report = dict(kind='recorded_joint_policy_geometric_approach_diagnostic',
                   metric='Distance from cylinder grasp point to the intended offset in the gripper frame',
                   reference='Recorded close phase of full training demonstrations, for descriptive comparison',
                   teacher_references=close_references(args.dataset, args.reference_volume),
-                  policy_results=[measure_rollout(folder) for folder in args.rollouts],
+                  policy_results=[measure_rollout(folder, pose_breakdown=args.pose_breakdown)
+                                  for folder in args.rollouts],
                   new_policy_inference_run=False, independent_cases_read=False)
+    if args.pose_breakdown:
+        report['pose_breakdown_method'] = ('Measured world-space error and rigid-pose projections at the '
+                                           'same snapshot. Neither projection advances physics or scores a policy.')
     with args.output.open('x') as file:
         json.dump(report, file, indent=2)
         file.write('\n')

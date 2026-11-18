@@ -1,0 +1,149 @@
+{
+  "kind": "recorded_joint_policy_geometric_approach_diagnostic",
+  "metric": "Distance from cylinder grasp point to the intended offset in the gripper frame",
+  "reference": "Recorded close phase of full training demonstrations, for descriptive comparison",
+  "teacher_references": [
+    {
+      "seed": 25,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_25",
+      "close_distance_m_min": 5.811681027008765e-07,
+      "close_distance_m_max": 0.00043116548887318766,
+      "initial_close_distance_m": 0.000107210962111806
+    },
+    {
+      "seed": 27,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "close_distance_m_min": 5.7154692391794e-07,
+      "close_distance_m_max": 0.00042882924914595965,
+      "initial_close_distance_m": 0.00010914935255803407
+    },
+    {
+      "seed": 28,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_28",
+      "close_distance_m_min": 8.541438699938408e-07,
+      "close_distance_m_max": 0.0004448215458262387,
+      "initial_close_distance_m": 0.00011374513252759884
+    },
+    {
+      "seed": 29,
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_29",
+      "close_distance_m_min": 5.367753222379693e-07,
+      "close_distance_m_max": 0.00046450260843578975,
+      "initial_close_distance_m": 0.00011136599672432523
+    }
+  ],
+  "policy_results": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-sampling-bc-v5-step256-single",
+      "snapshots": 27,
+      "robot_observations_reproduced_exactly": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 6.799999999998951,
+        "grasp_distance_m": 0.10025591055795655,
+        "grasp_point_error_components_m": [
+          0.07403574611336856,
+          0.06048904472843602,
+          0.03018329616001343
+        ],
+        "aperture_m": 0.05187720060348511,
+        "base_retreat_m": 0.027011393770496606,
+        "pose_breakdown": {
+          "error_world_m": [
+            -0.058829647410491216,
+            0.0772785687563717,
+            0.024866503540485814
+          ],
+          "base_xy_delta_m": [
+            -9.514578633518234e-06,
+            -0.027011393770496606
+          ],
+          "base_yaw_delta_deg": -1.374270584621794,
+          "wrist_shaft_error_deg": 4.771310081527824,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.043623391450439364,
+            0.042593563808916934,
+            0.024866503540485807
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.056981100671609775,
+            0.07688005173802404,
+            0.01548125056785854
+          ]
+        }
+      },
+      "first": {
+        "time_s": 0,
+        "grasp_distance_m": 0.3788930714805186,
+        "grasp_point_error_components_m": [
+          0.3532681430276514,
+          -0.005179853044015799,
+          -0.13687493510565985
+        ],
+        "aperture_m": 0.06799999624490738,
+        "base_retreat_m": 0,
+        "pose_breakdown": {
+          "error_world_m": [
+            0.005179853044015889,
+            0.35326814302765147,
+            -0.13687493510565976
+          ],
+          "base_xy_delta_m": [
+            0,
+            0
+          ],
+          "base_yaw_delta_deg": 0,
+          "wrist_shaft_error_deg": 0,
+          "error_with_reset_base_rigid_pose_m": [
+            0.005179853044015914,
+            0.35326814302765147,
+            -0.13687493510565973
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.005179853044015914,
+            0.35326814302765147,
+            -0.13687493510565973
+          ]
+        }
+      },
+      "last": {
+        "time_s": 10.400000000001219,
+        "grasp_distance_m": 0.24589821894477076,
+        "grasp_point_error_components_m": [
+          0.07468069019315222,
+          0.15818076645121407,
+          0.1728223762057197
+        ],
+        "aperture_m": 0.04811423644423485,
+        "base_retreat_m": 0.04700637184321638,
+        "pose_breakdown": {
+          "error_world_m": [
+            -0.14162483690519428,
+            0.10793904515969706,
+            0.16958037086231534
+          ],
+          "base_xy_delta_m": [
+            -0.0007686109204771974,
+            -0.04700637184321638
+          ],
+          "base_yaw_delta_deg": -2.7025165254134196,
+          "wrist_shaft_error_deg": 8.401454632804347,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.1127106089706158,
+            0.04223981685106015,
+            0.16958037086231537
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.12954991222601864,
+            0.10670493690462951,
+            0.1578962761403211
+          ]
+        }
+      },
+      "failure_reason": "collision:[['', '']]"
+    }
+  ],
+  "new_policy_inference_run": false,
+  "independent_cases_read": false,
+  "pose_breakdown_method": "Measured world-space error and rigid-pose projections at the same snapshot. Neither projection advances physics or scores a policy."
+}

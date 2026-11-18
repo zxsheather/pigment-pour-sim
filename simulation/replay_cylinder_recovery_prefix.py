@@ -43,9 +43,11 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
                 targets.append([env.hold_targets[i] for i in actuator_ids])
                 base.append(env.applied_action.copy())
                 observations.append(observation)
+                shaft_y = env.data.xmat[env.gripper_body].reshape(3, 3)[1, 0]
                 notes.append(dict(index=len(notes), frame=frame, time_s=float(env.data.time),
                                   aperture_m=float(observation[6] * APERTURE_SCALE_M),
                                   base_retreat_m=initial_base_y - float(env.base_pose()[1]),
+                                  wrist_shaft_error_deg=float(np.degrees(np.arccos(np.clip(shaft_y, -1., 1.)))),
                                   max_right_joint_speed_rad_s=float(abs(env.data.qvel[env.arm_dofs]).max()),
                                   grasp_distance_m=float(np.linalg.norm(env.grip_point_relative()
                                                                        - env.grasp_offset)),

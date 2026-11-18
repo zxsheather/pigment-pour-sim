@@ -259,6 +259,16 @@ V5 第 128 步权重通过完整审计和实际加载。首次 25 mL／seed 100 
 
 追加上述两条后，V7 候选版为 65 条、39,678 帧。原 38,531 帧逐值一致，继续用原归一化和共用视频文件，新追加条目通过 Wall 加载器和关节回放检查。调度任务已读取 V5 首轮结果与配对误差，等待第 256 步完整闭环。如果两次都无法接近到 5 cm 内，且始终没有承载接触、有效抬升或夹持，将从第 256 步权重接续 V7。V5 和候选版沿用官方几何与原有任务评分。[V7 审计](experiments/2026-11-18-joint-tray-v7-data-audit.json) · [加载器](experiments/2026-11-18-joint-tray-v7-loader.json) · [调度脚本](experiments/2026-11-18-joint-grasp-sampling-v5-transition.py)
 
+V5 第 256 步的 25 mL／seed 100 闭环仍未建立承载接触或抬升。最近距离从 14.29 cm 降至 10.03 cm。末段八条指令精确重放，在 10.80 秒复现右臂第 5 连杆与托盘约 1.13 mm 的穿入。两次闭环满足预先设定的切换条件，调度任务保留第 256 步父权重，并在旧训练退出后启动 V7。65 条数据版已通过实际 Wall 加载器检查并完成梯度更新。[权重审计](experiments/2026-11-18-joint-grasp-sampling-v5-step256-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-grasp-sampling-v5-step256-closed-loop.json) · [碰撞回放](experiments/2026-11-18-joint-grasp-sampling-v5-step256-collision.json) · [V7 切换](experiments/2026-11-18-joint-tray-v7-transition.json) · [V7 更新记录](experiments/2026-11-18-joint-tray-v7-first-update.json)
+
+最近点处夹爪轴线与教师靠近方向的夹角，在 V5 的第 128 和第 256 步分别为 30.67° 和 4.77°。第 128 步在同一快照中仅恢复夹爪轴线时仍相差 9.04 cm。第 256 步在同一快照中仅恢复底盘初始位姿时仍相差 6.59 cm。两种换算用于判断距离分量，物理和评分沿用实际闭环轨迹。根据两条轨迹，在训练专用种子上重放原来有界指令，另采高腕角误差、靠近时位置偏差和碰撞前退偏三类恢复起点。[第 128 步位姿](experiments/2026-11-18-joint-v4-v5-wrist-pose-breakdown.json) · [第 256 步位姿](experiments/2026-11-18-joint-grasp-sampling-v5-step256-wrist-pose.json) · [两组训练前缀](experiments/2026-11-18-joint-wrist-correction-prefix.json) · [第 256 步训练前缀](experiments/2026-11-18-joint-v5-step256-correction-prefix.json)
+
+37 mL 的 37.89° 起点默认教师在稳定读数时丢失刻度标记。对准目标收紧到 0.75 px 后教师完成任务，但第六个关节的 32 帧相对动作达到 0.0581 rad，超过现有 0.05 rad 上界。全程放慢触发滑移门槛，只放慢初始靠近则仍有刻度遮挡。初始靠近的独立倍率仅由实验配置显式启用，20 mL 的默认配置在同一快照重跑的 640 帧指令与轨迹逐值相同。选择同一 37 mL 训练种子中 30.65° 的较早快照后，0.75 px 配置通过完整教师、归一化和关节回放。20、22、34、37 mL 四条合格示范的关节回放滑移为 9.26–10.33 mm，均完成抬升、后退、移近和三次稳定读数。失败轨迹和越界示范留在源目录。[逐次尝试及回放](experiments/2026-11-18-joint-wrist-correction-replays.json) · [默认教师复跑](experiments/2026-11-18-joint-teacher-approach-scale-regression.json)
+
+四条新增示范已追加为 V8 备选数据，合计 69 条、42,011 帧。原 39,678 帧逐值一致，归一化哈希一致，所有视频与源文件共用磁盘载荷。Wall 加载器和导出后的关节回放均通过四条新示范。沿用 8%／6% 抽样配比与全量帧上的固定随机种子切分，离线复算前 512 次抽取时，四条新增示范各有曝光，共 43 次，其中 32 次位于靠近或前伸阶段。[V8 数据审计](experiments/2026-11-18-joint-pose-v8-data-audit.json) · [加载器](experiments/2026-11-18-joint-pose-v8-loader.json) · [抽样复算](experiments/2026-11-18-joint-pose-v8-initial-draws.json)
+
+为节省空间，确认 V7 已开始更新后，清理旧失败模型、优化器和在 V7 中逐文件核对的重复训练载荷，释放约 35.14 GiB。V5 第 256 步模型和处理器供 V7 初始化及权重比较，四个旧模型的数值评测及权重哈希继续可查。[清理清单](experiments/2026-11-18-joint-storage-cleanup-retired.json)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：

@@ -5,11 +5,12 @@ cd /data/hlou/pigment-pour-study
 root=$PWD
 sim=$root/pigment-pour-sim/simulation
 live=$root/runs/cylinder-joint-grasp-sampling-bc-v5
-v5_weights=$root/runs/cylinder-joint-grasp-sampling-data-check-v5/grasp-weights.npy
+live_weights=$root/runs/cylinder-joint-grasp-sampling-data-check-v5/grasp-weights.npy
 python=$root/.venv-wall/bin/python
 export PYTHONPATH="$sim:$root/wall-x" HF_HUB_OFFLINE=1 MUJOCO_GL=egl
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false
-case "${1:-drift}" in
+variant=${1:-drift}
+case "$variant" in
   drift)
     old=$root/datasets/cylinder-joint-reopen-recovery-v4
     data=$root/datasets/cylinder-joint-drift-recovery-v6
@@ -31,8 +32,21 @@ case "${1:-drift}" in
     checked=$root/runs/cylinder-joint-near-tray-recovery-v1-validation
     names=(volume_18_seed_9031_snapshot_00 volume_32_seed_9032_snapshot_03)
     ;;
+  wrist)
+    shift
+    if [ "$#" -eq 0 ]; then
+      printf 'Pass verified recovery-group/episode paths for the wrist stage\n' >&2
+      exit 2
+    fi
+    live=$root/runs/cylinder-joint-near-tray-recovery-bc-v7
+    live_weights=$root/runs/cylinder-joint-near-tray-recovery-data-check-v7/grasp-weights.npy
+    old=$root/datasets/cylinder-joint-near-tray-recovery-v7
+    data=$root/datasets/cylinder-joint-pose-recovery-v8
+    stage=$root/runs/cylinder-joint-pose-recovery-data-check-v8
+    names=("$@")
+    ;;
   *)
-    printf 'Expected drift or near-tray\n' >&2
+    printf 'Expected drift, near-tray or wrist\n' >&2
     exit 2
     ;;
 esac
@@ -44,6 +58,19 @@ reconstructions=()
 checks=()
 episode_index=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["total_episodes"])' "$old/meta/info.json")
 for name in "${names[@]}"; do
+  if [ "$variant" = wrist ]; then
+    group=${name%%/*}
+    name=${name#*/}
+    if [[ ! "$group" =~ ^cylinder-joint-(wrist-recovery|v5-step256-correction)-v1$ ||
+          ! "$name" =~ ^volume_[0-9]+_seed_[0-9]+_snapshot_[0-9]+(_[a-z_]+)?$ ]]; then
+      printf 'Unexpected recovery path: %s/%s\n' "$group" "$name" >&2
+      exit 2
+    fi
+    raw=$sim/generated/$group
+    checked=$root/runs/$group-validation
+    "$python" -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["demonstration_replay_success"] and d["geometry_audit_passed"] and not d["neural_weights_loaded"]' \
+      "$checked/$name/decoder/decoder-replay.json"
+  fi
   "$python" -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["data_integrity_passed"] and d["normalization_covers_all_labels"]' "$checked/$name/validation.json"
   episodes+=("$raw/$name")
   reconstructions+=("$checked/$name/joint-reconstruction")
@@ -52,7 +79,7 @@ for name in "${names[@]}"; do
 done
 find "$old" -type f \( -name '*.parquet' -o -name '*.mp4' -o -name '*.npy' -o -name '*.json' \) -print0 |
   sort -z | xargs -0 sha256sum > "$stage/protected-before.sha256"
-sha256sum "$live/train.yml" "$v5_weights" >> "$stage/protected-before.sha256"
+sha256sum "$live/train.yml" "$live_weights" >> "$stage/protected-before.sha256"
 
 "$python" -c "import sys; import torch; import runpy; runpy.run_path(sys.argv.pop(1), run_name='__main__')" \
   "$sim/export_carry_dataset.py" --episodes "${episodes[@]}" \
@@ -120,7 +147,7 @@ for index in range(base_count, len(new_provenance)):
     replays.append({k: replay[k] for k in ('episode', 'demonstration_frames', 'executed_frames',
         'demonstration_replay_success', 'max_slip_m', 'max_lifted_m', 'geometry_audit_passed')})
 assert all(r['demonstration_replay_success'] and r['geometry_audit_passed'] for r in replays)
-report = dict(kind='staged_joint_drift_corrections', dataset=str(data), base_dataset=str(old),
+report = dict(kind='staged_joint_recovery_corrections', dataset=str(data), base_dataset=str(old),
     episodes=len(new_provenance), frames=len(full), new_frames=len(full)-len(base), exact_unchanged_base_rows=len(base),
     norm_sha256=hashlib.sha256((data / 'joint_norm_stats.json').read_bytes()).hexdigest(),
     all_video_payloads_shared=True, new_duplicate_video_bytes=0,

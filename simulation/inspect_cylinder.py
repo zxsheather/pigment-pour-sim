@@ -267,8 +267,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
-                   held_initial_lift_m=0.,eye_alignment_target_px=2.):
+                   held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
+    if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
+        raise ValueError("Approach motion scale must be finite and positive")
     if not np.isfinite(held_initial_lift_m) or not 0<=held_initial_lift_m<=.10:
         raise ValueError("Held recovery lift must be within [0,0.10] m")
     if held_initial_lift_m and (not start_holding or skip_retreat):
@@ -350,7 +352,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # require the cylinder and image reading to be still at the end.
             if lost_seconds>.2 or metrics["bottle_slip_m"]>.025:raise InspectionFailure("lost_grasp")
             if metrics["bottle_tilt_rad"]>.12:raise InspectionFailure("cylinder_tilt")
-    def move(phase,point,seconds=2.0,opening=None):
+    def move(phase,point,seconds=2.0,opening=None,*,scale=None):
         if opening is None:opening=grip_opening
         q0=env.data.qpos[env.arm_addresses].copy()
         p0=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@env.grasp_offset
@@ -360,7 +362,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         angle=float(np.linalg.norm(rotvec))
         q1,error=env.inverse_kinematics(np.asarray(point),rotation,initial=q0)
         if error>.002:raise InspectionFailure(f"unreachable:{phase}:{error:.4f}")
-        duration=max(seconds,1.875*np.max(abs(q1-q0))/.45)*motion_scale
+        duration=max(seconds,1.875*np.max(abs(q1-q0))/.45)*(motion_scale if scale is None else scale)
         count=int(np.ceil(duration/CONTROL_DT))
         phase_log.append(dict(phase=phase,start_seconds=float(env.data.time),target=list(point),ik_error=error))
         print(json.dumps(phase_log[-1]),flush=True)
@@ -394,7 +396,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             q=env.data.qpos[env.arm_addresses].copy() if skip_retreat else move("retract",point+[0,-.15,0],3)
         else:
             approach=cylinder+[0,-.10,env.grasp_height]
-            move("approach",approach,opening=.034)
+            move("approach",approach,opening=.034,scale=approach_motion_scale)
             q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
             for _ in range(35):tick("close",q,grip_opening)
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
@@ -533,6 +535,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                                         "right_joint5","right_joint6","half_gripper_gap_m","base_vx","base_yaw_rate"],
                  source_sha256=INSPECTION_SOURCE_HASHES,
                  liquid_model="Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics")
+    if approach_motion_scale is not None:
+        summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
         if reason is None and summary["absolute_reading_error_ml"]>.5:
