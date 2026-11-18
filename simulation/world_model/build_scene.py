@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 import mujoco
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent
+from simulation.world_model.paths import ROOT, SCENE_CONFIG
 
 
 def fmt(values):
@@ -191,5 +191,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--assets",type=Path,default=ROOT/"third_party/sdk_robot")
     p.add_argument("--output",type=Path,default=ROOT/"generated")
-    p.add_argument("--config",type=Path,default=ROOT/"scene_config.json")
+    p.add_argument("--config",type=Path,default=SCENE_CONFIG)
     a=p.parse_args(); build(a.assets.resolve(),a.output.resolve(),a.config.resolve())

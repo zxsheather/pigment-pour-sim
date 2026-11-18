@@ -11,7 +11,7 @@ ROOT=SIM.parent
 def main():
     subprocess.run([str(HERE/'node_modules/.bin/esbuild'),str(HERE/'app.js'),'--bundle','--minify','--format=iife','--target=es2020','--outfile='+str(HERE/'app.bundle.js')],check=True)
     template=(HERE/'template.html').read_text()
-    config=(SIM/'scene_config.json').read_text()
+    config=(SIM/'world_model/scene_config.json').read_text()
     photo='data:image/jpeg;base64,'+base64.b64encode((ROOT/'场地照片/任务场地.jpg').read_bytes()).decode()
     robot=base64.b64encode((SIM/'reconstruction/quanta_x1.glb').read_bytes()).decode()
     js=(HERE/'app.bundle.js').read_text().replace('</script','<\\/script')

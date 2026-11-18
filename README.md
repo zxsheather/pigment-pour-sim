@@ -18,8 +18,8 @@
 ```text
 场景重建.html                   离线查看页
 场地照片/任务场地.jpg             原始参考照片
-simulation/scene_config.json    场景几何参数
-simulation/build_scene.py       从官方机器人资产生成 MuJoCo 场景
+simulation/world_model/scene_config.json    场景几何参数
+simulation/world_model/build_scene.py       从官方机器人资产生成 MuJoCo 场景
 simulation/export_scene.py      导出机器人 GLB、静态视图与来源记录
 simulation/reconstruction/     当前模型和静态视图
 simulation/viewer/             查看页源码与打包脚本
@@ -41,9 +41,9 @@ python3 scripts/bootstrap_sources.py
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -r simulation/requirements.txt
-.venv/bin/python simulation/build_scene.py
-.venv/bin/python simulation/export_scene.py
+.venv/bin/python -m pip install -e .
+.venv/bin/python -m simulation.world_model.build_scene
+.venv/bin/python -m simulation.export_scene
 ```
 
 无显示窗口的 Linux 环境可通过 `MUJOCO_GL=egl` 选择离屏渲染后端。
@@ -55,6 +55,6 @@ npm ci --prefix simulation/viewer --no-audit --no-fund
 python3 simulation/viewer/build_viewer.py
 ```
 
-输出仍为根目录的 `场景重建.html`。页面内调整仅影响当前查看会话；将导出的配置替换 `simulation/scene_config.json` 并重新生成后，才会更新保存的场景。
+输出仍为根目录的 `场景重建.html`。页面内调整仅影响当前查看会话；将导出的配置替换 `simulation/world_model/scene_config.json` 并重新生成后，才会更新保存的场景。
 
 机器人资产与查看页依赖的来源、版本及许可见 [THIRD_PARTY.md](THIRD_PARTY.md)。
