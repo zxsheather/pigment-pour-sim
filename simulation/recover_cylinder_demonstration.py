@@ -25,7 +25,7 @@ def main():
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
     p.add_argument("--lift-off-recovery",action="store_true",
-                   help="Teach a vertical lift from a stable loaded grasp at tray height.")
+                   help="Teach a vertical lift from a loaded, near-upright grasp at tray height.")
     p.add_argument("--eye-alignment-target-px",type=float,default=2.,
                    help="Teacher centering target before stable reads; acceptance remains at most2 pixels.")
     p.add_argument("--read-lateral-retries", type=float, nargs="+", default=[],
@@ -108,7 +108,6 @@ def collect(a, controller, output):
         if a.lift_off_recovery:
             recoverable=(metrics["grip_contacts"]==2 and abs(height)<=.005 and axis[2]>np.cos(.10)
                          and np.linalg.norm(env.data.qvel[dof:dof+3])<.02
-                         and np.linalg.norm(env.data.qvel[dof+3:dof+6])<.30
                          and not metrics["forbidden_contacts"])
         if a.reading_only:
             # After retreat the held cylinder can be below its original tray
@@ -129,6 +128,7 @@ def collect(a, controller, output):
         if a.lift_off_recovery:
             provenance["recovery_stage"]="lift_off_from_loaded_tray_grasp"
             provenance["initial_cylinder_height_relative_to_tray_reset_m"]=height
+            provenance["initial_cylinder_angular_speed_rad_s"]=float(np.linalg.norm(env.data.qvel[dof+3:dof+6]))
         if "source_motion" in source:
             assert source["source_motion"]["kind"]=="bounded_joint_command_prefix_replay_training_only"
             provenance["source_motion"]=source["source_motion"]
