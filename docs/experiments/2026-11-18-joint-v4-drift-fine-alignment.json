@@ -1,0 +1,613 @@
+{
+  "kind": "raw_recovery_training_candidate_validation",
+  "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v4-drift-recovery-v1/volume_35_seed_9025_snapshot_06_fine_alignment",
+  "frames": 725,
+  "robot_state_dimensions": 18,
+  "action_dimensions": 9,
+  "action_space": "joint",
+  "source_policy_robot_state_dimensions": 18,
+  "success_is_privileged_teacher_only": true,
+  "source_integration_state_and_controller_exactly_preserved": true,
+  "no_duplicate_export_created": true,
+  "training_not_modified_by_this_check": true,
+  "source_provenance": {
+    "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v4-drift-prefix-v1/volume_35_seed_9025/episode_000",
+    "snapshot_index": 6,
+    "source_simulated_seconds": 23.999999999989416,
+    "kind": "expert_recovery_training_only",
+    "physical_state": "Recorded replay-visited integration state and controller cache; no pose reset",
+    "clock": "Restarted at zero for the new demonstration sampling timestamps",
+    "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+    "starts_holding": false,
+    "initial_vertical_lift_m": 0.0,
+    "recovery_stage": "transport_or_grasp",
+    "source_motion": {
+      "kind": "bounded_joint_command_prefix_replay_training_only",
+      "trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reopen-bc-v4-step128-single/episode_000/trajectory.npz",
+      "trajectory_sha256": "3a75b04b6c609e395b750b8d59a463b83630ea79ad96596eb771d6e82ca61cb4",
+      "neural_inference_on_new_cases": false
+    }
+  },
+  "teacher_result": {
+    "success": true,
+    "failure_reason": null,
+    "simulated_seconds": 36.24999999999106,
+    "initialization": "preserved_policy_visited_physics",
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v4-drift-prefix-v1/volume_35_seed_9025/episode_000",
+      "snapshot_index": 6,
+      "source_simulated_seconds": 23.999999999989416,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded replay-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": false,
+      "initial_vertical_lift_m": 0.0,
+      "recovery_stage": "transport_or_grasp",
+      "source_motion": {
+        "kind": "bounded_joint_command_prefix_replay_training_only",
+        "trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reopen-bc-v4-step128-single/episode_000/trajectory.npz",
+        "trajectory_sha256": "3a75b04b6c609e395b750b8d59a463b83630ea79ad96596eb771d6e82ca61cb4",
+        "neural_inference_on_new_cases": false
+      }
+    },
+    "starts_holding": false,
+    "recovery_skips_existing_retreat": false,
+    "recovery_initial_lift_m": 0.0,
+    "lifted_m": -0.023023636455982377,
+    "final_tilt_rad": 0.016857652843509142,
+    "max_slip_m": 0.01129199819438229,
+    "final_contacts": 2,
+    "phases": [
+      {
+        "phase": "approach",
+        "start_seconds": 0.0,
+        "target": [
+          0.8802200882450537,
+          0.20104544839135016,
+          0.9907844891595746
+        ],
+        "ik_error": 2.7980210037945928e-09
+      },
+      {
+        "phase": "advance",
+        "start_seconds": 6.499999999999117,
+        "target": [
+          0.8802200882450537,
+          0.30104544839135017,
+          0.9907844891595746
+        ],
+        "ik_error": 8.865096248847875e-12
+      },
+      {
+        "phase": "lift",
+        "start_seconds": 10.90000000000183,
+        "target": [
+          0.8802200882450537,
+          0.30104544839135017,
+          1.0307844891595748
+        ],
+        "ik_error": 2.2339483397498346e-13
+      },
+      {
+        "phase": "retract",
+        "start_seconds": 13.400000000004885,
+        "target": [
+          0.8802200882450537,
+          0.15104544839135017,
+          1.1107844891595746
+        ],
+        "ik_error": 2.7456693668693e-11
+      },
+      {
+        "phase": "present",
+        "start_seconds": 21.04999999999629,
+        "target": [
+          0.7463193830336993,
+          -0.2749907491659367,
+          1.0119648633328353
+        ],
+        "ik_error": 1.5837012930708865e-11
+      },
+      {
+        "phase": "align_eye_level",
+        "start_seconds": 26.699999999983124,
+        "target": [
+          0.7463193830336993,
+          -0.2749907491659367,
+          0.9869648633328353
+        ],
+        "ik_error": 1.241819027393956e-12
+      },
+      {
+        "phase": "align_eye_level",
+        "start_seconds": 28.899999999977997,
+        "target": [
+          0.7463193830336993,
+          -0.2749907491659367,
+          0.9754905566088757
+        ],
+        "ik_error": 6.489856283603797e-16
+      },
+      {
+        "phase": "align_eye_level",
+        "start_seconds": 31.09999999997287,
+        "target": [
+          0.7463193830336993,
+          -0.2749907491659367,
+          0.9767654795782046
+        ],
+        "ik_error": 4.558222067135571e-16
+      },
+      {
+        "phase": "find_scale",
+        "start_seconds": 33.299999999976976,
+        "target": [
+          0.7463193830336993,
+          -0.2749907491659367,
+          0.9767654795782046
+        ],
+        "ik_error": 3.5790063211762404e-13
+      }
+    ],
+    "expected_volume_ml": 35.0,
+    "reading": {
+      "valid": true,
+      "volume_ml": 34.81481481481481,
+      "liquid_y": 385.0,
+      "liquid_x": 538,
+      "y20": 465.0,
+      "y35": 384.0,
+      "anchor_x": 538.0,
+      "liquid_bbox": [
+        527,
+        384,
+        22,
+        186
+      ],
+      "boundary_support_columns": 18,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 1.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    "reading_history": [
+      {
+        "time": 26.699999999983124,
+        "valid": true,
+        "volume_ml": 34.62962962962963,
+        "liquid_y": 341.0,
+        "liquid_x": 537,
+        "y20": 420.0,
+        "y35": 339.0,
+        "anchor_x": 536.25,
+        "liquid_bbox": [
+          527,
+          341,
+          20,
+          185
+        ],
+        "boundary_support_columns": 16,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": -42.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 28.899999999977997,
+        "valid": true,
+        "volume_ml": 34.81481481481481,
+        "liquid_y": 370.0,
+        "liquid_x": 538,
+        "y20": 450.0,
+        "y35": 369.0,
+        "anchor_x": 536.25,
+        "liquid_bbox": [
+          527,
+          370,
+          21,
+          186
+        ],
+        "boundary_support_columns": 17,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": -13.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 31.09999999997287,
+        "valid": true,
+        "volume_ml": 34.81481481481481,
+        "liquid_y": 385.0,
+        "liquid_x": 538,
+        "y20": 465.0,
+        "y35": 384.0,
+        "anchor_x": 534.25,
+        "liquid_bbox": [
+          527,
+          385,
+          21,
+          186
+        ],
+        "boundary_support_columns": 17,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": 1.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 35.49999999998748,
+        "valid": true,
+        "volume_ml": 35.0,
+        "liquid_y": 384.0,
+        "liquid_x": 538,
+        "y20": 465.0,
+        "y35": 384.0,
+        "anchor_x": 537.5,
+        "liquid_bbox": [
+          526,
+          384,
+          23,
+          186
+        ],
+        "boundary_support_columns": 19,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": 0.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 35.749999999988674,
+        "valid": true,
+        "volume_ml": 35.0,
+        "liquid_y": 384.0,
+        "liquid_x": 538,
+        "y20": 465.0,
+        "y35": 384.0,
+        "anchor_x": 538.0,
+        "liquid_bbox": [
+          527,
+          384,
+          22,
+          186
+        ],
+        "boundary_support_columns": 18,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": 0.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 35.99999999998987,
+        "valid": true,
+        "volume_ml": 35.0,
+        "liquid_y": 384.0,
+        "liquid_x": 538,
+        "y20": 465.0,
+        "y35": 384.0,
+        "anchor_x": 538.0,
+        "liquid_bbox": [
+          527,
+          384,
+          22,
+          186
+        ],
+        "boundary_support_columns": 18,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": 0.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      },
+      {
+        "time": 36.24999999999106,
+        "valid": true,
+        "volume_ml": 34.81481481481481,
+        "liquid_y": 385.0,
+        "liquid_x": 538,
+        "y20": 465.0,
+        "y35": 384.0,
+        "anchor_x": 538.0,
+        "liquid_bbox": [
+          527,
+          384,
+          22,
+          186
+        ],
+        "boundary_support_columns": 18,
+        "boundary_support_fraction": 1.0,
+        "eye_alignment_error_px": 1.5,
+        "method": "two_color_graduation_anchors_and_liquid_boundary"
+      }
+    ],
+    "view_search_history": [
+      {
+        "time": 33.299999999976976,
+        "iteration": 3,
+        "reading": {
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        }
+      }
+    ],
+    "neq": 0,
+    "policy": "privileged_pose_teacher",
+    "perception": "RGB only; 20/35 mL color calibration anchors",
+    "grip_profile": "official",
+    "geometry_audit_passed": true,
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.14,
+      "read_distance_m": 0.35,
+      "eye_alignment_target_px": 0.75,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "grip_force_target_n": null,
+    "grasp_reference_point_m": [
+      0.11457780620865918,
+      -3.588373146543034e-06,
+      0.0002287283875532897
+    ],
+    "hardware_model": "Pinned official parallel-finger collision meshes; no custom pads",
+    "contact_calibration": "Uncalibrated simulation assumptions; no measured real-finger friction",
+    "friction_scale": 1.0,
+    "mass_scale": 1.0,
+    "initial_yaw_rad": 0.0,
+    "yaw_jitter_rad": 0.0,
+    "max_held_tilt_rad": 0.04724142086848738,
+    "max_contact_loss_seconds": 0.0,
+    "final_finger_normal_forces_n": [
+      9.12166178418493,
+      9.04696370218612
+    ],
+    "gripper_actuator_force_limit_n": 20.0,
+    "gripper_force_limit_source": "Official URDF prismatic-joint effort limits",
+    "motion_teacher_inputs": "Simulator cylinder pose for grasp and upright correction; robot/camera calibration",
+    "collision_model": "32 hollow wall segments and base; official",
+    "contact_parameters": {
+      "noslip_iterations": 0,
+      "impratio": 10.0,
+      "physics_timestep": 0.0005,
+      "finger_geoms": [
+        {
+          "type": 7,
+          "condim": 3,
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ]
+        },
+        {
+          "type": 7,
+          "condim": 3,
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ]
+        },
+        {
+          "type": 7,
+          "condim": 3,
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ]
+        },
+        {
+          "type": 7,
+          "condim": 3,
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ]
+        },
+        {
+          "type": 7,
+          "condim": 3,
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ]
+        }
+      ]
+    },
+    "max_lifted_m": 0.11931585818619239,
+    "initial_camera_distance_m": 0.7422770387125016,
+    "final_camera_distance_m": 0.374349931573251,
+    "seed": 9025,
+    "position_jitter_m": 0.004,
+    "fps": 20,
+    "frames": 725,
+    "joint_command_columns": [
+      "right_joint1",
+      "right_joint2",
+      "right_joint3",
+      "right_joint4",
+      "right_joint5",
+      "right_joint6",
+      "half_gripper_gap_m",
+      "base_vx",
+      "base_yaw_rate"
+    ],
+    "source_sha256": {
+      "inspect_cylinder.py": "3030869a25d7a7fbd36f69012254eb8359dc095891026ec5e862e2a60b7d2022",
+      "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+      "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+      "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+      "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+      "scene_config.json": "cbebc6bb5c88431a38d2990d8961b36e0698e128c7c602d2f8ddb2415c7adeef"
+    },
+    "liquid_model": "Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics",
+    "absolute_reading_error_ml": 0.18518518518519045,
+    "final_linear_speed_m_s": 0.0008484365648287098,
+    "final_angular_speed_rad_s": 0.0029400667334561503
+  },
+  "video_alignment": {
+    "face_view": {
+      "frames": 725,
+      "width": 448,
+      "height": 448,
+      "sha256": "afedede83f16687811895d7313fa41fb479a5b780f051ee8c49ab39b02b5d908",
+      "bytes": 3513643
+    },
+    "left_wrist_view": {
+      "frames": 725,
+      "width": 448,
+      "height": 448,
+      "sha256": "4c2070cff5bce5f0a0bbaece867f1897efe21a49bbe4e2bfedc3425ac3d1000a",
+      "bytes": 2556054
+    },
+    "right_wrist_view": {
+      "frames": 725,
+      "width": 448,
+      "height": 448,
+      "sha256": "be9fe431cc5efd049641fa53600b265c4f1710f2d7a68f15b84a0754821f50f1",
+      "bytes": 8433106
+    }
+  },
+  "trajectory_sha256": "c43276b15d16c4bc9fbc2f991ba172bead5d2d2993f621034e5c2f01bd9c8668",
+  "norm_stats_sha256": "3abf687d02ca657b15724b63b2a0b83368463f9a0f56dabe380815ff02110947",
+  "horizon": 32,
+  "state_coverage": {
+    "samples": 725,
+    "outside_fraction_per_dimension": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "minimum": [
+      0.02690242789685726,
+      0.48885825276374817,
+      -2.405590295791626,
+      -0.0428500771522522,
+      -0.9288061261177063,
+      -6.585590017493814e-05,
+      0.1558067351579666,
+      -0.09259248524904251,
+      -0.002919309539720416,
+      -0.3406929075717926,
+      -0.25482767820358276,
+      -0.30624067783355713,
+      -0.3200453221797943,
+      -0.3368719518184662,
+      -0.017985977232456207,
+      0.6038792729377747,
+      -0.70709228515625,
+      1.5413689613342285
+    ],
+    "maximum": [
+      0.9577932357788086,
+      2.0995821952819824,
+      -0.9226084351539612,
+      1.394213318824768,
+      0.08373233675956726,
+      0.08190373331308365,
+      0.6975383162498474,
+      0.0010742265731096268,
+      0.003099309280514717,
+      0.34298035502433777,
+      0.2729198634624481,
+      0.32413432002067566,
+      0.2682775855064392,
+      0.25600457191467285,
+      0.027588292956352234,
+      0.6108874678611755,
+      -0.47334110736846924,
+      1.5422258377075195
+    ],
+    "maximum_bound_excess": 0.0
+  },
+  "horizon_action_coverage": {
+    "samples": 23200,
+    "outside_fraction_per_dimension": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "minimum": [
+      -0.38856904208660126,
+      -0.5022541284561157,
+      -0.4953664541244507,
+      -0.7047995924949646,
+      -0.6679786294698715,
+      -0.040175555273890495,
+      0.0615384615957737,
+      -0.10000000149011612,
+      0.0
+    ],
+    "maximum": [
+      0.6679234057664871,
+      0.5183834433555603,
+      0.6754392385482788,
+      0.2606232054531574,
+      0.2385798692703247,
+      0.0002683242637431249,
+      0.6974359154701233,
+      0.0,
+      0.0
+    ],
+    "maximum_bound_excess": 0.0
+  },
+  "first8_action_coverage": {
+    "samples": 5800,
+    "outside_fraction_per_dimension": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "minimum": [
+      -0.1114148497581482,
+      -0.15476763248443604,
+      -0.19416821002960205,
+      -0.20227330923080444,
+      -0.213523268699646,
+      -0.011529471725225449,
+      0.0615384615957737,
+      -0.10000000149011612,
+      0.0
+    ],
+    "maximum": [
+      0.21326801180839539,
+      0.16098690032958984,
+      0.20697999000549316,
+      0.09488515555858612,
+      0.15136957168579102,
+      9.863275045063347e-05,
+      0.6974359154701233,
+      0.0,
+      0.0
+    ],
+    "maximum_bound_excess": 0.0
+  },
+  "source_sha256": "3d3b217367a19ae74cd719e7cc721e5cb10379e5d2dc7680a606342bfe340078",
+  "data_integrity_passed": true,
+  "normalization_covers_all_labels": true
+}

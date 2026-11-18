@@ -13,7 +13,7 @@ import numpy as np
 
 from audit_gripper import audit
 from carry_env import CONTROL_DT
-from cylinder_joint_actions import APERTURE_SCALE_M, require, robot_joint_observation
+from cylinder_joint_actions import APERTURE_SCALE_M, JOINT_ACTION_WIDTH, JOINT_STATE_WIDTH, require, robot_joint_observation
 from inspect_cylinder import CylinderEnv
 
 
@@ -24,6 +24,7 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
     try:
         env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
                              yaw_jitter=case.get('yaw_jitter', 0.))
+        initial_base_y = float(env.base_pose()[1])
         geometry = audit(env)
         require(geometry['passed'] and geometry['custom_pads'] == 0, 'Official geometry audit failed')
         spec = int(mujoco.mjtState.mjSTATE_INTEGRATION)
@@ -44,6 +45,8 @@ def save_case(root, case, controller, source, commands, snapshot_frames, referen
                 observations.append(observation)
                 notes.append(dict(index=len(notes), frame=frame, time_s=float(env.data.time),
                                   aperture_m=float(observation[6] * APERTURE_SCALE_M),
+                                  base_retreat_m=initial_base_y - float(env.base_pose()[1]),
+                                  max_right_joint_speed_rad_s=float(abs(env.data.qvel[env.arm_dofs]).max()),
                                   grasp_distance_m=float(np.linalg.norm(env.grip_point_relative()
                                                                        - env.grasp_offset)),
                                   loaded_contacts=env.metrics()['grip_contacts']))
@@ -85,8 +88,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     frames = sorted(set(args.snapshot_frames))
-    require(len(frames) == len(args.snapshot_frames) and 0 < frames[0] <= frames[-1] <= 200,
-            'Use unique positive snapshot frames within the first 10 seconds')
+    require(len(frames) == len(args.snapshot_frames) and frames[0] > 0,
+            'Use unique positive snapshot frames')
     summary = json.loads((args.rollout / 'summary.json').read_text())
     require(summary['evaluation_complete'] and summary['action_space'] == 'joint'
             and summary['total'] == 1, 'Expected a completed single joint-policy rollout')
@@ -100,11 +103,14 @@ def main():
     trajectory = args.rollout / 'episode_000/trajectory.npz'
     with np.load(trajectory) as raw:
         end = frames[-1] + 1
+        require(end <= len(raw['timestamp']), 'Snapshot lies beyond the completed source rollout')
         commands = raw['joint_command'][:end]
-        require(commands.shape == (end, 9) and np.isfinite(commands).all()
+        require(commands.shape == (end, JOINT_ACTION_WIDTH) and np.isfinite(commands).all()
                 and np.allclose(raw['timestamp'][:end], np.arange(end) * CONTROL_DT, rtol=0, atol=1e-8),
                 'Invalid source command timeline')
         reference = raw['robot_joint_state'][:end]
+        require(reference.shape == (end, JOINT_STATE_WIDTH) and np.isfinite(reference).all(),
+                'Invalid recorded joint observations')
     source = dict(kind='bounded_joint_command_prefix_replay_training_only',
                   trajectory=str(trajectory.resolve()),
                   trajectory_sha256=hashlib.sha256(trajectory.read_bytes()).hexdigest(),

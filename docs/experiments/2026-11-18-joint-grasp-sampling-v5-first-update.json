@@ -1,0 +1,24 @@
+{
+  "kind": "verified_actual_V5_joint_training_updates",
+  "policy_parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reopen-bc-v4/checkpoints/0_256",
+  "loader_passed": true,
+  "episodes": 59,
+  "frames": 36082,
+  "same_dataset_norm_and_action_layout_as_v4": true,
+  "sampler_weights_sha256": "bf4f00efb533ad10a711cce33f1463b6e79617fe09baebcd38250bdd3ce455f9",
+  "official_train_driver_pid": 2115705,
+  "torchrun_pid": 2120472,
+  "trainer_pid": 2120555,
+  "v4_trainer_exited": true,
+  "first_iteration_line": "2026-11-18 10:54:51,669 - [rank0] - INFO -  epoch   0/1000 | iter      0/  8569 | loss 0.003827 | flow_loss 0.003827 | lr 0.000030 | time_current_backward_step 13.882137s |",
+  "observed_iteration_line": "2026-11-18 11:02:03,696 - [rank0] - INFO -  epoch   0/1000 | iter     50/  8569 | loss 0.004898 | flow_loss 0.004898 | lr 0.000030 | time_current_backward_step 8.156318s |",
+  "model_load_missing_keys_dataset_normalizers_only": [
+    "action_preprocessor.normalizer_action.min./data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+    "action_preprocessor.normalizer_action.delta./data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+    "action_preprocessor.normalizer_propri.min./data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+    "action_preprocessor.normalizer_propri.delta./data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4"
+  ],
+  "model_load_unexpected_keys": [],
+  "actual_gradient_updates": true,
+  "learned_policy_closed_loop_result_measured": false
+}

@@ -1,4 +1,5 @@
-"""Measure the first V4 rollout and compare predictions on fixed teacher inputs."""
+"""Measure a first joint rollout and compare predictions on fixed teacher inputs."""
+import argparse
 import hashlib
 import json
 import os
@@ -72,7 +73,36 @@ def compare(before, after):
                 models=[before['model'], after['model']], task_success_measured=False)
 
 
+def configure():
+    global RUN, PARENT, DATASET, OUTPUT, BASELINE, TRAIN_LOG, DRIVER_PID, TRAINER_PID
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--run', type=Path)
+    parser.add_argument('--output', type=Path)
+    parser.add_argument('--baseline', type=Path)
+    parser.add_argument('--trainer-pid', type=int)
+    args = parser.parse_args()
+    if args.run is None:
+        if any(x is not None for x in (args.output, args.baseline, args.trainer_pid)):
+            parser.error('Pass --run with --output, --baseline and --trainer-pid')
+        return
+    if any(x is None for x in (args.output, args.baseline, args.trainer_pid)):
+        parser.error('A run override requires --output, --baseline and --trainer-pid')
+    RUN, OUTPUT, BASELINE = (x.resolve() for x in (args.run, args.output, args.baseline))
+    assert RUN.parent == OUTPUT.parent == ROOT / 'runs'
+    status = read(RUN / 'execution-status.json')
+    validation = read(RUN / 'data-validation.json')
+    assert validation['passed'] and validation['sampling_weights_match_source_indices']
+    PARENT = Path(status['parent']).resolve()
+    DATASET = Path(validation['dataset']).resolve()
+    DRIVER_PID, TRAINER_PID = status['driver_pid'], args.trainer_pid
+    TRAIN_LOG = ROOT / 'results' / f'{RUN.name}.log'
+    assert str(RUN) in command(DRIVER_PID) and str(RUN) in command(TRAINER_PID)
+    assert Path(read(BASELINE)['model']).resolve() == PARENT
+    STATE.update(run=str(RUN), dataset=str(DATASET), trainer_pid=TRAINER_PID)
+
+
 def main():
+    configure()
     OUTPUT.mkdir()
     save('waiting_for_completed_neural_rollout')
     for _ in range(540):
