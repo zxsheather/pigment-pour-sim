@@ -251,6 +251,14 @@ V4 第 256 步在同一 25 mL／seed 100 闭环中将最近距离缩短到 12.65
 
 四条教师指令回放均通过抓取、移近和读数，最大滑移为 9.14–10.00 mm，抬升约 11.92–11.95 cm，指垫通过几何审计。追加后候选版共 63 条、38,531 帧，原 36,082 帧逐值一致，视频共用文件，新增抽样在保持 8%／6% 比例时将可用张爪窗口从 60 个增至 99 个。候选版已通过 Wall 加载器检查，等待 V5 实际闭环结果后择机使用。[导出与回放审计](experiments/2026-11-18-joint-drift-v6-data-audit.json) · [加载器检查](experiments/2026-11-18-joint-drift-v6-loader.json) · [抽样记录](experiments/2026-11-18-joint-drift-v6-sampling.json)
 
+V5 第 128 步权重通过完整审计和实际加载。首次 25 mL／seed 100 闭环于 11.40 秒碰撞结束，全程无承载接触或抬升。7.20 秒最接近预定抓取点时相差 14.29 cm，夹爪局部横向误差为 13.32 cm。末段四条原指令逐帧重放复现该碰撞，接触双方为右夹爪右指和托盘，穿入约 1.86 mm。第 128 步载入后释放 9.86 GiB 的 V4 淘汰权重和优化器，保留父权重和历次轨迹日志。[权重审计](experiments/2026-11-18-joint-grasp-sampling-v5-step128-weight-audit.json) · [真实闭环](experiments/2026-11-18-joint-grasp-sampling-v5-step128-closed-loop.json) · [接触点回放](experiments/2026-11-18-joint-grasp-sampling-v5-step128-collision.json) · [清理记录](experiments/2026-11-18-joint-grasp-sampling-v5-first-load-cleanup.json)
+
+13 帧配对教师观测中，三个重新张爪起点的开度误差从 −11.25、−15.80、−14.81 mm 变为 −11.23、−13.83、−8.71 mm。三个进入闭爪前的窗口中仍偏窄 17.50–24.95 mm。配对诊断显示起点预测有改善，整体闭环仍有明显横向偏差并碰撞。[教师观测配对结果](experiments/2026-11-18-joint-grasp-sampling-v5-step128-comparison.json) · [真实抓取点距离](experiments/2026-11-18-joint-grasp-sampling-v5-step128-approach.json)
+
+从 V4 碰撞轨迹复现的前 217 帧取两个练习状态，分别位于原轨迹最接近抓取点的 5.20 秒和碰撞前的 10.80 秒。两个独立于验收的训练种子均完成教师恢复。原始轨迹直接经过正式关节解码回放，达到抓取、移近与读数门槛，最大滑移 9.57 和 9.72 mm。直接回放与已有第 62 条导出参考回放逐项一致，省去了一份中间数据集。[回放前缀](experiments/2026-11-18-joint-tray-correction-prefix.json) · [恢复记录](experiments/2026-11-18-joint-tray-correction-status.json) · [直接解码回放](experiments/2026-11-18-joint-tray-correction-raw-replay.json)
+
+追加上述两条后，V7 候选版为 65 条、39,678 帧。原 38,531 帧逐值一致，继续用原归一化和共用视频文件，新追加条目通过 Wall 加载器和关节回放检查。调度任务已读取 V5 首轮结果与配对误差，等待第 256 步完整闭环。如果两次都无法接近到 5 cm 内，且始终没有承载接触、有效抬升或夹持，将从第 256 步权重接续 V7。V5 和候选版沿用官方几何与原有任务评分。[V7 审计](experiments/2026-11-18-joint-tray-v7-data-audit.json) · [加载器](experiments/2026-11-18-joint-tray-v7-loader.json) · [调度脚本](experiments/2026-11-18-joint-grasp-sampling-v5-transition.py)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：

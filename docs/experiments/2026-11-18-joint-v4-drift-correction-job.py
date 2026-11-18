@@ -1,4 +1,5 @@
 """Collect and check teacher corrections from V4-derived training states."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -36,6 +37,24 @@ def call(venv, script, arguments, log):
         output.flush()
         return subprocess.run(argv, stdout=output, stderr=subprocess.STDOUT, timeout=300,
                               cwd=ROOT, env=ENV).returncode
+
+
+def configure():
+    global PREFIX, RAW, RESULT, PLANS
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--prefix', type=Path, default=PREFIX)
+    parser.add_argument('--raw', type=Path, default=RAW)
+    parser.add_argument('--result', type=Path, default=RESULT)
+    parser.add_argument('--plan', type=Path)
+    args = parser.parse_args()
+    PREFIX, RAW, RESULT = (path.resolve() for path in (args.prefix, args.raw, args.result))
+    if args.plan:
+        PLANS = [(row['case'], row['snapshots']) for row in read(args.plan)]
+    assert PLANS and len({case for case, _ in PLANS}) == len(PLANS)
+    for case, snapshots in PLANS:
+        assert Path(case).name == case and snapshots and min(snapshots) >= 0
+        assert len(set(snapshots)) == len(snapshots)
+    STATE.update(prefix=str(PREFIX), raw_directory=str(RAW))
 
 
 def main():
@@ -89,6 +108,9 @@ def main():
 
 
 if __name__ == '__main__':
+    configure()
+    if RAW.exists() or RESULT.exists():
+        raise FileExistsError('Recovery job requires new output directories')
     try:
         main()
     except BaseException as exc:

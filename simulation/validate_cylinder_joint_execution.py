@@ -12,8 +12,10 @@ import mujoco
 import numpy as np
 import pyarrow.parquet as pq
 
-from cylinder_joint_actions import (absolute_joint_chunk, relative_joint_chunks,
-                                    robot_joint_observation, require)
+from cylinder_joint_actions import (
+    JOINT_ACTION_WIDTH, JOINT_STATE_WIDTH, absolute_joint_chunk, relative_joint_chunks,
+    robot_joint_observation, require,
+)
 from run_wall_cylinder import CylinderTrial
 
 
@@ -41,8 +43,7 @@ def cartesian_regression(episode, output):
 
 def joint_replay(dataset, episode, output):
     provenance = json.loads((dataset/'demonstration_provenance.json').read_text())
-    demo = provenance[episode];result = demo['metadata']['result'];raw_source = Path(demo['source'])
-    require(result['grip_force_target_n'] is None, 'Replay requires position servos')
+    demo = provenance[episode]
     pieces = [pq.read_table(p) for p in sorted((dataset/'data').rglob('*.parquet'))]
     states, actions = [], []
     for table in pieces:
@@ -53,6 +54,35 @@ def joint_replay(dataset, episode, output):
             actions.extend(np.asarray(table['action'].to_pylist())[order])
     states = np.asarray(states, np.float32);actions = np.asarray(actions, np.float32)
     require(len(states) == demo['metadata']['frames'], 'Frame count mismatch')
+    return replay_joint_labels(Path(demo['source']), demo['metadata']['result'], states, actions,
+                               output, episode=episode)
+
+
+def joint_replay_raw(source, reconstruction, validation_file, output):
+    from export_carry_dataset import file_digest, verify_joint_reconstruction
+
+    source = source.resolve()
+    validation = json.loads(validation_file.read_text())
+    require(validation['data_integrity_passed'] and validation['normalization_covers_all_labels']
+            and validation['action_space'] == 'joint' and Path(validation['episode']) == source
+            and validation['trajectory_sha256'] == file_digest(source / 'trajectory.npz'),
+            'Expected a verified raw joint recovery')
+    metadata = json.loads((source / 'metadata.json').read_text())
+    require(metadata['frames'] == validation['frames'], 'Validated raw frame count differs')
+    result = metadata['result']
+    require(result == validation['teacher_result'], 'Teacher result changed after validation')
+    require(result['success'] and result['grip_profile'] == 'official' and result['geometry_audit_passed'],
+            'Expected a successful official teacher demonstration')
+    with np.load(source / 'trajectory.npz', allow_pickle=False) as raw:
+        states, actions = verify_joint_reconstruction(source, reconstruction, raw, metadata['frames'])
+    return replay_joint_labels(source, result, states, actions, output)
+
+
+def replay_joint_labels(raw_source, result, states, actions, output, *, episode=None):
+    require(result['grip_force_target_n'] is None, 'Replay requires position servos')
+    require(states.shape == (len(actions), JOINT_STATE_WIDTH)
+            and actions.shape == (len(states), JOINT_ACTION_WIDTH)
+            and len(states) > 0, 'Invalid joint replay arrays')
     controller = dict(grasp_x=result['controller_parameters']['grasp_x_m'],
         grasp_height=result['controller_parameters']['grasp_height_m'],
         solver_impratio=result['contact_parameters']['impratio'],
@@ -117,11 +147,23 @@ def joint_replay(dataset, episode, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--dataset', type=Path, required=True)
-    parser.add_argument('--cartesian-episode', type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--dataset', type=Path)
+    source.add_argument('--raw-episode', type=Path)
+    parser.add_argument('--cartesian-episode', type=Path)
     parser.add_argument('--joint-episode', type=int, action='append', default=[])
+    parser.add_argument('--joint-reconstruction', type=Path)
+    parser.add_argument('--raw-validation', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args();require(not args.output.exists(), 'Output exists')
+    if args.raw_episode is not None:
+        if not args.joint_reconstruction or not args.raw_validation or args.cartesian_episode or args.joint_episode:
+            parser.error('A raw replay requires its joint reconstruction and raw validation')
+        report = joint_replay_raw(args.raw_episode, args.joint_reconstruction, args.raw_validation, args.output)
+        print(json.dumps(report), flush=True)
+        return
+    if not args.cartesian_episode or args.joint_reconstruction or args.raw_validation:
+        parser.error('The dataset path requires the Cartesian regression episode')
     args.output.mkdir(parents=True);started=time.time()
     regression = cartesian_regression(args.cartesian_episode, args.output/'cartesian')
     (args.output/'cartesian-regression.json').write_text(json.dumps(regression, indent=2)+'\n')
