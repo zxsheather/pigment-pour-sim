@@ -22,7 +22,8 @@ from export_cylinder_joint_dataset import digest, replace_vector, statistics
 FEATURE = 'observation.state'
 
 
-def write_view(base, output, info, states, episode_stats, cue_provenance):
+def write_view(base, output, info, states, episode_stats, cue_provenance, *,
+               norm_provenance_key='initial_wrist_cue'):
     shutil.copytree(base/'meta', output/'meta')
     shutil.copytree(base/'videos', output/'videos', copy_function=os.link)
     videos = list((base/'videos').rglob('*.mp4'))
@@ -64,7 +65,7 @@ def write_view(base, output, info, states, episode_stats, cue_provenance):
         require(len(values) == JOINT_SERVO_STATE_WIDTH, 'Expected joint-servo normalization')
         for index, value in zip(WRIST_CUE_STATE_INDICES, extra[key], strict=True):
             values[index] = value
-    norm['provenance']['initial_wrist_cue'] = cue_provenance
+    norm['provenance'][norm_provenance_key] = cue_provenance
     (output/'joint_norm_stats.json').write_text(json.dumps(norm, indent=2)+'\n')
     return len(videos), sum(path.stat().st_size for path in videos)
 
