@@ -1,10 +1,11 @@
-"""Export successful 23D Cartesian robot demonstrations to LeRobot v3."""
+"""Export successful Cartesian or reconstructed joint demonstrations to LeRobot v3."""
 from __future__ import annotations
 
 import argparse
 from contextlib import ExitStack
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import tempfile
@@ -14,7 +15,46 @@ import numpy as np
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
 from lerobot.datasets.lerobot_dataset import DEFAULT_IMAGE_PATH
 
+from cylinder_joint_actions import (JOINT_ACTION_NAMES, JOINT_STATE_NAMES,
+                                    joint_command_action, joint_observation,
+                                    relative_joint_chunks, require)
+
 CAMERAS = ("face_view", "left_wrist_view", "right_wrist_view")
+
+
+def file_digest(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(8 * 1024**2), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def verify_joint_reconstruction(episode, reconstruction, trajectory, frames):
+    report = json.loads((reconstruction / 'summary.json').read_text())
+    require(report['passed'] and report['source'] == str(episode.resolve())
+            and report['frames_reconstructed'] == frames
+            and report['trajectory_sha256'] == file_digest(episode / 'trajectory.npz'),
+            'Joint reconstruction does not match the source trajectory')
+    with np.load(reconstruction / 'robot_joint_observations.npz') as joints:
+        state = joint_observation(joints['right_qpos'], joints['right_qvel'],
+                                  trajectory['state'], trajectory['base_pose'])
+    return state, joint_command_action(trajectory['joint_command'])
+
+
+def share_immutable_videos(base, output, original_hashes):
+    """Use independent files while LeRobot is writing, then share verified bytes."""
+    shared = []
+    for relative, expected in original_hashes.items():
+        source, target = base / relative, output / relative
+        require(file_digest(source) == expected and file_digest(target) == expected,
+                f'Prior episode video changed during append: {relative}')
+        with tempfile.TemporaryDirectory(dir=target.parent) as temporary:
+            link = Path(temporary) / 'verified.mp4'
+            os.link(source, link)
+            link.replace(target)
+        shared.append(dict(path=str(relative), sha256=expected, bytes=source.stat().st_size))
+    return shared
 
 
 class SourceVideoDataset(LeRobotDataset):
@@ -45,11 +85,25 @@ def main():
                         help="Copy an immutable existing dataset, then append new successful episodes.")
     parser.add_argument("--include-base-odometry",action="store_true",
                         help="Append recorded robot base x/y/yaw to the 23D state; action stays 23D.")
+    parser.add_argument('--joint-reconstruction', nargs='+', type=Path,
+                        help='Validated joint replay directories in episode order for a joint dataset append.')
     args = parser.parse_args()
     if args.output.exists():
         parser.error("output must be a new directory")
+    joint = args.joint_reconstruction is not None
+    if joint and (not args.base_dataset or not args.reuse_source_videos or args.include_base_odometry
+                  or len(args.joint_reconstruction) != len(args.episodes)):
+        parser.error('Joint append requires a joint base, source-video reuse and one reconstruction per episode')
+    if joint:
+        base_report = json.loads((args.base_dataset / 'joint_export_validation.json').read_text())
+        require(base_report['passed'], 'Expected a verified joint base dataset')
+        norm = json.loads((args.base_dataset / 'joint_norm_stats.json').read_text())
+        horizon = norm['provenance']['horizon']
+        original_videos = {p.relative_to(args.base_dataset): file_digest(p)
+                           for p in (args.base_dataset / 'videos').rglob('*.mp4')}
+        require(bool(original_videos), 'No existing RGB videos')
     validated = []
-    for episode in args.episodes:
+    for episode_number, episode in enumerate(args.episodes):
         metadata = json.loads((episode / "metadata.json").read_text())
         if not metadata["result"]["success"]:
             raise ValueError(f"Refusing to train on failed demonstration: {episode}")
@@ -59,11 +113,22 @@ def main():
         if set(metadata["recorded_cameras"]) != set(CAMERAS):
             raise ValueError(f"All three recorded cameras are required: {episode}")
         with np.load(episode / "trajectory.npz") as data:
-            state, action = data["state"].copy(), data["action"].copy()
+            if joint:
+                require(metadata['robot_type'] == 'quanta_x1_official_cylinder', 'Expected official cylinder episode')
+                state, action = verify_joint_reconstruction(
+                    episode, args.joint_reconstruction[episode_number], data, metadata['frames'])
+                for name, values in [('observation.state', state),
+                                     ('action', relative_joint_chunks(state, action, horizon))]:
+                    bounds = norm['norm_stats'][name]
+                    require(np.all(values >= np.asarray(bounds['q01']) - 1e-7)
+                            and np.all(values <= np.asarray(bounds['q99']) + 1e-7),
+                            f'Joint append would change the existing normalization contract: {episode}/{name}')
+            else:
+                state, action = data["state"].copy(), data["action"].copy()
             timestamps = data["timestamp"].copy()
             odometry=data["base_pose"].copy() if args.include_base_odometry else None
         count = metadata["frames"]
-        if state.shape != (count, 23) or action.shape != state.shape:
+        if state.shape != (count, 18 if joint else 23) or action.shape != (count, 9 if joint else 23):
             raise ValueError(f"Unexpected vector dimensions: {episode}")
         if odometry is not None:
             if odometry.shape!=(count,3) or not np.isfinite(odometry).all():
@@ -88,8 +153,10 @@ def main():
                                  ("gripper", range(1))) for axis in axes]
     names += ["base_vx", "base_vy", "base_yaw_rate"]
     state_names=names+(["base_odometry_x","base_odometry_y","base_odometry_yaw"] if args.include_base_odometry else [])
+    if joint:
+        names, state_names = JOINT_ACTION_NAMES, JOINT_STATE_NAMES
     features = {"observation.state": {"dtype": "float32", "shape": (len(state_names),), "names": state_names},
-                "action": {"dtype": "float32", "shape": (23,), "names": names}}
+                "action": {"dtype": "float32", "shape": (len(names),), "names": names}}
     for camera in CAMERAS:
         features[f"observation.images.{camera}"] = {
             "dtype": "video", "shape": sample_image.shape,
@@ -100,9 +167,12 @@ def main():
         # Derived per-frame sampling arrays no longer match after append.
         # Keep the base export immutable and require fresh output weights.
         shutil.copytree(args.base_dataset,args.output,
-            ignore=shutil.ignore_patterns("frame-sampling-weights*.npy","frame-sampling-weights*.json"))
+            ignore=shutil.ignore_patterns("frame-sampling-weights*.npy","frame-sampling-weights*.json",
+                                          "joint_export_validation.json") if joint else
+                   shutil.ignore_patterns("frame-sampling-weights*.npy","frame-sampling-weights*.json"))
         dataset=dataset_class(args.repo_id,root=args.output,video_backend="pyav",vcodec="h264")
-        assert dataset.meta.info["robot_type"]==validated[0][1].get("robot_type","quanta_x1_planar_carry")
+        robot_type = 'quanta_x1_official_cylinder_joint_control' if joint else validated[0][1].get('robot_type','quanta_x1_planar_carry')
+        assert dataset.meta.info['robot_type'] == robot_type
         for key,feature in features.items():
             assert dataset.features[key]["dtype"]==feature["dtype"]
             assert tuple(dataset.features[key]["shape"])==tuple(feature["shape"])
@@ -110,6 +180,10 @@ def main():
         dataset.start_image_writer(num_threads=3)
         provenance=json.loads((args.base_dataset/"demonstration_provenance.json").read_text())
         assert dataset.num_episodes==len(provenance)
+        if joint:
+            sources = [str(item[0].resolve()) for item in validated]
+            require(len(set(sources)) == len(sources) and not set(sources) & {item['source'] for item in provenance},
+                    'Repeated episode source')
         old_frames=dataset.num_frames
     else:
         dataset = dataset_class.create(repo_id=args.repo_id, root=args.output,
@@ -159,9 +233,35 @@ def main():
     assert len(reopened.hf_dataset)==reopened.num_frames
     item = reopened[0]
     assert item["observation.state"].shape == (len(state_names),)
-    assert item["action"].shape == (23,)
+    assert item["action"].shape == (len(names),)
     for camera in CAMERAS:
         assert item[f"observation.images.{camera}"].shape[0] == 3
+    if joint:
+        offset = old_frames
+        for _, _, states, actions in validated:
+            rows = reopened.hf_dataset[offset:offset + len(states)]
+            require(np.array_equal(np.asarray(rows['index']), np.arange(offset, offset + len(states)))
+                    and np.array_equal(np.stack(rows['observation.state']), states)
+                    and np.array_equal(np.stack(rows['action']), actions),
+                    'Appended frames differ from reconstructed joint vectors or indices')
+            for index in (offset, offset + len(states) - 1):
+                item = reopened[index]
+                for camera in CAMERAS:
+                    require(item[f'observation.images.{camera}'].shape == (3, *sample_image.shape[:2]),
+                            'Appended sample has invalid RGB layout')
+            offset += len(states)
+        shared = share_immutable_videos(args.base_dataset, args.output, original_videos)
+        norm_path = args.output / 'joint_norm_stats.json'
+        require(file_digest(norm_path) == file_digest(args.base_dataset / norm_path.name), 'Normalization changed')
+        report = dict(kind='verified_joint_dataset_append', passed=True,
+                      dataset=str(args.output.resolve()), base_dataset=str(args.base_dataset.resolve()),
+                      episodes=reopened.num_episodes, frames=reopened.num_frames,
+                      robot_state_dimensions=18, action_dimensions=9,
+                      episode_provenance=provenance[-len(validated):],
+                      base_frame_count=old_frames, shared_existing_videos=shared,
+                      fixed_normalizer_sha256=file_digest(norm_path),
+                      fixed_normalizer_covers_appended_labels=True)
+        (args.output / 'joint_export_validation.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps({"episodes": reopened.num_episodes, "frames": reopened.num_frames,
                       "output": str(args.output.resolve())}), flush=True)
 

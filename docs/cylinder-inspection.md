@@ -195,6 +195,12 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 `validate_raw_cylinder_recovery.py --joint-reconstruction PATH` 支持上述 18D／9D 数据；传入关节配置时必须同时提供已通过的同源重建。[旧笛卡尔恢复回归](experiments/2026-11-18-raw-validator-cartesian-regression.json) 仍验证 309 帧、26D／23D 和三路视频，不改变其归一化。没有新增完整数据集副本。
 
+这条纠正示范现已追加到 `datasets/cylinder-joint-grasp-recovery-v2`，共 53 条、32,362 帧。导出器复用已通过校验的关节重建与原归一化，加载器验证新增示范的首、中、末帧、相对标签与采样权重。原 31,797 帧和 52 条 episode 元数据逐项相同。现有视频与原数据集硬链接，新增三路视频与纠正示范的原始 H.264 文件硬链接，追加版的独立增量是小型数值数据及元数据。[数据审计](experiments/2026-11-18-joint-grasp-recovery-v2-data-audit.json) · [实际加载检查](experiments/2026-11-18-joint-grasp-recovery-v2-loader-audit.json)
+
+按已通过校验的 9 维标签回放新增示范，量筒抬升 11.94 cm，最大滑移 9.64 mm，最终距相机 37.34 cm，满足完整物理与读数门槛。这是教师指令回放。根据前几轮真实模型在抓取前偏离的问题，下一轮对完整示范的前 8 秒赋予两倍抽样权重，同时让恢复示范保持 50% 的总抽样概率。完整示范前缀占全部抽样约 19.7%，原权重下约为 12.3%。[下一轮配置](experiments/2026-11-18-joint-grasp-recovery-v2-train.yml)
+
+调度脚本在第 768 步评测和核验结束后检查前六轮正式结果。若全部未出现承载接触且无有效抬升，则保留第 768 步权重并将下一轮训练接续到新版数据。出现抓取进展时继续当前运行。更新数据与抽样权重是一次联合实验，后续闭环成绩无法单独归因于其中一项。[调度脚本](experiments/2026-11-18-joint-grasp-recovery-v2-transition.py) · [第 768 步权重审计](experiments/2026-11-18-joint-position768-weight-audit.json)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：

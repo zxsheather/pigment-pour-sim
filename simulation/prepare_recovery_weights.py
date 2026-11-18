@@ -14,9 +14,16 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--target-recovery-fraction",type=float,
                    help="Rescale the recovery group to a fixed sampling share while retaining within-group priorities.")
+    p.add_argument('--full-start-boost', type=float, default=1.,
+                   help='Multiply sampling weights for the start of full demonstrations.')
+    p.add_argument('--full-start-seconds', type=float, default=8.,
+                   help='Duration of the weighted prefix of each full demonstration.')
     a = p.parse_args()
     if a.target_recovery_fraction is not None and not 0<a.target_recovery_fraction<1:
         p.error("Target recovery fraction must be in (0,1)")
+    if (not np.isfinite(a.full_start_boost) or a.full_start_boost < 1.
+            or not np.isfinite(a.full_start_seconds) or a.full_start_seconds <= 0.):
+        p.error('Full start boost must be at least 1 and the duration must be positive')
     assert not a.output.exists()
     provenance = json.loads((a.dataset/"demonstration_provenance.json").read_text())
     table = arrow.dataset(sorted((a.dataset/"data").rglob("*.parquet")), format="parquet").to_table(
@@ -45,6 +52,8 @@ def main():
         rows.append(dict(episode=episode, frames=int(selected.sum()), source=demo["source"],
                          starts_holding=initial.get("starts_holding", False)))
     assert rows, "No successful recovery demonstrations found"
+    full_start = ~recovery & (times < a.full_start_seconds)
+    weights[full_start] *= a.full_start_boost
     group_scale=1.
     if a.target_recovery_fraction is not None:
         group_scale=(weights[~recovery].sum()*a.target_recovery_fraction
@@ -56,6 +65,8 @@ def main():
         recovery_group_scale=group_scale,target_recovery_sampling_fraction=a.target_recovery_fraction,
         recovery_frame_fraction=float(recovery.mean()),
         expected_recovery_sampling_fraction=float(weights[recovery].sum()/weights.sum()),
+        full_start_weight_multiplier=a.full_start_boost, full_start_duration_s=a.full_start_seconds,
+        expected_full_start_sampling_fraction=float(weights[full_start].sum()/weights.sum()),
         weights_sha256=hashlib.sha256(a.output.read_bytes()).hexdigest(),
         note="Sampling probabilities, not new observations; independent test cases are never read")
     a.output.with_suffix(".json").write_text(json.dumps(report, indent=2)+"\n")
