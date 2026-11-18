@@ -1,0 +1,62 @@
+{
+  "status": "implemented",
+  "plan": "Plan.json",
+  "goal": "Group world modeling in one Python package and give motion, controllers, benchmarks, and demos explicit homes.",
+  "hierarchy": {
+    "pyproject.toml": "Declare Python dependencies and package discovery at the repository root.",
+    "simulation/": {
+      "__init__.py": "Root Python package.",
+      "world_model/": {
+        "__init__.py": "World modeling package.",
+        "build_scene.py": "Compose the imported robot and workspace into MuJoCo scene.xml.",
+        "scene_config.json": "Shared workspace dimensions and object placement for MuJoCo and the HTML viewer.",
+        "actuators.py": "Define servo settings and generate the MuJoCo actuator XML shared by both pour scenarios.",
+        "water.py": "Model water discharge, flight, collection, spill, and changing load.",
+        "paths.py": "Resolve the shared scene configuration and simulation output paths.",
+        "collision.py": "Query MuJoCo contacts between the robot and the workspace."
+      },
+      "motion/": {
+        "__init__.py": "Motion package.",
+        "pour_motion.py": "Convert target bottle poses into timed joint references using inverse kinematics and clearance checks."
+      },
+      "controllers/": {
+        "__init__.py": "Controller package.",
+        "pour_scripted.py": "Scripted dosing policy.",
+        "pour_learned.py": "Learned dosing policy."
+      },
+      "benchmarks/": {
+        "__init__.py": "Benchmark package.",
+        "pour_benchmark.py": "Run and score pour episodes.",
+        "pose.py": "Provide the shared robot pose for scenario setup and scene export.",
+        "setup_pour_pose.py": "Configure the held bottle, parked joints, and reset keyframes for attached-bottle and free-grasp scenes."
+      },
+      "demos/": {
+        "__init__.py": "Demo package.",
+        "demo_base_motion.py": "Base motion demo.",
+        "demo_wrist_rotation.py": "Wrist actuator demo.",
+        "demo_gripper_lift.py": "Free-grasp lift and release demo.",
+        "demo_pour_motion.py": "Pour motion demo.",
+        "demo_pour_water.py": "Coupled robot motion and water transfer demo."
+      },
+      "export_scene.py": "Export the robot model and static views for layout review.",
+      "viewer/": "Three.js viewer source, offline HTML builder, and npm dependencies.",
+      "reconstruction/": "Exported robot GLB and reference views.",
+      "generated/": "Local MuJoCo XML, previews, and demo GIFs."
+    }
+  },
+  "package_management": {
+    "python": "Use an editable install in the project virtual environment and package imports throughout.",
+    "javascript": "Keep npm dependencies and the lockfile in simulation/viewer/.",
+    "entry_points": [
+      "python -m simulation.world_model.build_scene",
+      "python -m simulation.benchmarks.setup_pour_pose",
+      "python -m simulation.demos.demo_pour_water"
+    ]
+  },
+  "migration": [
+    "Move existing modules into their proposed packages and update imports and asset paths.",
+    "Move the shared pose helper out of export_scene.py and into benchmarks for use by scene export and benchmark setup.",
+    "Update the viewer build to read scene_config.json from world_model.",
+    "Verify scene generation, both pour reset variants, HTML export, and the existing demos through their new entry points."
+  ]
+}
