@@ -117,6 +117,7 @@ def prepare(episode, reconstruction, base, output):
         env.data.time = 0.
         first_command = bounded_joint_command(env)
         restore_router = copy.deepcopy(router)
+        base_recovery = None
         with np.load(episode/'trajectory.npz', allow_pickle=False) as raw:
             count = metadata['frames']
             require(metadata['fps'] == 20 and np.allclose(raw['timestamp'], np.arange(count)*CONTROL_DT),
@@ -140,6 +141,23 @@ def prepare(episode, reconstruction, base, output):
             actions[:, :6] = deltas
             decoded = servo_increment_targets(actions, previous, CONTROL_DT)
             np.testing.assert_allclose(decoded[:, :6], commands[:, :6], atol=2e-9, rtol=0)
+            if provenance.get('recovery_stage') == 'restore_base_then_grasp':
+                reference = np.asarray(provenance['reset_base_odometry'])
+                np.testing.assert_array_equal(reference, trial.initial_base)
+                direction = np.array([np.cos(reference[2]), np.sin(reference[2])])
+                return_frames = np.flatnonzero(raw['phase'] == 'restore_approach_base')
+                require(return_frames.size and return_frames[-1]+1 < count, 'Missing a completed base return')
+                after_return = int(return_frames[-1])+1
+                require(np.all(tasks[:after_return] == 0) and not raw['contacts'][:after_return].any(),
+                        'Base return must occur before any grasp contact')
+                retreat_before = float((reference[:2]-raw['base_pose'][0,:2]) @ direction)
+                retreat_after = float((reference[:2]-raw['base_pose'][after_return,:2]) @ direction)
+                forward = actions[return_frames,7]
+                require(retreat_before > .02 and abs(retreat_after) <= .016 and np.any(forward > 0),
+                        'Recorded base return did not recover its approach pose')
+                base_recovery = dict(frames=int(return_frames.size), source_retreat_m=retreat_before,
+                                     residual_retreat_m=retreat_after, peak_forward_m_s=float(forward.max()),
+                                     positive_forward_frames=int(np.count_nonzero(forward > 0)))
 
         bounds = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
         for key, values in [('observation.state',model_states), ('action',actions)]:
@@ -178,6 +196,8 @@ def prepare(episode, reconstruction, base, output):
                       max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_lift,
                       reading_error_ml=abs(trial.good_readings[-1]-case['volume']),
                       alignment_video=videos, independent_cases_read=False)
+        if base_recovery is not None:
+            report['approach_base_recovery'] = base_recovery
         np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)
         (output/'certification.json').write_text(json.dumps(report,indent=2)+'\n')
         return report

@@ -22,6 +22,8 @@ def main():
     p.add_argument("--output",type=Path,required=True);p.add_argument("--record",action="store_true")
     p.add_argument("--start-holding",action="store_true",help="Preserve the existing grasp and teach transport/readout only.")
     p.add_argument("--reading-only",action="store_true",help="Held recovery after the robot already retreated: teach presentation/stopping/readout.")
+    p.add_argument("--restore-approach-base",action="store_true",
+                   help="Drive a retreated, contact-free robot towards its starting odometry before gripping.")
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
     p.add_argument("--lift-off-recovery",action="store_true",
@@ -32,6 +34,7 @@ def main():
                    help="Alternate camera-relative lateral positions in metres, tried after an RGB reading failure.")
     a=p.parse_args()
     if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
+    if a.restore_approach_base and a.start_holding:p.error("--restore-approach-base requires an unheld approach")
     if not np.isfinite(a.held_initial_lift_m) or not 0<=a.held_initial_lift_m<=.10:
         p.error("Held recovery lift must be within [0,0.10] m")
     if a.held_initial_lift_m and (not a.start_holding or a.reading_only):
@@ -103,6 +106,11 @@ def collect(a, controller, output):
         height=float(env.data.xpos[env.cylinder_body,2]-original_height)
         recoverable=(metrics["grip_contacts"]<2 and abs(height)<.015
                      and axis[2]>np.cos(.10) and np.linalg.norm(env.data.qvel[dof:dof+3])<.02)
+        if a.restore_approach_base:
+            direction = np.array([np.cos(initial_base[2]),np.sin(initial_base[2])])
+            retreat = (initial_base[:2]-env.base_pose()[:2]) @ direction
+            recoverable = (recoverable and metrics["grip_contacts"]==0
+                           and not metrics["forbidden_contacts"] and retreat > .02)
         if a.start_holding:
             recoverable=metrics["grip_contacts"]==2 and height>.02 and axis[2]>np.cos(.12)
         if a.lift_off_recovery:
@@ -125,6 +133,9 @@ def collect(a, controller, output):
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
+        if a.restore_approach_base:
+            provenance["recovery_stage"]="restore_base_then_grasp"
+            provenance["reset_base_odometry"]=initial_base.tolist()
         if a.lift_off_recovery:
             provenance["recovery_stage"]="lift_off_from_loaded_tray_grasp"
             provenance["initial_cylinder_height_relative_to_tray_reset_m"]=height
@@ -147,6 +158,8 @@ def collect(a, controller, output):
                     reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding,
                     skip_retreat=a.reading_only,held_initial_lift_m=a.held_initial_lift_m,
                     eye_alignment_target_px=a.eye_alignment_target_px)
+        if a.restore_approach_base:
+            teacher["approach_base_reference"] = initial_base
         result=run_inspection(env,output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
         return 0 if result["success"] else 1

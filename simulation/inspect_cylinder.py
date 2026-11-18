@@ -271,7 +271,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
                    release_single_contact=False,release_retreat_m=0.,teacher_grasp_height_m=None,
-                   stable_read_samples=3):
+                   stable_read_samples=3,approach_base_reference=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -289,6 +289,11 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
     if not isinstance(stable_read_samples, int) or stable_read_samples < 3:
         raise ValueError("Teacher readout requires at least three stable samples")
+    if approach_base_reference is not None:
+        approach_base_reference = np.asarray(approach_base_reference, dtype=float)
+        if (reset_scene or start_holding or release_single_contact
+                or approach_base_reference.shape != (3,) or not np.isfinite(approach_base_reference).all()):
+            raise ValueError("Approach base recovery requires finite reset odometry and a saved unheld state")
     approach_height = env.grasp_height
     if teacher_grasp_height_m is not None:
         # The existing cylinder collision wall spans 6–245 mm above the base.
@@ -322,7 +327,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if record_training:
         for cam in CAMERAS:
             writers[(cam,training_image_size)]=imageio.get_writer(output/f"training_{cam}.mp4",fps=20,codec="libx264",quality=9,macro_block_size=1,ffmpeg_params=["-threads","1"])
-    def tick(phase,q,opening,forward=0):
+    def tick(phase,q,opening,forward=0,yaw=0):
         nonlocal lost_seconds,max_slip,max_tilt,max_contact_loss
         before=env.state_vector();t=float(env.data.time)
         before_qpos=env.data.qpos.copy()
@@ -346,7 +351,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 q,error=env.inverse_kinematics(point,correction.reshape(3,3)@planned_rotation,
                                                 initial=env.data.qpos[env.arm_addresses])
                 if error>.002:raise InspectionFailure("upright_feedback_unreachable")
-        _,metrics=env.step_joints(q,opening=opening,forward=forward)
+        _,metrics=env.step_joints(q,opening=opening,forward=forward,yaw=yaw)
         commanded=np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id] for i in range(1,7)])
         commanded_opening=env.hold_targets[env.model.actuator("right_arm_gripper_left_joint_servo").id]
         cartesian_action=commanded_cartesian_action(env,before_qpos)
@@ -401,6 +406,49 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if held or straight:q1=q
         for _ in range(10):tick(phase,q1,opening)
         return q1
+    def restore_approach_base(reference):
+        phase = "restore_approach_base"
+        direction = np.array([np.cos(reference[2]), np.sin(reference[2])])
+        left = np.array([-direction[1], direction[0]])
+        initial_pose = env.base_pose()
+        initial_distance = float((reference[:2]-initial_pose[:2]) @ direction)
+        if initial_distance <= .02 or env.metrics()["grip_contacts"]:
+            raise InspectionFailure("approach_base_recovery_requires_contact_free_retreat")
+        def require_clearance():
+            if (env.metrics()["grip_contacts"]
+                    or np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder) > .005):
+                raise InspectionFailure("approach_base_recovery_disturbed_cylinder")
+
+        # Put the arm in its reset posture before driving toward the tray.
+        q0 = env.data.qpos[env.arm_addresses].copy()
+        q = np.asarray(CARRY_JOINTS)
+        count = max(1,int(np.ceil(1.875*np.max(np.abs(q-q0))/(.45*CONTROL_DT))))
+        phase_log.append(dict(phase="tuck_for_base_return",start_seconds=float(env.data.time),target=q.tolist()))
+        for step in range(1,count+1):
+            fraction = step/count
+            fraction = 10*fraction**3-15*fraction**4+6*fraction**5
+            tick("tuck_for_base_return",q0+(q-q0)*fraction,.034)
+            require_clearance()
+        attempt = dict(phase=phase,start_seconds=float(env.data.time),start_pose=env.base_pose().tolist(),
+                       target=reference.tolist())
+        phase_log.append(attempt)
+        for _ in range(200):
+            pose = env.base_pose()
+            displacement = reference[:2]-pose[:2]
+            distance, lateral = float(displacement@direction), float(displacement@left)
+            heading_offset = np.arctan2(lateral,max(.09,distance)) * np.clip((distance-.015)/.06,0,1)
+            heading_error = reference[2]+heading_offset-pose[2]
+            yaw = float(np.clip(1.8*np.arctan2(np.sin(heading_error),np.cos(heading_error)),-.15,.15))
+            speed = min(.09, max(0., 1.6*(distance-.008))) if distance > .012 else 0.
+            tick(phase,q,.034,forward=speed,yaw=yaw)
+            require_clearance()
+            velocity = env.base_velocity()
+            if abs(distance) <= .015 and abs(lateral) <= .025 and abs(yaw) < .04 and np.max(np.abs(velocity)) < .01:
+                attempt["end_seconds"] = float(env.data.time)
+                attempt["end_pose"] = env.base_pose().tolist()
+                break
+        else:
+            raise InspectionFailure("approach_base_recovery_timeout")
     reason=None
     try:
         if start_holding:
@@ -413,6 +461,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 move("lift_from_partial_grasp",point,2)
             q=env.data.qpos[env.arm_addresses].copy() if skip_retreat else move("retract",point+[0,-.15,0],3)
         else:
+            if approach_base_reference is not None:
+                restore_approach_base(approach_base_reference)
             if release_single_contact:
                 if env.metrics()["grip_contacts"] != 1:
                     raise InspectionFailure("release_requires_one_loaded_finger")
