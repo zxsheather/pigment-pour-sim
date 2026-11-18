@@ -11,9 +11,11 @@ from pathlib import Path
 from safetensors import safe_open
 import torch
 import torch.nn.functional as functional
+import yaml
 
 ACTION_KEYS=("action_preprocessor","moe.experts.1","qkv_proj_experts.1","o_proj_experts.1",
              "input_layernorms.1","post_attention_layernorms.1","model.norms.1")
+PROPRIO_PROJECTION = "action_preprocessor.propri_proj.weight"
 
 
 def file_hash(path):
@@ -43,13 +45,38 @@ def align_runtime_padding(key,original,target):
     return torch.cat((functional.pad(gate,padding),functional.pad(up,padding)),dim=0),True
 
 
+def trained_proprio_projection(base_config, checkpoint, tensor):
+    config = json.loads((checkpoint / "config.json").read_text())
+    train = yaml.safe_load((checkpoint / "config.yml").read_text())
+    state = train["task"]["agent_pos_config"]
+    assert base_config.get("use_state_string_representation") is not False
+    assert config["use_state_string_representation"] is False and state.get("base_odometry") == 3
+    assert sum(state.values()) == 26 and tuple(tensor.shape) == (config["hidden_size"], 52)
+    assert torch.isfinite(tensor).all()
+    optimizer = torch.load(checkpoint / "optimizer.pt", map_location="cpu", weights_only=True, mmap=True)
+    groups = [group for group in optimizer["param_groups"] if group.get("group_name") == "state_projection"]
+    assert len(groups) == 1 and len(groups[0]["params"]) == 1
+    slot = optimizer["state"][groups[0]["params"][0]]
+    step = int(slot["step"].item())
+    assert step > 0
+    for name in ("exp_avg", "exp_avg_sq"):
+        moment = slot[name]
+        assert moment.shape == tensor.shape and torch.isfinite(moment).all() and torch.count_nonzero(moment)
+    return dict(name=PROPRIO_PROJECTION, shape=list(tensor.shape), optimizer_steps=step,
+                nonzero_adam_moments=True, initialization="Added for continuous robot state")
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--base",type=Path,required=True)
     p.add_argument("--checkpoint",type=Path,required=True);p.add_argument("--output",type=Path,required=True)
+    p.add_argument("--allow-new-proprio-projection", action="store_true",
+                   help="Verify the added continuous-state projection against its saved optimizer state.")
     a=p.parse_args();torch.set_num_threads(1)
     base=a.base/"model.safetensors";checkpoint=a.checkpoint/"model.safetensors"
     changed=[];frozen_changed=[];missing=[];frozen_count=0;action_count=0;padding=[];aliases={}
-    tied=json.loads((a.base/"config.json").read_text()).get("tie_word_embeddings",False)
+    base_config=json.loads((a.base/"config.json").read_text())
+    tied=base_config.get("tie_word_embeddings",False)
+    added=[]
     with safe_open(str(base),framework="pt",device="cpu") as source, \
             safe_open(str(checkpoint),framework="pt",device="cpu") as trained:
         for key in trained.keys():
@@ -58,6 +85,10 @@ def main():
             if key not in source.keys():
                 if key=="lm_head.weight" and tied:
                     source_key="model.embed_tokens.weight";aliases[key]=source_key
+                elif key==PROPRIO_PROJECTION and a.allow_new_proprio_projection:
+                    added.append(trained_proprio_projection(base_config, a.checkpoint, trained.get_tensor(key)))
+                    action_count+=1
+                    continue
                 else:missing.append(key);continue
             target=trained.get_tensor(key);original=source.get_tensor(source_key).to(target.dtype)
             original,aligned=align_runtime_padding(key,original,target)
@@ -72,6 +103,7 @@ def main():
     report=dict(base_sha256=file_hash(base),checkpoint_sha256=file_hash(checkpoint),
                 checkpoint=str(a.checkpoint.resolve()),action_tensors=action_count,
                 frozen_tensors=frozen_count,changed_action_tensors=changed,
+                initialized_and_trained_tensors=added,
                 changed_frozen_tensors=frozen_changed,missing_base_keys=missing,
                 runtime_zero_padded_tensors=padding,
                 tied_weight_aliases=aliases,

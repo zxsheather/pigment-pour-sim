@@ -49,6 +49,8 @@ def measure_rollout(folder, *, pose_breakdown=False):
                              yaw_jitter=case.get('yaw_jitter', 0))
         initial_base = env.base_pose().copy()
         snapshots = []
+        max_state_error = 0.
+        aperture_index = 6 if action_space == 'joint' else 19
         with (np.load(directory / 'recovery_physics.npz') as physics,
               np.load(directory / 'model_observations.npz') as observations,
               np.load(directory / 'trajectory.npz') as trajectory):
@@ -61,13 +63,15 @@ def measure_rollout(folder, *, pose_breakdown=False):
                 mujoco.mj_forward(env.model, env.data)
                 if action_space == 'joint':
                     reproduced = robot_joint_observation(env)
-                    aperture_index = 6
+                    np.testing.assert_array_equal(reproduced, observed)
                 else:
                     reproduced = env.state_vector()
                     if len(observed) == 26:
                         reproduced = np.r_[reproduced, env.base_pose()].astype(np.float32)
-                    aperture_index = 19
-                np.testing.assert_array_equal(reproduced, observed)
+                    # Restoring a snapshot may round a rotation component differently.
+                    np.testing.assert_allclose(reproduced, observed, rtol=np.finfo(np.float32).eps,
+                                               atol=1e-12)
+                max_state_error = max(max_state_error, float(np.abs(reproduced - observed).max()))
                 require(abs(env.data.time - timestamp) < 1e-9, 'Snapshot clock mismatch')
                 error = env.grip_point_relative() - env.grasp_offset
                 row = dict(time_s=float(timestamp), grasp_distance_m=float(np.linalg.norm(error)),
@@ -80,7 +84,9 @@ def measure_rollout(folder, *, pose_breakdown=False):
             maximum_contacts = int(trajectory['contacts'].max(initial=0))
         require(bool(snapshots), 'No rollout snapshots')
         return dict(rollout=str(folder.resolve()), snapshots=len(snapshots),
-                    robot_observations_reproduced_exactly=True, maximum_recorded_loaded_contacts=maximum_contacts,
+                    robot_observations_reproduced_exactly=max_state_error == 0.,
+                    robot_observations_max_abs_difference=max_state_error,
+                    maximum_recorded_loaded_contacts=maximum_contacts,
                     nearest=min(snapshots, key=lambda row: row['grasp_distance_m']), first=snapshots[0],
                     last=snapshots[-1], failure_reason=episode['failure_reason'])
     finally:

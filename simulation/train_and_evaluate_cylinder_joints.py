@@ -57,11 +57,24 @@ def main():
                 'Expected Cartesian targets with base odometry')
         validator = 'validate_wall_data.py'
         norm_key = 'cylinder_cartesian_v1'
-    require(Path(cfg['checkpoint']['resume_from']).resolve() == parent/'model.safetensors',
-            'Parent/config mismatch')
     steps = cfg['hyperparams']['scheduler']['num_training_steps']
     interval = cfg['logging']['save_interval']
     require(steps > interval and (steps-1) % interval == 0, 'Final checkpoint must be scheduled')
+    resume = Path(cfg['checkpoint']['resume_from']).resolve()
+    resume_step = 0
+    if resume.is_dir():
+        import torch
+        for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt',
+                     'global_step.pth', 'current_epoch.pth'):
+            require((resume/name).is_file(), f'Missing resume checkpoint component: {name}')
+        resume_step = torch.load(resume/'global_step.pth', map_location='cpu', weights_only=True)['global_step']
+        require(0 < resume_step < steps-1 and resume_step % interval == 0 and resume.name == f'0_{resume_step}',
+                'Expected a complete scheduled checkpoint from epoch zero')
+        earlier = resume.parent.parent/f'checkpoint-{resume_step}-weight-audit.json'
+        proof = json.loads(earlier.read_text())
+        require(proof['passed'] and proof['checkpoint'] == str(resume), 'Resume checkpoint audit failed')
+    else:
+        require(resume == parent/'model.safetensors', 'Parent/config mismatch')
     require(not (run/'execution-status.json').exists(), 'Existing execution must be inspected, not restarted')
     scripts = Path(__file__).resolve().parent
     root = Path.cwd()
@@ -76,7 +89,8 @@ def main():
         require(trainer_entry.is_file(), 'Missing training entry point in the Wall-X source copy')
         trainer_env = os.environ | dict(PYTHONPATH=str(training_wall))
     state = dict(stage='data_validation', started=time.time(), driver_pid=os.getpid(),
-                 parent=str(parent), action_space=action_space, history=[], goal_complete=False)
+                 parent=str(parent), action_space=action_space, history=[], goal_complete=False,
+                 resumed_checkpoint=str(resume) if resume_step else None, resumed_step=resume_step)
     trainer = None
     active_call = None
 
@@ -126,15 +140,18 @@ def main():
         visited = []
         best = None
         best_score = None
-        for step in range(interval, steps, interval):
+        for step in range(resume_step + interval, steps, interval):
             while f'at global_step={step}' not in args.log.read_text(errors='replace'):
                 if trainer.poll() is not None:
                     raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
                 time.sleep(10)
             checkpoint = run/f'checkpoints/0_{step}'
             output = root/f'runs/{run.name}-step{step}-single'
-            call([python, str(scripts/'audit_wall_checkpoint.py'), '--base', str(parent),
-                  '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')],
+            audit = [python, str(scripts/'audit_wall_checkpoint.py'), '--base', str(parent),
+                     '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')]
+            if action_space == 'cartesian':
+                audit.append('--allow-new-proprio-projection')
+            call(audit,
                  f'audit_{step}')
             call([python, str(scripts/'run_wall_cylinder.py'), '--model', str(checkpoint),
                   '--config', str(config), '--norm-key', norm_key,
