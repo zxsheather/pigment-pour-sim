@@ -189,6 +189,8 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 [调度记录](experiments/2026-11-18-joint512-sampling-job-status.json) 与 [包装脚本](experiments/2026-11-18-joint512-sampling-job-source.py) 记录了资源互斥：仅暂缓正式评测协调器，训练进程始终运行；诊断子进程正常退出后，协调器已恢复并通过实际进程检查。诊断全程未加载教师动作作为策略输入，没有任务成功评分，也未触碰独立测试。
 
+协调器随后自动完成关节 `0_640` 的 [权重审计](experiments/2026-11-18-joint-position640-weight-audit.json) 和 [完整试跑](experiments/2026-11-18-joint-position640-closed-loop.json)：仍是 0/1，6.85 s 右手碰撞体接触托盘失败，未建立夹持或抬起，且没有发生关节限位投影。[1 帧末段回放](experiments/2026-11-18-joint-position640-collision-replay.json) 从原 6.80 s 状态执行原有界指令，机器人 23D 状态差异为零，确认接触双方为 `right_arm_gripper_right_link` 与 `target_tray`、穿入约 1.819 mm。目标量筒与允许夹持的对象仍由原评分规则处理，这里记录的是托盘碰撞；几何、力限、摩擦和验收未改。自动保留流程已淘汰旧 `0_512` 权重／优化器，保留其全部上述失败与采样数值记录；当前完整模型为官方预训练、所需父模型 `0_768`、暂定参考 `0_128` 和最新 `0_640`，仅最新优化器保留。后续训练继续，完整套件尚未启动。
+
 为下一轮准备纠正数据，从真实 `0_256` 的 10.0 s 状态恢复完整物理状态、速度、伺服缓存和接触求解器状态，仅将新示范时钟归零。固定几何和现有教师用 28.25 s 完成完整动作，最大抬起 11.94 cm、后退 23.35 cm、最大滑移 9.66 mm、距相机 37.30 cm，三次读数均为 24.939 mL（误差 0.061 mL）。[565 帧关节重建](experiments/2026-11-18-joint-position256-grasp-reconstruction.json) 对机器人状态、量筒位置与姿态的差异均为零；[原始数据检查](experiments/2026-11-18-joint-position256-grasp-recovery-validation.json) 验证初始 18D 策略观测逐值不变、三路 448px 视频各 565 帧且时间对齐，以及全部 H32／首 8 帧动作和状态均位于当前关节归一化边界内。这是**程序教师纠正示范，不是神经网络成功**。当前 52 条训练数据的 21 个文件 SHA256 未变；新示范只登记为后续候选，尚未导出或训练。原始成功示范现共 60 条，候选配方为原 52 条加额外 6 条，另有 2 条历史未选示范。
 
 `validate_raw_cylinder_recovery.py --joint-reconstruction PATH` 支持上述 18D／9D 数据；传入关节配置时必须同时提供已通过的同源重建。[旧笛卡尔恢复回归](experiments/2026-11-18-raw-validator-cartesian-regression.json) 仍验证 309 帧、26D／23D 和三路视频，不改变其归一化。没有新增完整数据集副本。
