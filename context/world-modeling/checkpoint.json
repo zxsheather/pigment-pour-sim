@@ -24,10 +24,19 @@
     ]
   },
   "open_validation": [
-    "Verify free-bottle retention during tilt with the real finger geometry.",
+    "Verify upright free-bottle retention with the imported finger geometry and no workspace support before testing lift and slow tilt. Measure the physical grip force and finger-to-bottle friction, then compare with simulation.",
     "Extend contact coverage to include free-bottle workspace contact and relevant robot self-contact.",
     "Compare simulated discharge, shutoff, and spill against measured water pours.",
     "Compare simulated actuator tracking, geometry, and sensor observations with measurements on the physical setup."
   ],
+  "no_pad_grasp_trial": {
+    "setup": "Temporary simulation with added grip pads removed. Bottle held upright at reset with 100 mL water and 215 g total modeled mass.",
+    "workspace_enabled": "At sliding friction 0.9, the bottle slipped about 12 mm relative to the gripper and contacted the cylinder.",
+    "workspace_support_disabled": {
+      "slip_threshold_mm": 70,
+      "time_to_threshold_s_by_sliding_friction": {"0.3": 0.072, "0.9": 0.164, "1.5": 0.280}
+    },
+    "interpretation": "The imported fingers lost the upright grasp at all three tested friction values. The friction values are provisional and the result still needs hardware validation."
+  },
   "references": ["../Plan.json", "real-world-modeling-gaps.json"]
 }
