@@ -215,6 +215,8 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 53 条训练版的 `0_128` 已完整保存并加载。权重检查显示 258 个动作或状态相关张量变化，581 个冻结张量保持一致。25 mL／seed 100 的真实模型闭环已启动，结果待运行结束。确认新检查点完整并实际加载后，淘汰旧版 `0_128` 的 8.36 GiB 权重，保留其失败轨迹、评测报告和新版引用的 `0_768` 父权重。[首个权重审计](experiments/2026-11-18-joint-grasp-recovery-v2-step128-weight-audit.json) · [保留记录](experiments/2026-11-18-joint-grasp-recovery-v2-checkpoint-retention.json)
 
+为区分示范动作拟合与闭环误差累积，`evaluate_wall_imitation.py` 增加了关节数据支持。用采集时的时间戳和轨迹哈希将三路视频与经过核验的 18 维观测、9 维命令对齐。选定一条 25 mL 完整训练示范上的七个时刻，覆盖起点、靠近、闭爪、抬升、退离和移近相机。比较同一教师输入下父模型 `0_768` 与新模型 `0_128` 的关节、夹爪和底盘预测，各自使用相同的随机种子及归一化。调度先等待正式闭环结束并测量轨迹的抓取点距离。仅在单例未通过且距离下一轮正式评测有足够时间时执行这个离线模型对照。它不推进物理，也不读取最终独立测试。[调度脚本](experiments/2026-11-18-joint-grasp-recovery-v2-teacher-comparison-job.py)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：
