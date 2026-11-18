@@ -152,9 +152,8 @@ def save_grasp_scene(scene, model, data, config, path):
     ET.ElementTree(scene).write(path, encoding="unicode")
 
 
-def main():
-    generated = ROOT / "generated"
-    config = json.loads(SCENE_CONFIG.read_text())
+def build_pour_scenes(generated, config):
+    """Generate both pour scenarios without opening a renderer."""
     scene = ET.parse(generated / "scene.xml").getroot()
     add_water_bottle(scene, config)
     world = scene.find("worldbody")
@@ -190,6 +189,17 @@ def main():
     save_grasp_scene(scene, model, data, config, grasp_path)
     mujoco.MjModel.from_xml_path(str(grasp_path))
     print(f"Saved {grasp_path} with a free bottle and finger contact")
+    return path, grasp_path
+
+
+def main():
+    generated = ROOT / "generated"
+    config = json.loads(SCENE_CONFIG.read_text())
+    path, _ = build_pour_scenes(generated, config)
+    model = mujoco.MjModel.from_xml_path(str(path))
+    data = mujoco.MjData(model)
+    mujoco.mj_resetDataKeyframe(model, data, model.key("pour_start").id)
+    mujoco.mj_forward(model, data)
     with mujoco.Renderer(model, width=1080, height=720) as renderer:
         for view in ("pour_start_view", "pour_start_detail"):
             renderer.update_scene(data, camera=view)

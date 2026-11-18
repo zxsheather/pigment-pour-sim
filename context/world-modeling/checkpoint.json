@@ -1,0 +1,33 @@
+{
+  "phase": "world_modeling",
+  "status": "simulation_baseline_verified",
+  "automated_tests": {
+    "path": "tests/world_model/",
+    "result": "18 passed",
+    "coverage": [
+      "Fresh scene generation, repeatable attached-bottle and free-grasp resets, and detection of deliberate arm contact.",
+      "Individual mapping, direction, tracking, and return for all nine servos with contacts disabled.",
+      "Free-bottle retention during upright hold and lift with simplified pads, followed by release.",
+      "Upright water hold, capture, miss, overflow, volume conservation, and static load compensation."
+    ]
+  },
+  "visual_demos": {
+    "entry_point": "python -m simulation.demos.demo_world_checks",
+    "local_outputs": [
+      "simulation/generated/world_scene_reset.gif",
+      "simulation/generated/world_actuators.gif"
+    ],
+    "companion_demos": [
+      "simulation.demos.demo_gripper_lift",
+      "simulation.demos.demo_pour_water",
+      "simulation.demos.demo_pour_water --miss"
+    ]
+  },
+  "open_validation": [
+    "Verify free-bottle retention during tilt with the real finger geometry.",
+    "Extend contact coverage to include free-bottle workspace contact and relevant robot self-contact.",
+    "Compare simulated discharge, shutoff, and spill against measured water pours.",
+    "Compare simulated actuator tracking, geometry, and sensor observations with measurements on the physical setup."
+  ],
+  "references": ["../Plan.json", "real-world-modeling-gaps.json"]
+}
