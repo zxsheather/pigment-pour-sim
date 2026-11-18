@@ -20,15 +20,17 @@
         "motion.py": "Convert target bottle poses into timed joint references using inverse kinematics and clearance checks."
       },
       "controllers/": {
-        "__init__.py": "Controller package.",
-        "pour_scripted.py": "Scripted dosing policy.",
-        "pour_learned.py": "Learned dosing policy."
+        "__init__.py": "Controller package reserved for Stage 4."
       },
+      "pour_system.py": "Run the pouring controller and motion layer together.",
       "benchmarks/": {
         "__init__.py": "Benchmark package.",
-        "pour_benchmark.py": "Run and score pour episodes.",
-        "pose.py": "Provide the shared robot pose for scenario setup and scene export.",
-        "setup_pour_pose.py": "Configure the held bottle, parked joints, and reset keyframes for attached-bottle and free-grasp scenes."
+        "mujoco_pour_benchmark.py": "Seed a fixed-start MuJoCo task, enforce the simulation deadline, and score the outcome.",
+        "scenarios/": {
+          "__init__.py": "Scenario package.",
+          "build_pour_scenes.py": "Configure the held bottle, parked joints, and reset keyframes for attached-bottle and free-grasp scenes.",
+          "robot_pose.py": "Provide the shared robot pose for scenario setup and scene export."
+        }
       },
       "demos/": {
         "__init__.py": "Demo package.",
@@ -49,13 +51,13 @@
     "javascript": "Keep npm dependencies and the lockfile in simulation/viewer/.",
     "entry_points": [
       "python -m simulation.world_model.build_scene",
-      "python -m simulation.benchmarks.setup_pour_pose",
+      "python -m simulation.benchmarks.scenarios.build_pour_scenes",
       "python -m simulation.demos.demo_pour_water"
     ]
   },
   "migration": [
     "Move existing modules into their proposed packages and update imports and asset paths.",
-    "Move the shared pose helper out of export_scene.py and into benchmarks for use by scene export and benchmark setup.",
+    "Move the shared pose helper out of export_scene.py and into benchmark scenarios for use by scene export and benchmark setup.",
     "Update the viewer build to read scene_config.json from world_model.",
     "Verify scene generation, both pour reset variants, HTML export, and the existing demos through their new entry points."
   ]
