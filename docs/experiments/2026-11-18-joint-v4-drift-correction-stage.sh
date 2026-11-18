@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Stage and verify the drift recovery demos without changing the active run.
+# Stage and verify the recovery demonstrations alongside the active run.
 set -euo pipefail
 cd /data/hlou/pigment-pour-study
 root=$PWD
@@ -107,7 +107,7 @@ PY
   --config "$stage/train.yml" "${checks[@]}" \
   --output "$stage/data-validation.json" > "$stage/loader.log" 2>&1
 
-"$python" - "$old" "$data" "$stage" "${episodes[@]}" <<'PY'
+"$python" - "$variant" "$old" "$data" "$stage" "${episodes[@]}" <<'PY'
 import hashlib
 import json
 import os
@@ -118,7 +118,8 @@ import pyarrow.dataset as arrow
 
 from validate_cylinder_joint_execution import joint_replay
 
-old, data, stage, *episodes = map(Path, sys.argv[1:])
+variant = sys.argv[1]
+old, data, stage, *episodes = map(Path, sys.argv[2:])
 def load_table(folder):
     return arrow.dataset(folder / 'data', format='parquet').to_table().sort_by('index')
 
@@ -147,7 +148,8 @@ for index in range(base_count, len(new_provenance)):
     replays.append({k: replay[k] for k in ('episode', 'demonstration_frames', 'executed_frames',
         'demonstration_replay_success', 'max_slip_m', 'max_lifted_m', 'geometry_audit_passed')})
 assert all(r['demonstration_replay_success'] and r['geometry_audit_passed'] for r in replays)
-report = dict(kind='staged_joint_recovery_corrections', dataset=str(data), base_dataset=str(old),
+kind = 'staged_joint_recovery_corrections' if variant == 'wrist' else 'staged_joint_drift_corrections'
+report = dict(kind=kind, dataset=str(data), base_dataset=str(old),
     episodes=len(new_provenance), frames=len(full), new_frames=len(full)-len(base), exact_unchanged_base_rows=len(base),
     norm_sha256=hashlib.sha256((data / 'joint_norm_stats.json').read_bytes()).hexdigest(),
     all_video_payloads_shared=True, new_duplicate_video_bytes=0,

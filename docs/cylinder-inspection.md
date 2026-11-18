@@ -267,6 +267,8 @@ V5 第 256 步的 25 mL／seed 100 闭环仍未建立承载接触或抬升。最
 
 四条新增示范已追加为 V8 备选数据，合计 69 条、42,011 帧。原 39,678 帧逐值一致，归一化哈希一致，所有视频与源文件共用磁盘载荷。Wall 加载器和导出后的关节回放均通过四条新示范。沿用 8%／6% 抽样配比与全量帧上的固定随机种子切分，离线复算前 512 次抽取时，四条新增示范各有曝光，共 43 次，其中 32 次位于靠近或前伸阶段。[V8 数据审计](experiments/2026-11-18-joint-pose-v8-data-audit.json) · [加载器](experiments/2026-11-18-joint-pose-v8-loader.json) · [抽样复算](experiments/2026-11-18-joint-pose-v8-initial-draws.json)
 
+V7 第 128 步的完整 Wall 模型评测为 0/1。最近距离从 V5 第 256 步的 10.03 cm 缩短到 8.20 cm，出现在 7.60 秒，夹爪轴线偏差为 17.62°。随后右臂第 4 连杆在 14.70 秒碰撞托盘，承载接触与抬升均为零。末段六帧原指令重现约 1.08 mm 的穿入。权重审计确认 258 个动作或状态张量更新，581 个冻结张量保持一致。V7 继续训练，切换任务已等待第 256 步实测。仅在两次都无承载接触、有效抬升或夹持，且最近距离均超过 5 cm 时才接续 V8。完整套件仍等待真实模型单例成功。[V7 权重](experiments/2026-11-18-joint-tray-v7-step128-weight-audit.json) · [正式闭环](experiments/2026-11-18-joint-tray-v7-step128-closed-loop.json) · [位姿](experiments/2026-11-18-joint-tray-v7-step128-approach.json) · [碰撞回放](experiments/2026-11-18-joint-tray-v7-step128-collision.json) · [V8 切换状态](experiments/2026-11-18-joint-pose-v8-transition-armed.json)
+
 为节省空间，确认 V7 已开始更新后，清理旧失败模型、优化器和在 V7 中逐文件核对的重复训练载荷，释放约 35.14 GiB。V5 第 256 步模型和处理器供 V7 初始化及权重比较，四个旧模型的数值评测及权重哈希继续可查。[清理清单](experiments/2026-11-18-joint-storage-cleanup-retired.json)
 
 ## 完整神经网络候选的验收
