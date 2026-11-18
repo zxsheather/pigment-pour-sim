@@ -1,0 +1,62 @@
+{
+  "status": "draft",
+  "goal": "Develop and benchmark the pouring phase in MuJoCo, then transfer the controller to the Quanta X1 using observations from the physical setup.",
+  "handoff": {
+    "start": "The base is parked at a specified pose, the robot holds an open upright bottle with a known water volume, and the empty cylinder is within reach.",
+    "end": "The bottle is upright at the specified retract pose, the grasp is retained, and all water in flight has landed.",
+    "upstream_phases": ["Pick up the bottle", "Move to the cylinder"]
+  },
+  "parts": [
+    {
+      "id": "world_model",
+      "responsibilities": ["Robot geometry, joints, and actuators", "Bottle and gripper contact", "Table, cylinder, and collision geometry", "Water discharge, flight, collection, spill, and changing load", "Observations compatible with estimates from physical sensors"],
+      "interface": {
+        "inputs": ["Current world state", "Actuator commands", "Simulation timestep"],
+        "outputs": ["Updated world state", "Controller observations", "Scoring data"]
+      },
+      "checkpoint": ["Reset to the same starting state on each run.", "Verify water volume balance and register spill on a deliberate miss.", "Validate a free grasp during lift and tilt, and compare flow and shutoff with physical pours."]
+    },
+    {
+      "id": "motion_layer",
+      "responsibilities": ["Deterministic inverse kinematics and trajectory timing", "Joint and actuator limits", "Collision and clearance checks", "Retargeting from measured state during execution"],
+      "interface": {
+        "inputs": ["Measured robot state", "Target bottle-mouth position and orientation", "Optional timing request"],
+        "outputs": ["Joint position references over time", "Execution status such as accepted, reached, or failed"]
+      },
+      "checkpoint": ["Execute raise, aim, tilt, return upright, and retract within agreed tracking tolerances.", "Reject a colliding path.", "Demonstrate that an upright request can interrupt an active tilt."]
+    },
+    {
+      "id": "benchmark",
+      "interface": {
+        "inputs": ["Fixed reset state", "Requested volume", "Controller"],
+        "outputs": ["Run record", "Signed and absolute volume error", "Total spill", "Completion status and time"]
+      },
+      "nominal_case": {
+        "requested_ml": 20,
+        "max_absolute_volume_error_ml": 1,
+        "max_spill_ml": 0.5,
+        "threshold_status": "provisional"
+      },
+      "scoring": {
+        "signed_volume_error": "Collected volume minus requested volume after the water settles.",
+        "spill": "Water discharged from the bottle that ends outside the cylinder. The current parcel model scores total spill. Impact splash requires a separate model or physical measurement.",
+        "completion": "Require an upright bottle at the retract pose, a retained grasp, and no disallowed contact."
+      },
+      "checkpoint": ["Distinguish a successful nominal pour, an underpour, and a deliberately misaligned pour.", "Use the same reset, observations, motion layer, and scoring for both controllers."]
+    },
+    {
+      "id": "pour_controller",
+      "interface": {
+        "inputs": ["Estimated bottle and cylinder poses", "Estimated collected volume", "Requested volume", "Motion status", "Controller state"],
+        "outputs": ["Target bottle pose with optional timing", "Hold or abort request"]
+      },
+      "approaches": {
+        "scripted": "Use explicit phases and feedback to decide when to return upright. Account for water in flight and water discharged while righting the bottle.",
+        "learned": "Choose targets through the same interface as the scripted controller."
+      },
+      "checkpoint": ["Complete one closed-loop scripted pour in MuJoCo using the existing water and motion layers.", "Compare both controllers under identical conditions.", "Once both pass the fixed case, evaluate held-out variations in bottle pose, fill level, and sensor delay."]
+    }
+  ],
+  "hardware_checks": ["Verify grasp retention during a slow tilt.", "Measure discharge and shutoff timing.", "Confirm how collected volume and spill can be measured.", "Measure actuator tracking and sensor error before assessing transfer."],
+  "open_decisions": ["Exact reset and retract poses", "Acceptable tracking and clearance tolerances", "Volume feedback and spill measurement on hardware", "Timing constraints for an upright retarget", "Allowed variation in the pickup and navigation handoff"]
+}
