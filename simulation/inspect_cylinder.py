@@ -24,9 +24,11 @@ GRIP_HEIGHT = 0.225
 READ_DISTANCE = 0.35
 CYLINDER_INSTRUCTION = ("Pick up the measuring cylinder, hold it upright, bring it close to the head camera, "
                         "and align the liquid surface with the image center for reading. Keep holding it.")
-INSPECTION_SOURCE_HASHES={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
-                          for name in ("inspect_cylinder.py","cylinder_actions.py","cylinder_reader.py",
-                                       "carry_env.py","audit_gripper.py","scene_config.json")}
+INSPECTION_SOURCE_HASHES = {
+    path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+    for path in (Path(__file__), ROOT/"cylinder_actions.py", ROOT/"cylinder_reader.py",
+                 ROOT/"carry_env.py", ROOT/"audit_gripper.py", ROOT/"scene_config.json")
+}
 
 
 def add_digit(parent, digit: str, x: float, z: float):
@@ -268,7 +270,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
-                   release_single_contact=False,release_retreat_m=0.):
+                   release_single_contact=False,release_retreat_m=0.,teacher_grasp_height_m=None,
+                   stable_read_samples=3):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -284,6 +287,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Release retreat requires single-contact recovery")
     if not np.isfinite(eye_alignment_target_px) or not .5<=eye_alignment_target_px<=2.:
         raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
+    if not isinstance(stable_read_samples, int) or stable_read_samples < 3:
+        raise ValueError("Teacher readout requires at least three stable samples")
+    approach_height = env.grasp_height
+    if teacher_grasp_height_m is not None:
+        # The existing cylinder collision wall spans 6–245 mm above the base.
+        if start_holding or not np.isfinite(teacher_grasp_height_m) or not .006 <= teacher_grasp_height_m <= .245:
+            raise ValueError("Teacher grasp height requires a new grasp at the cylinder wall")
+        approach_height = float(teacher_grasp_height_m)
     geometry_report=None
     if env.grip_profile=="official":
         from audit_gripper import audit
@@ -433,15 +444,15 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 else:
                     raise InspectionFailure("single_contact_release_did_not_settle")
                 cylinder = env.data.xpos[env.cylinder_body].copy()
-            approach=cylinder+[0,-.10,env.grasp_height]
+            approach=cylinder+[0,-.10,approach_height]
             move("approach",approach,opening=.034,scale=approach_motion_scale)
-            q=move("advance",cylinder+[0,0,env.grasp_height],2,opening=.034)
+            q=move("advance",cylinder+[0,0,approach_height],2,opening=.034)
             for _ in range(35):tick("close",q,grip_opening)
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
             env.grasp_reference=env._bottle_relative_position();held=True
             env.grasp_point_reference=env.grip_point_relative()
-            move("lift",cylinder+[0,0,env.grasp_height+.04],2)
-            q=move("retract",cylinder+[0,-.15,env.grasp_height+.12],3)
+            move("lift",cylinder+[0,0,approach_height+.04],2)
+            q=move("retract",cylinder+[0,-.15,approach_height+.12],3)
         if not skip_retreat:
             target_y=env.base_pose()[1]-.24
             for _ in range(150):
@@ -451,7 +462,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             else:raise InspectionFailure("base_retreat_timeout")
             for _ in range(15):tick("back_away",q,grip_opening)
         eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
-        point=eye+[read_lateral,read_distance,env.grasp_height-(SCALE_ZERO+SCALE_SPAN/2)]
+        point=eye+[read_lateral,read_distance,approach_height-(SCALE_ZERO+SCALE_SPAN/2)]
         q=move("present",point,3)
         for _ in range(20):tick("hold_for_reading",q,grip_opening)
         # The demonstration teacher may use simulator object pose to correct
@@ -503,7 +514,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         else:raise InspectionFailure("eye_alignment_timeout")
         # Repeat observations while physically holding still; no ground-truth
         # volume is used by the perception or height controller.
-        for _ in range(3):
+        for _ in range(stable_read_samples):
             for _ in range(5):tick("read_stable",q,grip_opening)
             reading=read_volume(env.render("face_view"));readings.append(dict(time=float(env.data.time),**reading))
             if not reading["valid"]:raise InspectionFailure(f"unstable_reading:{reading['reason']}")
@@ -575,6 +586,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  liquid_model="Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics")
     if approach_motion_scale is not None:
         summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
+    if teacher_grasp_height_m is not None:
+        summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
+    if stable_read_samples != 3:
+        summary["controller_parameters"]["stable_read_samples"]=stable_read_samples
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m

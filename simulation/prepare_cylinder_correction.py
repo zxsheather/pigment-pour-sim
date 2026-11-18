@@ -156,8 +156,17 @@ def prepare(episode, reconstruction, base, output):
             matched_frames += 1
             if trial.done:
                 break
-        require(trial.success and trial.joint_limit_projected_frames == 0,
-                f'Correction failed the full physical replay: {trial.reason}')
+        qualified = trial.success and trial.joint_limit_projected_frames == 0
+        if not qualified:
+            rejection = dict(
+                source=str(episode), frames_replayed=matched_frames,
+                simulated_seconds=float(env.data.time), failure_reason=trial.reason,
+                joint_limit_projected_frames=trial.joint_limit_projected_frames,
+                final_task_gates=trial.task_gates, final_readings=trial.readings[-12:],
+                consecutive_readings_ml=trial.good_readings[-3:],
+            )
+            (output/'physical-replay-rejected.json').write_text(json.dumps(rejection,indent=2)+'\n')
+        require(qualified, f'Correction failed the full physical replay: {trial.reason}')
         report = dict(kind='certified_on_policy_wrist_target_teacher_correction', source=str(episode),
                       source_model_episode=str(prior), volume_ml=case['volume'], seed=case['seed'],
                       snapshot=snapshot, source_prefix_seconds=time, state_observations_exact_at_snapshot=True,
