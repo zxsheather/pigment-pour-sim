@@ -1,7 +1,7 @@
 """Execute Wall-predicted arm/gripper/base actions on the fixed official fingers.
 
-Only robot kinematics and joint feedback enter the execution controller.
-Object truth and the calibrated RGB reader are used by the evaluator only.
+The model observes RGB and robot state. The wrist-cue layout also supplies
+initial RGB localization. Object truth and the volume reader score the trial.
 """
 import argparse
 import hashlib
@@ -17,9 +17,11 @@ import torch
 from audit_gripper import audit
 from carry_env import CAMERAS,CONTROL_DT
 from cylinder_actions import relative_to_absolute,cartesian_to_joint_target
-from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,
-    absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command)
+from cylinder_joint_actions import (JOINT_ACTION_LAYOUT,JOINT_SERVO_STATE_WIDTH,JOINT_WRIST_CUE_STATE_LAYOUT,
+    absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
+    with_joint_wrist_cue_state)
 from cylinder_reader import read_volume
+from cylinder_wrist_cue import capture_initial_wrist_cue
 from inspect_cylinder import CylinderEnv,CYLINDER_INSTRUCTION
 from run_wall_carry import CarryWallPolicy,_normalize_real_prefix
 from robot_state_normalization import enable_unclipped_robot_state
@@ -29,7 +31,8 @@ from robot_action_filter import (RobotActionFilter,limit_pose_step,TemporalActio
 SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).hexdigest()
                for name in ("run_wall_cylinder.py","run_wall_carry.py","cylinder_actions.py",
                             "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
-                            "robot_action_filter.py","robot_state_normalization.py","cylinder_joint_actions.py")}
+                            "robot_action_filter.py","robot_state_normalization.py","cylinder_joint_actions.py",
+                            "cylinder_wrist_cue.py","scene_config.json")}
 
 
 class CylinderWallPolicy(CarryWallPolicy):
@@ -53,6 +56,8 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.state_width=(joint_state_width(self._train_config['agent_pos_config']) if self.action_space=='joint'
                           else 26 if self.with_odometry else 23)
         self.joint_servo_state=self.action_space=='joint' and self.state_width==JOINT_SERVO_STATE_WIDTH
+        self.joint_wrist_cue=(self.joint_servo_state and
+                             self._train_config['agent_pos_config']==JOINT_WRIST_CUE_STATE_LAYOUT)
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
@@ -80,7 +85,7 @@ class CylinderWallPolicy(CarryWallPolicy):
         self.load_report.update(flow_steps=flow_steps,virtual_tail_after_normalization=0,
                                 action_space=self.action_space,active_action_dimensions=self.action_width,
                                 robot_state_dimensions=self.state_width,base_odometry=self.with_odometry,
-                                joint_servo_state=self.joint_servo_state,
+                                joint_servo_state=self.joint_servo_state,joint_wrist_cue=self.joint_wrist_cue,
                                 flow_noise=flow_noise,state_embedding_precision=state_embedding_precision,
                                 unclipped_robot_state=unclipped_robot_state,
                                 state_precision_alignment_applies=not self._model.config.use_state_string_representation,
@@ -123,9 +128,11 @@ class CylinderTrial:
     def __init__(self,case,controller,output,*,record=False,max_seconds=90,image_size=448,action_filter_seconds=0.,with_odometry=False,
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
-                 gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False):
+                 gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
+                 joint_wrist_cue=False):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
+        if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
             raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
@@ -140,6 +147,10 @@ class CylinderTrial:
             friction_scale=case.get("friction_scale",1.),mass_scale=case.get("mass_scale",1.))
         self.geometry_report=audit(self.env)
         self.env.reset_inspection(seed=case["seed"],jitter=case.get("jitter",.004),yaw_jitter=case.get("yaw_jitter",0.))
+        self.initial_wrist_cue=None
+        if joint_wrist_cue:
+            rgb,self.initial_wrist_cue=capture_initial_wrist_cue(self.env)
+            if record:imageio.imwrite(output/"initial_right_wrist_1024.png",rgb)
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
         self.action_filter=RobotActionFilter(self.env.state_vector(),action_filter_seconds,CONTROL_DT)
@@ -171,6 +182,8 @@ class CylinderTrial:
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
         if self.action_space=='joint':
             observation['state']=robot_joint_observation(self.env,servo_state=self.joint_servo_state)
+            if self.initial_wrist_cue is not None:
+                observation['state']=with_joint_wrist_cue_state(observation['state'],self.initial_wrist_cue['world_xy_m'])
         elif self.with_odometry:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         self.observations.append(dict(time=float(self.env.data.time),state=observation["state"].copy()))
@@ -289,9 +302,12 @@ class CylinderTrial:
             inference_seconds=self.latencies,
             executed_dimensions=(list(range(9)) if self.action_space=='joint' else list(range(10,21))+[22]),
             ignored_dimensions=(list(range(9,26)) if self.action_space=='joint' else list(range(10))+[21]),
-            observation_inputs=("Three RGB cameras and 18D robot joint positions/velocities, aperture, base velocity/odometry" if self.action_space=='joint' else
+            observation_inputs=("Three RGB cameras, joint/servo state and initial RGB wrist localization" if self.initial_wrist_cue is not None else
+                                "Three RGB cameras and 26D joint/servo state" if self.joint_servo_state else
+                                "Three RGB cameras and 18D robot joint positions/velocities, aperture, base velocity/odometry" if self.action_space=='joint' else
                                 "Three RGB cameras and 26D robot proprioception including base x/y/yaw" if self.with_odometry else
-                                "Three RGB cameras and 23D robot proprioception")+"; no object pose, phase or fill value",
+                                "Three RGB cameras and 23D robot proprioception")+"; no simulator object state, phase or fill value",
+            initial_wrist_cue=self.initial_wrist_cue,
             base_odometry=self.with_odometry,
             exact_input_images_recorded=bool(self.writers),
             low_level_controller=("Official joint limits with original5mrad margin and rate-limited joint position servos; no object-pose correction"
@@ -383,6 +399,7 @@ def main():
                          gripper_open_confirmations=args.gripper_open_confirmations,
                          gripper_open_confirmation_mode=args.gripper_open_confirmation_mode,
                          action_space=policy.action_space,joint_servo_state=policy.joint_servo_state,
+                         joint_wrist_cue=policy.joint_wrist_cue,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:

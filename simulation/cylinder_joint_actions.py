@@ -31,6 +31,15 @@ JOINT_SERVO_STATE_LAYOUT = {
     'right_gripper_tracking_error': 1,
     'base_forward_command': 1,
 }
+JOINT_WRIST_CUE_STATE_LAYOUT = {
+    **{name: width for name, width in JOINT_STATE_LAYOUT.items() if name != 'action_padding'},
+    'initial_wrist_target_forward': 1,
+    'right_joint_2_3_4_tracking_error': 3,
+    'initial_wrist_target_left': 1,
+    'initial_wrist_target_valid': 1,
+    'right_gripper_tracking_error': 1,
+    'base_forward_command': 1,
+}
 JOINT_ACTION_NAMES = ([f'right_joint_position_{i}' for i in range(1, 7)]
                       + ['right_gripper_opening_fraction', 'base_vx', 'base_yaw_rate'])
 JOINT_STATE_NAMES = (JOINT_ACTION_NAMES
@@ -39,6 +48,9 @@ JOINT_STATE_NAMES = (JOINT_ACTION_NAMES
 JOINT_SERVO_STATE_NAMES = (JOINT_STATE_NAMES
                            + [f'right_joint_tracking_error_{i}' for i in range(1, 7)]
                            + ['right_gripper_tracking_error_fraction', 'previous_base_forward_command'])
+WRIST_CUE_STATE_INDICES = (18, 22, 23)
+WRIST_CUE_STATE_NAMES = ('initial_cylinder_forward_in_current_base_frame_m',
+                         'initial_cylinder_left_in_current_base_frame_m', 'initial_rgb_detection_valid')
 
 
 def require(condition, message):
@@ -50,7 +62,8 @@ def joint_state_width(layout):
     items = list(layout.items())
     if items == list(JOINT_STATE_LAYOUT.items()):
         return JOINT_STATE_WIDTH
-    require(items == list(JOINT_SERVO_STATE_LAYOUT.items()), 'Unsupported cylinder joint state layout')
+    require(items in (list(JOINT_SERVO_STATE_LAYOUT.items()), list(JOINT_WRIST_CUE_STATE_LAYOUT.items())),
+            'Unsupported cylinder joint state layout')
     return JOINT_SERVO_STATE_WIDTH
 
 
@@ -86,6 +99,25 @@ def with_joint_servo_state(observation, previous_command):
             'Expected measured joint state and a matching previous command')
     tracking_error = command[..., :7] - state[..., :7]
     return np.concatenate((state, tracking_error, command[..., 7:8]), axis=-1)
+
+
+def with_joint_wrist_cue_state(servo_state, initial_world_xy):
+    """Project the initial RGB measurement into the current robot base frame."""
+    state = np.asarray(servo_state, dtype=np.float32).copy()
+    require(state.ndim > 0 and state.shape[-1] == JOINT_SERVO_STATE_WIDTH and np.isfinite(state).all(),
+            'Expected the current measured servo state')
+    if initial_world_xy is None:
+        state[..., WRIST_CUE_STATE_INDICES] = 0.
+        return state
+    xy = np.asarray(initial_world_xy, dtype=np.float64)
+    require(xy.shape == (2,) and np.isfinite(xy).all(), 'Invalid initial wrist location')
+    pose = state[..., 15:18].astype(np.float64)
+    dx, dy = np.moveaxis(xy - pose[..., :2], -1, 0)
+    c, s = np.cos(pose[..., 2]), np.sin(pose[..., 2])
+    state[..., 18] = c * dx + s * dy
+    state[..., 22] = -s * dx + c * dy
+    state[..., 23] = 1.
+    return state
 
 
 def relative_joint_chunks(states, actions, horizon):

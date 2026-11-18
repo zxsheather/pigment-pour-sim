@@ -5,8 +5,11 @@ from pathlib import Path
 
 import mujoco
 import numpy as np
+import imageio.v2 as imageio
 
-from cylinder_joint_actions import APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, require, robot_joint_observation
+from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_STATE_WIDTH, require,
+                                    robot_joint_observation, with_joint_wrist_cue_state)
+from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
 
 
@@ -44,6 +47,10 @@ def measure_rollout(folder, *, pose_breakdown=False):
     env = CylinderEnv(case['volume'], friction_scale=case.get('friction_scale', 1),
                       mass_scale=case.get('mass_scale', 1), **summary['controller']['environment'])
     directory = folder / 'episode_000'
+    wrist_cue = episode.get('initial_wrist_cue')
+    wrist_rgb = directory / 'initial_right_wrist_1024.png'
+    if wrist_cue is not None and episode['exact_input_images_recorded']:
+        require(wrist_rgb.is_file(), 'Recorded wrist cue is missing its source image')
     try:
         env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
                              yaw_jitter=case.get('yaw_jitter', 0))
@@ -68,6 +75,11 @@ def measure_rollout(folder, *, pose_breakdown=False):
                                                     physics['hold_targets'][i].tolist()))
                         env.applied_action[:] = physics['applied_base_action'][i]
                     reproduced = robot_joint_observation(env, servo_state=servo_state)
+                    if wrist_cue is not None:
+                        if i == 0 and wrist_rgb.is_file():
+                            require(cue_from_wrist_rgb(env, imageio.imread(wrist_rgb)) == wrist_cue,
+                                    'Archived wrist image or calibration does not reproduce the model input')
+                        reproduced = with_joint_wrist_cue_state(reproduced, wrist_cue['world_xy_m'])
                     np.testing.assert_array_equal(reproduced, observed)
                 else:
                     reproduced = env.state_vector()
