@@ -239,6 +239,10 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 V4 的第 128 步权重已完成保存、核验与 CUDA 加载。相对第 512 步父权重，258 个动作和状态张量发生更新，581 个冻结张量保持一致。实际闭环已开始。确认权重加载后清理了 V2 已淘汰的第 128 步权重和未被继承的第 512 步优化器，释放 9.86 GiB，保留第 512 步父权重、V4 续训文件和四次完整闭环记录。[权重核验](experiments/2026-11-18-joint-reopen-v4-step128-weight-audit.json) · [模型加载](experiments/2026-11-18-joint-reopen-v4-step128-model-load.json) · [清理记录](experiments/2026-11-18-joint-reopen-v4-first-load-cleanup.json)
 
+V4 第 128 步在 25 mL／seed 100 完整闭环中于 90 秒超时。复算 225 个仿真快照，夹爪到预定抓取点最近 22.13 cm，出现在 7.60 秒，当时指间开度为 39.35 mm。全程承载接触和抬升均为零，底盘最终后退 40.69 cm。当前主要失败出现在抓取之前。[首轮真实闭环](experiments/2026-11-18-joint-reopen-v4-step128-closed-loop.json) · [抓取点距离](experiments/2026-11-18-joint-reopen-v4-step128-approach.json)
+
+同样的 13 帧配对检查已完成。三条重新张爪起点的开度误差分别为 −17.76、−24.60、−17.94 mm，父模型对应为 −12.35、−18.35、−20.33 mm，两条偏差扩大，一条缩小。正式闭环继续运行第 256 步的检查。待前两次均确认超过 5 cm、无承载接触且无抬升，调度任务才会切换到提高抓取过渡抽样占比的 V5。保留当前权重与物理门槛用于比较，切换后沿用第 256 步权重。[配对结果](experiments/2026-11-18-joint-reopen-v4-step128-comparison.json) · [切换脚本](experiments/2026-11-18-joint-grasp-sampling-v5-transition.py)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：
