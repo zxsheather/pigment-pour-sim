@@ -1,0 +1,334 @@
+{
+  "kind": "a6000_model_rollouts_and_teacher_only_speed_check",
+  "actual_model_closed_loop": {
+    "cylinder-joint-single-contact-focus-bc-v11-a6000": [
+      {
+        "step": 384,
+        "success": 0,
+        "seconds": 14.700000000006474,
+        "gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.040928666317187945,
+          "camera_distance_m": 0.6923556586880075,
+          "linear_speed_m_s": 8.512821018569203e-14,
+          "angular_speed_rad_s": 0.0
+        },
+        "nearest_grasp_m": 0.24418385982764026,
+        "max_loaded_contacts": 0,
+        "collision": {
+          "kind": "recorded_joint_terminal_collision_replay",
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-focus-bc-v11-a6000-step384-single",
+          "snapshot_index": 36,
+          "source_time_s": 14.400000000006107,
+          "replayed_frames": 6,
+          "final_time_s": 14.700000000006474,
+          "joint_observations_exact": true,
+          "recorded_failure_reason": "collision:[['', ''], ['', '']]",
+          "penetrating_contacts": [
+            {
+              "geom_ids": [
+                141,
+                87
+              ],
+              "geom_names": [
+                "",
+                ""
+              ],
+              "body_names": [
+                "target_tray",
+                "right_arm_gripper_base_link"
+              ],
+              "penetration_m": 0.0020348906469425496
+            },
+            {
+              "geom_ids": [
+                142,
+                87
+              ],
+              "geom_names": [
+                "",
+                ""
+              ],
+              "body_names": [
+                "target_tray",
+                "right_arm_gripper_base_link"
+              ],
+              "penetration_m": 0.0020348906469425583
+            }
+          ],
+          "physics_timestep_s": 0.0005,
+          "solver_impratio": 10.0,
+          "neural_weights_loaded": false,
+          "independent_cases_read": false,
+          "learned_policy_task_success_measured": false
+        },
+        "held_lift_audit": null,
+        "updated_action_tensors": 258,
+        "changed_frozen_tensors": 0,
+        "checkpoint_sha256": "3bc5fa3a33434331eb854a32751046ba4f2ebb3c1b1eed577752753515e705cc"
+      },
+      {
+        "step": 512,
+        "success": 0,
+        "seconds": 17.45000000000468,
+        "gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.027247144445367744,
+          "camera_distance_m": 0.6840477522532549,
+          "linear_speed_m_s": 0.013271410908221369,
+          "angular_speed_rad_s": 0.3118785973823849
+        },
+        "nearest_grasp_m": 0.034691045605739594,
+        "max_loaded_contacts": 1,
+        "collision": {
+          "kind": "recorded_joint_terminal_collision_replay",
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-focus-bc-v11-a6000-step512-single",
+          "snapshot_index": 43,
+          "source_time_s": 17.200000000005264,
+          "replayed_frames": 5,
+          "final_time_s": 17.45000000000468,
+          "joint_observations_exact": true,
+          "recorded_failure_reason": "collision:[['', '']]",
+          "penetrating_contacts": [
+            {
+              "geom_ids": [
+                142,
+                80
+              ],
+              "geom_names": [
+                "",
+                ""
+              ],
+              "body_names": [
+                "target_tray",
+                "right_arm_link3"
+              ],
+              "penetration_m": 0.0012434298080813136
+            }
+          ],
+          "physics_timestep_s": 0.0005,
+          "solver_impratio": 10.0,
+          "neural_weights_loaded": false,
+          "independent_cases_read": false,
+          "learned_policy_task_success_measured": false
+        },
+        "held_lift_audit": {
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-focus-bc-v11-a6000-step512-single",
+          "terminal_reason": "collision:[['', '']]",
+          "raw_peak": {
+            "height_m": 0.019177872817254693,
+            "time_s": 17.4000000000048,
+            "loaded_fingers": 0,
+            "established_hold": false,
+            "tilt_rad": 0.3311716581643204
+          },
+          "max_supported_lift_m": 0.0,
+          "established_hold": false,
+          "loaded_finger_counts_after_command": [
+            326,
+            23,
+            0
+          ],
+          "observations_and_bounded_commands_exact": true,
+          "checkpoint_inference_rerun": false
+        },
+        "updated_action_tensors": 258,
+        "changed_frozen_tensors": 0,
+        "checkpoint_sha256": "bd9f00cdb6178c6a1644fe36e5fc65697f4ff20937db1927ad4fe65b5c5a518b"
+      }
+    ],
+    "cylinder-joint-v10-pregrasp-correction-bc-v12-a6000": [
+      {
+        "step": 128,
+        "success": 0,
+        "seconds": 11.900000000003052,
+        "gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": -0.005172763516160528,
+          "camera_distance_m": 0.6488400428734187,
+          "linear_speed_m_s": 8.511083233862495e-14,
+          "angular_speed_rad_s": 0.0
+        },
+        "nearest_grasp_m": 0.17027621328262,
+        "max_loaded_contacts": 0,
+        "collision": {
+          "kind": "recorded_joint_terminal_collision_replay",
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v10-pregrasp-correction-bc-v12-a6000-step128-single",
+          "snapshot_index": 29,
+          "source_time_s": 11.600000000002685,
+          "replayed_frames": 6,
+          "final_time_s": 11.900000000003052,
+          "joint_observations_exact": true,
+          "recorded_failure_reason": "collision:[['', '']]",
+          "penetrating_contacts": [
+            {
+              "geom_ids": [
+                142,
+                87
+              ],
+              "geom_names": [
+                "",
+                ""
+              ],
+              "body_names": [
+                "target_tray",
+                "right_arm_gripper_base_link"
+              ],
+              "penetration_m": 0.0012057827183216078
+            }
+          ],
+          "physics_timestep_s": 0.0005,
+          "solver_impratio": 10.0,
+          "neural_weights_loaded": false,
+          "independent_cases_read": false,
+          "learned_policy_task_success_measured": false
+        },
+        "held_lift_audit": {
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v10-pregrasp-correction-bc-v12-a6000-step128-single",
+          "terminal_reason": "collision:[['', '']]",
+          "raw_peak": {
+            "height_m": 0.0,
+            "time_s": 0.0,
+            "loaded_fingers": 0,
+            "established_hold": false
+          },
+          "max_supported_lift_m": 0.0,
+          "established_hold": false,
+          "loaded_finger_counts_after_command": [
+            238,
+            0,
+            0
+          ],
+          "observations_and_bounded_commands_exact": true,
+          "checkpoint_inference_rerun": false
+        },
+        "updated_action_tensors": 258,
+        "changed_frozen_tensors": 0,
+        "checkpoint_sha256": "cbf1e5f858e66a4a239a04df24d9741993a5ffd4f9d50141376b83efc0e6267a"
+      }
+    ]
+  },
+  "teacher_approach_speed": {
+    "kind": "teacher_approach_speed_ablation",
+    "results": [
+      {
+        "case": "volume_21_seed_9083",
+        "snapshot": 3,
+        "source_step": 1024,
+        "approach_scale": 1.35,
+        "raw": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v10-pregrasp-approach-speed-training/volume_21_seed_9083_snapshot_03",
+        "qualifies": true,
+        "teacher_exit": 0,
+        "teacher_failure": null,
+        "reconstruct_exit": 0,
+        "check_exit": 0,
+        "normalization_covers_all_labels": true,
+        "max_h32_label_excess": 0.0,
+        "replay_exit": 0,
+        "teacher_decoder_replay": true,
+        "geometry_passed": true,
+        "max_slip_m": 0.008987452227920993
+      },
+      {
+        "case": "volume_31_seed_9086",
+        "snapshot": 2,
+        "source_step": 512,
+        "approach_scale": 1.55,
+        "raw": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v10-pregrasp-approach-speed-training/volume_31_seed_9086_snapshot_02",
+        "qualifies": false,
+        "teacher_exit": 0,
+        "teacher_failure": null,
+        "reconstruct_exit": 0,
+        "check_exit": 0,
+        "normalization_covers_all_labels": false,
+        "max_h32_label_excess": 0.002774550858885047
+      },
+      {
+        "case": "volume_31_seed_9086",
+        "snapshot": 3,
+        "source_step": 512,
+        "approach_scale": 1.55,
+        "raw": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v10-pregrasp-approach-speed-training/volume_31_seed_9086_snapshot_03",
+        "qualifies": true,
+        "teacher_exit": 0,
+        "teacher_failure": null,
+        "reconstruct_exit": 0,
+        "check_exit": 0,
+        "normalization_covers_all_labels": true,
+        "max_h32_label_excess": 0.0,
+        "replay_exit": 0,
+        "teacher_decoder_replay": true,
+        "geometry_passed": true,
+        "max_slip_m": 0.00872435138683065
+      }
+    ],
+    "learned_model_test": false
+  },
+  "teacher_rejections_before_decoder": [
+    {
+      "attempt": "volume_21_seed_9083-snapshot-03",
+      "h32_excess": 0.0010304577474016668,
+      "out_of_range_dimensions": [
+        5
+      ],
+      "joint_decoder_started": false
+    },
+    {
+      "attempt": "volume_31_seed_9086-snapshot-02",
+      "h32_excess": 0.01313117215177044,
+      "out_of_range_dimensions": [
+        5
+      ],
+      "joint_decoder_started": false
+    },
+    {
+      "attempt": "volume_31_seed_9086-snapshot-03",
+      "h32_excess": 0.011155433766543862,
+      "out_of_range_dimensions": [
+        5
+      ],
+      "joint_decoder_started": false
+    }
+  ],
+  "v11_512_single_contact_precommand_frames": [
+    146,
+    148,
+    149,
+    197,
+    209,
+    210,
+    212,
+    221,
+    226,
+    227,
+    241,
+    276,
+    279,
+    283,
+    285,
+    288,
+    298,
+    308,
+    318,
+    337,
+    339,
+    340,
+    343
+  ],
+  "independent_cases_read": false
+}
