@@ -231,6 +231,12 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 第 512 步在 7.60 秒处距离预定抓取点 14.53 cm，15.85 秒碰撞结束。四次正式闭环没有承载接触、夹持或抬升。切换任务保留已审计的第 512 步权重，确认旧训练退出后，从该权重启动 59 条数据版。新一轮沿用相同几何、9 维动作、归一化与闭环门槛，已通过加载器检查并完成最初的反向传播。新版首次真实闭环安排在第 128 步。[第 512 步正式结果](experiments/2026-11-18-joint-grasp-recovery-v2-step512-closed-loop.json) · [距离记录](experiments/2026-11-18-joint-grasp-recovery-v2-step512-approach-distance.json) · [切换记录](experiments/2026-11-18-joint-reopen-v4-transition.json) · [新训练配置](experiments/2026-11-18-joint-reopen-v4-train.yml) · [首轮反向传播](experiments/2026-11-18-joint-reopen-v4-first-update.json)
 
+用真实加载子集的五条示范、15 帧，在 CPU 对比训练 collator 和正式推理预处理。三路 RGB 张量、图像网格、token、attention、18 维状态及两组填充掩码逐帧一致，MoE 路由一致。该检查覆盖三条张爪纠正示范的首、中、末帧。[输入一致性记录](experiments/2026-11-18-joint-reopen-v4-input-parity.json)
+
+同一 59 条数据准备了一套候选事件抽样。原 95% 训练子集中，60 个重新张爪锚点来自 6 条示范，361 个进入闭爪窗口的锚点来自 54 条示范。新抽样把两组预期质量由 3.41% 和 1.18% 分别提高到 8% 和 6%，其他示范帧仍保留正权重和组内比例。阶段只用于离线计算权重。原数据不复制，候选权重通过了实际 Wall 加载器检查，V4 训练仍使用原配比。[候选抽样审计](experiments/2026-11-18-joint-grasp-sampling-v5-weights.json) · [加载器检查](experiments/2026-11-18-joint-grasp-sampling-v5-loader.json)
+
+从第 512 步父模型取得 13 个配对教师观测的预测，覆盖完整示范和三个新恢复起点。三个恢复起点的教师前 8 帧平均目标开度为 47.0、56.4、48.8 mm，父模型分别输出 34.7、38.1、28.5 mm。调度任务已启动，等待 V4 首轮闭环正式结束。届时先测量抓取距离，再在空档对相同的图像和机器人状态做新版预测。如果实际单例成功，则由原验收程序接续原 8 组、开发 12 组及独立 12 组。[父模型预测](experiments/2026-11-18-joint-reopen-v4-teacher-parent512.json) · [配对帧](experiments/2026-11-18-joint-reopen-v4-teacher-frames.json) · [调度脚本](experiments/2026-11-18-joint-reopen-v4-first-probe-job.py)
+
 ## 完整神经网络候选的验收
 
 新增 `simulation/evaluate_cylinder_joint_candidate.py`，仅在集成训练器产生真实完整单例成功的 `candidate-ready.json` 后使用：
