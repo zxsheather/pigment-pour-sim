@@ -14,7 +14,19 @@ import time
 
 import yaml
 
+from audit_cylinder_grasp_approach import measure_rollout
 from cylinder_joint_actions import JOINT_ACTION_LAYOUT, JOINT_STATE_LAYOUT, require
+
+
+def development_score(successes, case, approach):
+    gates = case['final_task_gates']
+    stages = ('held', 'lifted', 'retreated', 'close_to_head')
+    completed = next((i for i, gate in enumerate(stages) if not gates[gate]), len(stages))
+    if completed == 0:
+        return (successes, completed, approach['maximum_recorded_loaded_contacts'],
+                -approach['nearest']['grasp_distance_m'])
+    return (successes, completed, -case['max_slip_m'],
+            min(.15, case['max_lifted_m']) if completed >= 2 else 0.)
 
 
 def main():
@@ -121,16 +133,16 @@ def main():
             require(report['evaluation_complete'] and report['action_space'] == 'joint'
                     and report['total'] == 1 and report['gripper_open_confirmations'] == 0,
                     'Incomplete or unexpected policy evaluation')
-            case = report['episodes'][0];gates = case['final_task_gates']
-            score = (int(bool(report['successes'])),
-                     sum(bool(gates.get(k, False)) for k in ('held', 'lifted', 'retreated', 'close_to_head')),
-                     min(.20, max(0., gates.get('base_retreat_m', 0.))) if gates.get('lifted', False) else 0.,
-                     min(.15, case['max_lifted_m']), -case['max_slip_m'])
+            approach = measure_rollout(output)
+            (output/'grasp-approach-audit.json').write_text(json.dumps(approach, indent=2)+'\n')
+            score = development_score(report['successes'], report['episodes'][0], approach)
             if best_score is None or score > best_score:
                 best, best_score = checkpoint, score
             visited.append(checkpoint)
             (run/'best-development-case.json').write_text(json.dumps(dict(model=str(best), score=best_score,
-                scope='One development case only; all full-suite gates still required'), indent=2)+'\n')
+                scope='One development case only; all full-suite gates still required',
+                ranking='Success, sequential task stages, then contacts and grasp distance before holding or slip and lift after holding'),
+                indent=2)+'\n')
             active = subprocess.run(['ps', '-eo', 'args='], capture_output=True, text=True).stdout
             for previous in visited[:-1]:
                 if any('python' in line and str(previous) in line for line in active.splitlines()):continue
