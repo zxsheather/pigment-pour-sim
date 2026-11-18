@@ -1,0 +1,84 @@
+"""Add opt-in cylinder wrist supervision to an isolated Wall-X training copy."""
+import argparse
+import ast
+import hashlib
+import json
+from pathlib import Path
+
+
+PROCESSOR = 'wall_x/model/core/action/processor.py'
+MIXIN = 'wall_x/model/core/vla_mixin.py'
+MODEL = 'wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl_act.py'
+HELPER = 'wall_x/model/core/action/cylinder_wrist_pose_loss.py'
+EDITS = {
+    PROCESSOR: (
+        ('import torch\n', 'import torch\n\nfrom .cylinder_wrist_pose_loss import wrist_pose_auxiliary_loss\n'),
+        ('        flow_loss_mask=None,\n    ):\n        with torch.autocast',
+         '        flow_loss_mask=None,\n        proprioception=None,\n    ):\n        with torch.autocast'),
+        ('            if dof_mask is not None:\n                dof_mask = dof_mask.reshape',
+         '            wrist_config = getattr(self.config, "joint_wrist_pose_loss", None)\n'
+         '            if wrist_config is not None:\n'
+         '                loss = loss + wrist_pose_auxiliary_loss(x_pred, action_chunk, proprioception, wrist_config)\n\n'
+         '            if dof_mask is not None:\n                dof_mask = dof_mask.reshape'),
+    ),
+    MIXIN: (
+        ('                    action_hidden_states, flow, action_chunk, dof_mask, flow_loss_mask\n',
+         '                    action_hidden_states, flow, action_chunk, dof_mask, flow_loss_mask,\n'
+         '                    proprioception=kwargs.get("proprioception"),\n'),
+    ),
+    MODEL: (
+        ('            flow_loss_mask=flow_loss_mask,\n            _lm_loss_mask=_lm_loss_mask,\n',
+         '            flow_loss_mask=flow_loss_mask,\n            _lm_loss_mask=_lm_loss_mask,\n'
+         '            proprioception=proprioception,\n'),
+    ),
+}
+
+
+def digest(source):
+    return hashlib.sha256(source.encode()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--wall-root', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    root = args.wall_root.resolve()
+    helper = root / HELPER
+    if args.output.exists() or helper.exists():
+        raise ValueError('Expected a new patch report and Wall-X training copy')
+    changes, source_audit = {}, {}
+    for name, pairs in EDITS.items():
+        file = root / name
+        original = file.read_text()
+        updated = original
+        for before, after in pairs:
+            if updated.count(before) != 1:
+                raise ValueError(f'Unexpected pinned Wall-X source for wrist supervision: {name}')
+            updated = updated.replace(before, after, 1)
+        ast.parse(updated)
+        changes[file] = updated
+        source_audit[name] = dict(before_sha256=digest(original), after_sha256=digest(updated))
+    module = Path(__file__).with_name('cylinder_wrist_pose_loss.py').read_text()
+    ast.parse(module)
+    changes[helper] = module
+    source_audit[HELPER] = dict(after_sha256=digest(module))
+
+    temporary = {}
+    for file, text in changes.items():
+        path = file.with_suffix('.wrist-pose.tmp')
+        with path.open('x') as f:
+            f.write(text)
+        temporary[file] = path
+    for file, path in temporary.items():
+        path.replace(file)
+    report = dict(kind='wall_x_opt_in_wrist_pose_loss', training_wall_root=str(root), files=source_audit,
+                  training_config_field='joint_wrist_pose_loss', uses_only_arm_state_and_joint_targets=True,
+                  serving_code_modified=False, retained_existing_flow_and_gripper_losses=True)
+    with args.output.open('x') as f:
+        json.dump(report, f, indent=2)
+        f.write('\n')
+
+
+if __name__ == '__main__':
+    main()
