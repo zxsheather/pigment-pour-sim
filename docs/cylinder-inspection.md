@@ -233,9 +233,11 @@ Wall 首轮训练采用官方 Wall-OSS 原权重、冻结视觉语言主干、�
 
 用真实加载子集的五条示范、15 帧，在 CPU 对比训练 collator 和正式推理预处理。三路 RGB 张量、图像网格、token、attention、18 维状态及两组填充掩码逐帧一致，MoE 路由一致。该检查覆盖三条张爪纠正示范的首、中、末帧。[输入一致性记录](experiments/2026-11-18-joint-reopen-v4-input-parity.json)
 
-同一 59 条数据准备了一套候选事件抽样。原 95% 训练子集中，60 个重新张爪锚点来自 6 条示范，361 个进入闭爪窗口的锚点来自 54 条示范。新抽样把两组预期质量由 3.41% 和 1.18% 分别提高到 8% 和 6%，其他示范帧仍保留正权重和组内比例。阶段只用于离线计算权重。原数据不复制，候选权重通过了实际 Wall 加载器检查，V4 训练仍使用原配比。[候选抽样审计](experiments/2026-11-18-joint-grasp-sampling-v5-weights.json) · [加载器检查](experiments/2026-11-18-joint-grasp-sampling-v5-loader.json)
+同一 59 条数据准备了一套候选事件抽样。原 95% 训练子集中，60 个重新张爪锚点来自 6 条示范，361 个进入闭爪窗口的锚点来自 54 条示范。新抽样把两组预期占比由 3.41% 和 1.18% 分别提高到 8% 和 6%，其他示范帧仍保留正权重和组内比例。复用实际采样器和种子重建第一轮的前 512 次抽取，两组次数分别由 12、5 增至 48、21。次数是离线重建结果。阶段只用于离线计算权重。原数据不复制，候选权重通过了实际 Wall 加载器检查，V4 训练仍使用原配比。[候选抽样审计](experiments/2026-11-18-joint-grasp-sampling-v5-weights.json) · [采样前缀](experiments/2026-11-18-joint-grasp-sampling-v5-initial-draws.json) · [加载器检查](experiments/2026-11-18-joint-grasp-sampling-v5-loader.json)
 
 从第 512 步父模型取得 13 个配对教师观测的预测，覆盖完整示范和三个新恢复起点。三个恢复起点的教师前 8 帧平均目标开度为 47.0、56.4、48.8 mm，父模型分别输出 34.7、38.1、28.5 mm。调度任务已启动，等待 V4 首轮闭环正式结束。届时先测量抓取距离，再在空档对相同的图像和机器人状态做新版预测。如果实际单例成功，则由原验收程序接续原 8 组、开发 12 组及独立 12 组。[父模型预测](experiments/2026-11-18-joint-reopen-v4-teacher-parent512.json) · [配对帧](experiments/2026-11-18-joint-reopen-v4-teacher-frames.json) · [调度脚本](experiments/2026-11-18-joint-reopen-v4-first-probe-job.py)
+
+V4 的第 128 步权重已完成保存、核验与 CUDA 加载。相对第 512 步父权重，258 个动作和状态张量发生更新，581 个冻结张量保持一致。实际闭环已开始。确认权重加载后清理了 V2 已淘汰的第 128 步权重和未被继承的第 512 步优化器，释放 9.86 GiB，保留第 512 步父权重、V4 续训文件和四次完整闭环记录。[权重核验](experiments/2026-11-18-joint-reopen-v4-step128-weight-audit.json) · [模型加载](experiments/2026-11-18-joint-reopen-v4-step128-model-load.json) · [清理记录](experiments/2026-11-18-joint-reopen-v4-first-load-cleanup.json)
 
 ## 完整神经网络候选的验收
 
