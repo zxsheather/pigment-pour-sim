@@ -7,7 +7,7 @@ import mujoco
 import numpy as np
 from PIL import Image, ImageDraw
 
-from simulation.motion.pour_motion import BottlePose, PourMotion
+from simulation.motion.motion import BottlePose, PourMotion
 from simulation.world_model.water import PourWater
 from simulation.world_model.paths import ROOT, SCENE_CONFIG
 from simulation.world_model.collision import workspace_contacts
@@ -29,7 +29,8 @@ def main():
 
     motion = PourMotion(model)
     water = PourWater(model, data, config)
-    start = motion.observe(data)
+    start = BottlePose(tuple(data.site("held_bottle_mouth").xpos),
+                       tuple(data.body("held_water_bottle").xquat))
     height = water.cylinder[2] + .195
     raised = BottlePose((*start.mouth_xyz_m[:2], height), start.bottle_quat_wxyz)
     # Aim slightly upstream of the rim center to allow for the falling stream's
@@ -46,6 +47,9 @@ def main():
     stride = max(1, round(.05 / dt))
     with mujoco.Renderer(model, width=720, height=480) as renderer:
         def step(label, record):
+            result = motion.update(dt, data)
+            if result.status == "failed":
+                raise RuntimeError(f"{label}: {result.reason}")
             water.apply_load(data)
             mujoco.mj_step(model, data)
             mujoco.mj_forward(model, data)
@@ -65,9 +69,10 @@ def main():
                 frames.append(frame)
 
         def move(label, goal, duration=1.6):
-            refs = motion.plan(data, goal, duration)
+            result = motion.request_move(goal, duration, data)
+            if result.status != "accepted":
+                raise RuntimeError(f"{label}: {result.reason}")
             for i in range(round((duration + .65) / dt)):
-                motion.command(data, refs, (i + 1) * dt / duration)
                 step(label, i % stride == 0)
             print(f"{label}: {water.collected_ml:.2f} mL collected, "
                   f"{water.spilled_ml:.2f} mL spilled")

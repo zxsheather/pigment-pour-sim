@@ -4,7 +4,7 @@ import mujoco
 import numpy as np
 from PIL import Image, ImageDraw
 
-from simulation.motion.pour_motion import BottlePose, PourMotion
+from simulation.motion.motion import BottlePose, PourMotion
 from simulation.benchmarks.setup_pour_pose import IDLE_ARM_JOINTS
 from simulation.world_model.paths import ROOT
 from simulation.world_model.collision import workspace_contacts
@@ -32,7 +32,8 @@ def main():
         max_idle_drift = max(max_idle_drift, check_idle_arm())
     mujoco.mj_forward(model, data)
 
-    start = motion.observe(data)
+    start = BottlePose(tuple(data.site("held_bottle_mouth").xpos),
+                       tuple(data.body("held_water_bottle").xquat))
     cylinder = data.site("cylinder_mouth").xpos.copy()
     upright = start.bottle_quat_wxyz
     clear_height = cylinder[2] + .195
@@ -46,14 +47,10 @@ def main():
 
     # A direct horizontal move at the loaded starting height would hit the rim.
     low_target = BottlePose((*cylinder[:2], start.mouth_xyz_m[2]), upright)
-    try:
-        motion.plan(data, low_target, 1.5)
-    except ValueError as error:
-        if "contacts the workspace" not in str(error):
-            raise
-        print("Verified: rejected a direct move through the cylinder")
-    else:
-        raise RuntimeError("Motion planner accepted a path through the cylinder")
+    result = motion.request_move(low_target, 1.5, data)
+    if result.status != "rejected" or "contacts the workspace" not in result.reason:
+        raise RuntimeError(f"Expected rejection for a path through the cylinder: {result}")
+    print("Verified: rejected a direct move through the cylinder")
 
     frames = []
     frame_stride = max(1, round(.08 / timestep))
@@ -63,13 +60,23 @@ def main():
             ("Move above the cylinder", over_rim),
             ("Tilt 35 degrees", tip),
             ("Return upright", over_rim),
+            ("Begin another tilt", tip),
+            ("Interrupt tilt and return upright", over_rim),
             ("Retract", high_start),
             ("Lower to starting pose", start),
         ):
             duration = 1.6
-            references = motion.plan(data, target, duration)
-            for step in range(round((duration + .8) / timestep)):
-                motion.command(data, references, (step + 1) * timestep / duration)
+            result = motion.request_move(target, duration, data)
+            if result.status != "accepted":
+                raise RuntimeError(f"{label}: {result.reason}")
+            interrupted = label == "Begin another tilt"
+            run_time = duration / 2 if interrupted else duration + .8
+            for step in range(round(run_time / timestep) + 1):
+                result = motion.update(timestep, data)
+                if result.status == "failed":
+                    raise RuntimeError(f"{label}: {result.reason}")
+                if result.status == "reached":
+                    break
                 mujoco.mj_step(model, data)
                 max_idle_drift = max(max_idle_drift, check_idle_arm())
                 mujoco.mj_forward(model, data)
@@ -81,10 +88,17 @@ def main():
                     overlay = ImageDraw.Draw(frame)
                     overlay.rectangle((8, 8, 290, 48), fill="#17242b")
                     overlay.text((16, 14), label, fill="white")
-                    height = (data.site(motion.mouth).xpos[2] - cylinder[2]) * 100
+                    height = (data.site("held_bottle_mouth").xpos[2] - cylinder[2]) * 100
                     overlay.text((16, 30), f"Bottle mouth above rim: {height:.1f} cm", fill="white")
                     frames.append(frame)
-            actual = motion.observe(data)
+            if interrupted:
+                if result.status != "executing":
+                    raise RuntimeError("Expected the tilt to be active at interruption")
+                continue
+            if result.status != "reached":
+                raise RuntimeError(f"{label}: expected to reach the target")
+            actual = BottlePose(tuple(data.site("held_bottle_mouth").xpos),
+                                tuple(data.body("held_water_bottle").xquat))
             position_error = np.linalg.norm(np.subtract(actual.mouth_xyz_m, target.mouth_xyz_m))
             rotation_error = np.empty(3)
             mujoco.mju_subQuat(rotation_error, np.array(target.bottle_quat_wxyz),
