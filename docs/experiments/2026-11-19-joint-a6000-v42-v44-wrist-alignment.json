@@ -1,6 +1,6 @@
 {
   "kind": "actual_wrist_alignment_corrections_and_increment_pose_supervision",
-  "observed_at": "2026-11-19T10:19:05+08:00",
+  "observed_at": "2026-11-19T10:32:04+08:00",
   "host": "4A6000",
   "root": "/data/hlou/pigment-pour-study",
   "official_parallel_finger_geometry_preserved": true,
@@ -2005,7 +2005,7 @@
     },
     "v43": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000",
-      "stage": "neural_evaluation_128",
+      "stage": "neural_evaluation_384",
       "driver": 976370,
       "live": true,
       "parent": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint",
@@ -2015,18 +2015,61 @@
         "grad_norm": 0.6135218143463135
       },
       "last_step": {
-        "step": 210,
-        "train_loss": 0.025530107039958238,
-        "grad_norm": 1.0719529032707213
+        "step": 430,
+        "train_loss": 0.019438775908201932,
+        "grad_norm": 1.3169069230556487
       },
       "native_data_passed": true,
       "weights_path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/checkpoints",
-      "evaluations": [],
-      "latest_step": null
+      "evaluations": [
+        {
+          "step": 128,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single/summary.json",
+          "nearest": {
+            "time_s": 25.999999999984755,
+            "grasp_distance_m": 0.08016861135707799,
+            "grasp_point_error_components_m": [
+              0.03098304734111755,
+              0.06377356993201969,
+              0.03741642423463362
+            ],
+            "aperture_m": 0.056094932556152347,
+            "base_retreat_m": 0.0788821189362855
+          },
+          "max_loaded_contacts": 1,
+          "held": false,
+          "success": false,
+          "terminal": "collision:[['right_left_official_collision_1_0', '']]",
+          "duration_s": 67.35000000013956,
+          "end_base_retreat_m": 0.29349338523722734
+        },
+        {
+          "step": 256,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step256-single/summary.json",
+          "nearest": {
+            "time_s": 14.000000000005619,
+            "grasp_distance_m": 0.23299289960910485,
+            "grasp_point_error_components_m": [
+              0.0470640671224193,
+              0.22808642053239941,
+              -0.006873836110373094
+            ],
+            "aperture_m": 0.06888693407177926,
+            "base_retreat_m": 0.011605060522912936
+          },
+          "max_loaded_contacts": 0,
+          "held": false,
+          "success": false,
+          "terminal": "timeout",
+          "duration_s": 90.00000000024771,
+          "end_base_retreat_m": 0.3148747689588578
+        }
+      ],
+      "latest_step": 256
     },
     "v44": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000",
-      "stage": "training",
+      "stage": "neural_evaluation_256",
       "driver": 1014471,
       "live": true,
       "parent": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint",
@@ -2036,14 +2079,36 @@
         "grad_norm": 0.3960530459880829
       },
       "last_step": {
-        "step": 60,
-        "train_loss": 0.014568840665742756,
-        "grad_norm": 1.170031076669693
+        "step": 300,
+        "train_loss": 0.015742396097630264,
+        "grad_norm": 1.1313183009624481
       },
       "native_data_passed": true,
       "weights_path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/checkpoints",
-      "evaluations": [],
-      "latest_step": null
+      "evaluations": [
+        {
+          "step": 128,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single/summary.json",
+          "nearest": {
+            "time_s": 8.399999999998775,
+            "grasp_distance_m": 0.34027243718271843,
+            "grasp_point_error_components_m": [
+              0.27180794901581695,
+              0.13559433240632743,
+              -0.1533621445382285
+            ],
+            "aperture_m": 0.05486622288823128,
+            "base_retreat_m": 0.003430225521673713
+          },
+          "max_loaded_contacts": 0,
+          "held": false,
+          "success": false,
+          "terminal": "collision:[['right_right_official_collision_1_0', 'tabletop_0']]",
+          "duration_s": 88.40000000024007,
+          "end_base_retreat_m": 0.14605963696932944
+        }
+      ],
+      "latest_step": 128
     }
   },
   "stage_code_sha256": {
@@ -2056,7 +2121,8 @@
     "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/prepare-train-v43.sh": "557b3ea59adc3f50fd70bbc8b5d5602a1ddc1dececb3cef30b91895cb9429f2f",
     "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teach-wrist-alignment.py": "e981c4e3b9fbd02125e2c7d5362fadbd5d69003ba5c8131b443b26b473b25ea8",
     "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/qualify-alignment.py": "75bc865b087cbf30a4235b126ebb0a79b005039ea7957c0e2877179d43aad188",
-    "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/prepare-train-v44.sh": "bd9c02923e324bf9769c7f701ebb66aa225c10b85de0d88e6b9f781523c7d824"
+    "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/prepare-train-v44.sh": "bd9c02923e324bf9769c7f701ebb66aa225c10b85de0d88e6b9f781523c7d824",
+    "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/reserve-wrist-forecast.py": "051786eea20869de03245a07199ef4f2a9f4c6286e6c1e732c9a5456199ffe3f"
   },
   "existing_default_teacher_regression": {
     "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-default-compatibility.json",
@@ -2106,6 +2172,46 @@
       "revised_nominal_mass": 0.09999999999999995,
       "relative_weights_preserved_within_each_group": true,
       "weights": "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/base-return-weights.npy"
+    }
+  },
+  "v43_first_weight_and_motion_proof": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/first-v43-evidence.json",
+    "result": {
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single/summary.json",
+      "episodes": 1,
+      "successes": 0,
+      "genuine_model_prediction_shape": [
+        169,
+        8,
+        26
+      ],
+      "checkpoint_sha256": "cd78a11ff2b82b636bb4c674167c6e794cb152d02a4af823b1c37c86ffc2600b",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "physical": {
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single",
+        "terminal_reason": "collision:[['right_left_official_collision_1_0', '']]",
+        "raw_peak": {
+          "height_m": 0.0009511504061474607,
+          "time_s": 34.099999999980795,
+          "loaded_fingers": 1,
+          "established_hold": false,
+          "tilt_rad": 0.02812376828699887
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          1337,
+          10,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      }
     }
   },
   "v43_first_prediction_vs_teacher_probe": {
@@ -2453,6 +2559,763 @@
           "tip_rmse_m": 0.008880478268205167,
           "end_tip_error_m": 0.014228345339227734,
           "mean_orientation_error_deg": 1.6564350423308962
+        }
+      }
+    }
+  },
+  "v43_local_policy_recovery_comparison": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/summary.json",
+    "result": {
+      "kind": "paired_model_local_correction_diagnostic",
+      "short_horizon_s": 7.0,
+      "independent_cases_read": false,
+      "training_only": true,
+      "full_model_completion_measured": false,
+      "first_robot_observation_reproduced_exactly": true,
+      "parent": [
+        {
+          "seed": 861701,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/parent/seed-861701",
+          "old_snapshot_index": 30,
+          "start_clock_s": 12.000000000003174,
+          "duration_s": 7.0499999999977785,
+          "closest_grasp_error_m": 0.06562482595499283,
+          "contact_counts": [
+            103,
+            38,
+            0
+          ],
+          "held": false,
+          "early_terminal": "timeout"
+        },
+        {
+          "seed": 861704,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/parent/seed-861704",
+          "old_snapshot_index": 105,
+          "start_clock_s": 42.00000000001852,
+          "duration_s": 7.000000000033424,
+          "closest_grasp_error_m": 0.09244475369295907,
+          "contact_counts": [
+            140,
+            0,
+            0
+          ],
+          "held": false,
+          "early_terminal": "timeout"
+        },
+        {
+          "seed": 861706,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/parent/seed-861706",
+          "old_snapshot_index": 81,
+          "start_clock_s": 32.39999999997268,
+          "duration_s": 7.000000000033424,
+          "closest_grasp_error_m": 0.04486976919926811,
+          "contact_counts": [
+            136,
+            4,
+            0
+          ],
+          "held": false,
+          "early_terminal": "timeout"
+        }
+      ],
+      "fit": [
+        {
+          "seed": 861701,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/servo_wrist_loss/seed-861701",
+          "old_snapshot_index": 30,
+          "start_clock_s": 12.000000000003174,
+          "duration_s": 7.0499999999977785,
+          "closest_grasp_error_m": 0.06762592300409911,
+          "contact_counts": [
+            109,
+            32,
+            0
+          ],
+          "held": false,
+          "early_terminal": "timeout"
+        },
+        {
+          "seed": 861704,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/servo_wrist_loss/seed-861704",
+          "old_snapshot_index": 105,
+          "start_clock_s": 42.00000000001852,
+          "duration_s": 7.000000000033424,
+          "closest_grasp_error_m": 0.09244475369295907,
+          "contact_counts": [
+            140,
+            0,
+            0
+          ],
+          "held": false,
+          "early_terminal": "timeout"
+        },
+        {
+          "seed": 861706,
+          "folder": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/paired-local-corrections/servo_wrist_loss/seed-861706",
+          "old_snapshot_index": 81,
+          "start_clock_s": 32.39999999997268,
+          "duration_s": 3.100000000014802,
+          "closest_grasp_error_m": 0.03434344904301358,
+          "contact_counts": [
+            47,
+            15,
+            0
+          ],
+          "held": false,
+          "early_terminal": "collision:[['target_tray_floor', 'cylinder_base']]"
+        }
+      ]
+    }
+  },
+  "reserve_teacher_alternate_states": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/alternate-recovery-attempts.json",
+    "result": {
+      "training_only": true,
+      "independent_cases_read": false,
+      "included_in_v44": false,
+      "formal_model_success_measured": false,
+      "results": [
+        {
+          "seed": 861707,
+          "old_failed_snapshot": 85,
+          "usable_static_ik_candidates": 28,
+          "attempts": [
+            {
+              "snapshot": {
+                "index": 46,
+                "t": 18.400000000002468,
+                "distance_m": 0.12667388972106725,
+                "tool_error_m": [
+                  -0.009698958259370213,
+                  0.11972561783813926,
+                  -0.04022413428557451
+                ],
+                "error_world_m": [
+                  -0.0949962015232675,
+                  0.025927899534811786,
+                  -0.07968525622051151
+                ],
+                "base_xy_delta_m": [
+                  -1.4671583086434126e-05,
+                  0.018485132937418103
+                ],
+                "base_yaw_delta_deg": -0.5981717429944258,
+                "wrist_shaft_error_deg": 16.96066141648153,
+                "error_with_reset_base_rigid_pose_m": [
+                  -0.08825277166037804,
+                  0.040576372557589946,
+                  -0.07968525622051148
+                ],
+                "error_with_teacher_shaft_same_wrist_origin_m": [
+                  -0.06400392603885763,
+                  0.020926005514894375,
+                  -0.06684409034303118
+                ],
+                "contact": 0,
+                "forbidden": false,
+                "movement_m": 6.69117719821477e-05,
+                "object_upright": true,
+                "linear_speed": 8.505600972891485e-14,
+                "retreat_m": -0.018485132937418103,
+                "advance_static_ik_error": 3.096283780188182e-15,
+                "lift_static_ik_error": 7.152798787035304e-11
+              },
+              "returncode": 0,
+              "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+              "evidence": {
+                "attempts": [
+                  {
+                    "output": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+                    "read_lateral_m": 0.14,
+                    "exit_code": 0,
+                    "failure_reason": null
+                  }
+                ],
+                "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00"
+              }
+            }
+          ]
+        },
+        {
+          "seed": 861708,
+          "old_failed_snapshot": 118,
+          "usable_static_ik_candidates": 28,
+          "attempts": [
+            {
+              "snapshot": {
+                "index": 25,
+                "t": 10.00000000000073,
+                "distance_m": 0.10709234805394999,
+                "tool_error_m": [
+                  0.07001460360287141,
+                  0.0683358191984444,
+                  -0.04355389888998075
+                ],
+                "error_world_m": [
+                  -0.055666560435516946,
+                  0.06070147582718144,
+                  -0.06844951346349663
+                ],
+                "base_xy_delta_m": [
+                  -0.00012812097316350357,
+                  0.01043665658629328
+                ],
+                "base_yaw_delta_deg": 2.1851118436614647,
+                "wrist_shaft_error_deg": 7.732800700822056,
+                "error_with_reset_base_rigid_pose_m": [
+                  -0.07835043599181302,
+                  0.08336768303698205,
+                  -0.06844951346349659
+                ],
+                "error_with_teacher_shaft_same_wrist_origin_m": [
+                  -0.05710173638468086,
+                  0.05965570410930482,
+                  -0.08385646405797309
+                ],
+                "contact": 0,
+                "forbidden": false,
+                "movement_m": 6.69117719821477e-05,
+                "object_upright": true,
+                "linear_speed": 8.504935241780379e-14,
+                "retreat_m": -0.01043665658629328,
+                "advance_static_ik_error": 4.9537583786406804e-11,
+                "lift_static_ik_error": 1.343167910777303e-09
+              },
+              "returncode": 0,
+              "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+              "evidence": {
+                "attempts": [
+                  {
+                    "output": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+                    "read_lateral_m": 0.14,
+                    "exit_code": 0,
+                    "failure_reason": null
+                  }
+                ],
+                "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "reserve_certified_teacher_corrections": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/alternate-qualification.json",
+    "result": {
+      "kind": "verified_perception_conditioned_rollout_corrections",
+      "base_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-clearance-alignment-increment-prompt-v44",
+      "results": [
+        {
+          "seed": 861707,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+          "qualified": true,
+          "proof": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/verified-alternate-corrections/seed-861707/prepared/certification.json",
+          "training_arrays": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/verified-alternate-corrections/seed-861707/prepared/model_training_frames.npz",
+          "certification": {
+            "kind": "certified_on_policy_wrist_target_teacher_correction",
+            "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+            "source_model_episode": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step1024/model-visited-states/episode_002",
+            "volume_ml": 31.0,
+            "seed": 861707,
+            "snapshot": 46,
+            "source_prefix_seconds": 18.400000000002468,
+            "state_observations_exact_at_snapshot": true,
+            "earlier_rgb_sha256": {
+              "face_view": "3a78cc588afeb176ba3ec0377fe8be449a86e073aa2bc13ee2b194404bb90dca",
+              "right_wrist_view": "e08c709af6c3ef2003db9d50c666c35238aa71291ee4f9d9df528eb7c5ab6070"
+            },
+            "earlier_rgb_estimate": {
+              "world_xy_m": [
+                0.8895207106414309,
+                0.3088495668308225
+              ],
+              "method": "blue_bearings_and_scale_pair"
+            },
+            "estimator_used_object_truth": false,
+            "trajectory_sha256": "463cee7f91d5da6fcf8a7ce6e85ef554757513545f90bb81229c03f5b69d5ef1",
+            "frames": 614,
+            "approach_target_frames": 215,
+            "physically_replayed_frames": 585,
+            "geometry_audit_passed": true,
+            "teacher_full_task_succeeded": true,
+            "model_task_success_measured": false,
+            "max_slip_m": 0.009417807466892967,
+            "max_supported_lift_m": 0.11936550275223057,
+            "reading_error_ml": 0.06690140845070403,
+            "alignment_video": {
+              "face_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00/training_face_view.mp4",
+                "sha256": "5a1822d17fcf5b87a6b72b7a0725b2e6a6882e64e2629737ef459d8d9bd2dfb5",
+                "frames": 614
+              },
+              "left_wrist_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00/training_left_wrist_view.mp4",
+                "sha256": "fe39311d980b7279ff8353929fe1b6d7bf8b37b08be0202567f9c16147a687fa",
+                "frames": 614
+              },
+              "right_wrist_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00/training_right_wrist_view.mp4",
+                "sha256": "4b87512248906a4e4767a8c1ac2f579c5e21814ef684f7e08ad155423f434323",
+                "frames": 614
+              }
+            },
+            "independent_cases_read": false,
+            "wrist_alignment_recovery": {
+              "alignment_frames": 50,
+              "closure_frame": 193,
+              "start_grasp_error_m": 0.12667388972106725,
+              "closure_grasp_error_m": 5.0458087518815e-05
+            }
+          }
+        },
+        {
+          "seed": 861708,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+          "qualified": true,
+          "proof": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/verified-alternate-corrections/seed-861708/prepared/certification.json",
+          "training_arrays": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/verified-alternate-corrections/seed-861708/prepared/model_training_frames.npz",
+          "certification": {
+            "kind": "certified_on_policy_wrist_target_teacher_correction",
+            "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+            "source_model_episode": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step1024/model-visited-states/episode_003",
+            "volume_ml": 39.0,
+            "seed": 861708,
+            "snapshot": 25,
+            "source_prefix_seconds": 10.00000000000073,
+            "state_observations_exact_at_snapshot": true,
+            "earlier_rgb_sha256": {
+              "face_view": "6e6db28f36a0785d6fce1b975c85f662d641d86f7713c3f07f72a79c7062c5a0",
+              "right_wrist_view": "8e98304c04457052fd467998120dfceb0e8d91640ce0676f4d2ef9e0d834ce82"
+            },
+            "earlier_rgb_estimate": {
+              "world_xy_m": [
+                0.8671998786339561,
+                0.28788883626952244
+              ],
+              "method": "blue_bearings_and_scale_pair"
+            },
+            "estimator_used_object_truth": false,
+            "trajectory_sha256": "5d5f075eec7d9770a64d29a5a5d8a62e0cb8f55e32fa7e968cf1cac9a767277c",
+            "frames": 697,
+            "approach_target_frames": 212,
+            "physically_replayed_frames": 674,
+            "geometry_audit_passed": true,
+            "teacher_full_task_succeeded": true,
+            "model_task_success_measured": false,
+            "max_slip_m": 0.010421037880886466,
+            "max_supported_lift_m": 0.1193473368617487,
+            "reading_error_ml": 0.02409638554216542,
+            "alignment_video": {
+              "face_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00/training_face_view.mp4",
+                "sha256": "78929ac82a8791ff636108411e93aa28b1b2cb5b0f39c84531f7348cc9e555f5",
+                "frames": 697
+              },
+              "left_wrist_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00/training_left_wrist_view.mp4",
+                "sha256": "6f4aa2e1ba316c5fb2a4fd8d5409a8a92d27ff920b70e614ce3a04fc92dab112",
+                "frames": 697
+              },
+              "right_wrist_view": {
+                "path": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00/training_right_wrist_view.mp4",
+                "sha256": "e46c578e8bc340dc572b6c9c45687f5ad3573427681e62f8179a3ecf43061456",
+                "frames": 697
+              }
+            },
+            "independent_cases_read": false,
+            "wrist_alignment_recovery": {
+              "alignment_frames": 50,
+              "closure_frame": 190,
+              "start_grasp_error_m": 0.10709234805394999,
+              "closure_grasp_error_m": 4.816520517002689e-05
+            }
+          }
+        }
+      ],
+      "qualified_count": 2,
+      "new_frames": 1311,
+      "new_approach_target_frames": 427,
+      "independent_cases_read": false,
+      "neural_policy_success_measured": false
+    }
+  },
+  "v43_first_action_rate": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/requested-and-applied-first-increments.json",
+    "result": {
+      "kind": "model_increment_output_and_applied_rate",
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single",
+      "complete_frames": 1347,
+      "action_source_confirmed_in_grasp_audit": true,
+      "raw_clipped_frames": 0,
+      "raw_arm_increment_max_rad": 0.014982514083385468,
+      "decoded_max_delta_rad": 0.014982514083385468,
+      "applied_max_delta_rad": 0.014982514083385468,
+      "rate_limit_rad_per_tick": 0.0325,
+      "full_task_succeeded": false,
+      "independent_cases_read": false
+    }
+  },
+  "v43_first_wrist_target_coverage": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/first-active-target-bound-coverage.json",
+    "result": {
+      "kind": "first_model_raw_visual_wrist_observation_normalization_budget",
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single",
+      "active_rows": 169,
+      "over_bound_approach_observations": 0,
+      "over_bound_by_axis": [
+        0,
+        0,
+        0
+      ],
+      "first_over_bound_by_axis_s": [
+        null,
+        null,
+        null
+      ],
+      "neural_result_observed": true,
+      "independent_cases_read": false
+    }
+  },
+  "v44_first_action_rate": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/requested-and-applied-first-increments.json",
+    "result": {
+      "kind": "model_increment_output_and_applied_rate",
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single",
+      "complete_frames": 1768,
+      "action_source_confirmed_in_grasp_audit": true,
+      "raw_clipped_frames": 0,
+      "raw_arm_increment_max_rad": 0.013899916782975197,
+      "decoded_max_delta_rad": 0.013899916782975197,
+      "applied_max_delta_rad": 0.013899916782975197,
+      "rate_limit_rad_per_tick": 0.0325,
+      "full_task_succeeded": false,
+      "independent_cases_read": false
+    }
+  },
+  "v44_first_wrist_target_coverage": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/first-active-target-bound-coverage.json",
+    "result": {
+      "kind": "first_model_raw_visual_wrist_observation_normalization_budget",
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single",
+      "active_rows": 221,
+      "over_bound_approach_observations": 110,
+      "over_bound_by_axis": [
+        39,
+        0,
+        74
+      ],
+      "first_over_bound_by_axis_s": [
+        60.000000000104464,
+        null,
+        29.999999999975433
+      ],
+      "neural_result_observed": true,
+      "independent_cases_read": false
+    }
+  },
+  "v44_first_weight_and_motion_proof": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/first-v44-evidence.json",
+    "result": {
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single/summary.json",
+      "episodes": 1,
+      "successes": 0,
+      "genuine_model_prediction_shape": [
+        221,
+        8,
+        26
+      ],
+      "checkpoint_sha256": "d1dedd92f7848766d1be0e2337b23fcf6807809ffee01f126fff28b8162b7d20",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "physical": {
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single",
+        "terminal_reason": "collision:[['right_right_official_collision_1_0', 'tabletop_0']]",
+        "raw_peak": {
+          "height_m": 0.0,
+          "time_s": 0.0,
+          "loaded_fingers": 0,
+          "established_hold": false
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          1768,
+          0,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      }
+    }
+  },
+  "v44_matched_reserve_prediction_probe": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-clearance-approach-v44/reserve-wrist-prediction-probe-v43-v44-step128.json",
+    "result": {
+      "kind": "actual_inference_on_matched_wrist_alignment_observations",
+      "reserve_training_only_seeds": [
+        861707,
+        861708
+      ],
+      "absent_from_v43_and_v44_training": true,
+      "independent_cases_read": false,
+      "formal_acceptance_measured": false,
+      "geometry_decoder_uses_archived_servo_anchor": true,
+      "seeds": [
+        47,
+        229,
+        417
+      ],
+      "rows": [
+        {
+          "seed": 861707,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+          "start_frame": 68,
+          "phase": "wrist_clearance_align",
+          "v42_parent": [
+            {
+              "tip_rmse_m": 0.015588347242072427,
+              "end_tip_error_m": 0.02095907887599306,
+              "mean_orientation_error_deg": 4.5820104784936655
+            },
+            {
+              "tip_rmse_m": 0.01316410940261861,
+              "end_tip_error_m": 0.019789467663814304,
+              "mean_orientation_error_deg": 2.8371827687259596
+            },
+            {
+              "tip_rmse_m": 0.013575097068045772,
+              "end_tip_error_m": 0.021454741002168428,
+              "mean_orientation_error_deg": 3.5543383805145665
+            }
+          ],
+          "v43_step128": [
+            {
+              "tip_rmse_m": 0.016596043609703938,
+              "end_tip_error_m": 0.022938685236341443,
+              "mean_orientation_error_deg": 4.678738237844518
+            },
+            {
+              "tip_rmse_m": 0.014433792888847422,
+              "end_tip_error_m": 0.0221731115242723,
+              "mean_orientation_error_deg": 3.002189153868527
+            },
+            {
+              "tip_rmse_m": 0.015088257350890049,
+              "end_tip_error_m": 0.023947109086880136,
+              "mean_orientation_error_deg": 3.667448978771351
+            }
+          ],
+          "v44_step128": [
+            {
+              "tip_rmse_m": 0.0180640808639938,
+              "end_tip_error_m": 0.024957623079992455,
+              "mean_orientation_error_deg": 4.81281978663845
+            },
+            {
+              "tip_rmse_m": 0.01321974513413753,
+              "end_tip_error_m": 0.018589873255229865,
+              "mean_orientation_error_deg": 3.0089895283549346
+            },
+            {
+              "tip_rmse_m": 0.011743985607479841,
+              "end_tip_error_m": 0.01744656951216314,
+              "mean_orientation_error_deg": 3.6861975157197575
+            }
+          ]
+        },
+        {
+          "seed": 861707,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861707/attempt-00/view_00",
+          "start_frame": 181,
+          "phase": "advance",
+          "v42_parent": [
+            {
+              "tip_rmse_m": 0.005993251907500529,
+              "end_tip_error_m": 0.007652321523467651,
+              "mean_orientation_error_deg": 1.0252280661189377
+            },
+            {
+              "tip_rmse_m": 0.0064754403927611065,
+              "end_tip_error_m": 0.009997597282750372,
+              "mean_orientation_error_deg": 1.3186299847366534
+            },
+            {
+              "tip_rmse_m": 0.01004002612147176,
+              "end_tip_error_m": 0.016449977402293044,
+              "mean_orientation_error_deg": 1.0900814198801776
+            }
+          ],
+          "v43_step128": [
+            {
+              "tip_rmse_m": 0.005197124352134645,
+              "end_tip_error_m": 0.006878367651323239,
+              "mean_orientation_error_deg": 1.0557191223278286
+            },
+            {
+              "tip_rmse_m": 0.007117024065621007,
+              "end_tip_error_m": 0.011487189792163519,
+              "mean_orientation_error_deg": 1.136680423655788
+            },
+            {
+              "tip_rmse_m": 0.010520564199243137,
+              "end_tip_error_m": 0.017597293589069533,
+              "mean_orientation_error_deg": 0.9906156541600178
+            }
+          ],
+          "v44_step128": [
+            {
+              "tip_rmse_m": 0.009976736095817014,
+              "end_tip_error_m": 0.013949652133991894,
+              "mean_orientation_error_deg": 1.3051075781798371
+            },
+            {
+              "tip_rmse_m": 0.004267370623135956,
+              "end_tip_error_m": 0.003759225252184812,
+              "mean_orientation_error_deg": 1.2480669393156365
+            },
+            {
+              "tip_rmse_m": 0.006392532082991576,
+              "end_tip_error_m": 0.01015248012971379,
+              "mean_orientation_error_deg": 0.8836537158288214
+            }
+          ]
+        },
+        {
+          "seed": 861708,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+          "start_frame": 65,
+          "phase": "wrist_clearance_align",
+          "v42_parent": [
+            {
+              "tip_rmse_m": 0.011245378837010496,
+              "end_tip_error_m": 0.015551777166459918,
+              "mean_orientation_error_deg": 2.98588186736736
+            },
+            {
+              "tip_rmse_m": 0.011200582272052593,
+              "end_tip_error_m": 0.018029099679584486,
+              "mean_orientation_error_deg": 2.281230423449185
+            },
+            {
+              "tip_rmse_m": 0.013085733324697943,
+              "end_tip_error_m": 0.021615907642800927,
+              "mean_orientation_error_deg": 3.037157647103693
+            }
+          ],
+          "v43_step128": [
+            {
+              "tip_rmse_m": 0.012649015042906964,
+              "end_tip_error_m": 0.018405934050117458,
+              "mean_orientation_error_deg": 3.059842437985592
+            },
+            {
+              "tip_rmse_m": 0.013434103419483263,
+              "end_tip_error_m": 0.022054970731692113,
+              "mean_orientation_error_deg": 2.4631529550186944
+            },
+            {
+              "tip_rmse_m": 0.01566383284795054,
+              "end_tip_error_m": 0.026052376709889434,
+              "mean_orientation_error_deg": 3.1369880164566535
+            }
+          ],
+          "v44_step128": [
+            {
+              "tip_rmse_m": 0.012046020420232848,
+              "end_tip_error_m": 0.016633793430486654,
+              "mean_orientation_error_deg": 2.9316240870098147
+            },
+            {
+              "tip_rmse_m": 0.010579989415928076,
+              "end_tip_error_m": 0.016644678762634448,
+              "mean_orientation_error_deg": 2.086863509753575
+            },
+            {
+              "tip_rmse_m": 0.011432012818469891,
+              "end_tip_error_m": 0.018921339280379697,
+              "mean_orientation_error_deg": 2.87679295662785
+            }
+          ]
+        },
+        {
+          "seed": 861708,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/teacher-alternate-snapshots/seed-861708/attempt-00/view_00",
+          "start_frame": 178,
+          "phase": "advance",
+          "v42_parent": [
+            {
+              "tip_rmse_m": 0.005526695735565186,
+              "end_tip_error_m": 0.007157973421906201,
+              "mean_orientation_error_deg": 0.8430682962866136
+            },
+            {
+              "tip_rmse_m": 0.005222229523951153,
+              "end_tip_error_m": 0.00782644211391252,
+              "mean_orientation_error_deg": 1.4882429880574026
+            },
+            {
+              "tip_rmse_m": 0.008427982330094692,
+              "end_tip_error_m": 0.013767733967323875,
+              "mean_orientation_error_deg": 1.084559016844862
+            }
+          ],
+          "v43_step128": [
+            {
+              "tip_rmse_m": 0.003914976651522082,
+              "end_tip_error_m": 0.004966231681354098,
+              "mean_orientation_error_deg": 0.6621580809305323
+            },
+            {
+              "tip_rmse_m": 0.0065508652297308675,
+              "end_tip_error_m": 0.01061575273655116,
+              "mean_orientation_error_deg": 1.3538332141325258
+            },
+            {
+              "tip_rmse_m": 0.009968668599163526,
+              "end_tip_error_m": 0.016568622931122247,
+              "mean_orientation_error_deg": 1.023430142108019
+            }
+          ],
+          "v44_step128": [
+            {
+              "tip_rmse_m": 0.009228892196451802,
+              "end_tip_error_m": 0.013406972846850796,
+              "mean_orientation_error_deg": 1.1257138486213498
+            },
+            {
+              "tip_rmse_m": 0.003709039951468458,
+              "end_tip_error_m": 0.0022602121350231382,
+              "mean_orientation_error_deg": 1.4804425360678874
+            },
+            {
+              "tip_rmse_m": 0.005223165331957509,
+              "end_tip_error_m": 0.008075848823175613,
+              "mean_orientation_error_deg": 0.9586712816595815
+            }
+          ]
+        }
+      ],
+      "means": {
+        "v42_parent": {
+          "tip_rmse_m": 0.009962072846486855,
+          "end_tip_error_m": 0.015021009811872897,
+          "mean_orientation_error_deg": 2.1773009447982563
+        },
+        "v43_step128": {
+          "tip_rmse_m": 0.010927855688099786,
+          "end_tip_error_m": 0.016973803810064723,
+          "mean_orientation_error_deg": 2.1858997014383372
+        },
+        "v44_step128": {
+          "tip_rmse_m": 0.009656964211838691,
+          "end_tip_error_m": 0.013733189053485527,
+          "mean_orientation_error_deg": 2.200411940314791
         }
       }
     }
