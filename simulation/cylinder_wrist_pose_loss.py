@@ -147,6 +147,19 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     if flow_loss_mask is not None:
         valid &= flow_loss_mask.reshape_as(valid).bool()
     valid_prefix = valid.cumprod(dim=1).bool()
-    loss = (squared_error * (calibration['weight'] / calibration['position_scale_m'] ** 2)
-            ).masked_fill(~valid_prefix, 0.)
+    loss = squared_error * (calibration['weight'] / calibration['position_scale_m'] ** 2)
+    closing = calibration.get('closing_lateral_alignment')
+    if closing is not None:
+        # The teacher's local y axis is the direction between the parallel
+        # fingers. Apply the extra supervision only when its approach cue is
+        # active and its commanded aperture enters the closing range.
+        closing_frames = ((state[:, None, 23] > closing['cue_validity_threshold'])
+                          & (reference[..., 6] <= closing['aperture_label_max']))
+        if dof_mask is not None:
+            closing_frames &= dof_mask.reshape_as(labels)[..., 6].bool()
+        lateral_axis = (expected[..., 2, :] - expected[..., 0, :]) / calibration['orientation_marker_offset_m']
+        lateral_error = (tip * lateral_axis).sum(dim=-1)
+        alignment_loss = closing['weight'] * (lateral_error / closing['scale_m']).square()
+        loss = loss + alignment_loss.masked_fill(~closing_frames, 0.)
+    loss = loss.masked_fill(~valid_prefix, 0.)
     return torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))

@@ -1,4 +1,4 @@
-"""Run a training-only held-cylinder diagnostic from certified teacher starts."""
+"""Run a training-only grasp or hold diagnostic from certified teacher starts."""
 
 import argparse
 import hashlib
@@ -59,11 +59,12 @@ def state_digest(trial):
     values = np.empty(mujoco.mj_stateSize(env.model, trial.recovery_spec))
     mujoco.mj_getState(env.model, env.data, values, trial.recovery_spec)
     commands = [env.hold_targets[i] for i in trial.hold_actuator_ids]
-    combined = np.r_[values, commands, env.applied_action, env.grasp_point_reference]
+    reference = env.grasp_point_reference
+    combined = np.r_[values, commands, env.applied_action, reference if reference is not None else []]
     return hashlib.sha256(combined.tobytes()).hexdigest()
 
 
-def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
+def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False, closure_start=False):
     proof = row['certification']
     episode = Path(proof['source'])
     prior = Path(proof['source_model_episode'])
@@ -81,13 +82,20 @@ def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
             and not provenance['starts_holding'], 'Expected a certified correction in a training-only scene')
     with np.load(trace, allow_pickle=False) as raw, np.load(row['training_arrays'], allow_pickle=False) as data:
         lift = raw['cylinder_position'][:, 2] - raw['cylinder_position'][0, 2]
-        if retreat_start:
+        if closure_start:
+            offset = np.asarray([metadata['result']['controller_parameters']['grasp_x_m'], 0., 0.])
+            error = np.linalg.norm(raw['grip_point_relative'] - offset, axis=1)
+            stage = ((raw['phase'] == 'close') & (error <= .002) & (raw['contacts'] == 0)
+                     & (data['task_index'] == 0) & (data['state'][:, 6] * APERTURE_SCALE_M >= .05))
+        elif retreat_start:
             stage = ((raw['phase'] == 'back_away') & (raw['joint_command'][:, 7] < -.025)
                      & (data['state'][:, 7] >= -.025))
         else:
             stage = (raw['phase'] == 'lift') & (lift >= lift_m)
-        candidates = np.flatnonzero(stage & (raw['contacts'] == 2) & (data['task_index'] == 1))
-        require(len(candidates) > 0, 'No certified two-finger frame in the selected phase')
+        if not closure_start:
+            stage &= (raw['contacts'] == 2) & (data['task_index'] == 1)
+        candidates = np.flatnonzero(stage)
+        require(len(candidates) > 0, 'No certified frame in the selected phase')
         frame = int(candidates[0])
         expected_state = data['state'][frame]
         actions = data['action'].copy()
@@ -106,7 +114,7 @@ def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
         trial.progress_changes.clear()
         trial.update_progress()
         max_command_error = 0.
-        if retreat_start:
+        if retreat_start or closure_start:
             # Long contact sequences amplify the rounding of float32 training
             # increments. Replay the recorded bounded targets for this prefix.
             prefix = original_commands.copy()
@@ -120,8 +128,10 @@ def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
             executed = bounded_joint_command(trial.env)
             max_command_error = max(max_command_error, float(np.abs(executed - original_commands[i]).max()))
         trial.servo_increments = True
-        require(not trial.done and trial.held and trial.env.metrics()['grip_contacts'] == 2
-                and trial.progress_router.index == tasks[frame], 'No established two-finger hold at takeover')
+        contacts_at_takeover = trial.env.metrics()['grip_contacts']
+        require(not trial.done and trial.held == (not closure_start)
+                and contacts_at_takeover == (0 if closure_start else 2)
+                and trial.progress_router.index == tasks[frame], 'Physical contact or phase differs at takeover')
         observed = trial.observation()
         max_input_error = float(np.abs(observed['state'] - expected_state).max())
         require(max_command_error <= 1e-6 and max_input_error <= 3e-5,
@@ -132,7 +142,7 @@ def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
                         time_s=float(trial.env.data.time), lift_m=trial.max_lift, slip_m=trial.max_slip,
                         task_index=trial.progress_router.index, state_sha256=state_digest(trial),
                         prefix_max_command_error=max_command_error, max_certified_model_state_error=max_input_error,
-                        actual_contacts=trial.env.metrics()['grip_contacts'], scoring_hold_established=trial.held)
+                        actual_contacts=contacts_at_takeover, scoring_hold_established=trial.held)
         trial.max_seconds = takeover['time_s'] + max_seconds
         trial.rows.clear()
         trial.observations.clear()
@@ -146,7 +156,8 @@ def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
 def finish(trial, takeover, contact_counts, controlled_by):
     result = trial.finish()
     folder = trial.output
-    result.update(probe_kind='held_state_training_only', formal_acceptance_eligible=False)
+    kind = 'held_state_training_only' if takeover['scoring_hold_established'] else 'closure_state_training_only'
+    result.update(probe_kind=kind, formal_acceptance_eligible=False)
     (folder / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
     return dict(takeover=takeover, result=str(folder / 'summary.json'),
                 controlled_by=controlled_by,
@@ -158,7 +169,8 @@ def finish(trial, takeover, contact_counts, controlled_by):
 
 
 def run_teacher(row, output, args):
-    trial, start, suffix = start_trial(row, output, args.lift_m, args.max_seconds, retreat_start=args.retreat_start)
+    trial, start, suffix = start_trial(row, output, args.lift_m, args.max_seconds,
+                                       retreat_start=args.retreat_start, closure_start=args.closure_start)
     counts = [0, 0, 0]
     try:
         for label in suffix:
@@ -174,7 +186,8 @@ def run_teacher(row, output, args):
 
 
 def run_policy(row, output, args, policy, teacher_start):
-    trial, start, _ = start_trial(row, output, args.lift_m, args.max_seconds, retreat_start=args.retreat_start)
+    trial, start, _ = start_trial(row, output, args.lift_m, args.max_seconds,
+                                  retreat_start=args.retreat_start, closure_start=args.closure_start)
     counts = [0, 0, 0]
     try:
         require(start == teacher_start, 'Model and teacher warm starts differ')
@@ -216,8 +229,11 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--hold-opening', action='store_true',
                         help='For causal diagnosis, hold the takeover gripper target while Wall runs arm and base.')
-    parser.add_argument('--retreat-start', action='store_true',
-                        help='Start at the first certified reverse command after the arm has retracted.')
+    takeover = parser.add_mutually_exclusive_group()
+    takeover.add_argument('--retreat-start', action='store_true',
+                          help='Start at the first certified reverse command after the arm has retracted.')
+    takeover.add_argument('--closure-start', action='store_true',
+                          help='Start at the certified aligned position with open fingers before closing.')
     parser.add_argument('--lift-m', type=float, default=.025)
     parser.add_argument('--max-seconds', type=float, default=45.)
     args = parser.parse_args()
@@ -225,6 +241,7 @@ def main():
     require(bool(args.checkpoint) == bool(args.config) == bool(args.weight_audit),
             'Provide checkpoint, weight audit and config together')
     require(not args.hold_opening or args.checkpoint, 'Fixed opening is a model action diagnostic')
+    require(not (args.hold_opening and args.closure_start), 'Closure probe requires predicted gripper commands')
     certified = read(args.qualification)
     require(not certified['independent_cases_read'] and not certified['neural_policy_success_measured'],
             'Expected training-only teacher certification')
@@ -232,9 +249,10 @@ def main():
     require(len(rows) == 2 and len({row['seed'] for row in rows}) == 2, 'Expected two separate certified reserves')
     args.output.mkdir(parents=True)
     teachers = [run_teacher(row, args.output / f"teacher-{row['seed']}", args) for row in rows]
-    report = dict(kind='wall_oss_held_state_training_diagnostic', source=str(args.qualification),
+    kind = 'wall_oss_closure_state_training_diagnostic' if args.closure_start else 'wall_oss_held_state_training_diagnostic'
+    report = dict(kind=kind, source=str(args.qualification),
                   from_training_only=True, independent_cases_read=False, formal_acceptance_eligible=False,
-                  fixed_gripper=args.hold_opening, retreat_start=args.retreat_start,
+                  fixed_gripper=args.hold_opening, retreat_start=args.retreat_start, closure_start=args.closure_start,
                   teachers=teachers, models=[], checkpoint=None)
     if args.checkpoint:
         proof = read(args.weight_audit)
