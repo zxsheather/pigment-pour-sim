@@ -179,13 +179,19 @@ def prepare(episode, reconstruction, base, output):
                                      positive_forward_frames=int(np.count_nonzero(forward > 0)))
             recovery_stage = provenance.get('recovery_stage')
             if recovery_stage in ('clearance_wrist_alignment_then_grasp',
-                                  'restore_heading_then_clearance_wrist_alignment'):
+                                  'restore_heading_then_clearance_wrist_alignment',
+                                  'release_then_clearance_wrist_alignment'):
                 aligns = np.flatnonzero(raw['phase'] == 'wrist_clearance_align')
                 closing = np.flatnonzero(raw['phase'] == 'close')
                 require(aligns.size and closing.size and aligns[-1] < closing[0],
                         'Missing recorded wrist alignment before closure')
                 close_frame = int(closing[0])
-                require(np.all(tasks[:close_frame] == 0) and not raw['contacts'][:close_frame].any(),
+                beginning = 0
+                if recovery_stage == 'release_then_clearance_wrist_alignment':
+                    require(single_contact_recovery is not None, 'Missing certified single-finger release')
+                    beginning = single_contact_recovery['release_frames']
+                require(beginning <= aligns[0] and np.all(tasks[:close_frame] == 0)
+                        and not raw['contacts'][beginning:close_frame].any(),
                         'Wrist alignment must occur before grasp contact')
                 position = raw['grip_point_relative'][[0, close_frame]] - env.grasp_offset
                 start_error, close_error = np.linalg.norm(position,axis=1)

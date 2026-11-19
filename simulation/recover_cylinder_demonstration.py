@@ -126,7 +126,9 @@ def collect(a, controller, output):
             recoverable = (recoverable and metrics["grip_contacts"]==0
                            and not metrics["forbidden_contacts"] and retreat > .02)
         if a.align_from_clearance:
-            recoverable = recoverable and metrics["grip_contacts"]==0 and not metrics["forbidden_contacts"]
+            releases_contact = controller.get("teacher",{}).get("release_single_contact",False)
+            expected_contact = 1 if releases_contact else 0
+            recoverable = recoverable and metrics["grip_contacts"]==expected_contact and not metrics["forbidden_contacts"]
         if a.restore_approach_heading:
             recoverable = recoverable and abs(angle_difference(initial_base[2],env.base_pose()[2])) >= .035
         if a.start_holding:
@@ -151,11 +153,16 @@ def collect(a, controller, output):
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
+        if controller.get("teacher",{}).get("release_lift_m"):
+            provenance["reset_base_y_m"]=float(initial_base[1])
         if a.restore_approach_base:
             provenance["recovery_stage"]="restore_base_then_grasp"
             provenance["reset_base_odometry"]=initial_base.tolist()
         if a.align_from_clearance:
-            provenance["recovery_stage"]="clearance_wrist_alignment_then_grasp"
+            if releases_contact:
+                provenance["recovery_stage"]="release_then_clearance_wrist_alignment"
+            else:
+                provenance["recovery_stage"]="clearance_wrist_alignment_then_grasp"
             if a.wrist_clearance_rear_distance_m is not None:
                 provenance["wrist_clearance_rear_distance_m"]=a.wrist_clearance_rear_distance_m
         if a.restore_approach_heading:

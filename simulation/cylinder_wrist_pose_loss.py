@@ -118,6 +118,34 @@ def servo_arm_targets(actions, anchor, calibration):
     return torch.stack(targets, dim=-2)
 
 
+def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow_loss_mask):
+    """Supervise the opening requested over a demonstrated widening prefix."""
+    state_min, state_max = state.new_tensor(calibration['state_aperture_affine_m']).unbind()
+    tracking_min, tracking_max = state.new_tensor(calibration['tracking_error_affine_m']).unbind()
+    action_min, action_max = state.new_tensor(calibration['action_aperture_affine_m']).unbind()
+    gap = state_min + (state[:, 6:7] + 1.) * (state_max-state_min) * .5
+    tracking_error = tracking_min + (state[:, 24:25] + 1.) * (tracking_max-tracking_min) * .5
+    previous_target = gap + tracking_error
+    target = action_min + (reference[..., 6] + 1.) * (action_max-action_min) * .5
+    requested = action_min + (forecast[..., 6] + 1.) * (action_max-action_min) * .5
+
+    valid = torch.ones_like(target, dtype=torch.bool)
+    if dof_mask is not None:
+        valid &= dof_mask.reshape_as(reference)[..., 6].bool()
+    if flow_loss_mask is not None:
+        valid &= flow_loss_mask.reshape_as(target).bool()
+    valid &= state[:, 23:24] > calibration['cue_validity_threshold']
+    steps = torch.cat((previous_target, target), dim=1).diff(dim=1)
+    widening = (valid & (steps >= -calibration['allowed_target_drop_m'])).cumprod(dim=1).bool()
+    gain = target - previous_target
+    release = (widening & (gain >= calibration['minimum_opening_gain_m'])).any(dim=1, keepdim=True)
+    frames = release & widening & (gain > calibration['allowed_target_drop_m'])
+    # Training labels already describe bounded servo targets. Compare them
+    # with the undamped request so a closing prediction still gets a gradient.
+    shortfall = (target - requested).clamp_min(0.) / calibration['scale_m']
+    return (calibration['weight'] * shortfall.square()).masked_fill(~frames, 0.)
+
+
 def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibration,
                                     dof_mask=None, flow_loss_mask=None):
     """Compare the FK of composed arm commands from a shared proprioceptive anchor."""
@@ -162,4 +190,9 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
         alignment_loss = closing['weight'] * (lateral_error / closing['scale_m']).square()
         loss = loss + alignment_loss.masked_fill(~closing_frames, 0.)
     loss = loss.masked_fill(~valid_prefix, 0.)
-    return torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
+    padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
+    release = calibration.get('release_opening')
+    if release is not None:
+        gap_loss = release_opening_loss(forecast, reference, state, release, dof_mask, flow_loss_mask)
+        padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
+    return padded

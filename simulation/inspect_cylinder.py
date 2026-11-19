@@ -273,7 +273,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
-                   release_single_contact=False,release_retreat_m=0.,teacher_grasp_height_m=None,
+                   release_single_contact=False,release_retreat_m=0.,release_lift_m=0.,teacher_grasp_height_m=None,
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
@@ -285,8 +285,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Initial lift requires a held transport recovery")
     if release_single_contact and (reset_scene or start_holding):
         raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
-    if align_from_clearance and (reset_scene or start_holding or release_single_contact):
-        raise ValueError("Wrist clearance alignment requires a saved contact-free approach")
+    if align_from_clearance and (reset_scene or start_holding):
+        raise ValueError("Wrist clearance alignment requires a saved unheld approach")
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
@@ -294,6 +294,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Release retreat must be within [0,0.10] m")
     if release_retreat_m and not release_single_contact:
         raise ValueError("Release retreat requires single-contact recovery")
+    if not np.isfinite(release_lift_m) or not 0. <= release_lift_m <= .06:
+        raise ValueError("Release lift must be within [0,0.06] m")
+    if release_lift_m and (not release_single_contact or release_retreat_m):
+        raise ValueError("Release lift requires single-contact recovery without a planar release retreat")
+    if release_lift_m and not np.isfinite((initial_state_provenance or {}).get('reset_base_y_m', np.nan)):
+        raise ValueError("Release lift requires the source episode's reset base coordinate")
     if not np.isfinite(eye_alignment_target_px) or not .5<=eye_alignment_target_px<=2.:
         raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
     if not isinstance(stable_read_samples, int) or stable_read_samples < 3:
@@ -305,7 +311,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             raise ValueError("Approach base recovery requires finite reset odometry and a saved unheld state")
     if approach_heading_reference is not None and (
             not align_from_clearance or approach_base_reference is not None
-            or not np.isfinite(approach_heading_reference)):
+            or release_single_contact or not np.isfinite(approach_heading_reference)):
         raise ValueError("Heading recovery requires a finite yaw reference and a saved clearance approach")
     approach_height = env.grasp_height
     if teacher_grasp_height_m is not None:
@@ -521,6 +527,24 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 break
         else:
             raise InspectionFailure("approach_base_recovery_timeout")
+
+    def has_upward_finger_contact():
+        total = upward = 0.
+        force = np.empty(6)
+        for i, contact in enumerate(env.data.contact):
+            first, second = env.model.geom_bodyid[[contact.geom1, contact.geom2]]
+            if first == env.cylinder_body and second in env.finger_bodies:
+                sign = 1.
+            elif second == env.cylinder_body and first in env.finger_bodies:
+                sign = -1.
+            else:
+                continue
+            mujoco.mj_contactForce(env.model, env.data, i, force)
+            if force[0] > .05:
+                total += force[0]
+                upward += sign * force[0] * contact.frame[2]
+        return total > 0. and upward >= .8*total
+
     reason=None
     try:
         if start_holding:
@@ -540,6 +564,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     raise InspectionFailure("release_requires_one_loaded_finger")
                 q = env.data.qpos[env.arm_addresses].copy()
                 cylinder_dof = env.model.joint("cylinder_free").dofadr[0]
+                if release_lift_m:
+                    if not has_upward_finger_contact():
+                        raise InspectionFailure("release_lift_requires_upward_contact_normal")
+                    nominal_rotation = rotation
+                    rotation = env.data.xmat[env.gripper_body].reshape(3,3).copy()
+                    tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
+                    q = move("withdraw_from_contact", tip+[0,0,release_lift_m],1.2,opening=.034,straight=True)
+                    rotation = nominal_rotation
                 stationary_ticks = 0
                 for tick_index in range(30):
                     if tick_index == 12 and release_retreat_m and env.metrics()["grip_contacts"]:
@@ -589,6 +621,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             q=move("retract",cylinder+[0,-.15,approach_height+.12],3)
         if not skip_retreat:
             target_y=env.base_pose()[1]-.24
+            if release_lift_m:
+                target_y = min(target_y, initial_state_provenance['reset_base_y_m']-.24)
             for _ in range(150):
                 distance=env.base_pose()[1]-target_y
                 if distance<.008:break
@@ -729,6 +763,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
+        if release_lift_m:
+            summary["controller_parameters"]["release_lift_m"]=release_lift_m
     if align_from_clearance:
         summary["controller_parameters"]["align_from_clearance"]=True
     if approach_heading_reference is not None:
