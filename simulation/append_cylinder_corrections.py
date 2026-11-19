@@ -18,7 +18,7 @@ from cylinder_tray_vision import WRIST_TARGET_CUE_PROTOCOL
 from export_carry_dataset import LeRobotDataset, SourceVideoDataset, file_digest, share_immutable_video
 
 
-def append(base, qualifications, base_weights, output):
+def append(base, qualifications, base_weights, output, *, held_only=False):
     require(not output.exists(), 'Output exists')
     view = json.loads((base/'wrist_target_view_audit.json').read_text())
     bundle = json.loads(qualifications.read_text())
@@ -28,6 +28,7 @@ def append(base, qualifications, base_weights, output):
     manifest = json.loads((base/'demonstration_provenance.json').read_text())
     rows = [case for case in bundle['results'] if case['qualified']]
     require(rows and len(rows) == bundle['qualified_count'], 'No verified teacher correction data')
+    expected_tasks = np.arange(1 if held_only else 0, len(PROGRESS_PROMPTS))
     norm = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
     old = arrow.dataset(base/'data',format='parquet').to_table().sort_by('index')
     old_frames = len(old)
@@ -53,6 +54,7 @@ def append(base, qualifications, base_weights, output):
                 require(proof == row['certification'] and proof['teacher_full_task_succeeded']
                         and proof['geometry_audit_passed'] and not proof['model_task_success_measured']
                         and not proof['independent_cases_read']
+                        and proof.get('start_holding', False) == held_only
                         and proof['trajectory_sha256'] == file_digest(source/'trajectory.npz')
                         and not any(x['source'] == str(source) or x['metadata']['result']['seed'] == row['seed']
                                     for x in manifest), 'Correction provenance is not unique and verified')
@@ -61,7 +63,7 @@ def append(base, qualifications, base_weights, output):
                     state, action, tasks = (raw[k] for k in ('state','action','task_index'))
                 require(state.shape == (frames, JOINT_SERVO_STATE_WIDTH) and action.shape == (frames, JOINT_ACTION_WIDTH)
                         and state.dtype == action.dtype == np.float32 and tasks.shape == (frames,)
-                        and np.array_equal(np.unique(tasks),np.arange(len(PROGRESS_PROMPTS))),
+                        and np.array_equal(np.unique(tasks),expected_tasks),
                         'Correction frame statistics or phase metadata differs')
                 for name, values in [('observation.state',state),('action',action)]:
                     require(np.isfinite(values).all() and np.all(values >= np.asarray(norm[name]['q01']) - 1e-7)
@@ -115,17 +117,21 @@ def append(base, qualifications, base_weights, output):
                 and len(reopened.hf_dataset) == len(after), 'Appended dataset does not reopen')
         (path/'demonstration_provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')
         phases = np.concatenate(task_blocks)
-        # Keep the relative original weights and assign 20% of total mass to
-        # corrections, of which 75% is used for approaching and closing.
-        new_mass = weights.sum() * .2 / .8
-        approach = phases == 0
-        new_weights = np.where(approach, new_mass*.75/approach.sum(), new_mass*.25/(~approach).sum())
+        new_fraction = .10 if held_only else .20
+        approach_fraction = 0. if held_only else .75
+        new_mass = weights.sum() * new_fraction / (1 - new_fraction)
+        if held_only:
+            new_weights = np.full(len(phases), new_mass / len(phases))
+        else:
+            approach = phases == 0
+            new_weights = np.where(approach, new_mass*.75/approach.sum(), new_mass*.25/(~approach).sum())
         np.save(path/'frame-sampling-weights.npy',np.concatenate((weights,new_weights)))
         report = dict(kind='verified_wrist_target_correction_append',base=str(base),dataset=str(output),
                       qualifications=str(qualifications),new_episodes=len(rows),new_frames=len(all_new),
                       episodes=len(manifest),frames=len(after),base_frames_exact=True,normalization_exact=True,
                       original_video_hardlinks=len(video_hashes),appended_video_hardlinks=len(seen)-len(video_hashes),
-                      new_sampling_fraction=.2,new_approach_fraction=.75,
+                      new_sampling_fraction=new_fraction,new_approach_fraction=approach_fraction,
+                      held_only=held_only,
                       reader_reopen_passed=True,independent_cases_read=False)
         (path/'correction_append_audit.json').write_text(json.dumps(report,indent=2)+'\n')
         path.rename(output)
@@ -138,9 +144,11 @@ def main():
     parser.add_argument('--qualification-report', required=True, type=Path)
     parser.add_argument('--base-weights', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--held-only',action='store_true',
+                        help='Append certified lift/retreat and presentation continuations.')
     args = parser.parse_args()
     print(json.dumps(append(args.base_dataset.resolve(),args.qualification_report.resolve(),
-                            args.base_weights.resolve(),args.output.resolve())))
+                            args.base_weights.resolve(),args.output.resolve(),held_only=args.held_only)))
 
 
 if __name__ == '__main__':
