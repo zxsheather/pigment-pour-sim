@@ -1,6 +1,6 @@
 {
   "kind": "model_visited_base_approach_corrections_and_wall_oss_finetuning",
-  "observed_at": "2026-11-19T08:10:05+08:00",
+  "observed_at": "2026-11-19T09:16:35+08:00",
   "host": "4A6000",
   "root": "/data/hlou/pigment-pour-study",
   "goal_complete": false,
@@ -1273,20 +1273,20 @@
       "latest_evaluated_step": 1024
     },
     "v40": {
-      "stage": "neural_evaluation_896",
+      "stage": "curve_complete_no_full_single_success",
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-correction-bc-v40-a6000",
       "parent": "/data/hlou/pigment-pour-study/runs/cylinder-unilateral-contact-v40/pinned-v39-step128",
       "driver_pid": 3845615,
-      "live": true,
+      "live": false,
       "first_step": {
         "step": 0,
         "train_loss": 0.0994761660695076,
         "grad_norm": 0.9471445083618164
       },
       "last_step": {
-        "step": 970,
-        "train_loss": 0.01596412886865437,
-        "grad_norm": 0.519582325220108
+        "step": 1020,
+        "train_loss": 0.01216193283908069,
+        "grad_norm": 0.5854889452457428
       },
       "official_data_validation": true,
       "evaluations": [
@@ -1355,25 +1355,47 @@
           "elapsed_sim_seconds": 90.00000000024771,
           "failure": "timeout",
           "end_base_retreat_m": 0.6280373621089411
+        },
+        {
+          "step": 896,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-correction-bc-v40-a6000-step896-single/summary.json",
+          "closest_m": 0.12776118600133046,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.535364545776254
+        },
+        {
+          "step": 1024,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-correction-bc-v40-a6000-step1024-single/summary.json",
+          "closest_m": 0.07963311542916945,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.5367223506850931
         }
       ],
-      "latest_evaluated_step": 768
+      "latest_evaluated_step": 1024
     },
     "v41": {
-      "stage": "neural_evaluation_384",
+      "stage": "curve_complete_no_full_single_success",
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000",
       "parent": "/data/hlou/pigment-pour-study/runs/cylinder-base-approach-correction-v41/pinned-v40-step128",
       "driver_pid": 4161151,
-      "live": true,
+      "live": false,
       "first_step": {
         "step": 0,
         "train_loss": 0.003036361187696457,
         "grad_norm": 0.6019524931907654
       },
       "last_step": {
-        "step": 500,
-        "train_loss": 0.02257232591509819,
-        "grad_norm": 0.6178556323051453
+        "step": 1020,
+        "train_loss": 0.011848972365260124,
+        "grad_norm": 0.5348748087882995
       },
       "official_data_validation": true,
       "evaluations": [
@@ -1398,29 +1420,184 @@
           "elapsed_sim_seconds": 90.00000000024771,
           "failure": "timeout",
           "end_base_retreat_m": 0.7775010476840886
+        },
+        {
+          "step": 384,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step384-single/summary.json",
+          "closest_m": 0.15477382801102788,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.5467030274493798
+        },
+        {
+          "step": 512,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step512-single/summary.json",
+          "closest_m": 0.12925542799997963,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.7263372332011236
+        },
+        {
+          "step": 640,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step640-single/summary.json",
+          "closest_m": 0.09629237184710156,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.40301162283692926
+        },
+        {
+          "step": 768,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step768-single/summary.json",
+          "closest_m": 0.12826778944152234,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.5280331601352372
+        },
+        {
+          "step": 896,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step896-single/summary.json",
+          "closest_m": 0.08520285006461661,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.38292047090627046
+        },
+        {
+          "step": 1024,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-approach-correction-bc-v41-a6000-step1024-single/summary.json",
+          "closest_m": 0.09008496031144228,
+          "max_loaded_fingers": 1,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 23.149999999991397,
+          "failure": "collision:[['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_17'], ['', 'cylinder_wall_17'], ['', 'cylinder_wall_17'], ['', 'cylinder_wall_17'], ['', 'cylinder_wall_18'], ['', 'cylinder_wall_18'], ['', 'cylinder_wall_18'], ['', 'cylinder_wall_18'], ['', 'cylinder_wall_19'], ['', 'cylinder_wall_19'], ['', 'cylinder_wall_19'], ['', 'cylinder_wall_19'], ['', 'cylinder_wall_20'], ['', 'cylinder_wall_20'], ['', 'cylinder_wall_20'], ['', 'cylinder_wall_20'], ['', 'cylinder_wall_21'], ['', 'cylinder_wall_21'], ['', 'cylinder_wall_21'], ['', 'cylinder_wall_21'], ['', 'cylinder_wall_22'], ['', 'cylinder_wall_22'], ['', 'cylinder_wall_22'], ['', 'cylinder_wall_22'], ['', 'cylinder_wall_23'], ['', 'cylinder_wall_23'], ['', 'cylinder_wall_24'], ['', 'cylinder_wall_24'], ['', 'cylinder_wall_25'], ['', 'cylinder_wall_25'], ['', 'cylinder_wall_25']]",
+          "end_base_retreat_m": 0.11728581921108816
         }
       ],
-      "latest_evaluated_step": 256
+      "latest_evaluated_step": 1024
     },
     "v42": {
-      "stage": "neural_evaluation_128",
+      "stage": "curve_complete_no_full_single_success",
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000",
       "parent": "/data/hlou/pigment-pour-study/runs/cylinder-base-approach-correction-v41/pinned-v40-step128",
       "driver_pid": 154305,
-      "live": true,
+      "live": false,
       "first_step": {
         "step": 0,
         "train_loss": 0.00831591710448265,
         "grad_norm": 0.45697152614593506
       },
       "last_step": {
-        "step": 210,
-        "train_loss": 0.02601188193075359,
-        "grad_norm": 0.7120904833078384
+        "step": 1020,
+        "train_loss": 0.013340023066848516,
+        "grad_norm": 0.6559024930000306
       },
       "official_data_validation": true,
-      "evaluations": [],
-      "latest_evaluated_step": null
+      "evaluations": [
+        {
+          "step": 128,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single/summary.json",
+          "closest_m": 0.11908915045384302,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 49.250000000053134,
+          "failure": "collision:[['right_left_official_collision_1_2', 'target_tray_floor']]",
+          "end_base_retreat_m": 0.1450535521469254
+        },
+        {
+          "step": 256,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step256-single/summary.json",
+          "closest_m": 0.15497446004351362,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.373948332025137
+        },
+        {
+          "step": 384,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step384-single/summary.json",
+          "closest_m": 0.1455926693609677,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.5049737078261443
+        },
+        {
+          "step": 512,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step512-single/summary.json",
+          "closest_m": 0.16613912825697527,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 38.20000000000037,
+          "failure": "collision:[['right_left_official_collision_1_0', '']]",
+          "end_base_retreat_m": 0.034847647141589166
+        },
+        {
+          "step": 640,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step640-single/summary.json",
+          "closest_m": 0.1783164980471059,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.5584283874272198
+        },
+        {
+          "step": 768,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step768-single/summary.json",
+          "closest_m": 0.07637161832147098,
+          "max_loaded_fingers": 1,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.4309044237431563
+        },
+        {
+          "step": 896,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step896-single/summary.json",
+          "closest_m": 0.13355646135748597,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.10404380571940575
+        },
+        {
+          "step": 1024,
+          "result": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step1024-single/summary.json",
+          "closest_m": 0.07385010858240154,
+          "max_loaded_fingers": 0,
+          "held": false,
+          "success": false,
+          "elapsed_sim_seconds": 90.00000000024771,
+          "failure": "timeout",
+          "end_base_retreat_m": 0.28047339930502113
+        }
+      ],
+      "latest_evaluated_step": 1024
     }
   },
   "pregrasp_forward_labels": {
@@ -3812,5 +3989,91 @@
         "same_relative_draws_within_groups": true
       }
     }
-  }
+  },
+  "first_v42_weight_and_closure_proof": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-expanded-base-return-v42/first-v42-evidence.json",
+    "result": {
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single/summary.json",
+      "episodes": 1,
+      "successes": 0,
+      "genuine_model_prediction_shape": [
+        124,
+        8,
+        26
+      ],
+      "checkpoint_sha256": "fb59cd2d4e2fe4ae2e09c58ca62fd5aba9fac574c6427f1a6cf0c35e0090670c",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "physical": {
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single",
+        "terminal_reason": "collision:[['right_left_official_collision_1_2', 'target_tray_floor']]",
+        "raw_peak": {
+          "height_m": 0.0,
+          "time_s": 0.0,
+          "loaded_fingers": 0,
+          "established_hold": false
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          985,
+          0,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      }
+    }
+  },
+  "first_v42_pregrasp": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single/grasp-approach-audit.json",
+    "result": {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single",
+      "snapshots": 124,
+      "robot_observations_reproduced_exactly": true,
+      "robot_observations_max_abs_difference": 0.0,
+      "progress_prompts_reproduced_exactly": true,
+      "model_servo_increment_decode_exact": true,
+      "maximum_recorded_loaded_contacts": 0,
+      "nearest": {
+        "time_s": 38.80000000000324,
+        "grasp_distance_m": 0.11908915045384302,
+        "grasp_point_error_components_m": [
+          0.0056241809463195985,
+          0.008106050409375594,
+          0.11867976361310204
+        ],
+        "aperture_m": 0.055742892175912856,
+        "base_retreat_m": 0.10192982976999138
+      },
+      "first": {
+        "time_s": 0.0,
+        "grasp_distance_m": 0.3788930714805187,
+        "grasp_point_error_components_m": [
+          0.3532681430276515,
+          -0.005179853044015759,
+          -0.13687493510565982
+        ],
+        "aperture_m": 0.06800000175833702,
+        "base_retreat_m": 0.0
+      },
+      "last": {
+        "time_s": 49.200000000052896,
+        "grasp_distance_m": 0.2455938648473475,
+        "grasp_point_error_components_m": [
+          0.02779043525408044,
+          0.039137847991393734,
+          0.24085735823023657
+        ],
+        "aperture_m": 0.04877122923731804,
+        "base_retreat_m": 0.1450535521469254
+      },
+      "failure_reason": "collision:[['right_left_official_collision_1_2', 'target_tray_floor']]"
+    }
+  },
+  "first_v42_model_video": "/data/hlou/pigment-pour-study/runs/cylinder-joint-weighted-base-approach-bc-v42-a6000-step128-single/episode_000/cylinder_overview.mp4"
 }
