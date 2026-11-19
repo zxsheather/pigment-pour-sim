@@ -1,0 +1,1002 @@
+{
+  "kind": "closure_readiness_diagnostic_and_v51_training_start",
+  "reused_official_parallel_finger_mesh_and_servos": true,
+  "independent_cases_read": false,
+  "eligible_full_reset_neural_completion": false,
+  "diagnostic_sources": [
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/reset-rgb-closure-dwell-model-audit.json",
+      "sha256": "2484eb28175b79a327ffc6e12a6087e819618b951de5156df0b5a012a4a2ff28"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-matched-close-prompt.json",
+      "sha256": "ecb17ffa0f6577059cfc8059209db55152c486e080d928561b9cee0c27b655ba"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-matched-close-prompt.npz",
+      "sha256": "5089a13670ec077c421c4f5825d5b98266611183a5780f7e7c7deb8de5139f57"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-step256-v48-step896-closure-replay.json",
+      "sha256": "0c38df0bbeac6128727d10c26b8c0d1e597b396c0b984acd31fd2aba035e84b7"
+    }
+  ],
+  "measured_readiness": {
+    "observed_coordinates": [
+      "tool_lateral",
+      "tool_axial",
+      "vertical"
+    ],
+    "thresholds_for_diagnostic_only": true,
+    "training_teachers": {
+      "total_episodes": 149,
+      "open_then_close_episodes": 140,
+      "events": {
+        "close_start": {
+          "cue_episode_count": 91,
+          "absolute_observed_error_mm_quantiles": [
+            [
+              0.22269465029239655,
+              0.6625885367393494,
+              0.10730376839637756
+            ],
+            [
+              4.3387017250061035,
+              3.8774490356445312,
+              5.841307163238525
+            ],
+            [
+              23.805049896240234,
+              19.637981414794922,
+              11.303719520568848
+            ]
+          ],
+          "absolute_true_tool_error_mm_quantiles": [
+            [
+              2.277371658255927e-05,
+              0.0012992889156515641,
+              0.11151513174020196
+            ],
+            [
+              3.0896783695289542,
+              3.9629780361594147,
+              6.10199318394492
+            ],
+            [
+              6.256892366705357,
+              19.101091138378226,
+              7.681150017309629
+            ]
+          ],
+          "absolute_lateral_estimation_error_mm_quantiles": [
+            0.1327630706917276,
+            0.5368309213327883,
+            19.134646518524942
+          ]
+        },
+        "first_narrow_target": {
+          "cue_episode_count": 91,
+          "absolute_observed_error_mm_quantiles": [
+            [
+              0.22483661770820618,
+              0.708977222442627,
+              0.19132447242736816
+            ],
+            [
+              4.440426826477051,
+              3.7553274631500244,
+              13.598867416381836
+            ],
+            [
+              28.15106201171875,
+              8.326620101928711,
+              16.149629592895508
+            ]
+          ],
+          "absolute_true_tool_error_mm_quantiles": [
+            [
+              1.579408507004459e-05,
+              0.00018695772326104976,
+              0.024962989474584647
+            ],
+            [
+              1.3653356680438582,
+              2.6708350183363287,
+              13.464759120408639
+            ],
+            [
+              2.292279479698628,
+              7.443728237986128,
+              13.827388877067952
+            ]
+          ],
+          "absolute_lateral_estimation_error_mm_quantiles": [
+            0.1764531314662844,
+            3.3473374296442184,
+            27.787099956857215
+          ]
+        }
+      },
+      "gates": [
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 87,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 84,
+          "first_gate_relative_frame_quantiles": [
+            -25.0,
+            -21.0,
+            -2.0
+          ],
+          "never_opens_by_first_narrow": 53
+        },
+        {
+          "tolerances_mm": [
+            10.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 87,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 87,
+          "first_gate_relative_frame_quantiles": [
+            -25.0,
+            -21.0,
+            -17.0
+          ],
+          "never_opens_by_first_narrow": 53
+        },
+        {
+          "tolerances_mm": [
+            20.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 87,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 87,
+          "first_gate_relative_frame_quantiles": [
+            -25.0,
+            -21.0,
+            -7.0
+          ],
+          "never_opens_by_first_narrow": 50
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 87,
+          "ready_at_first_narrow": 82,
+          "opens_at_least_8_frames_early": 86,
+          "first_gate_relative_frame_quantiles": [
+            -33.0,
+            -24.0,
+            -2.0
+          ],
+          "never_opens_by_first_narrow": 50
+        },
+        {
+          "tolerances_mm": [
+            10.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 87,
+          "ready_at_first_narrow": 87,
+          "opens_at_least_8_frames_early": 87,
+          "first_gate_relative_frame_quantiles": [
+            -33.0,
+            -24.0,
+            -5.0
+          ],
+          "never_opens_by_first_narrow": 50
+        },
+        {
+          "tolerances_mm": [
+            20.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 90,
+          "ready_at_first_narrow": 90,
+          "opens_at_least_8_frames_early": 90,
+          "first_gate_relative_frame_quantiles": [
+            -92.0,
+            -24.0,
+            -6.0
+          ],
+          "never_opens_by_first_narrow": 49
+        }
+      ],
+      "dwell_gates": [
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 1.0,
+          "elapsed_ticks": 5,
+          "ready_at_close": 70,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -4.0,
+            -3.0,
+            -1.0
+          ],
+          "never_opens_by_first_narrow": 70
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 2.5,
+          "elapsed_ticks": 5,
+          "ready_at_close": 70,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -6.0,
+            -5.0,
+            -5.0
+          ],
+          "never_opens_by_first_narrow": 70
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 5.0,
+          "elapsed_ticks": 5,
+          "ready_at_close": 70,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -7.0,
+            -6.0,
+            -6.0
+          ],
+          "never_opens_by_first_narrow": 70
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 1.0,
+          "elapsed_ticks": 10,
+          "ready_at_close": 0,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            1.0,
+            2.0,
+            4.0
+          ],
+          "never_opens_by_first_narrow": 70
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 2.5,
+          "elapsed_ticks": 10,
+          "ready_at_close": 70,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "never_opens_by_first_narrow": 70
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 5.0,
+          "elapsed_ticks": 10,
+          "ready_at_close": 70,
+          "ready_at_first_narrow": 70,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -2.0,
+            -1.0,
+            -1.0
+          ],
+          "never_opens_by_first_narrow": 70
+        }
+      ]
+    },
+    "reserved_teachers": {
+      "total_episodes": 2,
+      "open_then_close_episodes": 2,
+      "events": {
+        "close_start": {
+          "cue_episode_count": 2,
+          "absolute_observed_error_mm_quantiles": [
+            [
+              0.13128544948995113,
+              0.7924950569868088,
+              0.10476910695433617
+            ],
+            [
+              0.19770987443625926,
+              1.2247322648763657,
+              0.105586027354002
+            ],
+            [
+              0.2143159806728363,
+              1.3327915668487549,
+              0.10579025745391846
+            ]
+          ],
+          "absolute_true_tool_error_mm_quantiles": [
+            [
+              1.1299272075915367e-05,
+              0.0012441773261859246,
+              0.11072985529039606
+            ],
+            [
+              1.1714211135792133e-05,
+              0.0012547241652824392,
+              0.11154356241271987
+            ],
+            [
+              1.1817945900761325e-05,
+              0.001257360875056568,
+              0.11174698919330082
+            ]
+          ],
+          "absolute_lateral_estimation_error_mm_quantiles": [
+            0.1312849308161263,
+            0.19771839518009515,
+            0.21432676127108738
+          ]
+        },
+        "first_narrow_target": {
+          "cue_episode_count": 2,
+          "absolute_observed_error_mm_quantiles": [
+            [
+              0.1312853917479515,
+              0.7910636514425278,
+              0.19108716398477554
+            ],
+            [
+              0.1977110669016838,
+              1.223324653506279,
+              0.19142007380723952
+            ],
+            [
+              0.21431748569011688,
+              1.3313899040222168,
+              0.19150330126285553
+            ]
+          ],
+          "absolute_true_tool_error_mm_quantiles": [
+            [
+              1.0705504305514466e-05,
+              0.0001785882378160797,
+              0.02444630825476089
+            ],
+            [
+              1.1045440551491675e-05,
+              0.00018007947055892481,
+              0.02477679021256962
+            ],
+            [
+              1.1130424612985977e-05,
+              0.0001804522787446361,
+              0.024859410702021804
+            ]
+          ],
+          "absolute_lateral_estimation_error_mm_quantiles": [
+            0.13128581666825898,
+            0.1977200562254357,
+            0.21432861611472986
+          ]
+        }
+      },
+      "gates": [
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -21.0,
+            -21.0,
+            -21.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            10.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -21.0,
+            -21.0,
+            -21.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            20.0,
+            20.0,
+            10.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -21.0,
+            -21.0,
+            -21.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -24.0,
+            -23.5,
+            -23.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            10.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -24.0,
+            -23.5,
+            -23.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            20.0,
+            30.0,
+            20.0
+          ],
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 2,
+          "first_gate_relative_frame_quantiles": [
+            -24.0,
+            -23.5,
+            -23.0
+          ],
+          "never_opens_by_first_narrow": 0
+        }
+      ],
+      "dwell_gates": [
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 1.0,
+          "elapsed_ticks": 5,
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -3.0,
+            -3.0,
+            -3.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 2.5,
+          "elapsed_ticks": 5,
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -5.0,
+            -5.0,
+            -5.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 5.0,
+          "elapsed_ticks": 5,
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -6.0,
+            -6.0,
+            -6.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 1.0,
+          "elapsed_ticks": 10,
+          "ready_at_close": 0,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 2.5,
+          "elapsed_ticks": 10,
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "never_opens_by_first_narrow": 0
+        },
+        {
+          "tolerances_mm": [
+            5.0,
+            20.0,
+            10.0
+          ],
+          "max_tool_speed_mm_s": 5.0,
+          "elapsed_ticks": 10,
+          "ready_at_close": 2,
+          "ready_at_first_narrow": 2,
+          "opens_at_least_8_frames_early": 0,
+          "first_gate_relative_frame_quantiles": [
+            -1.0,
+            -1.0,
+            -1.0
+          ],
+          "never_opens_by_first_narrow": 0
+        }
+      ]
+    },
+    "model_rollouts": [
+      {
+        "rollout": "runs/cylinder-joint-held-recovery-bc-v48-a6000-step384-single",
+        "failure_reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_31']]",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "trajectory_sha256": "0d1f39a25c1704f05f7d27c625dd73ee6ab9b70cc6a156d733b101b512aa374f",
+        "observation_sha256": "722c705350d9b5653646272b64e3127b7bae35efaf0ee9c58e4f01a5da7804d4",
+        "reconstructed_observations": 55,
+        "observed_state_and_prompt_exact": true,
+        "first_spatially_ready": null,
+        "first_ready_after_dwell": null,
+        "first_narrow_request_after_open": {
+          "time_s": 17.200000000005264,
+          "observed_error_mm": [
+            81.93304443359375,
+            -17.212482452392578,
+            -16.941741943359375
+          ],
+          "dwell_gate_open": false
+        },
+        "first_applied_narrow_after_open": {
+          "time_s": 17.750000000003983,
+          "observed_error_mm": [
+            59.09919738769531,
+            -17.228044509887695,
+            -15.98451042175293
+          ],
+          "dwell_gate_open": false
+        }
+      },
+      {
+        "rollout": "runs/cylinder-joint-held-recovery-bc-v48-a6000-step896-single",
+        "failure_reason": "timeout",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "trajectory_sha256": "a9a3b49ef35bb43156056ccba75c98116222127ed937f1b9af22efb2627e8a5e",
+        "observation_sha256": "d21d0731ad52fd393312c73948f2e54deb69d3a66d965651ab8b99bd684d29a3",
+        "reconstructed_observations": 225,
+        "observed_state_and_prompt_exact": true,
+        "first_spatially_ready": null,
+        "first_ready_after_dwell": null,
+        "first_narrow_request_after_open": null,
+        "first_applied_narrow_after_open": null
+      },
+      {
+        "rollout": "runs/cylinder-joint-held-retreat-start-bc-v49-a6000-step128-single",
+        "failure_reason": "timeout",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "trajectory_sha256": "c9c8af25e690ca866e729fc77aa5165ec99ed79560c23746bdf97d8e1cede817",
+        "observation_sha256": "9e7df53f12a7cbfc77d4b5ffb0b17f07fc8bfcc0b4a83842f0ff42cf94d85b59",
+        "reconstructed_observations": 225,
+        "observed_state_and_prompt_exact": true,
+        "first_spatially_ready": null,
+        "first_ready_after_dwell": null,
+        "first_narrow_request_after_open": {
+          "time_s": 60.400000000106374,
+          "observed_error_mm": [
+            -3.1002635955810547,
+            72.82391357421875,
+            206.57962036132812
+          ],
+          "dwell_gate_open": false
+        },
+        "first_applied_narrow_after_open": null
+      },
+      {
+        "rollout": "runs/cylinder-joint-model-near-grasp-bc-v50-a6000-step256-single",
+        "failure_reason": "timeout",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "trajectory_sha256": "b3545917b1c3164046580eefa593c88a47bccb380494e3405f5e2ad949c3bfd9",
+        "observation_sha256": "1d299180267200d155cc1a1d7308481ea54f8deda085a8843c8bd578f8139e8c",
+        "reconstructed_observations": 225,
+        "observed_state_and_prompt_exact": true,
+        "first_spatially_ready": null,
+        "first_ready_after_dwell": null,
+        "first_narrow_request_after_open": {
+          "time_s": 62.05000000011425,
+          "observed_error_mm": [
+            -363.5958251953125,
+            683.1764526367188,
+            6.775872230529785
+          ],
+          "dwell_gate_open": false
+        },
+        "first_applied_narrow_after_open": null
+      }
+    ]
+  },
+  "model_language_probe": {
+    "model": "/data/hlou/pigment-pour-study/runs/cylinder-grasp-tolerance-v51/v50-step128-checkpoint",
+    "prompt": "Close the parallel fingers around the measuring cylinder. Hold the wrist position steady and keep the cylinder upright.",
+    "original_chunks_exact_reproduction": 24,
+    "simulator_advanced": false,
+    "records": [
+      {
+        "seed": 861901,
+        "window": "advance",
+        "teacher_final_aperture_mm": 68.0,
+        "original": {
+          "final_applied_aperture_mm": 59.94129094481468,
+          "lateral_rms_mm": 2.7502352732923763,
+          "tip_rms_mm": 13.816178456378786
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 58.71220934391022,
+          "lateral_rms_mm": 3.4594154348572346,
+          "tip_rms_mm": 14.05419875822519
+        }
+      },
+      {
+        "seed": 861901,
+        "window": "closure_start",
+        "teacher_final_aperture_mm": 43.999999999999986,
+        "original": {
+          "final_applied_aperture_mm": 54.8347225189209,
+          "lateral_rms_mm": 4.45301071423792,
+          "tip_rms_mm": 7.88060308302524
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 54.4272486269474,
+          "lateral_rms_mm": 3.878588685601607,
+          "tip_rms_mm": 6.7648188938556855
+        }
+      },
+      {
+        "seed": 861901,
+        "window": "closing_near_20mm",
+        "teacher_final_aperture_mm": 10.999999999999979,
+        "original": {
+          "final_applied_aperture_mm": 16.66264521578947,
+          "lateral_rms_mm": 3.7163727859216316,
+          "tip_rms_mm": 7.034515191501673
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 15.421159068743382,
+          "lateral_rms_mm": 4.432380858894186,
+          "tip_rms_mm": 8.50362711596229
+        }
+      },
+      {
+        "seed": 861901,
+        "window": "first_two_fingers",
+        "teacher_final_aperture_mm": 6.0,
+        "original": {
+          "final_applied_aperture_mm": 9.278140380978584,
+          "lateral_rms_mm": 4.184491125854635,
+          "tip_rms_mm": 7.448719143930289
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 7.225647583603859,
+          "lateral_rms_mm": 6.320531392829224,
+          "tip_rms_mm": 9.615075914077133
+        }
+      },
+      {
+        "seed": 861902,
+        "window": "advance",
+        "teacher_final_aperture_mm": 68.0,
+        "original": {
+          "final_applied_aperture_mm": 60.16003403067589,
+          "lateral_rms_mm": 3.2258804386722493,
+          "tip_rms_mm": 13.394296128553515
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 58.51214426755905,
+          "lateral_rms_mm": 3.5437893948252377,
+          "tip_rms_mm": 13.959947482979764
+        }
+      },
+      {
+        "seed": 861902,
+        "window": "closure_start",
+        "teacher_final_aperture_mm": 43.999999999999986,
+        "original": {
+          "final_applied_aperture_mm": 59.90319299697876,
+          "lateral_rms_mm": 4.00211083569138,
+          "tip_rms_mm": 7.2295563769779605
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 57.044779360294335,
+          "lateral_rms_mm": 4.07990418355385,
+          "tip_rms_mm": 7.028942469241633
+        }
+      },
+      {
+        "seed": 861902,
+        "window": "closing_near_20mm",
+        "teacher_final_aperture_mm": 10.999999999999979,
+        "original": {
+          "final_applied_aperture_mm": 18.470908284187317,
+          "lateral_rms_mm": 6.214795223812743,
+          "tip_rms_mm": 8.44157454753813
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 21.47554770112038,
+          "lateral_rms_mm": 6.143829203889653,
+          "tip_rms_mm": 8.335039020117266
+        }
+      },
+      {
+        "seed": 861902,
+        "window": "first_two_fingers",
+        "teacher_final_aperture_mm": 6.0,
+        "original": {
+          "final_applied_aperture_mm": 10.004116758704185,
+          "lateral_rms_mm": 4.9223161132277236,
+          "tip_rms_mm": 7.547871289706913
+        },
+        "steady_close": {
+          "final_applied_aperture_mm": 8.613811895251274,
+          "lateral_rms_mm": 6.9204360611461135,
+          "tip_rms_mm": 9.442370628092654
+        }
+      }
+    ]
+  },
+  "exact_physical_replay": [
+    {
+      "rollout": "runs/cylinder-joint-model-near-grasp-bc-v50-a6000-step256-single",
+      "trajectory_sha256": "b3545917b1c3164046580eefa593c88a47bccb380494e3405f5e2ad949c3bfd9",
+      "min_grasp_distance_m": 0.13252258628104888,
+      "error_world_m": [
+        -0.09231468882443725,
+        0.0949377798460343,
+        -0.005201159464129613
+      ],
+      "loaded_contact_counts": [
+        1800,
+        0,
+        0
+      ]
+    },
+    {
+      "rollout": "runs/cylinder-joint-held-recovery-bc-v48-a6000-step896-single",
+      "trajectory_sha256": "a9a3b49ef35bb43156056ccba75c98116222127ed937f1b9af22efb2627e8a5e",
+      "min_grasp_distance_m": 0.10376250002477883,
+      "error_world_m": [
+        -0.06706637335041575,
+        0.07803251703105392,
+        0.013404635870218217
+      ],
+      "loaded_contact_counts": [
+        1800,
+        0,
+        0
+      ]
+    }
+  ],
+  "current_training": {
+    "v48": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-held-recovery-bc-v48-a6000",
+      "stage": "curve_complete_no_full_single_success",
+      "evaluated_step": 1024,
+      "single": {
+        "source": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-held-recovery-bc-v48-a6000-step1024-single/summary.json",
+          "sha256": "b4d2d24570ede5c1250dd4bd1a6ca68dad1433988f14e0837110a6a239f5bf56"
+        },
+        "success": false,
+        "reason": "timeout",
+        "maximum_supported_lift_m": 0.0,
+        "final_task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": true,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.5466532242729968,
+          "camera_distance_m": 1.2458321802878476,
+          "linear_speed_m_s": 8.512217382617723e-14,
+          "angular_speed_rad_s": 0.0
+        }
+      }
+    },
+    "v49": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-held-retreat-start-bc-v49-a6000",
+      "stage": "neural_evaluation_1024",
+      "evaluated_step": 896,
+      "single": {
+        "source": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-held-retreat-start-bc-v49-a6000-step896-single/summary.json",
+          "sha256": "c925049e3d9e520885f72a7e24d860c996bb6267f232cec4e3756a6606e9838e"
+        },
+        "success": false,
+        "reason": "timeout",
+        "maximum_supported_lift_m": 0.0,
+        "final_task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": true,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.34084486717137086,
+          "camera_distance_m": 1.0221202289572593,
+          "linear_speed_m_s": 8.513762037512912e-14,
+          "angular_speed_rad_s": 0.0
+        }
+      }
+    },
+    "v50": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-model-near-grasp-bc-v50-a6000",
+      "stage": "neural_evaluation_512",
+      "evaluated_step": 384,
+      "single": {
+        "source": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-model-near-grasp-bc-v50-a6000-step384-single/summary.json",
+          "sha256": "ec853a17b63c0b817d7b0bb5b6807dff69d57f4f16faef13427b6ba7639f2811"
+        },
+        "success": false,
+        "reason": "timeout",
+        "maximum_supported_lift_m": 0.0,
+        "final_task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": true,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.386542533395824,
+          "camera_distance_m": 1.0798915956723056,
+          "linear_speed_m_s": 8.516175565744619e-14,
+          "angular_speed_rad_s": 0.0
+        }
+      }
+    },
+    "v51": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000",
+      "stage": "training",
+      "evaluated_step": null,
+      "first_native_gradient": {
+        "log": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000/driver.log",
+        "entry": "2026-11-19 12:32:44,704 - [rank0] - INFO - [FSDP Train] Step 0: {'action_expert_param_norm': 61.988624572753906, 'grad_norm': 0.5635555386543274, 'org_vlm_param_norm': 523.1836547851562, 'train_loss': 0.008494243957102299, 'lr_group/action': 1e-05, 'lr': 1e-05, 'total_param_norm': 526.8431396484375, 'channel_loss_/data/hlou/pigment-pour-study/datasets/cylinder-joint-reset-held-near-grasp-v50_flow': 0.008494243853622012, 'visual_param_norm': 0.0, 'lr_group/state_projection': 5e-05, 'flow_loss': 0.008494243957102299}"
+      },
+      "native_data_validation": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000/data-validation.json",
+        "sha256": "ab9fb4970a7f1538644edf0767a24fb56a4513014aa57218fb6c766cda10119c"
+      },
+      "training_pid": 2516046
+    }
+  },
+  "queued_v50_training_only_collection": {
+    "scope": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-step256-collection-scope.json",
+      "sha256": "5b7bfaf9f9ed9309e78927809d013590a1bcb7d8fa8707ee98155ff3215dcd7c"
+    },
+    "cases": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-step256-training-cases.json",
+      "sha256": "77902d6f58cb16e7d2fe4c19c1b645809a03f0741bcc6b3409a30a858d6f6f5e"
+    },
+    "script": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/collect-v50-step256-when-v49-done.sh",
+      "sha256": "fb351464e015ec0e55607850baef7b8f69d35dded0a3437e618a18882f166e70"
+    },
+    "process": 2550000,
+    "process_running": true,
+    "has_started": false,
+    "draft_teacher_demonstrations_added": 0
+  }
+}
