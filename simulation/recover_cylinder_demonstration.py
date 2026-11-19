@@ -27,6 +27,8 @@ def main():
                           help="Drive a retreated, contact-free robot towards its starting odometry before gripping.")
     recovery.add_argument("--align-from-clearance",action="store_true",
                           help="Retract and align a contact-free wrist before advancing and closing.")
+    p.add_argument("--wrist-clearance-rear-distance-m",type=float,
+                   help="Optional longitudinal wrist clearance for a saved contact-free approach.")
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
     p.add_argument("--lift-off-recovery",action="store_true",
@@ -39,6 +41,9 @@ def main():
     if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
     if a.restore_approach_base and a.start_holding:p.error("--restore-approach-base requires an unheld approach")
     if a.align_from_clearance and a.start_holding:p.error("--align-from-clearance requires an unheld approach")
+    if a.wrist_clearance_rear_distance_m is not None and (
+            not a.align_from_clearance or not .07 <= a.wrist_clearance_rear_distance_m <= .18):
+        p.error("--wrist-clearance-rear-distance-m requires --align-from-clearance and a distance in [0.07,0.18] m")
     if not np.isfinite(a.held_initial_lift_m) or not 0<=a.held_initial_lift_m<=.10:
         p.error("Held recovery lift must be within [0,0.10] m")
     if a.held_initial_lift_m and (not a.start_holding or a.reading_only):
@@ -144,6 +149,8 @@ def collect(a, controller, output):
             provenance["reset_base_odometry"]=initial_base.tolist()
         if a.align_from_clearance:
             provenance["recovery_stage"]="clearance_wrist_alignment_then_grasp"
+            if a.wrist_clearance_rear_distance_m is not None:
+                provenance["wrist_clearance_rear_distance_m"]=a.wrist_clearance_rear_distance_m
         if a.lift_off_recovery:
             provenance["recovery_stage"]="lift_off_from_loaded_tray_grasp"
             provenance["initial_cylinder_height_relative_to_tray_reset_m"]=height
@@ -170,6 +177,8 @@ def collect(a, controller, output):
             teacher["approach_base_reference"] = initial_base
         if a.align_from_clearance:
             teacher["align_from_clearance"] = True
+            if a.wrist_clearance_rear_distance_m is not None:
+                teacher["wrist_clearance_rear_distance_m"] = a.wrist_clearance_rear_distance_m
         result=run_inspection(env,output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
         return 0 if result["success"] else 1
