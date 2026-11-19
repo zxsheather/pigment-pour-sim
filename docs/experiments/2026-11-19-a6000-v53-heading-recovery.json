@@ -579,5 +579,180 @@
     "sampling_weights_match_source_indices": true,
     "episodes": 153,
     "frames": 99639
+  },
+  "first_model_evaluation_followup": {
+    "kind": "first_v53_model_and_v52_single_finger_contact_audit",
+    "observed_at": "2026-11-19T13:37:22.388795+08:00",
+    "independent_cases_read": false,
+    "actual_neural_runs": [
+      {
+        "run": "v51",
+        "step": 128,
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000-step128-single",
+        "trace": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000-step128-single/episode_000/trajectory.npz",
+          "sha256": "91e26fa4a4acec5af51d3acbced2d075b3406838acafaaabbf0e9c77c62e610d"
+        },
+        "maximum_abs_yaw_before_20s_deg": 10.470133781433105,
+        "signed_yaw_at_nearest_saved_view_deg": -8.723777770996094,
+        "nearest_saved_mm": 223.94596709821832,
+        "loaded_fingers": 0,
+        "full_neural_success": false,
+        "failure": "timeout",
+        "simulated_seconds": 90.00000000024771,
+        "phase_evaluation_figure": "Same one development scenario; no cross-checkpoint statistical inference"
+      },
+      {
+        "run": "v52",
+        "step": 128,
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step128-single",
+        "trace": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step128-single/episode_000/trajectory.npz",
+          "sha256": "fc5ce31727b6402f18b27c9f77abc8cdf335ebe4af69d84e3b875871d0907b7b"
+        },
+        "maximum_abs_yaw_before_20s_deg": 6.680081844329834,
+        "signed_yaw_at_nearest_saved_view_deg": -4.156525611877441,
+        "nearest_saved_mm": 104.25777765306702,
+        "loaded_fingers": 0,
+        "full_neural_success": false,
+        "failure": "timeout",
+        "simulated_seconds": 90.00000000024771,
+        "phase_evaluation_figure": "Same one development scenario; no cross-checkpoint statistical inference"
+      },
+      {
+        "run": "v52",
+        "step": 384,
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step384-single",
+        "trace": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step384-single/episode_000/trajectory.npz",
+          "sha256": "3e60a561a8514f14d8aa1ae0c15e911ecf2e5336c412c5d2d7cdd5fcd88ca44f"
+        },
+        "maximum_abs_yaw_before_20s_deg": 7.342705726623535,
+        "signed_yaw_at_nearest_saved_view_deg": -7.342705726623535,
+        "nearest_saved_mm": 70.75119661302939,
+        "loaded_fingers": 1,
+        "full_neural_success": false,
+        "failure": "timeout",
+        "simulated_seconds": 90.00000000024771,
+        "phase_evaluation_figure": "Same one development scenario; no cross-checkpoint statistical inference"
+      },
+      {
+        "run": "v53",
+        "step": 128,
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-heading-recovery-bc-v53-a6000-step128-single",
+        "trace": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-heading-recovery-bc-v53-a6000-step128-single/episode_000/trajectory.npz",
+          "sha256": "a368705fe8f12397def7a9b0ef7f4daf8092391a2a294dab9affe89b7355b1ad"
+        },
+        "maximum_abs_yaw_before_20s_deg": 11.498342514038086,
+        "signed_yaw_at_nearest_saved_view_deg": -6.389819622039795,
+        "nearest_saved_mm": 151.53919915576773,
+        "loaded_fingers": 0,
+        "full_neural_success": false,
+        "failure": "timeout",
+        "simulated_seconds": 90.00000000024771,
+        "phase_evaluation_figure": "Same one development scenario; no cross-checkpoint statistical inference"
+      }
+    ],
+    "v53_first_full_physical_replay": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-heading-recovery-v53/first-v53-evidence.json",
+      "sha256": "259691ca34547417c0e2a30ca34855bda7b5ff8170ed5283c8240955d2c1e816",
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-heading-recovery-bc-v53-a6000-step128-single/summary.json",
+      "episodes": 1,
+      "successes": 0,
+      "genuine_model_prediction_shape": [
+        225,
+        8,
+        26
+      ],
+      "checkpoint_sha256": "fd5ae3c4c94fc264343bcc2f339ad250e8cac777d195b2a7fe6deefc6a3b57fc",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "physical": {
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-heading-recovery-bc-v53-a6000-step128-single",
+        "terminal_reason": "timeout",
+        "raw_peak": {
+          "height_m": 0.0,
+          "time_s": 0.0,
+          "loaded_fingers": 0,
+          "established_hold": false
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          1800,
+          0,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      }
+    },
+    "v52_single_finger_detail": {
+      "audit_source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-heading-recovery-v53/v52-step384-closure-physics.json",
+        "sha256": "08b43d53877a4db651ab2a9775e55489e7d86897dc9cf27ab78de5399a6a2c3b"
+      },
+      "supported_lift_m": 0.0,
+      "loaded_finger_frames": [
+        1750,
+        50,
+        0
+      ],
+      "nearest_20hz_grasp_point_mm": 69.02390935064916,
+      "first_loaded": {
+        "error_world_m": [
+          -0.048788742344807595,
+          0.02519182072624586,
+          -0.04516612626023145
+        ],
+        "base_xy_delta_m": [
+          -0.000377821325070693,
+          -0.005100853344323808
+        ],
+        "base_yaw_delta_deg": -3.8372106620255884,
+        "wrist_shaft_error_deg": 6.157319648196765,
+        "error_with_reset_base_rigid_pose_m": [
+          -0.004206124879347906,
+          0.00028852047410005133,
+          -0.04516612626023142
+        ],
+        "error_with_teacher_shaft_same_wrist_origin_m": [
+          -0.06102934753894762,
+          0.024528401622478824,
+          -0.043644990684298834
+        ],
+        "frame": 229,
+        "time_s": 11.450000000002502,
+        "distance_m": 0.07109815871347513,
+        "loaded_contacts": 1,
+        "cylinder_tilt_rad": 0.0023879055562291028,
+        "predicted_full_opening_m": 0.04995850905776024,
+        "measured_full_opening_m": 0.04694278635084629,
+        "next_bounded_full_opening_m": 0.04995850905776024,
+        "cylinder_height_delta_m": -0.0002477436194546767,
+        "cylinder_y_delta_m": 2.3395101118039996e-06,
+        "base_forward_m_s": 0.0019201487302780151,
+        "base_yaw_rate_rad_s": -0.0019204461574554438
+      },
+      "applied_aperture_mm_bounds_during_contact": [
+        40.57112342119216,
+        63.00867292284966
+      ]
+    },
+    "target_collection": {
+      "scope": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-heading-recovery-v53/v52-step384-training-scope.json",
+        "sha256": "1fdb94603d1cea85ee4ff4220c39423a8568cb1c5f83edf479dd160824a29ac1"
+      },
+      "pid": 3221894,
+      "process_alive": true,
+      "started": false
+    },
+    "formal_candidate_ready": []
   }
 }
