@@ -12,7 +12,7 @@ import numpy as np
 
 from carry_env import CAMERAS, CONTROL_DT, angle_difference
 from cylinder_joint_actions import (
-    ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, bounded_joint_command, require,
+    APERTURE_SCALE_M, ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, bounded_joint_command, require,
     servo_increment_targets, with_joint_servo_state,
 )
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
@@ -120,6 +120,7 @@ def prepare(episode, reconstruction, base, output):
         base_recovery = None
         heading_recovery = None
         wrist_alignment = None
+        single_contact_recovery = None
         with np.load(episode/'trajectory.npz', allow_pickle=False) as raw:
             count = metadata['frames']
             require(metadata['fps'] == 20 and np.allclose(raw['timestamp'], np.arange(count)*CONTROL_DT),
@@ -143,6 +144,22 @@ def prepare(episode, reconstruction, base, output):
             actions[:, :6] = deltas
             decoded = servo_increment_targets(actions, previous, CONTROL_DT)
             np.testing.assert_allclose(decoded[:, :6], commands[:, :6], atol=2e-9, rtol=0)
+            if result['controller_parameters'].get('release_single_contact'):
+                releasing = np.flatnonzero(np.isin(raw['phase'], ('release_contact', 'withdraw_from_contact')))
+                require(releasing.size and releasing[0] == 0 and releasing[-1] + 1 < count,
+                        'Missing the initial single-finger release')
+                released = int(releasing[-1]) + 1
+                require(np.array_equal(releasing, np.arange(released))
+                        and raw['contacts'][0] == 1 and raw['contacts'][released] == 0
+                        and raw['tilt'][released] < .10 and np.all(tasks[:released+1] == 0),
+                        'The saved single-finger contact did not clear before regrasp')
+                object_shift = raw['cylinder_position'][released] - raw['cylinder_position'][0]
+                single_contact_recovery = dict(
+                    release_frames=released, release_seconds=float(raw['timestamp'][released]),
+                    withdrawal_frames=int(np.sum(raw['phase'][:released] == 'withdraw_from_contact')),
+                    initial_aperture_m=float(raw['state'][0, 19] * APERTURE_SCALE_M),
+                    released_cylinder_shift_m=float(np.linalg.norm(object_shift)),
+                    released_cylinder_tilt_rad=float(raw['tilt'][released]))
             if provenance.get('recovery_stage') == 'restore_base_then_grasp':
                 reference = np.asarray(provenance['reset_base_odometry'])
                 np.testing.assert_array_equal(reference, trial.initial_base)
@@ -237,6 +254,8 @@ def prepare(episode, reconstruction, base, output):
             report['approach_base_recovery'] = base_recovery
         if heading_recovery is not None:
             report['approach_heading_recovery'] = heading_recovery
+        if single_contact_recovery is not None:
+            report['single_contact_recovery'] = single_contact_recovery
         if wrist_alignment is not None:
             report['wrist_alignment_recovery'] = wrist_alignment
         np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)

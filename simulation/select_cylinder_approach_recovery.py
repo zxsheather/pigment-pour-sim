@@ -39,9 +39,11 @@ def observed_snapshots(directory, episode, environment):
         dof = env.model.joint('cylinder_free').dofadr[0]
         snapshots = directory/'recovery_physics.npz'
         observations = directory/'model_observations.npz'
+        trajectory = directory/'trajectory.npz'
         rows = []
         with (np.load(snapshots, allow_pickle=False) as physics,
-              np.load(observations, allow_pickle=False) as observed):
+              np.load(observations, allow_pickle=False) as observed,
+              np.load(trajectory, allow_pickle=False) as controls):
             times = observed['timestamp']
             require(len(times) and np.all(np.diff(times) > 0)
                     and len(times) == len(physics['full_state']) == len(observed['state']),
@@ -49,6 +51,12 @@ def observed_snapshots(directory, episode, environment):
             spec = int(physics['state_spec'])
             actuator_ids = physics['hold_actuator_ids'].tolist()
             require(set(actuator_ids) == set(env.hold_targets), 'Saved actuator identities differ')
+            control_times = controls['timestamp']
+            ticks = np.searchsorted(control_times, times)
+            require(np.all(ticks < len(control_times)), 'An observation has no applied control tick')
+            np.testing.assert_array_equal(control_times[ticks], times)
+            contacts = controls['contacts']
+            prior_double = np.r_[False, np.maximum.accumulate(contacts == 2)[:-1]]
             for i in np.flatnonzero(observed['instruction'] == PROGRESS_PROMPTS[0]):
                 mujoco.mj_setState(env.model, env.data, physics['full_state'][i], spec)
                 env.hold_targets = dict(zip(actuator_ids, physics['hold_targets'][i].tolist(), strict=True))
@@ -59,20 +67,27 @@ def observed_snapshots(directory, episode, environment):
                 np.testing.assert_array_equal(cue, observed['state'][i])
                 require(env.data.time == times[i], 'Snapshot clock differs from model observation')
                 metrics = env.metrics()
+                tick = ticks[i]
+                require(metrics['grip_contacts'] == contacts[tick], 'Saved contact count differs from restored physics')
                 error = env.grip_point_relative() - env.grasp_offset
                 pose = wrist_pose_breakdown(env, error, initial_base)
                 location = env.data.xpos[env.cylinder_body]
-                rows.append(dict(index=int(i), timestamp_s=float(times[i]),
+                rows.append(dict(index=int(i), control_tick=int(tick), timestamp_s=float(times[i]),
                                  true_grasp_distance_m=float(np.linalg.norm(error)),
                                  current_aperture_m=float(state[6] * APERTURE_SCALE_M),
                                  loaded_fingers=metrics['grip_contacts'], collision=bool(metrics['forbidden_contacts']),
                                  cylinder_shift_m=float(np.linalg.norm(location - initial_cylinder)),
                                  cylinder_z_delta_m=float(location[2] - initial_cylinder[2]),
                                  cylinder_upright=bool(env.data.xmat[env.cylinder_body, 8] > np.cos(.08)),
+                                 cylinder_tilt_rad=metrics['bottle_tilt_rad'],
                                  cylinder_speed_m_s=float(np.linalg.norm(env.data.qvel[dof:dof+3])),
+                                 cylinder_angular_speed_rad_s=float(np.linalg.norm(env.data.qvel[dof+3:dof+6])),
+                                 prior_double_contact=bool(prior_double[tick]),
                                  retreat_m=float((initial_base[:2] - env.base_pose()[:2]) @ forward),
                                  **pose))
-        return rows, dict(physics=sha256(snapshots), robot_observations=sha256(observations))
+        loaded_counts = np.bincount(contacts, minlength=3).tolist()
+        return rows, loaded_counts, dict(physics=sha256(snapshots), robot_observations=sha256(observations),
+                                         applied_trajectory=sha256(trajectory))
     finally:
         env.close()
 
@@ -85,10 +100,15 @@ def choose(rows):
              and r['error_world_m'][1] >= .025 and abs(r['retreat_m']) < .18
              and abs(r['base_yaw_delta_deg']) < 20.]
     base = [r for r in stable if .055 <= r['retreat_m'] <= .32 and abs(r['base_yaw_delta_deg']) < 30.]
+    single = [r for r in rows if r['loaded_fingers'] == 1 and r['timestamp_s'] > 0.
+              and not r['collision'] and not r['prior_double_contact']
+              and r['cylinder_shift_m'] < .015 and r['cylinder_tilt_rad'] < .10
+              and r['cylinder_speed_m_s'] < .02 and r['cylinder_angular_speed_rad_s'] < .35]
     wrist.sort(key=lambda r: (r['true_grasp_distance_m'] + .25 * max(0., .055-r['error_world_m'][1]),
                               r['timestamp_s']))
     base.sort(key=lambda r: (abs(r['retreat_m'] - .10), r['timestamp_s']))
-    return dict(clearance_wrist_alignment=wrist, restore_base=base)
+    single.sort(key=lambda r: (r['cylinder_shift_m'] + .07*r['cylinder_tilt_rad'], r['timestamp_s']))
+    return dict(clearance_wrist_alignment=wrist, restore_base=base, release_single_contact=single)
 
 
 def select(collection, cases_path, scope_path):
@@ -119,10 +139,11 @@ def select(collection, cases_path, scope_path):
         require(episode == summary['episodes'][i] and episode['geometry_audit']['passed']
                 and episode['geometry_audit']['custom_pads'] == 0 and episode['exact_input_images_recorded'],
                 'Episode lacks matched observations or the expected official geometry')
-        rows, hashes = observed_snapshots(directory, episode, summary['controller']['environment'])
+        rows, loaded_counts, hashes = observed_snapshots(directory, episode, summary['controller']['environment'])
         eligible = choose(rows)
         results.append(dict(seed=case['seed'], episode=str(directory), snapshot_hashes=hashes,
                             recorded_model_success=episode['success'], approach_snapshots_verified=len(rows),
+                            control_tick_contact_counts=loaded_counts,
                             closest=min(rows, key=lambda r: r['true_grasp_distance_m'], default=None),
                             candidates=eligible))
     return dict(kind='training_only_model_approach_recovery_selection',
