@@ -998,5 +998,55 @@
     "process_running": true,
     "has_started": false,
     "draft_teacher_demonstrations_added": 0
+  },
+  "follow_up_after_v51_checkpoint_128": {
+    "observed_at": "2026-11-19T12:40:19.494124+08:00",
+    "v51_step128": {
+      "audit": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-closing-lateral-bc-v51-a6000/checkpoint-128-weight-audit.json",
+        "sha256": "cd51542b5a0ff0789bf57b0e9d3c7704f77028b6885e2fc7eb2e9df6a92bb9cc"
+      },
+      "model_file_sha256": "3ba59116bde9d4d67e8e22e69c61c501c1e726a533d82192562ea7239dedfe35",
+      "updated_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "current_stage": "neural_evaluation_128"
+    },
+    "closed_loop_further_replay": {
+      "source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-step384-v49-step896-closure-replay.json",
+        "sha256": "1fcafa65d8780683a7d9fd37a8c749cb1fdb87cfa0a7de827d171d79a8d579f0"
+      },
+      "results": [
+        {
+          "rollout": "runs/cylinder-joint-model-near-grasp-bc-v50-a6000-step384-single",
+          "trajectory_sha256": "2dc217efba557bbac33163d14a4b1cebeb8e27fc2fbc0e288509ea8fa64fe955",
+          "nearest_m": 0.10165400612377595,
+          "loaded_contact_frames": [
+            1800,
+            0,
+            0
+          ]
+        },
+        {
+          "rollout": "runs/cylinder-joint-held-retreat-start-bc-v49-a6000-step896-single",
+          "trajectory_sha256": "5ad46773a3fe64d3d7c268de1d8c25bf322392c76d749ecf231223e60abe1cba",
+          "nearest_m": 0.12638831092984334,
+          "loaded_contact_frames": [
+            1800,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "collection": {
+      "started": true,
+      "active_real_wall_chunks": true,
+      "closed_loop_collection_scope": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-closure-cue-audit/v50-step256-collection-scope.json",
+        "sha256": "5b7bfaf9f9ed9309e78927809d013590a1bcb7d8fa8707ee98155ff3215dcd7c"
+      }
+    },
+    "candidate_ready": []
   }
 }
