@@ -10,7 +10,7 @@ import imageio.v2 as imageio
 import mujoco
 import numpy as np
 
-from carry_env import CAMERAS, CONTROL_DT
+from carry_env import CAMERAS, CONTROL_DT, angle_difference
 from cylinder_joint_actions import (
     ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, bounded_joint_command, require,
     servo_increment_targets, with_joint_servo_state,
@@ -118,6 +118,7 @@ def prepare(episode, reconstruction, base, output):
         first_command = bounded_joint_command(env)
         restore_router = copy.deepcopy(router)
         base_recovery = None
+        heading_recovery = None
         wrist_alignment = None
         with np.load(episode/'trajectory.npz', allow_pickle=False) as raw:
             count = metadata['frames']
@@ -159,7 +160,9 @@ def prepare(episode, reconstruction, base, output):
                 base_recovery = dict(frames=int(return_frames.size), source_retreat_m=retreat_before,
                                      residual_retreat_m=retreat_after, peak_forward_m_s=float(forward.max()),
                                      positive_forward_frames=int(np.count_nonzero(forward > 0)))
-            if provenance.get('recovery_stage') == 'clearance_wrist_alignment_then_grasp':
+            recovery_stage = provenance.get('recovery_stage')
+            if recovery_stage in ('clearance_wrist_alignment_then_grasp',
+                                  'restore_heading_then_clearance_wrist_alignment'):
                 aligns = np.flatnonzero(raw['phase'] == 'wrist_clearance_align')
                 closing = np.flatnonzero(raw['phase'] == 'close')
                 require(aligns.size and closing.size and aligns[-1] < closing[0],
@@ -173,6 +176,25 @@ def prepare(episode, reconstruction, base, output):
                 wrist_alignment = dict(alignment_frames=int(aligns.size), closure_frame=close_frame,
                                        start_grasp_error_m=float(start_error),
                                        closure_grasp_error_m=float(close_error))
+                if recovery_stage == 'restore_heading_then_clearance_wrist_alignment':
+                    reference = provenance['reset_base_heading_rad']
+                    require(reference == trial.initial_base[2], 'Heading reference differs from reset odometry')
+                    turning = np.flatnonzero(raw['phase'] == 'restore_approach_heading')
+                    tucked = np.flatnonzero(raw['phase'] == 'tuck_for_heading_return')
+                    require(turning.size and tucked.size and tucked[-1] < turning[0] <= turning[-1] < aligns[0],
+                            'Missing contact-free heading recovery before wrist alignment')
+                    poses = raw['base_pose']
+                    after = int(turning[-1]) + 1
+                    initial_error = angle_difference(reference, poses[0, 2])
+                    final_error = angle_difference(reference, poses[after, 2])
+                    xy_drift = float(np.linalg.norm(poses[after, :2] - poses[turning[0], :2]))
+                    corrective = actions[turning, 8] * np.sign(initial_error) > .01
+                    require(abs(initial_error) >= .035 and abs(final_error) <= .006 and xy_drift <= .008
+                            and np.all(actions[turning, 7] == 0) and corrective.any(),
+                            'Recorded heading recovery did not restore the reset yaw in place')
+                    heading_recovery = dict(frames=int(turning.size), tuck_frames=int(tucked.size),
+                                            source_error_rad=initial_error, final_error_rad=final_error,
+                                            translation_m=xy_drift, corrective_frames=int(corrective.sum()))
 
         bounds = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
         for key, values in [('observation.state',model_states), ('action',actions)]:
@@ -213,6 +235,8 @@ def prepare(episode, reconstruction, base, output):
                       alignment_video=videos, independent_cases_read=False)
         if base_recovery is not None:
             report['approach_base_recovery'] = base_recovery
+        if heading_recovery is not None:
+            report['approach_heading_recovery'] = heading_recovery
         if wrist_alignment is not None:
             report['wrist_alignment_recovery'] = wrist_alignment
         np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)

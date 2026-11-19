@@ -11,6 +11,7 @@ from pathlib import Path
 import mujoco
 import numpy as np
 
+from carry_env import angle_difference
 from inspect_cylinder import CylinderEnv,run_inspection
 
 
@@ -27,6 +28,8 @@ def main():
                           help="Drive a retreated, contact-free robot towards its starting odometry before gripping.")
     recovery.add_argument("--align-from-clearance",action="store_true",
                           help="Retract and align a contact-free wrist before advancing and closing.")
+    p.add_argument("--restore-approach-heading",action="store_true",
+                   help="With clearance alignment, tuck the arm and recover the reset yaw before aligning the wrist.")
     p.add_argument("--wrist-clearance-rear-distance-m",type=float,
                    help="Optional longitudinal wrist clearance for a saved contact-free approach.")
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
@@ -41,6 +44,8 @@ def main():
     if a.reading_only and not a.start_holding:p.error("--reading-only requires --start-holding")
     if a.restore_approach_base and a.start_holding:p.error("--restore-approach-base requires an unheld approach")
     if a.align_from_clearance and a.start_holding:p.error("--align-from-clearance requires an unheld approach")
+    if a.restore_approach_heading and not a.align_from_clearance:
+        p.error("--restore-approach-heading requires --align-from-clearance")
     if a.wrist_clearance_rear_distance_m is not None and (
             not a.align_from_clearance or not .07 <= a.wrist_clearance_rear_distance_m <= .18):
         p.error("--wrist-clearance-rear-distance-m requires --align-from-clearance and a distance in [0.07,0.18] m")
@@ -122,6 +127,8 @@ def collect(a, controller, output):
                            and not metrics["forbidden_contacts"] and retreat > .02)
         if a.align_from_clearance:
             recoverable = recoverable and metrics["grip_contacts"]==0 and not metrics["forbidden_contacts"]
+        if a.restore_approach_heading:
+            recoverable = recoverable and abs(angle_difference(initial_base[2],env.base_pose()[2])) >= .035
         if a.start_holding:
             recoverable=metrics["grip_contacts"]==2 and height>.02 and axis[2]>np.cos(.12)
         if a.lift_off_recovery:
@@ -151,6 +158,9 @@ def collect(a, controller, output):
             provenance["recovery_stage"]="clearance_wrist_alignment_then_grasp"
             if a.wrist_clearance_rear_distance_m is not None:
                 provenance["wrist_clearance_rear_distance_m"]=a.wrist_clearance_rear_distance_m
+        if a.restore_approach_heading:
+            provenance["recovery_stage"]="restore_heading_then_clearance_wrist_alignment"
+            provenance["reset_base_heading_rad"]=float(initial_base[2])
         if a.lift_off_recovery:
             provenance["recovery_stage"]="lift_off_from_loaded_tray_grasp"
             provenance["initial_cylinder_height_relative_to_tray_reset_m"]=height
@@ -179,6 +189,8 @@ def collect(a, controller, output):
             teacher["align_from_clearance"] = True
             if a.wrist_clearance_rear_distance_m is not None:
                 teacher["wrist_clearance_rear_distance_m"] = a.wrist_clearance_rear_distance_m
+        if a.restore_approach_heading:
+            teacher["approach_heading_reference"] = float(initial_base[2])
         result=run_inspection(env,output,seed=case["seed"],jitter=case.get("jitter",.004),
                               yaw_jitter=case.get("yaw_jitter",0.),record=a.record,**teacher)
         return 0 if result["success"] else 1

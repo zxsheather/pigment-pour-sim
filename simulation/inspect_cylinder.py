@@ -12,7 +12,7 @@ import mujoco
 import numpy as np
 from scipy.optimize import least_squares
 
-from carry_env import CarryEnv, CARRY_JOINTS, CONTROL_DT, PHYSICS_DT, GRASP_OFFSET, ROOT, CAMERAS
+from carry_env import CarryEnv, CARRY_JOINTS, CONTROL_DT, PHYSICS_DT, GRASP_OFFSET, ROOT, CAMERAS, angle_difference
 from build_scene import camera, element, fmt
 from cylinder_reader import read_volume, annotate
 from cylinder_actions import commanded_cartesian_action
@@ -275,7 +275,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
                    release_single_contact=False,release_retreat_m=0.,teacher_grasp_height_m=None,
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
-                   wrist_clearance_rear_distance_m=None):
+                   wrist_clearance_rear_distance_m=None,approach_heading_reference=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -303,6 +303,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if (reset_scene or start_holding or release_single_contact
                 or approach_base_reference.shape != (3,) or not np.isfinite(approach_base_reference).all()):
             raise ValueError("Approach base recovery requires finite reset odometry and a saved unheld state")
+    if approach_heading_reference is not None and (
+            not align_from_clearance or approach_base_reference is not None
+            or not np.isfinite(approach_heading_reference)):
+        raise ValueError("Heading recovery requires a finite yaw reference and a saved clearance approach")
     approach_height = env.grasp_height
     if teacher_grasp_height_m is not None:
         # The existing cylinder collision wall spans 6–245 mm above the base.
@@ -440,6 +444,49 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         clear[0] = cylinder[0]
         move("wrist_clearance_align",clear,2,opening=.034,straight=True)
 
+    def tuck_for_base_motion(phase, check_clearance):
+        q0 = env.data.qpos[env.arm_addresses].copy()
+        q = np.asarray(CARRY_JOINTS)
+        count = max(1,int(np.ceil(1.875*np.max(np.abs(q-q0))/(.45*CONTROL_DT))))
+        phase_log.append(dict(phase=phase,start_seconds=float(env.data.time),target=q.tolist()))
+        for step in range(1,count+1):
+            fraction = step/count
+            fraction = 10*fraction**3-15*fraction**4+6*fraction**5
+            tick(phase,q0+(q-q0)*fraction,.034)
+            check_clearance()
+        return q
+
+    def restore_approach_heading(reference):
+        phase = "restore_approach_heading"
+        if env.metrics()["grip_contacts"]:
+            raise InspectionFailure("heading_recovery_requires_contact_free_start")
+
+        def require_clearance():
+            if (env.metrics()["grip_contacts"]
+                    or np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder) > .005):
+                raise InspectionFailure("heading_recovery_disturbed_cylinder")
+
+        q = tuck_for_base_motion("tuck_for_heading_return", require_clearance)
+        start = env.base_pose()
+        attempt = dict(phase=phase,start_seconds=float(env.data.time),start_pose=start.tolist(),
+                       target_yaw_rad=float(reference))
+        phase_log.append(attempt)
+        stable = 0
+        for _ in range(120):
+            error = angle_difference(reference, env.base_pose()[2])
+            yaw = float(np.clip(2.2*error,-.16,.16)) if abs(error) > .006 else 0.
+            tick(phase,q,.034,yaw=yaw)
+            require_clearance()
+            pose = env.base_pose()
+            if np.linalg.norm(pose[:2]-start[:2]) > .008:
+                raise InspectionFailure("heading_recovery_base_translation")
+            settled = abs(angle_difference(reference, pose[2])) <= .006 and abs(env.base_velocity()[2]) < .02
+            stable = stable + 1 if settled else 0
+            if stable >= 5:
+                attempt.update(end_seconds=float(env.data.time),end_pose=pose.tolist())
+                return
+        raise InspectionFailure("heading_recovery_timeout")
+
     def restore_approach_base(reference):
         phase = "restore_approach_base"
         direction = np.array([np.cos(reference[2]), np.sin(reference[2])])
@@ -453,16 +500,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     or np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder) > .005):
                 raise InspectionFailure("approach_base_recovery_disturbed_cylinder")
 
-        # Put the arm in its reset posture before driving toward the tray.
-        q0 = env.data.qpos[env.arm_addresses].copy()
-        q = np.asarray(CARRY_JOINTS)
-        count = max(1,int(np.ceil(1.875*np.max(np.abs(q-q0))/(.45*CONTROL_DT))))
-        phase_log.append(dict(phase="tuck_for_base_return",start_seconds=float(env.data.time),target=q.tolist()))
-        for step in range(1,count+1):
-            fraction = step/count
-            fraction = 10*fraction**3-15*fraction**4+6*fraction**5
-            tick("tuck_for_base_return",q0+(q-q0)*fraction,.034)
-            require_clearance()
+        q = tuck_for_base_motion("tuck_for_base_return", require_clearance)
         attempt = dict(phase=phase,start_seconds=float(env.data.time),start_pose=env.base_pose().tolist(),
                        target=reference.tolist())
         phase_log.append(attempt)
@@ -528,10 +566,19 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 else:
                     raise InspectionFailure("single_contact_release_did_not_settle")
                 cylinder = env.data.xpos[env.cylinder_body].copy()
+            if approach_heading_reference is not None:
+                restore_approach_heading(approach_heading_reference)
             if align_from_clearance:
                 align_wrist_at_clearance()
             approach_distance = .10 if wrist_clearance_rear_distance_m is None else min(.10, wrist_clearance_rear_distance_m)
             approach=cylinder+[0,-approach_distance,approach_height]
+            if approach_heading_reference is not None:
+                wrist_rotation = env.data.xmat[env.gripper_body].reshape(3,3)
+                tip = env.data.xpos[env.gripper_body] + wrist_rotation@env.grasp_offset
+                if tip[2] > approach[2] + .002:
+                    # Lower while the wrist is still behind the tray after the tucked turn.
+                    tip[2] = approach[2]
+                    move("wrist_clearance_lower",tip,1.5,opening=.034,straight=True)
             move("approach",approach,opening=.034,scale=approach_motion_scale,straight=align_from_clearance)
             q=move("advance",cylinder+[0,0,approach_height],2,opening=.034,straight=align_from_clearance)
             for _ in range(35):tick("close",q,grip_opening)
@@ -684,6 +731,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
     if align_from_clearance:
         summary["controller_parameters"]["align_from_clearance"]=True
+    if approach_heading_reference is not None:
+        summary["controller_parameters"]["approach_heading_reference_rad"]=float(approach_heading_reference)
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
         if reason is None and summary["absolute_reading_error_ml"]>.5:
