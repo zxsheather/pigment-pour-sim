@@ -914,5 +914,119 @@
   "v54_physical_watcher": {
     "pid": 3456860,
     "live": true
+  },
+  "v52_step896_additional_actual_evidence": {
+    "observed_at": "2026-11-19T14:03:16.944487+08:00",
+    "v52_step896_actual_model_contact": {
+      "physical_audit": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/v52-step896-physical-lift/held-lift-audit.json",
+        "sha256": "e97a00c83acf1bd4098fbee9f7e3819c8a488e9a15755c55badbb3cb62c6567c",
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step896-single",
+        "terminal_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "raw_peak": {
+          "height_m": 0.005479021314009125,
+          "time_s": 22.849999999992097,
+          "loaded_fingers": 0,
+          "established_hold": false,
+          "tilt_rad": 0.13425827972476664
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          643,
+          165,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      },
+      "terminal_replay": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/v52-step896-terminal-collision.json",
+        "sha256": "34eb94c6764f48b7f5ebe0a6660fe1500a739c10b7628f6a49e1c905d499a58b",
+        "kind": "recorded_joint_terminal_collision_replay",
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-recovery-bc-v52-a6000-step896-single",
+        "snapshot_index": 100,
+        "source_time_s": 40.00000000000897,
+        "replayed_frames": 8,
+        "final_time_s": 40.40000000001088,
+        "joint_observations_exact": true,
+        "recorded_failure_reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "penetrating_contacts": [
+          {
+            "geom_ids": [
+              139,
+              156
+            ],
+            "geom_names": [
+              "target_tray_floor",
+              "cylinder_base"
+            ],
+            "body_names": [
+              "target_tray",
+              "measuring_cylinder"
+            ],
+            "penetration_m": 0.00113104989604473
+          }
+        ],
+        "physics_timestep_s": 0.0005,
+        "solver_impratio": 10.0,
+        "neural_weights_loaded": false,
+        "independent_cases_read": false,
+        "learned_policy_task_success_measured": false
+      },
+      "nearest_grasp_point": {
+        "error_world_m": [
+          -0.0064919469238187005,
+          0.027456272192455833,
+          -0.029224944762350307
+        ],
+        "base_xy_delta_m": [
+          0.0005029881211237042,
+          0.009058151146098425
+        ],
+        "base_yaw_delta_deg": -10.023122391829546,
+        "wrist_shaft_error_deg": 13.844629179385555,
+        "error_with_reset_base_rigid_pose_m": [
+          0.11014560829980335,
+          -0.0015943619276037602,
+          -0.02922494476235027
+        ],
+        "error_with_teacher_shaft_same_wrist_origin_m": [
+          -0.03345078972038762,
+          0.024115313511273273,
+          -0.03474574967037802
+        ],
+        "frame": 766,
+        "time_s": 38.30000000000085,
+        "distance_m": 0.040621295571785114,
+        "loaded_contacts": 0,
+        "cylinder_tilt_rad": 0.0,
+        "predicted_full_opening_m": 0.04712783463299275,
+        "measured_full_opening_m": 0.0457839971780777,
+        "next_bounded_full_opening_m": 0.04712783463299275,
+        "cylinder_height_delta_m": -6.691177199613652e-05,
+        "cylinder_y_delta_m": -0.0011392444055695061,
+        "base_forward_m_s": -0.004464834928512573,
+        "base_yaw_rate_rad_s": 0.0105998957157135
+      },
+      "source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/v52-step896-closure-physics.json",
+        "sha256": "ec3a947b357ed475512f100ae9d59758d099927d7a64218b23c59adce0b66421"
+      }
+    },
+    "training_only_collection": {
+      "scope": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/v52-step896-training-scope.json",
+        "sha256": "5ad8d75c464d958b1f4367cf62e84248f24d58987e792e57f5aa61a0e5838203"
+      },
+      "pid": 3506968,
+      "live": true,
+      "started": false
+    },
+    "candidate_ready": []
   }
 }
