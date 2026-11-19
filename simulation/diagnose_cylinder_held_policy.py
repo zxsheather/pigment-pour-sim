@@ -63,7 +63,7 @@ def state_digest(trial):
     return hashlib.sha256(combined.tobytes()).hexdigest()
 
 
-def start_trial(row, output, lift_m, max_seconds):
+def start_trial(row, output, lift_m, max_seconds, *, retreat_start=False):
     proof = row['certification']
     episode = Path(proof['source'])
     prior = Path(proof['source_model_episode'])
@@ -81,9 +81,13 @@ def start_trial(row, output, lift_m, max_seconds):
             and not provenance['starts_holding'], 'Expected a certified correction in a training-only scene')
     with np.load(trace, allow_pickle=False) as raw, np.load(row['training_arrays'], allow_pickle=False) as data:
         lift = raw['cylinder_position'][:, 2] - raw['cylinder_position'][0, 2]
-        candidates = np.flatnonzero((raw['phase'] == 'lift') & (lift >= lift_m) & (raw['contacts'] == 2)
-                                   & (data['task_index'] == 1))
-        require(len(candidates) > 0, 'No certified two-finger lift frame')
+        if retreat_start:
+            stage = ((raw['phase'] == 'back_away') & (raw['joint_command'][:, 7] < -.025)
+                     & (data['state'][:, 7] >= -.025))
+        else:
+            stage = (raw['phase'] == 'lift') & (lift >= lift_m)
+        candidates = np.flatnonzero(stage & (raw['contacts'] == 2) & (data['task_index'] == 1))
+        require(len(candidates) > 0, 'No certified two-finger frame in the selected phase')
         frame = int(candidates[0])
         expected_state = data['state'][frame]
         actions = data['action'].copy()
@@ -102,17 +106,26 @@ def start_trial(row, output, lift_m, max_seconds):
         trial.progress_changes.clear()
         trial.update_progress()
         max_command_error = 0.
-        for i in range(frame):
+        if retreat_start:
+            # Long contact sequences amplify the rounding of float32 training
+            # increments. Replay the recorded bounded targets for this prefix.
+            prefix = original_commands.copy()
+            prefix[:, 6] *= 2 / APERTURE_SCALE_M
+            trial.servo_increments = False
+        else:
+            prefix = actions[:frame]
+        for i, action in enumerate(prefix):
             require(not trial.done and trial.progress_router.index == tasks[i], 'Teacher prefix diverged')
-            trial.step(actions[i])
+            trial.step(action)
             executed = bounded_joint_command(trial.env)
             max_command_error = max(max_command_error, float(np.abs(executed - original_commands[i]).max()))
+        trial.servo_increments = True
         require(not trial.done and trial.held and trial.env.metrics()['grip_contacts'] == 2
                 and trial.progress_router.index == tasks[frame], 'No established two-finger hold at takeover')
         observed = trial.observation()
         max_input_error = float(np.abs(observed['state'] - expected_state).max())
         require(max_command_error <= 1e-6 and max_input_error <= 3e-5,
-                'Scene near takeover does not reproduce the certified trajectory')
+                f'Takeover differs from certification: command {max_command_error:g}, observation {max_input_error:g}')
         require(not trial.good_readings and not trial.task_gates['retreated'],
                 'The teacher prefix must end before retreat and reading')
         takeover = dict(case=case, teacher_source=str(episode), teacher_reference_frame=frame,
@@ -145,7 +158,7 @@ def finish(trial, takeover, contact_counts, controlled_by):
 
 
 def run_teacher(row, output, args):
-    trial, start, suffix = start_trial(row, output, args.lift_m, args.max_seconds)
+    trial, start, suffix = start_trial(row, output, args.lift_m, args.max_seconds, retreat_start=args.retreat_start)
     counts = [0, 0, 0]
     try:
         for label in suffix:
@@ -161,7 +174,7 @@ def run_teacher(row, output, args):
 
 
 def run_policy(row, output, args, policy, teacher_start):
-    trial, start, _ = start_trial(row, output, args.lift_m, args.max_seconds)
+    trial, start, _ = start_trial(row, output, args.lift_m, args.max_seconds, retreat_start=args.retreat_start)
     counts = [0, 0, 0]
     try:
         require(start == teacher_start, 'Model and teacher warm starts differ')
@@ -203,6 +216,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--hold-opening', action='store_true',
                         help='For causal diagnosis, hold the takeover gripper target while Wall runs arm and base.')
+    parser.add_argument('--retreat-start', action='store_true',
+                        help='Start at the first certified reverse command after the arm has retracted.')
     parser.add_argument('--lift-m', type=float, default=.025)
     parser.add_argument('--max-seconds', type=float, default=45.)
     args = parser.parse_args()
@@ -219,7 +234,8 @@ def main():
     teachers = [run_teacher(row, args.output / f"teacher-{row['seed']}", args) for row in rows]
     report = dict(kind='wall_oss_held_state_training_diagnostic', source=str(args.qualification),
                   from_training_only=True, independent_cases_read=False, formal_acceptance_eligible=False,
-                  fixed_gripper=args.hold_opening, teachers=teachers, models=[], checkpoint=None)
+                  fixed_gripper=args.hold_opening, retreat_start=args.retreat_start,
+                  teachers=teachers, models=[], checkpoint=None)
     if args.checkpoint:
         proof = read(args.weight_audit)
         require(proof['passed'] and proof['changed_action_tensors'] and not proof['changed_frozen_tensors']
