@@ -104,3 +104,49 @@ def wrist_pose_auxiliary_loss(predicted, labels, proprioception, calibration):
     # Use one active joint-action slot so Wall's existing masks and reduction
     # include the pose loss once per executed frame.
     return torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
+
+
+def servo_arm_targets(actions, anchor, calibration):
+    """Compose rate-limited increments with the fixed joint-limit margin."""
+    lower, upper = actions.new_tensor(calibration['joint_limits_rad']).unbind(0)
+    limit = calibration['arm_increment_limit_rad']
+    deltas = denormalize_arm(actions, calibration['action_affine_rad']).clamp(-limit, limit)
+    targets = []
+    for delta in deltas.unbind(-2):
+        anchor = (anchor + delta).clamp(lower, upper)
+        targets.append(anchor)
+    return torch.stack(targets, dim=-2)
+
+
+def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibration,
+                                    dof_mask=None, flow_loss_mask=None):
+    """Compare the FK of composed arm commands from a shared proprioceptive anchor."""
+    if (labels.ndim != 3 or labels.shape[1:] != (8, 26)
+            or predicted.shape != (labels.shape[0] * 8, 26)
+            or proprioception is None or proprioception.shape != (labels.shape[0], 1, 26)):
+        raise ValueError('Servo wrist supervision requires eight increments and a 26D wrist-target state')
+    dtype = torch.float64 if predicted.dtype == torch.float64 else torch.float32
+    state = proprioception[:, 0].to(dtype)
+    anchor = denormalize_arm(state, calibration['state_affine_rad'])
+    # The wrist-target layout preserves command error for joints 2 and 3.
+    # Use measured positions for the four slots replaced by the visual cue.
+    low, high = state.new_tensor(calibration['tracking_affine_rad']).unbind(0)
+    tracking = low + (state[..., 19:21] + 1) * (high - low) * .5
+    anchor = anchor + torch.nn.functional.pad(tracking, (1, 3))
+    reference = labels.to(dtype)
+    forecast = predicted.reshape_as(labels).to(dtype)
+    expected = wrist_markers(servo_arm_targets(reference, anchor, calibration), calibration)
+    planned = wrist_markers(servo_arm_targets(forecast, anchor, calibration), calibration)
+    error = planned - expected
+    tip = error[..., 0, :]
+    orientation = error[..., 1:, :] - tip[..., None, :]
+    squared_error = tip.square().sum(-1) + .5 * orientation.square().sum((-2, -1))
+    valid = torch.ones_like(squared_error, dtype=torch.bool)
+    if dof_mask is not None:
+        valid &= dof_mask.reshape_as(labels)[..., :6].bool().all(dim=-1)
+    if flow_loss_mask is not None:
+        valid &= flow_loss_mask.reshape_as(valid).bool()
+    valid_prefix = valid.cumprod(dim=1).bool()
+    loss = (squared_error * (calibration['weight'] / calibration['position_scale_m'] ** 2)
+            ).masked_fill(~valid_prefix, 0.)
+    return torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))

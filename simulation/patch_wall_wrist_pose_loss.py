@@ -12,10 +12,16 @@ MODEL = 'wall_x/model/qact/qwen2_5/modeling_qwen2_5_vl_act.py'
 HELPER = 'wall_x/model/core/action/cylinder_wrist_pose_loss.py'
 
 
-def processor_edits(couple_base):
-    name = 'wrist_pose_with_base_motion_loss' if couple_base else 'wrist_pose_auxiliary_loss'
-    config = 'joint_base_and_wrist_pose_loss' if couple_base else 'joint_wrist_pose_loss'
-    masks = ', dof_mask, flow_loss_mask' if couple_base else ''
+MODES = {
+    'absolute': ('wrist_pose_auxiliary_loss', 'joint_wrist_pose_loss'),
+    'coupled': ('wrist_pose_with_base_motion_loss', 'joint_base_and_wrist_pose_loss'),
+    'increment': ('servo_increment_wrist_pose_loss', 'joint_servo_wrist_pose_loss'),
+}
+
+
+def processor_edits(mode):
+    name, config = MODES[mode]
+    masks = '' if mode == 'absolute' else ', dof_mask, flow_loss_mask'
     return (
         ('import torch\n', f'import torch\n\nfrom .cylinder_wrist_pose_loss import {name}\n'),
         ('        flow_loss_mask=None,\n    ):\n        with torch.autocast',
@@ -50,15 +56,34 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wall-root', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--couple-base', action='store_true',
-                        help='Include the base twist prefix and emphasize narrow teacher targets.')
+    options = parser.add_mutually_exclusive_group()
+    options.add_argument('--couple-base', dest='mode', action='store_const', const='coupled',
+                         help='Include the base twist prefix and emphasize narrow teacher targets.')
+    options.add_argument('--servo-increments', dest='mode', action='store_const', const='increment',
+                         help='Compose rate-limited arm increments before comparing wrist poses.')
+    parser.set_defaults(mode='absolute')
     args = parser.parse_args()
     root = args.wall_root.resolve()
     helper = root / HELPER
-    if args.output.exists() or helper.exists():
-        raise ValueError('Expected a new patch report and Wall-X training copy')
+    if args.output.exists():
+        raise ValueError('Expected a new patch report')
+    module = Path(__file__).with_name('cylinder_wrist_pose_loss.py').read_text()
+    processor = processor_edits(args.mode)
+    edits = {PROCESSOR: processor, **EDITS}
+    existing_module = None
+    if helper.exists():
+        if args.mode != 'increment':
+            raise ValueError('Expected an unpatched Wall-X copy for this mode')
+        existing_module = helper.read_text()
+        if ('def wrist_markers(' not in existing_module or 'def servo_arm_targets(' in existing_module
+                or processor[1][1] not in (root / PROCESSOR).read_text()
+                or any(after not in (root / path).read_text() for path, pairs in EDITS.items()
+                       for _, after in pairs)):
+            raise ValueError('Existing wrist patch does not have the expected proprioception path')
+        edits = {PROCESSOR: (processor[0], processor[2])}
+        module = existing_module.rstrip() + '\n\n\n' + module[module.index('def servo_arm_targets('):]
     changes, source_audit = {}, {}
-    for name, pairs in {PROCESSOR: processor_edits(args.couple_base), **EDITS}.items():
+    for name, pairs in edits.items():
         file = root / name
         original = file.read_text()
         updated = original
@@ -69,10 +94,11 @@ def main():
         ast.parse(updated)
         changes[file] = updated
         source_audit[name] = dict(before_sha256=digest(original), after_sha256=digest(updated))
-    module = Path(__file__).with_name('cylinder_wrist_pose_loss.py').read_text()
     ast.parse(module)
     changes[helper] = module
     source_audit[HELPER] = dict(after_sha256=digest(module))
+    if existing_module is not None:
+        source_audit[HELPER]['before_sha256'] = digest(existing_module)
 
     temporary = {}
     for file, text in changes.items():
@@ -83,9 +109,10 @@ def main():
     for file, path in temporary.items():
         path.replace(file)
     report = dict(kind='wall_x_opt_in_wrist_pose_loss', training_wall_root=str(root), files=source_audit,
-                  training_config_field=('joint_base_and_wrist_pose_loss' if args.couple_base else 'joint_wrist_pose_loss'),
-                  uses_only_arm_state_and_joint_targets=not args.couple_base,
-                  base_motion_coupled=args.couple_base, serving_code_modified=False,
+                  training_config_field=MODES[args.mode][1],
+                  uses_only_arm_state_and_joint_targets=args.mode != 'coupled',
+                  base_motion_coupled=args.mode == 'coupled', servo_increments=args.mode == 'increment',
+                  serving_code_modified=False,
                   retained_existing_flow_and_gripper_losses=True)
     with args.output.open('x') as f:
         json.dump(report, f, indent=2)

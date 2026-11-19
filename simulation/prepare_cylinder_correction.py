@@ -118,6 +118,7 @@ def prepare(episode, reconstruction, base, output):
         first_command = bounded_joint_command(env)
         restore_router = copy.deepcopy(router)
         base_recovery = None
+        wrist_alignment = None
         with np.load(episode/'trajectory.npz', allow_pickle=False) as raw:
             count = metadata['frames']
             require(metadata['fps'] == 20 and np.allclose(raw['timestamp'], np.arange(count)*CONTROL_DT),
@@ -158,6 +159,20 @@ def prepare(episode, reconstruction, base, output):
                 base_recovery = dict(frames=int(return_frames.size), source_retreat_m=retreat_before,
                                      residual_retreat_m=retreat_after, peak_forward_m_s=float(forward.max()),
                                      positive_forward_frames=int(np.count_nonzero(forward > 0)))
+            if provenance.get('recovery_stage') == 'clearance_wrist_alignment_then_grasp':
+                aligns = np.flatnonzero(raw['phase'] == 'wrist_clearance_align')
+                closing = np.flatnonzero(raw['phase'] == 'close')
+                require(aligns.size and closing.size and aligns[-1] < closing[0],
+                        'Missing recorded wrist alignment before closure')
+                close_frame = int(closing[0])
+                require(np.all(tasks[:close_frame] == 0) and not raw['contacts'][:close_frame].any(),
+                        'Wrist alignment must occur before grasp contact')
+                position = raw['grip_point_relative'][[0, close_frame]] - env.grasp_offset
+                start_error, close_error = np.linalg.norm(position,axis=1)
+                require(close_error < start_error, 'Wrist alignment did not reduce the measured grasp error')
+                wrist_alignment = dict(alignment_frames=int(aligns.size), closure_frame=close_frame,
+                                       start_grasp_error_m=float(start_error),
+                                       closure_grasp_error_m=float(close_error))
 
         bounds = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
         for key, values in [('observation.state',model_states), ('action',actions)]:
@@ -198,6 +213,8 @@ def prepare(episode, reconstruction, base, output):
                       alignment_video=videos, independent_cases_read=False)
         if base_recovery is not None:
             report['approach_base_recovery'] = base_recovery
+        if wrist_alignment is not None:
+            report['wrist_alignment_recovery'] = wrist_alignment
         np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)
         (output/'certification.json').write_text(json.dumps(report,indent=2)+'\n')
         return report

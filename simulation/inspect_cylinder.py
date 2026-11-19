@@ -271,7 +271,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
                    release_single_contact=False,release_retreat_m=0.,teacher_grasp_height_m=None,
-                   stable_read_samples=3,approach_base_reference=None):
+                   stable_read_samples=3,approach_base_reference=None,align_from_clearance=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -281,6 +281,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Initial lift requires a held transport recovery")
     if release_single_contact and (reset_scene or start_holding):
         raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
+    if align_from_clearance and (reset_scene or start_holding or release_single_contact):
+        raise ValueError("Wrist clearance alignment requires a saved contact-free approach")
     if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
         raise ValueError("Release retreat must be within [0,0.10] m")
     if release_retreat_m and not release_single_contact:
@@ -365,6 +367,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                          slip=before_metrics["bottle_slip_m"],tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
         if not np.isfinite(env.data.qpos).all():raise InspectionFailure("nonfinite_state")
         if metrics["forbidden_contacts"]:raise InspectionFailure(f"collision:{metrics['forbidden_contacts']}")
+        if align_from_clearance and (phase.startswith("wrist_clearance_") or phase in ("approach", "advance")):
+            shift = np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder)
+            if metrics["grip_contacts"] or shift > .005:
+                raise InspectionFailure("wrist_alignment_disturbed_cylinder")
         if held:
             max_slip=max(max_slip,metrics["bottle_slip_m"])
             max_tilt=max(max_tilt,metrics["bottle_tilt_rad"])
@@ -406,6 +412,26 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if held or straight:q1=q
         for _ in range(10):tick(phase,q1,opening)
         return q1
+
+    def align_wrist_at_clearance():
+        nonlocal rotation
+        if env.metrics()["grip_contacts"]:
+            raise InspectionFailure("wrist_alignment_requires_contact_free_start")
+        nominal = rotation
+        rotation = env.data.xmat[env.gripper_body].reshape(3,3).copy()
+        tip = env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+        clear = tip.copy()
+        clear[1] = min(tip[1], cylinder[1]-.14)
+        if tip[1]-clear[1] > .002:
+            move("wrist_clearance_back",clear,1.5,opening=.034,straight=True)
+        safe_height = cylinder[2]+approach_height+.045
+        if clear[2] < safe_height-.002:
+            clear[2] = safe_height
+            move("wrist_clearance_up",clear,1.5,opening=.034,straight=True)
+        rotation = nominal
+        clear[0] = cylinder[0]
+        move("wrist_clearance_align",clear,2,opening=.034,straight=True)
+
     def restore_approach_base(reference):
         phase = "restore_approach_base"
         direction = np.array([np.cos(reference[2]), np.sin(reference[2])])
@@ -494,9 +520,11 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 else:
                     raise InspectionFailure("single_contact_release_did_not_settle")
                 cylinder = env.data.xpos[env.cylinder_body].copy()
+            if align_from_clearance:
+                align_wrist_at_clearance()
             approach=cylinder+[0,-.10,approach_height]
-            move("approach",approach,opening=.034,scale=approach_motion_scale)
-            q=move("advance",cylinder+[0,0,approach_height],2,opening=.034)
+            move("approach",approach,opening=.034,scale=approach_motion_scale,straight=align_from_clearance)
+            q=move("advance",cylinder+[0,0,approach_height],2,opening=.034,straight=align_from_clearance)
             for _ in range(35):tick("close",q,grip_opening)
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
             env.grasp_reference=env._bottle_relative_position();held=True
@@ -643,6 +671,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
+    if align_from_clearance:
+        summary["controller_parameters"]["align_from_clearance"]=True
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
         if reason is None and summary["absolute_reading_error_ml"]>.5:
