@@ -1,0 +1,2845 @@
+{
+  "host": "4A6000",
+  "observed_at": "2026-11-19T10:50:19+08:00",
+  "root": "/data/hlou/pigment-pour-study",
+  "goal_complete": false,
+  "independent_cases_read": false,
+  "fixed_official_parallel_fingers": true,
+  "candidate_manifests": [],
+  "archive_ik_backoff_reproduction": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/archived-backoff-verification.json",
+    "result": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000-step1792-single/episode_000",
+      "default_and_backoff_identical_joint_target_frames": 446,
+      "archived_state_max_difference": 0.0,
+      "archived_ik_residual_max_difference": 0.0,
+      "archive_rejected": {
+        "requested_weighted_residual": 0.0020046722175210566,
+        "independent_fk_residual": 1.5217736302299607e-12,
+        "model_step_fraction": 0.5
+      },
+      "out_of_reach_stationary": {
+        "requested_weighted_residual": 36.183370109643256,
+        "independent_fk_residual": 0.0,
+        "model_step_fraction": 0.0
+      },
+      "independent_fk_matches": true,
+      "cylinder_translation_does_not_change_decoder": true,
+      "geometry_audit_passed": true,
+      "official_joint_margin_rad": 0.005,
+      "ik_limit": 0.002,
+      "independent_cases_read": false,
+      "task_success_measured": false
+    }
+  },
+  "joint_base_counterfactual": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/joint-base-command-replay.json",
+    "result": {
+      "kind": "recorded_pregrasp_base_axis_replay",
+      "trials": [
+        {
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step256-single",
+          "source_case": {
+            "volume": 25.0,
+            "seed": 100,
+            "jitter": 0.004
+          },
+          "trajectory_sha256": "7d9c7a008b5112e41e00712a3aad31a943308f196e55246dd855dc753d946165",
+          "variants": {
+            "recorded": {
+              "steps": 1800,
+              "end_time_s": 90.00000000024771,
+              "nearest": {
+                "time_s": 14.10000000000574,
+                "grasp_distance_m": 0.23241663650059133,
+                "base_delta_m": [
+                  -0.0006986513138896866,
+                  -0.012673898103798598
+                ]
+              },
+              "collision": null,
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                -0.14417552524382177,
+                -0.3148747689588578
+              ],
+              "final_base_yaw_delta_deg": -48.13949405741444,
+              "all_recorded_robot_states_exact": true,
+              "geometry_audit_passed": true
+            },
+            "zero_forward": {
+              "steps": 1800,
+              "end_time_s": 90.00000000024771,
+              "nearest": {
+                "time_s": 70.5000000001546,
+                "grasp_distance_m": 0.18616482221197164,
+                "base_delta_m": [
+                  -0.020760871896009947,
+                  -0.022564536085666165
+                ]
+              },
+              "collision": null,
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                -0.026196594936664486,
+                -0.028555894789302816
+              ],
+              "final_base_yaw_delta_deg": -44.34149389517704,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            },
+            "zero_yaw": {
+              "steps": 766,
+              "end_time_s": 38.30000000000085,
+              "nearest": {
+                "time_s": 37.249999999995836,
+                "grasp_distance_m": 0.10384193879791315,
+                "base_delta_m": [
+                  0.00045002375727587474,
+                  -0.14309172998683128
+                ]
+              },
+              "collision": {
+                "time_s": 38.30000000000085,
+                "recorded_geom_names": [
+                  [
+                    "",
+                    "cylinder_wall_4"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_5"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_5"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_14"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_14"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_15"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_15"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_16"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_16"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_17"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_17"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_27"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_27"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_28"
+                  ]
+                ]
+              },
+              "max_loaded_fingers": 1,
+              "first_loaded": {
+                "frame": 704,
+                "time_s": 35.19999999998605,
+                "loaded_fingers": 1,
+                "grasp_distance_m": 0.1165104965372476,
+                "cylinder_position_change_m": 0.0006496605533670123,
+                "cylinder_linear_speed_m_s": 0.013248795134724827,
+                "cylinder_tilt_rad": 0.01922144785252299,
+                "forbidden_contact": false
+              },
+              "final_base_delta_m": [
+                0.0006262645911415676,
+                -0.15154976277883014
+              ],
+              "final_base_yaw_delta_deg": -0.161355249104851,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            },
+            "zero_base": {
+              "steps": 1264,
+              "end_time_s": 63.20000000011974,
+              "nearest": {
+                "time_s": 62.700000000117356,
+                "grasp_distance_m": 0.1328058880555319,
+                "base_delta_m": [
+                  0.014323104651649876,
+                  -0.021223364773929443
+                ]
+              },
+              "collision": {
+                "time_s": 63.20000000011974,
+                "recorded_geom_names": [
+                  [
+                    "",
+                    "cylinder_wall_5"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_6"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_7"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_8"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_9"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_10"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_11"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_12"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_13"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_14"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_14"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_14"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_15"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_15"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_16"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_16"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_17"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_17"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_18"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_19"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_20"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_21"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_22"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_23"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_24"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_25"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_26"
+                  ],
+                  [
+                    "",
+                    "cylinder_wall_27"
+                  ]
+                ]
+              },
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                0.014319994714720674,
+                -0.021159429460038737
+              ],
+              "final_base_yaw_delta_deg": -3.6772852113324292,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            }
+          }
+        },
+        {
+          "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single",
+          "source_case": {
+            "volume": 25.0,
+            "seed": 100,
+            "jitter": 0.004
+          },
+          "trajectory_sha256": "fb258fc3235f22235df92df0c5c2937a199c5f51bd2c31a4b7b9f9ca5e20bfbd",
+          "variants": {
+            "recorded": {
+              "steps": 1768,
+              "end_time_s": 88.40000000024007,
+              "nearest": {
+                "time_s": 8.399999999998775,
+                "grasp_distance_m": 0.34027243718271843,
+                "base_delta_m": [
+                  -0.00013070729017361504,
+                  -0.003430225521673713
+                ]
+              },
+              "collision": {
+                "time_s": 88.40000000024007,
+                "recorded_geom_names": [
+                  [
+                    "right_right_official_collision_1_0",
+                    "tabletop_0"
+                  ]
+                ]
+              },
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                -0.03733281521550269,
+                -0.14671371866006055
+              ],
+              "final_base_yaw_delta_deg": -26.145952782526056,
+              "all_recorded_robot_states_exact": true,
+              "geometry_audit_passed": true
+            },
+            "zero_forward": {
+              "steps": 1746,
+              "end_time_s": 87.30000000023482,
+              "nearest": {
+                "time_s": 22.74999999999233,
+                "grasp_distance_m": 0.33552111483498914,
+                "base_delta_m": [
+                  1.3948160676457988e-06,
+                  -1.8045320511195229e-06
+                ]
+              },
+              "collision": {
+                "time_s": 87.30000000023482,
+                "recorded_geom_names": [
+                  [
+                    "right_right_official_collision_1_0",
+                    "tabletop_0"
+                  ]
+                ]
+              },
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                -0.0023898454053637996,
+                -0.00447962748001085
+              ],
+              "final_base_yaw_delta_deg": -25.175039684334266,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            },
+            "zero_yaw": {
+              "steps": 1768,
+              "end_time_s": 88.40000000024007,
+              "nearest": {
+                "time_s": 8.399999999998775,
+                "grasp_distance_m": 0.3322671181596863,
+                "base_delta_m": [
+                  -2.788136179143752e-05,
+                  -0.003411245169923194
+                ]
+              },
+              "collision": null,
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                -1.2485104015635962e-05,
+                -0.14681087726320752
+              ],
+              "final_base_yaw_delta_deg": -0.0021429932189942396,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            },
+            "zero_base": {
+              "steps": 1759,
+              "end_time_s": 87.95000000023792,
+              "nearest": {
+                "time_s": 22.74999999999233,
+                "grasp_distance_m": 0.3283578262908549,
+                "base_delta_m": [
+                  1.2411814214630112e-05,
+                  5.261312296223064e-06
+                ]
+              },
+              "collision": {
+                "time_s": 87.95000000023792,
+                "recorded_geom_names": [
+                  [
+                    "right_right_official_collision_1_0",
+                    "tabletop_0"
+                  ]
+                ]
+              },
+              "max_loaded_fingers": 0,
+              "first_loaded": null,
+              "final_base_delta_m": [
+                0.0001328572708260145,
+                -0.007486127530972386
+              ],
+              "final_base_yaw_delta_deg": 0.7809774970873624,
+              "all_recorded_robot_states_exact": false,
+              "geometry_audit_passed": true
+            }
+          }
+        }
+      ],
+      "arm_and_gripper_targets_from_original_trace": true,
+      "learned_policy_inference": false,
+      "teacher_label_generation": false,
+      "task_success_measured": false,
+      "independent_cases_read": false
+    }
+  },
+  "joint_early_approach": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/early-approach-comparison.json",
+    "result": {
+      "kind": "recorded_reset_to_approach_wrist_progress",
+      "teacher_training_episodes": 44,
+      "times_s": [
+        0.0,
+        2.0,
+        4.0,
+        6.0,
+        8.0
+      ],
+      "teacher_median_initial_body_tip": [
+        0.3275042825937271,
+        -0.26350000500679016,
+        1.1277263164520264
+      ],
+      "teacher_projection_m": [
+        [
+          0.0,
+          0.09727207190448534,
+          0.27085350155895244,
+          0.297176954359092,
+          0.37329317117122296
+        ],
+        [
+          0.0,
+          0.09816156135048247,
+          0.27439293003822873,
+          0.29966702049880434,
+          0.37826787138034645
+        ],
+        [
+          0.0,
+          0.0991373127596437,
+          0.2793990163488663,
+          0.30376882356609525,
+          0.3840391620370944
+        ]
+      ],
+      "teacher_world_projection_m": [
+        [
+          0.0,
+          0.09694060268946136,
+          0.27077646136190564,
+          0.296914989936826,
+          0.37329317970538695
+        ],
+        [
+          0.0,
+          0.09782704272898358,
+          0.2743074891028891,
+          0.2994188891163204,
+          0.3782678753007498
+        ],
+        [
+          0.0,
+          0.09879865694458095,
+          0.27930936497374537,
+          0.30353260370726165,
+          0.38403916699026003
+        ]
+      ],
+      "teacher_mean_step_radian_intervals": [
+        [
+          0.010290690627709088,
+          0.0173228196670726,
+          0.0031648011863773056,
+          0.006674854662977965
+        ],
+        [
+          0.010372707992353205,
+          0.017548902513221075,
+          0.003179614868055082,
+          0.007064263592583516
+        ],
+        [
+          0.010485889248164246,
+          0.017693389494018063,
+          0.0033920363691753975,
+          0.007091067215011695
+        ]
+      ],
+      "teacher_grasp_direction_body": [
+        0.932195773414674,
+        -0.01080086526128234,
+        -0.3617932853680749
+      ],
+      "teacher_manifest": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-clearance-alignment-increment-prompt-v44/demonstration_provenance.json",
+      "independent_cases_read": false,
+      "causal_intervention": false,
+      "models": [
+        {
+          "version": 43,
+          "step": 128,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            0.05541292366243867,
+            0.09949192444574959,
+            0.18743224510204007,
+            0.27371024542549616
+          ],
+          "world_projected_m": [
+            0.0,
+            0.05747189816314366,
+            0.09808896673811925,
+            0.1844824591058185,
+            0.268821242697948
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.06132309439485306,
+              -0.016123746054772736,
+              0.005324466295269614
+            ],
+            [
+              0.10800440720178384,
+              -0.021377822906770594,
+              0.003925519074411188
+            ],
+            [
+              0.19076428954267022,
+              -0.025833062620483904,
+              -0.025770409845429443
+            ],
+            [
+              0.2700445561274337,
+              -0.04664447753293427,
+              -0.05934894792477907
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.013594670413113685,
+              0.06356113361777577,
+              0.005324466295269614
+            ],
+            [
+              0.01865971176014547,
+              0.10653089722251158,
+              0.003925519074411188
+            ],
+            [
+              0.027647848701015776,
+              0.1875789208702635,
+              -0.025770409845429443
+            ],
+            [
+              0.05658541258644589,
+              0.264684766613854,
+              -0.05934894792477907
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006700722500681877,
+            0.005556601053103805,
+            0.006009934190660715,
+            0.0069694753736257555
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -3.6597251892089844e-05,
+              0.0004576444625854492
+            ],
+            [
+              1.4126300811767578e-05,
+              -0.003248542547225952
+            ],
+            [
+              -3.701448440551758e-05,
+              -0.0021472275257110596
+            ],
+            [
+              -4.553794860839844e-05,
+              -6.964802742004395e-05
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "collision:[['right_left_official_collision_1_0', '']]"
+        },
+        {
+          "version": 43,
+          "step": 256,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step256-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            0.02382716745692137,
+            0.0243002304545752,
+            0.06227151710593873,
+            0.12023618818516008
+          ],
+          "world_projected_m": [
+            0.0,
+            0.025473735950509883,
+            0.018687943427548103,
+            0.053106482818931086,
+            0.10608435586229319
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.030222864063939925,
+              -0.021633748647688744,
+              0.012659499425342169
+            ],
+            [
+              0.03502527173807235,
+              -0.028557538604260857,
+              0.023932522518226973
+            ],
+            [
+              0.07418459497190677,
+              -0.03159861718275897,
+              0.019968146115913354
+            ],
+            [
+              0.13618914237374385,
+              -0.05482347395965437,
+              0.02020738352998741
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.02060600595207318,
+              0.032001105428145604,
+              0.012659499425342169
+            ],
+            [
+              0.03101332884359398,
+              0.028976315375394357,
+              0.023932522518226973
+            ],
+            [
+              0.04034660270955137,
+              0.06425157425649658,
+              0.019968146115913354
+            ],
+            [
+              0.07340373352192886,
+              0.12079268248239472,
+              0.02020738352998741
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.007245763251557946,
+            0.0058887192979455,
+            0.006116380216553807,
+            0.007558295642957092
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -3.153085708618164e-05,
+              0.0009864568710327148
+            ],
+            [
+              1.7881393432617188e-07,
+              -0.0040569007396698
+            ],
+            [
+              -5.5789947509765625e-05,
+              -0.003314375877380371
+            ],
+            [
+              -3.218650817871094e-05,
+              -0.002053588628768921
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "timeout"
+        },
+        {
+          "version": 43,
+          "step": 384,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step384-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            0.031021547151727336,
+            0.04310593514423451,
+            0.0906033196387438,
+            0.1662264655317118
+          ],
+          "world_projected_m": [
+            0.0,
+            0.03437023191648445,
+            0.04528215406317687,
+            0.09303628061656734,
+            0.16718343281320444
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.03509975022235329,
+              -0.015160321516432651,
+              0.005146685465938106
+            ],
+            [
+              0.04830253368757087,
+              -0.015604339398344547,
+              0.005776842900070633
+            ],
+            [
+              0.09485490625445159,
+              -0.009679531508395511,
+              -0.0057365067540513515
+            ],
+            [
+              0.16970808273500032,
+              -0.018602734841348556,
+              -0.021626665766789177
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.014540568690019073,
+              0.03869918584819526,
+              0.005146685465938106
+            ],
+            [
+              0.016667664527797,
+              0.050624722000616684,
+              0.005776842900070633
+            ],
+            [
+              0.01620153718412598,
+              0.09738926411180793,
+              -0.0057365067540513515
+            ],
+            [
+              0.03539848764990772,
+              0.17054005254303672,
+              -0.021626665766789177
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006155894231051206,
+            0.005112250568345189,
+            0.0055684435181319715,
+            0.006801382545381785
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -3.7610530853271484e-05,
+              0.003152817487716675
+            ],
+            [
+              5.424022674560547e-06,
+              0.0031102001667022705
+            ],
+            [
+              -1.996755599975586e-05,
+              0.00683826208114624
+            ],
+            [
+              6.669759750366211e-05,
+              0.010702937841415405
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "timeout"
+        },
+        {
+          "version": 43,
+          "step": 512,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step512-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            0.02251046112347039,
+            0.02610702763864564,
+            0.07433605140997196,
+            0.1371981262664092
+          ],
+          "world_projected_m": [
+            0.0,
+            0.030041287009758076,
+            0.035780077263971956,
+            0.08629985441845378,
+            0.15067004190031108
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.024527936077764934,
+              -0.020434914927891734,
+              0.001589559576773869
+            ],
+            [
+              0.026798370878777122,
+              -0.02848331929541753,
+              -0.002261111828857132
+            ],
+            [
+              0.07167690979694114,
+              -0.027969265227383633,
+              -0.019947984311865286
+            ],
+            [
+              0.13082488936925085,
+              -0.04144673935773863,
+              -0.04089643807672072
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.016568322923284362,
+              0.032651324669537574,
+              0.001589559576773869
+            ],
+            [
+              0.023322739504417767,
+              0.037234792905534,
+              -0.002261111828857132
+            ],
+            [
+              0.02481012440901409,
+              0.0845475159089753,
+              -0.019947984311865286
+            ],
+            [
+              0.043778059056393315,
+              0.1452496873035689,
+              -0.04089643807672072
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006463209120556712,
+            0.00568290650844574,
+            0.006121251825243234,
+            0.006917299283668399
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -5.1915645599365234e-05,
+              0.005080461502075195
+            ],
+            [
+              -1.3828277587890625e-05,
+              0.006256967782974243
+            ],
+            [
+              -0.00013464689254760742,
+              0.010679692029953003
+            ],
+            [
+              -0.00014859437942504883,
+              0.016084492206573486
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "timeout"
+        },
+        {
+          "version": 44,
+          "step": 128,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            -0.0059029674077847975,
+            -0.009562347568465678,
+            0.015808536536922015,
+            0.04240240347655051
+          ],
+          "world_projected_m": [
+            0.0,
+            -0.002432827411749767,
+            -0.010785500728133455,
+            0.013095130545173845,
+            0.036752938554339934
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0019024088338451262,
+              -0.014421947113536782,
+              0.011844662724424415
+            ],
+            [
+              -0.0045903116747865735,
+              -0.015186094153185392,
+              0.015056391601699914
+            ],
+            [
+              0.019681982611132964,
+              -0.015976167030758603,
+              0.0074945583645358305
+            ],
+            [
+              0.05326823194493718,
+              -0.023186031007298546,
+              0.02074235951894865
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.011779568299754795,
+              0.0018507513147398291,
+              0.011844662724424415
+            ],
+            [
+              0.013365129352624572,
+              -0.005881333508492792,
+              0.015056391601699914
+            ],
+            [
+              0.017908708086770808,
+              0.016748822983368106,
+              0.0074945583645358305
+            ],
+            [
+              0.03132008131831787,
+              0.04711360246782126,
+              0.02074235951894865
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006476874416694045,
+            0.005908880941569805,
+            0.006043735239654779,
+            0.006787868915125728
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -2.1576881408691406e-05,
+              0.0015342533588409424
+            ],
+            [
+              4.00543212890625e-05,
+              -0.0028878450393676758
+            ],
+            [
+              -1.722574234008789e-05,
+              -0.0013545751571655273
+            ],
+            [
+              9.238719940185547e-06,
+              0.00010064244270324707
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "collision:[['right_right_official_collision_1_0', 'tabletop_0']]"
+        },
+        {
+          "version": 44,
+          "step": 256,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step256-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            -0.010977984874915993,
+            -0.03684988158724993,
+            -0.0260157467726624,
+            -0.01327027675541617
+          ],
+          "world_projected_m": [
+            0.0,
+            -0.0014287060218840062,
+            -0.025285839046713148,
+            -0.010024128524567934,
+            0.0071223939189656044
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.003670959817828001,
+              -0.012653976990494697,
+              0.02126243316270826
+            ],
+            [
+              -0.026766485034625698,
+              -0.0075222585983796275,
+              0.03311151631296538
+            ],
+            [
+              -0.014959328759465151,
+              -0.001324849051961563,
+              0.03340314410140399
+            ],
+            [
+              0.004280736348495351,
+              -0.0009775589433577703,
+              0.047738087652586136
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.009711944754866808,
+              0.006606983521773413,
+              0.02126243316270826
+            ],
+            [
+              0.00440418855459479,
+              -0.014325192484025973,
+              0.03311151631296538
+            ],
+            [
+              -4.313736566763371e-05,
+              0.0022113064369004842,
+              0.03340314410140399
+            ],
+            [
+              0.0030819155144250487,
+              0.026132306793012816,
+              0.047738087652586136
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006198539724573493,
+            0.005495384847745299,
+            0.005431382125243545,
+            0.006484541483223439
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -6.377696990966797e-05,
+              0.007845401763916016
+            ],
+            [
+              -2.4259090423583984e-05,
+              0.009681761264801025
+            ],
+            [
+              -0.0001284480094909668,
+              0.016124576330184937
+            ],
+            [
+              -7.76052474975586e-05,
+              0.023602694272994995
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "timeout"
+        },
+        {
+          "version": 44,
+          "step": 384,
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step384-single/episode_000/trajectory.npz",
+          "body_projected_m": [
+            0.0,
+            0.018737578080222226,
+            0.030890582699007747,
+            0.07877512817062615,
+            0.1462020825435966
+          ],
+          "world_projected_m": [
+            0.0,
+            0.023657953571359955,
+            0.03506612862838691,
+            0.08274008646657798,
+            0.14708349764870923
+          ],
+          "body_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.026509749824893902,
+              -0.012191580740712304,
+              0.0168780862682798
+            ],
+            [
+              0.04137677312874549,
+              -0.012084818787190199,
+              0.021590220560968376
+            ],
+            [
+              0.09039648231170383,
+              -0.007330916321261205,
+              0.015399044251631633
+            ],
+            [
+              0.1604126574488094,
+              -0.016681808328591397,
+              0.00971299589735608
+            ]
+          ],
+          "world_tip_delta_m": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.009426194436556345,
+              0.03182005498384077,
+              0.0168780862682798
+            ],
+            [
+              0.007672401172505339,
+              0.04590715600790224,
+              0.021590220560968376
+            ],
+            [
+              0.0048245775065660634,
+              0.09467887542629644,
+              0.015399044251631633
+            ],
+            [
+              0.018970107104677503,
+              0.16133166974200286,
+              0.00971299589735608
+            ]
+          ],
+          "arm_command_radian_intervals": [
+            0.006017014663666487,
+            0.005219372035935521,
+            0.005743508273735642,
+            0.006903020618483424
+          ],
+          "base_xy_delta_m": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              -4.3272972106933594e-05,
+              0.0032071471214294434
+            ],
+            [
+              7.927417755126953e-06,
+              0.001268923282623291
+            ],
+            [
+              -5.030632019042969e-05,
+              0.0027009248733520508
+            ],
+            [
+              -7.492303848266602e-05,
+              0.0022836923599243164
+            ]
+          ],
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "failure_reason": "timeout"
+        }
+      ]
+    }
+  },
+  "cartesian_pair_process": {
+    "pid": 1273241,
+    "live": false
+  },
+  "cartesian_physical_audit_process": {
+    "pid": 1328877,
+    "live": false
+  },
+  "reset_sampler": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-reset-approach-v46/initial-approach-sampler-audit.json",
+    "result": {
+      "kind": "initial_approach_resampling_only",
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-expanded-base-approach-increment-prompt-v42",
+      "model_parent": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint/model.safetensors",
+      "reference_config": "/data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/train-v43.yml",
+      "config": "/data/hlou/pigment-pour-study/runs/cylinder-reset-approach-v46/train-v46.yml",
+      "original_weights": "/data/hlou/pigment-pour-study/runs/cylinder-expanded-base-return-v42/base-return-weights.npy",
+      "weights": "/data/hlou/pigment-pour-study/runs/cylinder-reset-approach-v46/frame-weights.npy",
+      "scope": "first 80 frames of the 44 original successful training-only teacher starts",
+      "source_episode_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "groups": [
+        {
+          "name": "reset_first_4_seconds",
+          "frames": 3520,
+          "old_mass": 0.002031853713638871,
+          "new_mass": 0.20000000000000012
+        },
+        {
+          "name": "forward_return",
+          "frames": 211,
+          "old_mass": 0.10000000000000002,
+          "new_mass": 0.09999999999999999
+        },
+        {
+          "name": "remaining",
+          "frames": 88276,
+          "old_mass": 0.8979681462863611,
+          "new_mass": 0.7
+        }
+      ],
+      "train_config_diff_limited_to_sampling_and_run_paths": true,
+      "action_and_observation_contract_unchanged": true,
+      "independent_cases_read": false,
+      "formal_cases_used_as_labels": false
+    }
+  },
+  "reset_sampler_process": {
+    "pid": 1321515,
+    "live": true,
+    "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint --log /data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/driver.log --data-port 30137 --train-port 30138 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x "
+  },
+  "learned_training_runs": {
+    "v43": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000",
+      "stage": "neural_evaluation_640",
+      "driver": {
+        "pid": 976370,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint --log /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/driver.log --data-port 30133 --train-port 30134 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x "
+      },
+      "training": {
+        "pid": 982435,
+        "live": true,
+        "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python -m torch.distributed.run --nproc_per_node=1 --master_port=30134 /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py --config /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/train.yml "
+      },
+      "config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/train.yml",
+      "official_loader": {
+        "file": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/data-validation.json",
+        "result": {
+          "kind": "official_wall_joint_data_contract",
+          "passed": true,
+          "action_representation": "servo_increment",
+          "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-expanded-base-approach-increment-prompt-v42",
+          "episodes": 143,
+          "frames": 92007,
+          "flow_horizon": 8,
+          "training_iterations_per_epoch": 21851,
+          "batch_shapes": {
+            "input_ids": [
+              4,
+              482
+            ],
+            "attention_mask": [
+              4,
+              482
+            ],
+            "pixel_values": [
+              6144,
+              1176
+            ],
+            "image_grid_thw": [
+              12,
+              3
+            ],
+            "action_chunk": [
+              4,
+              8,
+              26
+            ],
+            "dof_mask": [
+              4,
+              8,
+              26
+            ],
+            "proprioception": [
+              4,
+              1,
+              26
+            ],
+            "agent_pos_mask": [
+              4,
+              1,
+              26
+            ],
+            "frame_index": [
+              4
+            ],
+            "sample_time": [
+              4
+            ],
+            "moe_token_types": [
+              4,
+              482
+            ]
+          },
+          "checks": [
+            {
+              "episode": 0,
+              "frame": 328,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 655,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 320,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 633,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 997,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 498,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            }
+          ],
+          "episode_end_repeats_last": true,
+          "action_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "robot_state_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "sampling_weights_match_source_indices": true,
+          "processor_loaded": true,
+          "checkpoint_serving_normalizer_factory_matches_training": true,
+          "serving_normalizer_key": "cylinder_joint_v1",
+          "distributed_backend": "gloo",
+          "neural_weights_loaded": false,
+          "model_forward": false,
+          "backward": false,
+          "task_success_measured": false,
+          "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+        }
+      },
+      "first_gradient": {
+        "step": 0,
+        "grad_norm": 0.6135218143463135,
+        "train_loss": 0.004976944997906685
+      },
+      "last_gradient": {
+        "step": 740,
+        "grad_norm": 1.249829602241516,
+        "train_loss": 0.030317059019580483
+      },
+      "scored_steps": [
+        {
+          "step": 128,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single/summary.json",
+          "closest_m": 0.08016861135707799,
+          "max_contacts": 1,
+          "held": false,
+          "success": false,
+          "reason": "collision:[['right_left_official_collision_1_0', '']]",
+          "recorded_seconds": 67.35000000013956,
+          "base_retreat_m": 0.29349338523722734
+        },
+        {
+          "step": 256,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step256-single/summary.json",
+          "closest_m": 0.23299289960910485,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "timeout",
+          "recorded_seconds": 90.00000000024771,
+          "base_retreat_m": 0.3148747689588578
+        },
+        {
+          "step": 384,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step384-single/summary.json",
+          "closest_m": 0.12131112223075913,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "timeout",
+          "recorded_seconds": 90.00000000024771,
+          "base_retreat_m": 0.3028275573035659
+        },
+        {
+          "step": 512,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step512-single/summary.json",
+          "closest_m": 0.13475947708740268,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "timeout",
+          "recorded_seconds": 90.00000000024771,
+          "base_retreat_m": 0.2958458532407924
+        }
+      ],
+      "latest_scored_step": 512
+    },
+    "v44": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000",
+      "stage": "neural_evaluation_512",
+      "driver": {
+        "pid": 1014471,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint --log /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/driver.log --data-port 30135 --train-port 30136 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x "
+      },
+      "training": {
+        "pid": 1045860,
+        "live": true,
+        "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python -m torch.distributed.run --nproc_per_node=1 --master_port=30136 /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py --config /data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/train.yml "
+      },
+      "config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/train.yml",
+      "official_loader": {
+        "file": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/data-validation.json",
+        "result": {
+          "kind": "official_wall_joint_data_contract",
+          "passed": true,
+          "action_representation": "servo_increment",
+          "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-clearance-alignment-increment-prompt-v44",
+          "episodes": 149,
+          "frames": 95963,
+          "flow_horizon": 8,
+          "training_iterations_per_epoch": 22791,
+          "batch_shapes": {
+            "input_ids": [
+              4,
+              472
+            ],
+            "attention_mask": [
+              4,
+              472
+            ],
+            "pixel_values": [
+              6144,
+              1176
+            ],
+            "image_grid_thw": [
+              12,
+              3
+            ],
+            "action_chunk": [
+              4,
+              8,
+              26
+            ],
+            "dof_mask": [
+              4,
+              8,
+              26
+            ],
+            "proprioception": [
+              4,
+              1,
+              26
+            ],
+            "agent_pos_mask": [
+              4,
+              1,
+              26
+            ],
+            "frame_index": [
+              4
+            ],
+            "sample_time": [
+              4
+            ],
+            "moe_token_types": [
+              4,
+              472
+            ]
+          },
+          "checks": [
+            {
+              "episode": 0,
+              "frame": 655,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 331,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 74,
+              "frame": 336,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 74,
+              "frame": 670,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 74,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 148,
+              "frame": 601,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 148,
+              "frame": 300,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 148,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            }
+          ],
+          "episode_end_repeats_last": true,
+          "action_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "robot_state_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "sampling_weights_match_source_indices": true,
+          "processor_loaded": true,
+          "checkpoint_serving_normalizer_factory_matches_training": true,
+          "serving_normalizer_key": "cylinder_joint_v1",
+          "distributed_backend": "gloo",
+          "neural_weights_loaded": false,
+          "model_forward": false,
+          "backward": false,
+          "task_success_measured": false,
+          "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+        }
+      },
+      "first_gradient": {
+        "step": 0,
+        "grad_norm": 0.3960530459880829,
+        "train_loss": 0.010045579634606838
+      },
+      "last_gradient": {
+        "step": 600,
+        "grad_norm": 0.9519135028123855,
+        "train_loss": 0.016547823091968894
+      },
+      "scored_steps": [
+        {
+          "step": 128,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step128-single/summary.json",
+          "closest_m": 0.34027243718271843,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "collision:[['right_right_official_collision_1_0', 'tabletop_0']]",
+          "recorded_seconds": 88.40000000024007,
+          "base_retreat_m": 0.14605963696932944
+        },
+        {
+          "step": 256,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step256-single/summary.json",
+          "closest_m": 0.3708459648973789,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "timeout",
+          "recorded_seconds": 90.00000000024771,
+          "base_retreat_m": 0.029869406880321858
+        },
+        {
+          "step": 384,
+          "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000-step384-single/summary.json",
+          "closest_m": 0.13517747587732915,
+          "max_contacts": 0,
+          "held": false,
+          "success": false,
+          "reason": "timeout",
+          "recorded_seconds": 90.00000000024771,
+          "base_retreat_m": 0.2728684133685666
+        }
+      ],
+      "latest_scored_step": 384
+    },
+    "v46": {
+      "run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000",
+      "stage": "training",
+      "driver": {
+        "pid": 1321515,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/step768/audited-checkpoint --log /data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/driver.log --data-port 30137 --train-port 30138 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x "
+      },
+      "training": {
+        "pid": 1355335,
+        "live": true,
+        "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python -m torch.distributed.run --nproc_per_node=1 --master_port=30138 /data/hlou/pigment-pour-study/runs/cylinder-wrist-alignment-v43/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py --config /data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/train.yml "
+      },
+      "config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/train.yml",
+      "official_loader": {
+        "file": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/data-validation.json",
+        "result": {
+          "kind": "official_wall_joint_data_contract",
+          "passed": true,
+          "action_representation": "servo_increment",
+          "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-expanded-base-approach-increment-prompt-v42",
+          "episodes": 143,
+          "frames": 92007,
+          "flow_horizon": 8,
+          "training_iterations_per_epoch": 21851,
+          "batch_shapes": {
+            "input_ids": [
+              4,
+              482
+            ],
+            "attention_mask": [
+              4,
+              482
+            ],
+            "pixel_values": [
+              6144,
+              1176
+            ],
+            "image_grid_thw": [
+              12,
+              3
+            ],
+            "action_chunk": [
+              4,
+              8,
+              26
+            ],
+            "dof_mask": [
+              4,
+              8,
+              26
+            ],
+            "proprioception": [
+              4,
+              1,
+              26
+            ],
+            "agent_pos_mask": [
+              4,
+              1,
+              26
+            ],
+            "frame_index": [
+              4
+            ],
+            "sample_time": [
+              4
+            ],
+            "moe_token_types": [
+              4,
+              482
+            ]
+          },
+          "checks": [
+            {
+              "episode": 0,
+              "frame": 328,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 0,
+              "frame": 655,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 320,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 71,
+              "frame": 633,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 997,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 0,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            },
+            {
+              "episode": 142,
+              "frame": 498,
+              "action_labels_exact": true,
+              "robot_state_exact": true,
+              "gripper_and_base_absolute": true,
+              "normalization_matches_inference": true,
+              "masks_and_padding_correct": true,
+              "zero_arm_increments_at_padded_steps": true
+            }
+          ],
+          "episode_end_repeats_last": true,
+          "action_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "robot_state_active_dimensions": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "sampling_weights_match_source_indices": true,
+          "processor_loaded": true,
+          "checkpoint_serving_normalizer_factory_matches_training": true,
+          "serving_normalizer_key": "cylinder_joint_v1",
+          "distributed_backend": "gloo",
+          "neural_weights_loaded": false,
+          "model_forward": false,
+          "backward": false,
+          "task_success_measured": false,
+          "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+        }
+      },
+      "first_gradient": {
+        "step": 0,
+        "grad_norm": 0.8179407715797424,
+        "train_loss": 0.15207591652870178
+      },
+      "last_gradient": {
+        "step": 30,
+        "grad_norm": 1.618526440858841,
+        "train_loss": 0.030031831422820687
+      },
+      "scored_steps": [],
+      "latest_scored_step": null
+    }
+  },
+  "formal_runtime": "/data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation",
+  "source_sha256": {
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/runtime/simulation/cylinder_actions.py": "5af793b4e3b0f1d0049c118619ea427d1383fbd9d0fe96d7e3eb342b43ef327e",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/runtime/simulation/inspect_cylinder.py": "4a760289d9c95312fb89588c85f7d2ed1253b007510ed8682cad5d05351a7b0a",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/runtime/simulation/run_wall_cylinder.py": "9cf10093b76890f8c6f37997789e393b159042b90b2120a5593ad14d20fcd5a8",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/runtime/simulation/evaluate_cylinder_joint_candidate.py": "ca57128d0f9533735c84fe56ef54b2937423ce8591580d5544758f817cb47492",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/runtime/simulation/audit_cylinder_held_lift.py": "c911d06f7a7a6b63932b21dfdfc8fa73e939345dba36ab7110a8c69b59791168",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/verify-backoff.py": "db46c06487239a9f208dbdb4b72f430acd38d31d36101dff8853da0e1169b21c",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/measure-early-approach.py": "e2abf57b53c250746e90a4627d3f7e8d29d59ecdcb15c4739f9254eb535602e8",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/evaluate-pair.sh": "54426209aeba75a420a5417aa2f0924c1da8bcd477e0011dcbc33fe48a862e33",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/audit-completed-pair.sh": "307c9674f3feda514ab50483b5c8e6b18ac478bdac12037fc2b802e72e7cb2e3",
+    "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/replay-first-projection.py": "aed443cd78420c06625a8c45e8a565beb4ad0b2f09a62d99b77bc014276e2cf5",
+    "/data/hlou/pigment-pour-study/runs/cylinder-reset-approach-v46/prepare-reset-sampling.py": "9156d3d5559ad37b090ee05b1797f6ee777a09148127271ffc94a0e104c3f4f1",
+    "/data/hlou/pigment-pour-study/runs/cylinder-reset-approach-v46/train-when-gpu-ready.sh": "d4603297a9f5415ad9fad13dcad119e04fc7a882fde2911747e6c449885cf02f"
+  },
+  "cartesian_shorter_single": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-shorter-ik/summary.json",
+    "success": false,
+    "reason": "timeout",
+    "recorded_seconds": 90.00000000024771,
+    "max_raw_lift_m": 0.003472996268432671,
+    "stats": {
+      "shorter_steps": 726,
+      "stationary_targets": 0,
+      "max_requested_residual": 0.02365962500198736
+    },
+    "ik_projection": {
+      "applicable": true,
+      "max_allowed_weighted_residual": 0.002,
+      "max_attempted_residual": 0.0019999736184295046,
+      "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+    },
+    "final_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.12900476266010075,
+      "camera_distance_m": 0.8117868449607315,
+      "linear_speed_m_s": 8.506631646901208e-14,
+      "angular_speed_rad_s": 6.886065920797844e-16
+    }
+  },
+  "cartesian_strict_single": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-strict-ik/summary.json",
+    "success": false,
+    "reason": "Unreachable model action:0.00234",
+    "recorded_seconds": 20.74999999999699,
+    "max_raw_lift_m": 4.205021175718304e-05,
+    "stats": null,
+    "ik_projection": {
+      "applicable": true,
+      "max_allowed_weighted_residual": 0.002,
+      "max_attempted_residual": 0.0023444792997938725,
+      "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+    },
+    "final_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.04233781043613394,
+      "camera_distance_m": 0.6922187483111313,
+      "linear_speed_m_s": 8.507297217486733e-14,
+      "angular_speed_rad_s": 3.0234116847189585e-15
+    }
+  },
+  "cartesian_matched_result": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/matched-cartesian-closed-loop.json",
+    "result": {
+      "kind": "same_checkpoint_independent_cartesian_closed_loop_diagnostic",
+      "model": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-epoch-resume-bc-v17-a6000/checkpoints/2_1792",
+      "same_policy_weights_verified_before_execution": true,
+      "shorter": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-shorter-ik",
+        "success": false,
+        "failure_reason": "timeout",
+        "simulated_seconds": 90.00000000024771,
+        "max_lifted_m": 0.003472996268432671,
+        "max_slip_m": 0.0,
+        "ik_backoff": {
+          "shorter_steps": 726,
+          "stationary_targets": 0,
+          "max_requested_residual": 0.02365962500198736
+        },
+        "ik_projection": {
+          "applicable": true,
+          "max_allowed_weighted_residual": 0.002,
+          "max_attempted_residual": 0.0019999736184295046,
+          "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+        },
+        "final_task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.12900476266010075,
+          "camera_distance_m": 0.8117868449607315,
+          "linear_speed_m_s": 8.506631646901208e-14,
+          "angular_speed_rad_s": 6.886065920797844e-16
+        }
+      },
+      "strict": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-strict-ik",
+        "success": false,
+        "failure_reason": "Unreachable model action:0.00234",
+        "simulated_seconds": 20.74999999999699,
+        "max_lifted_m": 4.205021175718304e-05,
+        "max_slip_m": 0.0,
+        "ik_backoff": null,
+        "ik_projection": {
+          "applicable": true,
+          "max_allowed_weighted_residual": 0.002,
+          "max_attempted_residual": 0.0023444792997938725,
+          "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+        },
+        "final_task_gates": {
+          "held": false,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.04233781043613394,
+          "camera_distance_m": 0.6922187483111313,
+          "linear_speed_m_s": 8.507297217486733e-14,
+          "angular_speed_rad_s": 3.0234116847189585e-15
+        }
+      },
+      "physical_audit": {
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-shorter-ik",
+        "terminal_reason": "timeout",
+        "raw_peak": {
+          "height_m": 0.003472996268432671,
+          "time_s": 13.200000000004641,
+          "loaded_fingers": 1,
+          "established_hold": false,
+          "tilt_rad": 0.08729722872473766
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          1760,
+          40,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false,
+        "ik_backoff_trace_exact": true,
+        "nearest_tool": {
+          "distance_m": 0.0685753808804342,
+          "time_s": 12.25000000000348
+        }
+      },
+      "geometry_unchanged": true,
+      "formal_acceptance_measured": false,
+      "independent_cases_read": false,
+      "independent_prefix_comparison": {
+        "first_shortened_control_tick": 444,
+        "first_shortened_time_s": 22.19999999999361,
+        "archived_arm_commands_prefix_equal": false,
+        "archived_robot_state_prefix_equal": false,
+        "compared_raw_prediction_chunks": 52,
+        "prefix_frames_compared": 415,
+        "max_raw_action_difference_in_checked_prefix": 0.5963409543037415
+      }
+    }
+  },
+  "archived_first_decoder_divergence": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/recorded-first-projection-pair.json",
+    "result": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-shorter-ik",
+      "original_model_command_from_recording": true,
+      "robot_and_servo_state_exact": true,
+      "first_shortened_control_tick": 444,
+      "pre_step_time_s": 22.19999999999361,
+      "strict_failure_reason": "Unreachable model action:0.00373",
+      "full_pose_weighted_residual": 0.003733343857756029,
+      "shortened_pose_fraction": 0.5,
+      "shortened_weighted_residual": 0.00048193887157298767,
+      "next_recorded_robot_state_exact": true,
+      "original_opening_and_base_cmd_preserved": true,
+      "actual_neural_inference_rerun": false,
+      "independent_cases_read": false
+    }
+  },
+  "formal_verifier_backoff_rejection": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/formal-backoff-rejection.json",
+    "result": {
+      "report": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/v17-step1792-shorter-ik/summary.json",
+      "rejected_during_acceptance_preflight": true,
+      "reason": "Cartesian diagnostic backoff is outside formal acceptance",
+      "independent_cases_read": false
+    }
+  },
+  "joint_audit_output_regression_bit_exact": {
+    "file": "/data/hlou/pigment-pour-study/runs/cylinder-cartesian-ik-backoff-v45/joint-audit-regression/held-lift-audit.json",
+    "result": {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000-step128-single",
+      "terminal_reason": "collision:[['right_left_official_collision_1_0', '']]",
+      "raw_peak": {
+        "height_m": 0.0009511504061474607,
+        "time_s": 34.099999999980795,
+        "loaded_fingers": 1,
+        "established_hold": false,
+        "tilt_rad": 0.02812376828699887
+      },
+      "max_supported_lift_m": 0.0,
+      "established_hold": false,
+      "loaded_finger_counts_after_command": [
+        1337,
+        10,
+        0
+      ],
+      "longest_consecutive_double_load_frames": 0,
+      "longest_consecutive_double_load_seconds": 0.0,
+      "first_sustained_hold_s": null,
+      "first_supported_lift_40mm_s": null,
+      "observations_and_bounded_commands_exact": true,
+      "checkpoint_inference_rerun": false
+    }
+  }
+}

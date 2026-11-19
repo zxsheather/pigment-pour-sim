@@ -153,7 +153,8 @@ class CylinderTrial:
                  cartesian_speed_limit=0.,angular_speed_limit=0.,ik_max_residual=.002,temporal_ensemble=0,prediction_samples=1,
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
                  gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
-                 joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None,servo_increments=False):
+                 joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None,servo_increments=False,
+                 cartesian_ik_backoff=False):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
@@ -165,7 +166,8 @@ class CylinderTrial:
                 tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
-                                        temporal_ensemble,prediction_samples!=1,gripper_open_confirmations)):
+                                        temporal_ensemble,prediction_samples!=1,gripper_open_confirmations,
+                                        cartesian_ik_backoff)):
             raise ValueError('Joint execution requires single model draws without Cartesian or gripper filters')
         self.action_space=action_space
         self.servo_increments=servo_increments
@@ -202,6 +204,7 @@ class CylinderTrial:
         self.with_odometry=with_odometry or action_space=='joint'
         self.cartesian_speed_limit=cartesian_speed_limit;self.angular_speed_limit=angular_speed_limit
         self.ik_max_residual=ik_max_residual;self.max_attempted_ik_residual=0.
+        self.cartesian_ik_backoff=cartesian_ik_backoff
         self.temporal_ensemble=TemporalActionEnsemble(temporal_ensemble)
         self.prediction_samples=prediction_samples;self.sampled_chunks=[]
         self.state_embedding_precision=state_embedding_precision
@@ -274,7 +277,8 @@ class CylinderTrial:
                 self.max_joint_limit_projection=max(self.max_joint_limit_projection,joint_projection)
                 self.joint_limit_projected_frames+=int(joint_projection>0)
             else:
-                joints,opening,forward,yaw=cartesian_to_joint_target(env,action,max_ik_residual=self.ik_max_residual)
+                joints,opening,forward,yaw=cartesian_to_joint_target(
+                    env,action,max_ik_residual=self.ik_max_residual,backoff=self.cartesian_ik_backoff)
                 ik_residual=env.last_cartesian_ik_residual
         except ValueError as error:
             if self.action_space=='cartesian':
@@ -287,6 +291,10 @@ class CylinderTrial:
         if self.action_space=='joint':self.rows[-1]['joint_state']=robot_joint_observation(env)
         _,metrics=env.step_joints(joints,opening=opening,forward=forward,yaw=yaw)
         if self.action_space=='joint':self.rows[-1]['joint_command']=bounded_joint_command(env)
+        if self.cartesian_ik_backoff:
+            self.rows[-1].update(joint_command=bounded_joint_command(env),
+                                 requested_ik_residual=env.last_cartesian_requested_residual,
+                                 pose_fraction=env.last_cartesian_pose_fraction)
         lifted=float(env.data.xpos[env.cylinder_body,2]-self.initial_cylinder[2]);self.max_lift=max(self.max_lift,lifted)
         if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
         if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
@@ -384,6 +392,11 @@ class CylinderTrial:
                            initial_tray_images=self.initial_tray_images,
                            observation_inputs="Three RGB cameras, measured robot progress and joint/servo state "
                            "with the reset RGB tray cue projected along the current base axes during approach")
+        if self.cartesian_ik_backoff:
+            summary['ik_backoff']=dict(
+                shorter_steps=sum(r['pose_fraction']<1. for r in self.rows),
+                stationary_targets=sum(r['pose_fraction']==0. for r in self.rows),
+                max_requested_residual=max((r['requested_ik_residual'] for r in self.rows),default=0.))
         if reading["valid"]:summary["absolute_reading_error_ml"]=abs(reading["volume_ml"]-env.volume_ml)
         (self.output/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
         np.save(self.output/"predicted_chunks.npy",np.asarray(self.chunks))
@@ -405,6 +418,9 @@ class CylinderTrial:
                dict(joint_limit_projection_rad=np.array([r['joint_projection'] for r in self.rows]),
                     robot_joint_state=np.array([r['joint_state'] for r in self.rows]),
                     joint_command=np.array([r['joint_command'] for r in self.rows])))
+        if self.cartesian_ik_backoff:
+            extra.update({key:np.array([r[key] for r in self.rows])
+                          for key in ('joint_command','requested_ik_residual','pose_fraction')})
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             unfiltered_model_action=np.array([r["raw_action"] for r in self.rows]),
@@ -432,6 +448,8 @@ def main():
     p.add_argument("--angular-speed-limit",type=float,default=0.,help="Optional pre-IK robot-feedback rotation limit, rad/s; 0 disables.")
     p.add_argument("--ik-max-residual",type=float,default=.002,
                    help="Allowed weighted nearest-IK residual, m/rad*0.25; physical task gates stay fixed.")
+    p.add_argument("--cartesian-ik-backoff",action="store_true",
+                   help="Diagnostic shorter pose step when the original target exceeds the IK tolerance.")
     p.add_argument("--temporal-ensemble",type=int,default=0,choices=range(9),
                    help="Average overlapping forecasts for the same tick; newest gripper retained; 0 disables.")
     p.add_argument("--prediction-samples",type=int,default=1,choices=range(1,9),
@@ -467,6 +485,7 @@ def main():
                          max_seconds=args.max_seconds,image_size=args.image_size,
                          action_filter_seconds=args.action_filter_seconds,with_odometry=policy.with_odometry,
                          cartesian_speed_limit=args.cartesian_speed_limit,angular_speed_limit=args.angular_speed_limit,
+                         cartesian_ik_backoff=args.cartesian_ik_backoff,
                          ik_max_residual=args.ik_max_residual,temporal_ensemble=args.temporal_ensemble,
                          prediction_samples=args.prediction_samples,
                          state_embedding_precision=args.state_embedding_precision,
@@ -546,6 +565,7 @@ def main():
                     robot_servo_envelope=dict(cartesian_speed_limit_m_s=args.cartesian_speed_limit,
                                              angular_speed_limit_rad_s=args.angular_speed_limit),
                     ik_max_residual=(None if policy.action_space=='joint' else args.ik_max_residual),
+                    cartesian_ik_backoff=args.cartesian_ik_backoff,
                     temporal_ensemble_predictions=args.temporal_ensemble,
                     prediction_samples_per_observation=args.prediction_samples,
                     state_embedding_precision=args.state_embedding_precision,

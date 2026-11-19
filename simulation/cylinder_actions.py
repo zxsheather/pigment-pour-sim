@@ -5,6 +5,7 @@ No object position, task phase or desired liquid volume enters these helpers.
 """
 import numpy as np
 import mujoco
+from scipy.spatial.transform import Rotation
 
 
 def rotation_from_rows(value):
@@ -51,15 +52,41 @@ def commanded_cartesian_action(env,reference_qpos):
     return np.concatenate(parts).astype(np.float32)
 
 
-def cartesian_to_joint_target(env,action,*,max_ik_residual=.002):
+def _backoff_cartesian_target(env, point, rotation, initial, max_ik_residual):
+    """Take a shorter step toward the model pose, starting at a feasible arm pose."""
+    anchor=np.clip(initial,*env.ik_joint_bounds())
+    data=env.ik_data
+    data.qpos[:]=env.data.qpos
+    data.qpos[env.arm_addresses]=anchor
+    mujoco.mj_kinematics(env.model,data)
+    start_rotation=data.xmat[env.gripper_body].reshape(3,3).copy()
+    start_point=data.xpos[env.gripper_body]+start_rotation@env.grasp_offset
+    relative=Rotation.from_matrix(rotation@start_rotation.T).as_rotvec()
+    for fraction in (.5,.25,.125,.0625):
+        reduced_point=start_point+fraction*(point-start_point)
+        reduced_rotation=Rotation.from_rotvec(fraction*relative).as_matrix()@start_rotation
+        joints,residual=env.inverse_kinematics(reduced_point,reduced_rotation,initial=anchor)
+        if residual<=max_ik_residual:
+            return joints,residual,fraction
+    return anchor,0.,0.
+
+
+def cartesian_to_joint_target(env,action,*,max_ik_residual=.002,backoff=False):
     action=np.asarray(action,dtype=float)
     if action.shape!=(23,) or not np.isfinite(action).all():raise ValueError("Invalid absolute Cartesian action")
     base=env.data.xmat[env.robot_root].reshape(3,3)
     rotation=base@rotation_from_rows(action[13:19])
     origin=env.data.xpos[env.robot_root]+base@action[10:13]
     point=origin+rotation@env.grasp_offset
-    joints,error=env.inverse_kinematics(point,rotation,initial=env.data.qpos[env.arm_addresses])
+    initial=env.data.qpos[env.arm_addresses]
+    joints,error=env.inverse_kinematics(point,rotation,initial=initial)
+    env.last_cartesian_requested_residual=float(error)
+    env.last_cartesian_pose_fraction=1.
     env.last_cartesian_ik_residual=float(error)
-    if error>max_ik_residual:raise ValueError(f"Unreachable model action:{error:.5f}")
+    if error>max_ik_residual:
+        if not backoff:raise ValueError(f"Unreachable model action:{error:.5f}")
+        joints,error,fraction=_backoff_cartesian_target(env,point,rotation,initial,max_ik_residual)
+        env.last_cartesian_ik_residual=float(error)
+        env.last_cartesian_pose_fraction=fraction
     opening=float(np.clip(action[19]*.0975/2,0.,.04875))
     return joints,opening,float(np.clip(action[20],-.12,.12)),float(np.clip(action[22],-.3,.3))

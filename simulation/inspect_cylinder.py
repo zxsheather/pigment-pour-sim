@@ -206,6 +206,10 @@ class CylinderEnv(CarryEnv):
             values["bottle_slip_m"]=float(np.linalg.norm(self.grip_point_relative()-self.grasp_point_reference))
         return values
 
+    def ik_joint_bounds(self):
+        ranges=np.array([self.model.joint(f"right_arm_joint{i}").range for i in range(1,7)])
+        return ranges[:,0]+.005,ranges[:,1]-.005
+
     def inverse_kinematics(self, point: np.ndarray, rotation: np.ndarray, *, initial=None):
         d=self.ik_data
         d.qpos[:]=self.data.qpos
@@ -217,8 +221,7 @@ class CylinderEnv(CarryEnv):
             delta_quat=np.empty(4);mujoco.mju_mat2Quat(delta_quat,delta_rotation.reshape(-1))
             orientation=np.empty(3);mujoco.mju_quat2Vel(orientation,delta_quat,1.0)
             return np.r_[point-current,.25*orientation]
-        ranges=np.array([self.model.joint(f"right_arm_joint{i}").range for i in range(1,7)])
-        low,high=ranges[:,0]+.005,ranges[:,1]-.005
+        low,high=self.ik_joint_bounds()
         seeds=[initial if initial is not None else self.data.qpos[self.arm_addresses],
                [0,1.2,-.5,-.7,0,0],[-.8,.6,-1.4,.8,.8,0]]
         best=None

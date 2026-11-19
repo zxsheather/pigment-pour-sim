@@ -1,4 +1,4 @@
-"""Replay a saved joint rollout and measure lift while both fingers carry load."""
+"""Replay recorded commands and measure lift while both fingers carry load."""
 import argparse
 import json
 from pathlib import Path
@@ -12,36 +12,49 @@ from run_wall_cylinder import CylinderTrial
 
 def audit(rollout, output):
     recorded = json.loads((rollout / 'summary.json').read_text())
-    require(recorded['evaluation_complete'] and recorded['action_space'] == 'joint'
+    joint = recorded['action_space'] == 'joint'
+    backoff = recorded['action_space'] == 'cartesian' and recorded.get('cartesian_ik_backoff', False)
+    require(recorded['evaluation_complete'] and (joint or backoff)
             and recorded['total'] == 1 and not recorded['probe_only'],
-            'Expected a complete single joint rollout')
+            'Expected a complete single joint or diagnostic Cartesian rollout')
     case = recorded['episodes'][0]
     trace = rollout / 'episode_000/trajectory.npz'
     duration = case['simulated_seconds']
     max_seconds = duration if case['failure_reason'] == 'timeout' else duration + 1.
     trial = CylinderTrial(case['case'], recorded['controller'], output,
-                          action_space='joint', max_seconds=max_seconds)
+                          action_space=recorded['action_space'], max_seconds=max_seconds,
+                          cartesian_ik_backoff=backoff, ik_max_residual=recorded['ik_max_residual'] if backoff else .002)
     max_supported_lift = 0.
     raw_peak = dict(height_m=0., time_s=0., loaded_fingers=0, established_hold=False)
     contact_counts = [0, 0, 0]
     double_frames = longest_double = 0
     first_hold = first_supported_40mm = None
+    closest = (float('inf'), 0.)
     try:
         require(trial.geometry_report['passed'] and trial.geometry_report['custom_pads'] == 0,
                 'Expected official collision geometry')
         with np.load(trace, allow_pickle=False) as data:
-            for action, state, bounded in zip(data['action'], data['robot_joint_state'],
-                                               data['joint_command'], strict=True):
+            state_key = 'robot_joint_state' if joint else 'state'
+            backoff_trace = {key: data[key] for key in ('ik_residual', 'requested_ik_residual', 'pose_fraction')} if backoff else {}
+            increments = zip(data['action'], data[state_key], data['joint_command'], strict=True)
+            for index, (action, state, bounded) in enumerate(increments):
                 require(not trial.done, 'Replay stopped before the recorded final command')
-                np.testing.assert_array_equal(robot_joint_observation(trial.env), state)
+                observed = robot_joint_observation(trial.env) if joint else trial.env.state_vector()
+                np.testing.assert_array_equal(observed, state)
                 trial.step(action)
                 np.testing.assert_array_equal(trial.rows[-1]['joint_command'], bounded)
+                if backoff:
+                    require(all(trial.rows[-1][key] == data_column[index] for key, data_column in backoff_trace.items()),
+                            'Recorded IK projection did not reproduce')
                 metrics = trial.env.metrics()
                 fingers = metrics['grip_contacts']
                 contact_counts[fingers] += 1
                 double_frames = double_frames + 1 if fingers == 2 else 0
                 longest_double = max(longest_double, double_frames)
                 time = float(trial.env.data.time)
+                if backoff:
+                    distance = float(np.linalg.norm(trial.env.grip_point_relative() - trial.env.grasp_offset))
+                    closest = min(closest, (distance, time))
                 if trial.held and first_hold is None:
                     first_hold = time
                 elevation = float(trial.env.data.xpos[trial.env.cylinder_body, 2] - trial.initial_cylinder[2])
@@ -64,6 +77,9 @@ def audit(rollout, output):
                       longest_consecutive_double_load_seconds=longest_double * CONTROL_DT,
                       first_sustained_hold_s=first_hold, first_supported_lift_40mm_s=first_supported_40mm,
                       observations_and_bounded_commands_exact=True, checkpoint_inference_rerun=False)
+        if backoff:
+            result.update(ik_backoff_trace_exact=True,
+                          nearest_tool=dict(distance_m=closest[0], time_s=closest[1]) if sum(contact_counts) else None)
         (output / 'held-lift-audit.json').write_text(json.dumps(result, indent=2) + '\n')
         return result
     finally:
