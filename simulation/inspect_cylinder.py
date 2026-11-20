@@ -282,7 +282,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    align_near_grasp=False,hold_wrist_on_heading_return=False,
                    align_near_grasp_forward=False,
                    wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False,
-                   align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False):
+                   align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
+                   lateral_alignment_min_depth_m=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -302,6 +303,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Forward alignment requires near grasp alignment")
     if align_near_grasp_at_current_depth and (not align_near_grasp or align_near_grasp_forward):
         raise ValueError("Current-depth alignment requires its own near grasp mode")
+    if lateral_alignment_min_depth_m is not None and (
+            not align_near_grasp_at_current_depth or not np.isfinite(lateral_alignment_min_depth_m)
+            or lateral_alignment_min_depth_m <= 0.):
+        raise ValueError("Lateral clearance requires current-depth alignment and a positive depth")
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
@@ -698,19 +703,31 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     if (not (near or high) or gap < .035
                             or env.metrics()["grip_contacts"]):
                         raise InspectionFailure("current_depth_alignment_requires_open_fingers_and_forward_clearance")
+                    alignment_depth = measured_tip[1]
                 elif (np.linalg.norm(error) > .03 and not forward) or env.metrics()["grip_contacts"]:
                     reason = ("near_grasp_alignment_requires_clear_fingers_in_approach_range" if align_near_grasp_forward
                               else "near_grasp_alignment_requires_clear_fingers_within_30mm")
                     raise InspectionFailure(reason)
                 q = np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
                               for i in range(1,7)])
+                if lateral_alignment_min_depth_m is not None and abs(delta[0]) >= .030:
+                    clearance = lateral_alignment_min_depth_m - delta[1]
+                    if clearance > 0.:
+                        # Withdraw at the measured aperture so opening cannot sweep a pad into the wall.
+                        nominal = rotation
+                        rotation = measured_rotation.copy()
+                        rear_tip = measured_tip.copy()
+                        rear_tip[1] -= clearance
+                        q = move("wrist_clearance_near_rear",rear_tip,1.,opening=gap*.5,straight=True)
+                        rotation = nominal
+                        alignment_depth = rear_tip[1]
                 for _ in range(12):tick("wrist_clearance_near_open",q,.034)
                 axis = env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
                 target = env.data.xpos[env.cylinder_body] + approach_height * axis
                 if align_near_grasp_at_current_depth:
-                    # Turn and lower behind the cylinder before advancing toward it.
                     alignment = target.copy()
-                    alignment[1] = measured_tip[1]
+                    alignment[1] = alignment_depth
+                    # Align behind the cylinder before advancing toward it.
                     move("wrist_clearance_near_plane",alignment,1.5,opening=.034,straight=True)
                 q = move("wrist_clearance_near_align",target,1.5,opening=.034,straight=True)
             else:
@@ -935,6 +952,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["align_near_grasp_forward"]=True
     if align_near_grasp_at_current_depth:
         summary["controller_parameters"]["align_near_grasp_at_current_depth"]=True
+    if lateral_alignment_min_depth_m is not None:
+        summary["controller_parameters"]["lateral_alignment_min_depth_m"]=lateral_alignment_min_depth_m
     if wrist_clearance_open_after_retreat:
         summary["controller_parameters"]["wrist_clearance_open_after_retreat"]=True
     if wrist_clearance_align_before_lift:
