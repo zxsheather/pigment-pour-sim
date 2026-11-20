@@ -277,7 +277,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
-                   wrist_clearance_retreat_from_reset=False,read_from_current_view=False):
+                   wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
+                   retry_reading_from_current_view=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -351,6 +352,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     rows=[];writers={};phase_log=[];held=False;lost_seconds=0.0;max_slip=0.0
     max_tilt=0.0;max_contact_loss=0.0
     readings=[];view_search=[]
+    reading_retry_reason=None
     if record:
         for cam in ("cylinder_overview","face_view"):
             writers[(cam,env.image_size)]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
@@ -650,18 +652,26 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             else:raise InspectionFailure("base_retreat_timeout")
             for _ in range(15):tick("back_away",q,grip_opening)
         camera_id=env.model.camera("face_view").id
-        if read_from_current_view:
+        use_current_view=read_from_current_view
+        view_right=lateral_moves=None
+
+        def settle_at_current_view():
+            nonlocal grip_opening, rotation, point, view_right, lateral_moves
             open_servo=env.model.actuator("right_arm_gripper_left_joint_servo").id
             grip_opening=env.hold_targets[open_servo]
-            q=np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
-                        for i in range(1,7)])
-            for _ in range(24):tick("hold_for_reading",q,grip_opening)
+            hold_joints=np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
+                                  for i in range(1,7)])
+            for _ in range(24):tick("hold_for_reading",hold_joints,grip_opening)
             rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
             point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
             view_right=env.data.cam_xmat[camera_id].reshape(3,3)[:,0].copy()
             view_right[2]=0.
             view_right/=np.linalg.norm(view_right)
             lateral_moves=iter((.012,-.024,.037,-.05))
+            return hold_joints
+
+        if use_current_view:
+            q=settle_at_current_view()
         else:
             eye=env.data.cam_xpos[camera_id].copy()
             point=eye+[read_lateral,read_distance,approach_height-(SCALE_ZERO+SCALE_SPAN/2)]
@@ -680,7 +690,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         for _ in range(4):
             axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
             tilt=float(np.arccos(np.clip(axis[2],-1,1)))
-            if tilt<np.deg2rad(3 if read_from_current_view else 1):break
+            if tilt<np.deg2rad(3 if use_current_view else 1):break
             correction_axis=np.cross(axis,[0.,0.,1.])
             correction_axis/=np.linalg.norm(correction_axis)
             quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,correction_axis,.8*tilt)
@@ -697,14 +707,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     and reading["boundary_support_fraction"]<.5)
         def align_camera_reading(q, attempt):
             nonlocal rotation, point
-            for iteration in range(11 if read_from_current_view else 6):
+            for iteration in range(11 if use_current_view else 6):
                 suffix = f"{attempt}_{iteration:02d}" if attempt else f"{iteration:02d}"
                 rgb=env.render("face_view")
                 reading=read_volume(rgb)
                 if needs_view(reading):
                     view_search.append(dict(time=float(env.data.time),iteration=iteration,reading=reading))
                     imageio.imwrite(output/f"view_rejected_{suffix}.png",annotate(rgb,reading))
-                    if read_from_current_view:
+                    if use_current_view:
                         for lateral in lateral_moves:
                             q=move_camera_offset("find_scale",lateral*view_right)
                             rgb=env.render("face_view");reading=read_volume(rgb)
@@ -725,9 +735,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
                 if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:return q
                 focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[camera_id])/2))
-                limit=.012 if read_from_current_view else .025
+                limit=.012 if use_current_view else .025
                 dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-limit,limit)
-                if read_from_current_view:
+                if use_current_view:
                     q=move_camera_offset("align_eye_level",np.array([0.,0.,dz]))
                 else:
                     point[2]+=dz
@@ -746,10 +756,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 if abs(reading["eye_alignment_error_px"])>2:return "eye_alignment_drift"
             return None
 
-        for attempt in range(3 if read_from_current_view else 1):
+        for attempt in range(3 if use_current_view or retry_reading_from_current_view else 1):
             q=align_camera_reading(q,attempt)
             read_failure=hold_for_stable_reading(q)
             if read_failure is None:break
+            if not use_current_view and retry_reading_from_current_view:
+                reading_retry_reason=read_failure
+                q=settle_at_current_view()
+                use_current_view=True
         else:raise InspectionFailure(read_failure)
         stable=[r["volume_ml"] for r in readings[-3:]]
         if np.ptp(stable)>.4:raise InspectionFailure("reading_not_stable")
@@ -827,6 +841,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["wrist_clearance_retreat_from_reset"]=True
     if read_from_current_view:
         summary["controller_parameters"]["read_from_current_view"]=True
+    if retry_reading_from_current_view:
+        summary["controller_parameters"]["retry_reading_from_current_view"]=True
+        summary["reading_retry_reason"]=reading_retry_reason
     if teacher_grasp_height_m is not None:
         summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
     if stable_read_samples != 3:
