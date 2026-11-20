@@ -1,0 +1,1567 @@
+{
+  "kind": "measured_approach_progress_and_matched_wall_objective",
+  "recorded_at": "2026-11-20T23:28:30.035835+08:00",
+  "independent_cases_read": false,
+  "official_geometry_preserved": true,
+  "source_analysis": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/approach-direction-report.json",
+  "observed": {
+    "development_rollouts": 11,
+    "distance_radius_m": 0.18,
+    "comparison_time_interval_s": [
+      4,
+      24
+    ],
+    "control_ticks_per_window": 8,
+    "development_windows": 274,
+    "median_m": {
+      "actual_progress_m": 0.00040895998567588854,
+      "arm_at_initial_base_progress_m": 0.0029996273277534333,
+      "measured_base_endpoint_contribution_m": -0.0015689307709903233,
+      "servo_tracking_contribution_m": -0.0005914406890556376,
+      "commanded_to_measured_tip_m": 0.0013792626194974859
+    },
+    "p90_commanded_to_measured_tip_m": 0.0024488918971301544,
+    "pose_and_rgb_cue_reconstruction_max_m": 1.2416900785350293e-07,
+    "rgb_target_error_from_case_reset_m": 0.000980727507112906,
+    "progress_gt_1mm_rate_measured": 0.4635036496350365,
+    "progress_gt_1mm_rate_arm_only": 0.6313868613138686
+  },
+  "development_rollouts": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step128-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-base-response-bc-v63-a6000-step128-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.874087989488727e-08,
+      "encoded_cue_distance_max_error_m": 9.34771815508384e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.10044167425947934,
+      "minimum_cue_distance_time_s": 14.000000000005619,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.00039939536670201015,
+          "q10": -0.007333140718229958,
+          "median": -0.00027236438776088306,
+          "q90": 0.009133071600724458,
+          "towards_gt_1mm_fraction": 0.42857142857142855,
+          "away_gt_1mm_fraction": 0.42857142857142855
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.00297890095127827,
+          "q10": -0.006273981774443664,
+          "median": 0.0034357091014328937,
+          "q90": 0.011459049307335597,
+          "towards_gt_1mm_fraction": 0.5714285714285714,
+          "away_gt_1mm_fraction": 0.2619047619047619
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": -0.0022771591273199852,
+          "q10": -0.0056758396112161725,
+          "median": -0.0024098940093142673,
+          "q90": 0.0008794968853440569,
+          "towards_gt_1mm_fraction": 0.09523809523809523,
+          "away_gt_1mm_fraction": 0.6666666666666666
+        },
+        "servo_tracking_contribution_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": -0.00030234645725627516,
+          "q10": -0.0021794877492184424,
+          "median": -0.0002005784134384708,
+          "q90": 0.00120672502964016,
+          "towards_gt_1mm_fraction": 0.11904761904761904,
+          "away_gt_1mm_fraction": 0.2857142857142857
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.0017009139958739951,
+          "q10": 0.0005851338062401307,
+          "median": 0.0015062077836929437,
+          "q90": 0.0028134358869727847,
+          "towards_gt_1mm_fraction": 0.8571428571428571,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 12,
+            "nominal_weight": 12.0,
+            "mean": -0.0006756071332842834,
+            "q10": -0.0068854353134579615,
+            "median": -0.0020076927063126387,
+            "q90": 0.008545579537031129,
+            "towards_gt_1mm_fraction": 0.3333333333333333,
+            "away_gt_1mm_fraction": 0.6666666666666666
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 30,
+            "nominal_weight": 30.0,
+            "mean": 0.0008293963666965276,
+            "q10": -0.007846814273590595,
+            "median": 0.00041151180095090606,
+            "q90": 0.009443014870713447,
+            "towards_gt_1mm_fraction": 0.4666666666666667,
+            "away_gt_1mm_fraction": 0.3333333333333333
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-base-response-bc-v63-a6000-step256-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.504204265231282e-08,
+      "encoded_cue_distance_max_error_m": 1.2416900785350293e-07,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.11145687667468235,
+      "minimum_cue_distance_time_s": 14.800000000006596,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 23,
+          "nominal_weight": 23.0,
+          "mean": -5.647925815672122e-05,
+          "q10": -0.009745451923289775,
+          "median": -0.0020630877397526115,
+          "q90": 0.01144545992859837,
+          "towards_gt_1mm_fraction": 0.391304347826087,
+          "away_gt_1mm_fraction": 0.5652173913043478
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 23,
+          "nominal_weight": 23.0,
+          "mean": 0.004717061628524791,
+          "q10": -0.004417422726128066,
+          "median": 0.002852272716918791,
+          "q90": 0.014517945277172647,
+          "towards_gt_1mm_fraction": 0.6086956521739131,
+          "away_gt_1mm_fraction": 0.2608695652173913
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 23,
+          "nominal_weight": 23.0,
+          "mean": -0.003944789491584633,
+          "q10": -0.006327781326384607,
+          "median": -0.0041761943872069,
+          "q90": -0.0017087830556589234,
+          "towards_gt_1mm_fraction": 0.0,
+          "away_gt_1mm_fraction": 0.9130434782608695
+        },
+        "servo_tracking_contribution_m": {
+          "n": 23,
+          "nominal_weight": 23.0,
+          "mean": -0.0008287513950968787,
+          "q10": -0.0021385329778041804,
+          "median": -0.0008528322439810276,
+          "q90": 0.0005054009003994612,
+          "towards_gt_1mm_fraction": 0.0,
+          "away_gt_1mm_fraction": 0.34782608695652173
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 23,
+          "nominal_weight": 23.0,
+          "mean": 0.0016385360783169156,
+          "q10": 0.001013333105936258,
+          "median": 0.0013874412295837683,
+          "q90": 0.002516104218055128,
+          "towards_gt_1mm_fraction": 0.9130434782608695,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 6,
+            "nominal_weight": 6.0,
+            "mean": -0.0016614309083882496,
+            "q10": -0.009632020944857538,
+            "median": -0.0006678773365718304,
+            "q90": 0.0031337468929319556,
+            "towards_gt_1mm_fraction": 0.3333333333333333,
+            "away_gt_1mm_fraction": 0.5
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 17,
+            "nominal_weight": 17.0,
+            "mean": 0.0005099742654544065,
+            "q10": -0.009310575553053885,
+            "median": -0.002871007776984541,
+            "q90": 0.012898581602033074,
+            "towards_gt_1mm_fraction": 0.4117647058823529,
+            "away_gt_1mm_fraction": 0.5882352941176471
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step384-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-base-response-bc-v63-a6000-step384-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.188548969453777e-08,
+      "encoded_cue_distance_max_error_m": 6.713571448768718e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.11559611289986103,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 40,
+          "nominal_weight": 40.0,
+          "mean": 0.000987120638422738,
+          "q10": -0.005214021455050774,
+          "median": 0.0009209149930318189,
+          "q90": 0.007524643019689442,
+          "towards_gt_1mm_fraction": 0.5,
+          "away_gt_1mm_fraction": 0.325
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 40,
+          "nominal_weight": 40.0,
+          "mean": 0.0028201399557174016,
+          "q10": -0.0035735254319154836,
+          "median": 0.003341269925730514,
+          "q90": 0.009754252863747374,
+          "towards_gt_1mm_fraction": 0.675,
+          "away_gt_1mm_fraction": 0.25
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 40,
+          "nominal_weight": 40.0,
+          "mean": -0.0012140035276199377,
+          "q10": -0.003508010692994855,
+          "median": -0.001103629133905104,
+          "q90": 0.0004975230687897518,
+          "towards_gt_1mm_fraction": 0.025,
+          "away_gt_1mm_fraction": 0.55
+        },
+        "servo_tracking_contribution_m": {
+          "n": 40,
+          "nominal_weight": 40.0,
+          "mean": -0.0006190157896747261,
+          "q10": -0.0023263032395163113,
+          "median": -0.0005677642144125902,
+          "q90": 0.0006420600762250542,
+          "towards_gt_1mm_fraction": 0.025,
+          "away_gt_1mm_fraction": 0.325
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 40,
+          "nominal_weight": 40.0,
+          "mean": 0.0014576152452370835,
+          "q10": 0.0006411221937560825,
+          "median": 0.0013457725065250817,
+          "q90": 0.0024527730572442828,
+          "towards_gt_1mm_fraction": 0.675,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 1,
+            "nominal_weight": 1.0,
+            "mean": -0.004411689751215253,
+            "q10": -0.004411689751215253,
+            "median": -0.004411689751215253,
+            "q90": -0.004411689751215253,
+            "towards_gt_1mm_fraction": 0.0,
+            "away_gt_1mm_fraction": 1.0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 39,
+            "nominal_weight": 39.0,
+            "mean": 0.0011255516740544813,
+            "q10": -0.005250777082628838,
+            "median": 0.0011495066237168228,
+            "q90": 0.007543361744936795,
+            "towards_gt_1mm_fraction": 0.5128205128205128,
+            "away_gt_1mm_fraction": 0.3076923076923077
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step512-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-base-response-bc-v63-a6000-step512-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.854379354906531e-08,
+      "encoded_cue_distance_max_error_m": 1.0049392173971938e-07,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.19193762958258387,
+      "minimum_cue_distance_time_s": 17.600000000004332,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 0
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 0
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 0
+        },
+        "servo_tracking_contribution_m": {
+          "n": 0
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 0
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step640-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-base-response-bc-v63-a6000-step640-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.363381424374357e-08,
+      "encoded_cue_distance_max_error_m": 1.0476839984452369e-07,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.3139892745889313,
+      "minimum_cue_distance_time_s": 14.800000000006596,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 0
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 0
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 0
+        },
+        "servo_tracking_contribution_m": {
+          "n": 0
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 0
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step128-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-full-reset-read-bc-v65-a6000-step128-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.429785806521919e-08,
+      "encoded_cue_distance_max_error_m": 8.739442369787298e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.08115697250210176,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.000856163428909074,
+          "q10": -0.005949689826903298,
+          "median": 0.001269488472345634,
+          "q90": 0.009809568410058367,
+          "towards_gt_1mm_fraction": 0.5476190476190477,
+          "away_gt_1mm_fraction": 0.3333333333333333
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.004212932176298041,
+          "q10": -0.0023548124961321453,
+          "median": 0.00400910482426501,
+          "q90": 0.013246975185253206,
+          "towards_gt_1mm_fraction": 0.6904761904761905,
+          "away_gt_1mm_fraction": 0.14285714285714285
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": -0.0027377332056915758,
+          "q10": -0.0059376103576172625,
+          "median": -0.002951024178452444,
+          "q90": 0.0006899325963597034,
+          "towards_gt_1mm_fraction": 0.09523809523809523,
+          "away_gt_1mm_fraction": 0.8333333333333334
+        },
+        "servo_tracking_contribution_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": -0.0006190355416973919,
+          "q10": -0.0019469576032014183,
+          "median": -0.00031449257033513945,
+          "q90": 0.0003439875112187421,
+          "towards_gt_1mm_fraction": 0.023809523809523808,
+          "away_gt_1mm_fraction": 0.38095238095238093
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 42,
+          "nominal_weight": 42.0,
+          "mean": 0.001583562060562743,
+          "q10": 0.00064965292091832,
+          "median": 0.0015304394202665015,
+          "q90": 0.002534067871414708,
+          "towards_gt_1mm_fraction": 0.7619047619047619,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 25,
+            "nominal_weight": 25.0,
+            "mean": -0.0007098061414264578,
+            "q10": -0.007127595567022971,
+            "median": 0.0010456553590927065,
+            "q90": 0.004041604434164653,
+            "towards_gt_1mm_fraction": 0.52,
+            "away_gt_1mm_fraction": 0.4
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 17,
+            "nominal_weight": 17.0,
+            "mean": 0.0031590598558730912,
+            "q10": -0.005172808986621707,
+            "median": 0.0024395418678913317,
+            "q90": 0.010964890142229079,
+            "towards_gt_1mm_fraction": 0.5882352941176471,
+            "away_gt_1mm_fraction": 0.23529411764705882
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step256-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-full-reset-read-bc-v65-a6000-step256-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.531726688677862e-08,
+      "encoded_cue_distance_max_error_m": 8.091328540515974e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.13595218752179541,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 25,
+          "nominal_weight": 25.0,
+          "mean": -0.0009582445991816025,
+          "q10": -0.00998040662251451,
+          "median": -0.00041956998487927,
+          "q90": 0.006928513228649541,
+          "towards_gt_1mm_fraction": 0.32,
+          "away_gt_1mm_fraction": 0.44
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 25,
+          "nominal_weight": 25.0,
+          "mean": 0.0005167565304999954,
+          "q10": -0.006972689001755961,
+          "median": 0.0005222434089167116,
+          "q90": 0.008925237052983648,
+          "towards_gt_1mm_fraction": 0.48,
+          "away_gt_1mm_fraction": 0.36
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 25,
+          "nominal_weight": 25.0,
+          "mean": -0.0010411342933218204,
+          "q10": -0.0033934516587210972,
+          "median": -0.00105857304111448,
+          "q90": 0.0009970227671300125,
+          "towards_gt_1mm_fraction": 0.08,
+          "away_gt_1mm_fraction": 0.52
+        },
+        "servo_tracking_contribution_m": {
+          "n": 25,
+          "nominal_weight": 25.0,
+          "mean": -0.00043386683635977753,
+          "q10": -0.0018582851027111602,
+          "median": -0.0005710258467383766,
+          "q90": 0.0008168939259431129,
+          "towards_gt_1mm_fraction": 0.08,
+          "away_gt_1mm_fraction": 0.24
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 25,
+          "nominal_weight": 25.0,
+          "mean": 0.0012485190361746568,
+          "q10": 0.0006285840012091808,
+          "median": 0.0012609488272709816,
+          "q90": 0.0019789547437372547,
+          "towards_gt_1mm_fraction": 0.68,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 25,
+            "nominal_weight": 25.0,
+            "mean": -0.0009582445991816025,
+            "q10": -0.00998040662251451,
+            "median": -0.00041956998487927,
+            "q90": 0.006928513228649541,
+            "towards_gt_1mm_fraction": 0.32,
+            "away_gt_1mm_fraction": 0.44
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step384-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-full-reset-read-bc-v65-a6000-step384-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.529664837809007e-08,
+      "encoded_cue_distance_max_error_m": 8.462024519984013e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.11678583080199621,
+      "minimum_cue_distance_time_s": 22.799999999992213,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 0.0021015435298549086,
+          "q10": -0.0034600716793032477,
+          "median": 0.002678759650581959,
+          "q90": 0.00817923631485842,
+          "towards_gt_1mm_fraction": 0.6428571428571429,
+          "away_gt_1mm_fraction": 0.21428571428571427
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 0.0025758664573555766,
+          "q10": -0.003879978590580199,
+          "median": 0.0030315346935397697,
+          "q90": 0.008522725548596065,
+          "towards_gt_1mm_fraction": 0.7142857142857143,
+          "away_gt_1mm_fraction": 0.17857142857142858
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 5.776815954086485e-05,
+          "q10": -0.0006416626010541604,
+          "median": 6.645920675223059e-06,
+          "q90": 0.0009346341400342103,
+          "towards_gt_1mm_fraction": 0.10714285714285714,
+          "away_gt_1mm_fraction": 0.03571428571428571
+        },
+        "servo_tracking_contribution_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": -0.0005320910870415327,
+          "q10": -0.0015290455085176374,
+          "median": -0.0005680018757289463,
+          "q90": 0.0005460568627877375,
+          "towards_gt_1mm_fraction": 0.0,
+          "away_gt_1mm_fraction": 0.25
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 0.0013625688538707636,
+          "q10": 0.0005777467022116549,
+          "median": 0.0013152653449067895,
+          "q90": 0.0021889850978024502,
+          "towards_gt_1mm_fraction": 0.6785714285714286,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 1,
+            "nominal_weight": 1.0,
+            "mean": -0.008123282022685654,
+            "q10": -0.008123282022685654,
+            "median": -0.008123282022685654,
+            "q90": -0.008123282022685654,
+            "towards_gt_1mm_fraction": 0.0,
+            "away_gt_1mm_fraction": 1.0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 27,
+            "nominal_weight": 27.0,
+            "mean": 0.0024802407725415965,
+            "q10": -0.0030976852219906648,
+            "median": 0.0027312308035667004,
+            "q90": 0.008189273017132893,
+            "towards_gt_1mm_fraction": 0.6666666666666666,
+            "away_gt_1mm_fraction": 0.18518518518518517
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step128-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-short-clearance-bc-v66-a6000-step128-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 7.143604044498802e-08,
+      "encoded_cue_distance_max_error_m": 8.158342240660588e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.1368697399098384,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": -0.000767669534018125,
+          "q10": -0.006839685795205044,
+          "median": -0.0008535129354975693,
+          "q90": 0.006985152563362193,
+          "towards_gt_1mm_fraction": 0.35714285714285715,
+          "away_gt_1mm_fraction": 0.5
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 0.0016038315551269008,
+          "q10": -0.005271771380059973,
+          "median": 0.002601791231687161,
+          "q90": 0.009521409335163418,
+          "towards_gt_1mm_fraction": 0.5357142857142857,
+          "away_gt_1mm_fraction": 0.32142857142857145
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": -0.0018887147655252787,
+          "q10": -0.00426182445907681,
+          "median": -0.0016597701183680563,
+          "q90": 4.6146469227074135e-05,
+          "towards_gt_1mm_fraction": 0.03571428571428571,
+          "away_gt_1mm_fraction": 0.7857142857142857
+        },
+        "servo_tracking_contribution_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": -0.000482786323619747,
+          "q10": -0.00207906974803134,
+          "median": -0.000598705014356965,
+          "q90": 0.0009069286214601736,
+          "towards_gt_1mm_fraction": 0.07142857142857142,
+          "away_gt_1mm_fraction": 0.25
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 28,
+          "nominal_weight": 28.0,
+          "mean": 0.0013601144616292207,
+          "q10": 0.0007488070140468919,
+          "median": 0.001230322310128807,
+          "q90": 0.002296802543309093,
+          "towards_gt_1mm_fraction": 0.7142857142857143,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 28,
+            "nominal_weight": 28.0,
+            "mean": -0.000767669534018125,
+            "q10": -0.006839685795205044,
+            "median": -0.0008535129354975693,
+            "q90": 0.006985152563362193,
+            "towards_gt_1mm_fraction": 0.35714285714285715,
+            "away_gt_1mm_fraction": 0.5
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step256-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-short-clearance-bc-v66-a6000-step256-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 6.88697579997651e-08,
+      "encoded_cue_distance_max_error_m": 1.088088156242506e-07,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.1638444185496562,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 10,
+          "nominal_weight": 10.0,
+          "mean": -4.462789621182406e-05,
+          "q10": -0.0041143329267600975,
+          "median": -0.0010322969444291343,
+          "q90": 0.0080538899558998,
+          "towards_gt_1mm_fraction": 0.2,
+          "away_gt_1mm_fraction": 0.5
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 10,
+          "nominal_weight": 10.0,
+          "mean": 0.006394249078730282,
+          "q10": 0.0019537039756761937,
+          "median": 0.00431887706361421,
+          "q90": 0.014143593821544263,
+          "towards_gt_1mm_fraction": 1.0,
+          "away_gt_1mm_fraction": 0.0
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 10,
+          "nominal_weight": 10.0,
+          "mean": -0.0051841208544483154,
+          "q10": -0.008012101497087892,
+          "median": -0.004647356820878787,
+          "q90": -0.0025063834107826866,
+          "towards_gt_1mm_fraction": 0.0,
+          "away_gt_1mm_fraction": 1.0
+        },
+        "servo_tracking_contribution_m": {
+          "n": 10,
+          "nominal_weight": 10.0,
+          "mean": -0.0012547561204937913,
+          "q10": -0.002708996017768875,
+          "median": -0.0010873446380101487,
+          "q90": -0.0003813265148448759,
+          "towards_gt_1mm_fraction": 0.0,
+          "away_gt_1mm_fraction": 0.6
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 10,
+          "nominal_weight": 10.0,
+          "mean": 0.0018296146023539677,
+          "q10": 0.0007313382884713575,
+          "median": 0.0017306587131682915,
+          "q90": 0.0033235825657402297,
+          "towards_gt_1mm_fraction": 0.9,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 0
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 10,
+            "nominal_weight": 10.0,
+            "mean": -4.462789621182406e-05,
+            "q10": -0.0041143329267600975,
+            "median": -0.0010322969444291343,
+            "q90": 0.0080538899558998,
+            "towards_gt_1mm_fraction": 0.2,
+            "away_gt_1mm_fraction": 0.5
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step384-single",
+      "data": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/cylinder-joint-short-clearance-bc-v66-a6000-step384-single-windows.npz",
+      "failure": "timeout",
+      "neural_forward_reran": false,
+      "cue_estimate_error_from_initial_object_m": [
+        -0.00016385662128381995,
+        -0.0009554557905665506,
+        0.00014859906844322257
+      ],
+      "independent_wrist_fk_max_error_m": 6.721295724066474e-08,
+      "encoded_cue_distance_max_error_m": 6.591550510970379e-08,
+      "maximum_loaded_fingers": 0,
+      "minimum_cue_distance_m": 0.06976283228126429,
+      "minimum_cue_distance_time_s": 16.40000000000713,
+      "near_4_to_24_seconds": {
+        "actually_achieved_progress_m": {
+          "n": 36,
+          "nominal_weight": 36.0,
+          "mean": 0.0018950318165836552,
+          "q10": -0.005399430305684026,
+          "median": 0.0013343278537654851,
+          "q90": 0.01217601429207329,
+          "towards_gt_1mm_fraction": 0.5277777777777778,
+          "away_gt_1mm_fraction": 0.3055555555555556
+        },
+        "arm_target_progress_at_start_base_m": {
+          "n": 36,
+          "nominal_weight": 36.0,
+          "mean": 0.0033925377118654153,
+          "q10": -0.00472600063365655,
+          "median": 0.0023606828118878376,
+          "q90": 0.012816184568088562,
+          "towards_gt_1mm_fraction": 0.6111111111111112,
+          "away_gt_1mm_fraction": 0.16666666666666666
+        },
+        "base_contribution_using_measured_endpoint_m": {
+          "n": 36,
+          "nominal_weight": 36.0,
+          "mean": -0.0008715422298692208,
+          "q10": -0.0031783893000548362,
+          "median": -0.0006883971891313706,
+          "q90": 0.0007461699681815524,
+          "towards_gt_1mm_fraction": 0.05555555555555555,
+          "away_gt_1mm_fraction": 0.3611111111111111
+        },
+        "servo_tracking_contribution_m": {
+          "n": 36,
+          "nominal_weight": 36.0,
+          "mean": -0.0006259636654125393,
+          "q10": -0.001958367053439171,
+          "median": -0.0005661256478320177,
+          "q90": 0.0004018626575750029,
+          "towards_gt_1mm_fraction": 0.05555555555555555,
+          "away_gt_1mm_fraction": 0.2222222222222222
+        },
+        "commanded_to_measured_wrist_distance_m": {
+          "n": 36,
+          "nominal_weight": 36.0,
+          "mean": 0.0012810627269581446,
+          "q10": 0.000461150872609033,
+          "median": 0.0011949332396700017,
+          "q90": 0.0021305285718012305,
+          "towards_gt_1mm_fraction": 0.6111111111111112,
+          "away_gt_1mm_fraction": 0.0
+        }
+      },
+      "near_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 3,
+            "nominal_weight": 3.0,
+            "mean": -0.002574778530476394,
+            "q10": -0.006362926674931185,
+            "median": -0.0055089719099983975,
+            "q90": 0.0041475629935004005,
+            "towards_gt_1mm_fraction": 0.3333333333333333,
+            "away_gt_1mm_fraction": 0.6666666666666666
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 25,
+            "nominal_weight": 25.0,
+            "mean": 0.0005004769486437927,
+            "q10": -0.004413555866854685,
+            "median": -1.6831491959870548e-05,
+            "q90": 0.008255961838802159,
+            "towards_gt_1mm_fraction": 0.44,
+            "away_gt_1mm_fraction": 0.32
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 8,
+            "nominal_weight": 8.0,
+            "mean": 0.007929194659043244,
+            "q10": -0.00041147298779025386,
+            "median": 0.00833702503567027,
+            "q90": 0.013956089295707621,
+            "towards_gt_1mm_fraction": 0.875,
+            "away_gt_1mm_fraction": 0.125
+          }
+        ]
+      ],
+      "approach_prompt_only": true
+    }
+  ],
+  "teacher_dataset_analysis": [
+    {
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-held-wrist-heading-v69",
+      "sampler": "/data/hlou/pigment-pour-study/runs/cylinder-held-wrist-heading-v69/v69-sampling.npy",
+      "total_frames": 117082,
+      "approach_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 2419,
+            "nominal_weight": 0.07597037500449158,
+            "mean": 0.0064156556545344155,
+            "q10": -0.01038086478381606,
+            "median": 0.00015965371313128083,
+            "q90": 0.028862960982051957,
+            "towards_gt_1mm_fraction": 0.3876996178029629,
+            "away_gt_1mm_fraction": 0.2594747873961266,
+            "nominal_total_fraction": 0.07597037500449158
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 6604,
+            "nominal_weight": 0.1952460674943028,
+            "mean": 0.0017629665886369557,
+            "q10": -0.004074426930893415,
+            "median": 0.00030558693337431566,
+            "q90": 0.009529740312530276,
+            "towards_gt_1mm_fraction": 0.39375350661473807,
+            "away_gt_1mm_fraction": 0.18182012274112852,
+            "nominal_total_fraction": 0.1952460674943028
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 2802,
+            "nominal_weight": 0.11848088927588073,
+            "mean": 0.005336860064649665,
+            "q10": -0.00330527292804081,
+            "median": 8.522013719979036e-05,
+            "q90": 0.025328996627911864,
+            "towards_gt_1mm_fraction": 0.3938099127254474,
+            "away_gt_1mm_fraction": 0.2688488931468587,
+            "nominal_total_fraction": 0.11848088927588073
+          }
+        ]
+      ]
+    },
+    {
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-rear-clearance-align-v71",
+      "sampler": "/data/hlou/pigment-pour-study/runs/cylinder-v65-approach-pairs-v71/v71-sampling.npy",
+      "total_frames": 119859,
+      "approach_measured_progress_by_radius_m": [
+        [
+          0.04,
+          0.08,
+          {
+            "n": 2607,
+            "nominal_weight": 0.08890177726219678,
+            "mean": 0.00692990095700154,
+            "q10": -0.010120306231652545,
+            "median": 0.0003030033229464813,
+            "q90": 0.028851449766691434,
+            "towards_gt_1mm_fraction": 0.414135596150311,
+            "away_gt_1mm_fraction": 0.2504386087004676,
+            "nominal_total_fraction": 0.08890177726219678
+          }
+        ],
+        [
+          0.08,
+          0.12,
+          {
+            "n": 6862,
+            "nominal_weight": 0.20525993048185534,
+            "mean": 0.0017466036364074868,
+            "q10": -0.0038882574737594128,
+            "median": 0.0003992115560792019,
+            "q90": 0.008841529125883762,
+            "towards_gt_1mm_fraction": 0.41239669930519046,
+            "away_gt_1mm_fraction": 0.17231501626419624,
+            "nominal_total_fraction": 0.20525993048185534
+          }
+        ],
+        [
+          0.12,
+          0.18,
+          {
+            "n": 2802,
+            "nominal_weight": 0.10900241813381026,
+            "mean": 0.0053368600646496655,
+            "q10": -0.0033052729280408097,
+            "median": 8.522013719980118e-05,
+            "q90": 0.02532899662791483,
+            "towards_gt_1mm_fraction": 0.3938099127254474,
+            "away_gt_1mm_fraction": 0.2688488931468587,
+            "nominal_total_fraction": 0.10900241813381026
+          }
+        ]
+      ]
+    }
+  ],
+  "v72_training_preparation": {
+    "kind": "matched_approach_progress_loss_to_v71",
+    "data_exact": true,
+    "model_and_hyperparameters_exact_except_approach_progress": true,
+    "configuration": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/train-v72.yml",
+    "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024/model.safetensors",
+    "added_calibration": {
+      "min_distance_m": 0.06,
+      "min_progress_m": 0.005,
+      "weight": 0.4,
+      "scale_m": 0.012,
+      "base_command_response": {
+        "previous_motion_affine": [
+          [
+            -0.12000000476837158,
+            -0.3
+          ],
+          [
+            0.12000000476837158,
+            0.3
+          ]
+        ],
+        "step_limit": 0.015
+      }
+    },
+    "dataset_frames": 119859,
+    "dataset_episodes": 184,
+    "coverage": {
+      "eligible_distance_anchors": 11382,
+      "supervised_anchors": 5527,
+      "eligible_prefixes": 33712,
+      "nominal_weight": 0.10374336859087885,
+      "supervised_anchors_in_v71_new_episodes": 89,
+      "nominal_weight_in_v71_new_episodes": 0.010680000000000002,
+      "coverage_uses_nominal_weights_before_wall_holdout": true
+    },
+    "independent_cases_read": false,
+    "source_sha256": "2e54f6fe9aa7762acbd8147c2d8c27ce7f010a64594e9d61f16864c9ccb79f5f"
+  },
+  "native_wall_proof": {
+    "kind": "native_wall_measured_approach_progress_loss",
+    "source": "/data/hlou/pigment-pour-study/runs/cylinder-v65-approach-pairs-v71/combined-clearance-captures/volume_18_seed_881711/qualified/model_training_frames.npz",
+    "source_frame": 94,
+    "source_seed": 881711,
+    "maximum_discrepancy_against_independent_numpy_and_mujoco_fk": 1.8096635301390052e-14,
+    "active_prefix_ticks": {
+      "approach": 4,
+      "cue_invalid": 0,
+      "outside_radius": 0,
+      "under_minimum_distance": 0,
+      "teacher_stays": 0,
+      "yaw_mask_after_six": 2,
+      "arm_mask_after_six": 2,
+      "padding_after_seven": 3,
+      "equal_prediction": 4
+    },
+    "old_objective_exact_when_disabled": true,
+    "masked_invalid_label_or_pad_stops_prefix": true,
+    "gradient_action_axes": "arm_and_base_only",
+    "matched_advance_has_zero_shortfall": true,
+    "teacher_non_advance_masked": true,
+    "bf16_loss_float32": true,
+    "independent_cases_read": false
+  },
+  "a6000_processes": {
+    "start-v72": {
+      "pid": 3911352,
+      "live": true,
+      "log": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/start-v72.log"
+    },
+    "first-v72-evidence": {
+      "pid": 3911353,
+      "live": true,
+      "log": "/data/hlou/pigment-pour-study/runs/cylinder-approach-direction-v72/first-v72-evidence.log"
+    }
+  },
+  "closed_loop_activity": [
+    {
+      "version": 63,
+      "active_stage": "audit_896",
+      "driver_pid": 2374918,
+      "driver_live": true,
+      "latest_complete_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step768-single",
+      "reason": "timeout",
+      "successes": 0,
+      "nearest_saved_observation_m": 0.20891198733912114,
+      "maximum_saved_loaded_contacts": 0,
+      "geometry_official": true
+    },
+    {
+      "version": 65,
+      "active_stage": "audit_640",
+      "driver_pid": 2666346,
+      "driver_live": true,
+      "latest_complete_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step512-single",
+      "reason": "timeout",
+      "successes": 0,
+      "nearest_saved_observation_m": 0.06924313644610414,
+      "maximum_saved_loaded_contacts": 1,
+      "geometry_official": true
+    },
+    {
+      "version": 66,
+      "active_stage": "neural_evaluation_512",
+      "driver_pid": 2850288,
+      "driver_live": true,
+      "latest_complete_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step384-single",
+      "reason": "timeout",
+      "successes": 0,
+      "nearest_saved_observation_m": 0.0706816115499651,
+      "maximum_saved_loaded_contacts": 0,
+      "geometry_official": true
+    }
+  ],
+  "v72_neural_update_at_recording": false,
+  "official_wall_data_validation": {
+    "kind": "official_wall_joint_data_contract",
+    "passed": true,
+    "action_representation": "servo_increment",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-rear-clearance-align-v71",
+    "episodes": 184,
+    "frames": 119859,
+    "flow_horizon": 8,
+    "training_iterations_per_epoch": 28466,
+    "batch_shapes": {
+      "input_ids": [
+        4,
+        482
+      ],
+      "attention_mask": [
+        4,
+        482
+      ],
+      "pixel_values": [
+        6144,
+        1176
+      ],
+      "image_grid_thw": [
+        12,
+        3
+      ],
+      "action_chunk": [
+        4,
+        8,
+        26
+      ],
+      "dof_mask": [
+        4,
+        8,
+        26
+      ],
+      "proprioception": [
+        4,
+        1,
+        26
+      ],
+      "agent_pos_mask": [
+        4,
+        1,
+        26
+      ],
+      "frame_index": [
+        4
+      ],
+      "sample_time": [
+        4
+      ],
+      "moe_token_types": [
+        4,
+        482
+      ]
+    },
+    "checks": [
+      {
+        "episode": 0,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 0,
+        "frame": 321,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 0,
+        "frame": 655,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 180,
+        "frame": 296,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 180,
+        "frame": 586,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 180,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 181,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 181,
+        "frame": 299,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 181,
+        "frame": 587,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 182,
+        "frame": 588,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 182,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 182,
+        "frame": 293,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 183,
+        "frame": 508,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 183,
+        "frame": 1012,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 183,
+        "frame": 1,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      }
+    ],
+    "episode_end_repeats_last": true,
+    "action_active_dimensions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "robot_state_active_dimensions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25
+    ],
+    "sampling_weights_match_source_indices": true,
+    "processor_loaded": true,
+    "checkpoint_serving_normalizer_factory_matches_training": true,
+    "serving_normalizer_key": "cylinder_joint_v1",
+    "distributed_backend": "gloo",
+    "neural_weights_loaded": false,
+    "model_forward": false,
+    "backward": false,
+    "task_success_measured": false,
+    "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+  },
+  "wait_for_v71_gpu_reservation": true
+}
