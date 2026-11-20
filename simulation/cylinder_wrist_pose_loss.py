@@ -218,6 +218,29 @@ def near_grasp_roll_loss(planned, expected, state, valid_prefix, calibration, ma
     return (calibration['weight'] * error.square().sum(-1)).masked_fill(~active, 0.)
 
 
+def near_heading_recovery_loss(forecast, reference, state, valid, calibration):
+    """Penalize turning farther away than a demonstrated heading recovery."""
+    lower, upper = state.new_tensor(calibration['state_yaw_affine']).unbind()
+    yaw = lower + (state[:, 17] + 1.) * (upper - lower) * .5
+    delta = yaw - calibration['reset_yaw_rad']
+    error = torch.atan2(delta.sin(), delta.cos())
+    side = error.sign()[:, None]
+
+    lower, upper = state.new_tensor(calibration['action_yaw_affine']).unbind()
+    requested = lower + (forecast[..., 8:9] + 1.) * (upper - lower) * .5
+    demonstrated = lower + (reference[..., 8] + 1.) * (upper - lower) * .5
+    measured_lo, measured_hi = state.new_tensor(calibration['state_yaw_rate_affine']).unbind()
+    previous = measured_lo + (state[:, 8:9] + 1.) * (measured_hi - measured_lo) * .5
+    applied = slew_base_commands(requested, previous, lower, upper, calibration['command_step_limit'])[..., 0]
+
+    returning = (side * demonstrated <= -calibration['minimum_return_rate_rad_s']) & valid
+    nearby = wrist_target_is_near(state, calibration) & (error.abs() >= calibration['min_heading_error_rad'])
+    active = nearby[:, None] & valid.cumprod(dim=1).bool() & returning.cumsum(dim=1).bool()
+    excess = side * (applied - demonstrated).cumsum(dim=1) * calibration['control_dt_s']
+    loss = calibration['weight'] * (excess.clamp_min(0.) / calibration['scale_rad']).square()
+    return loss.masked_fill(~active, 0.)
+
+
 def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibration,
                                     dof_mask=None, flow_loss_mask=None):
     """Compare the FK of composed arm commands from a shared proprioceptive anchor."""
@@ -280,4 +303,13 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     if release is not None:
         gap_loss = release_opening_loss(forecast, reference, state, release, dof_mask, flow_loss_mask)
         padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
+    heading = calibration.get('near_heading_recovery')
+    if heading is not None:
+        yaw_valid = torch.ones_like(valid)
+        if dof_mask is not None:
+            yaw_valid &= dof_mask.reshape_as(labels)[..., 8].bool()
+        if flow_loss_mask is not None:
+            yaw_valid &= flow_loss_mask.reshape_as(valid).bool()
+        heading_loss = near_heading_recovery_loss(forecast, reference, state, yaw_valid, heading)
+        padded = padded + torch.nn.functional.pad(heading_loss.reshape(-1, 1), (8, 17))
     return padded
