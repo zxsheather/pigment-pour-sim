@@ -1,4 +1,4 @@
-"""Verify a teacher correction and preserve the policy's earlier RGB context."""
+"""Qualify full and model-visited teacher demonstrations for Wall training."""
 
 import argparse
 import copy
@@ -10,7 +10,7 @@ import imageio.v2 as imageio
 import mujoco
 import numpy as np
 
-from carry_env import CAMERAS, CONTROL_DT, angle_difference
+from carry_env import CAMERAS, CONTROL_DT, ROOT, angle_difference
 from cylinder_joint_actions import (
     APERTURE_SCALE_M, ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, bounded_joint_command, require,
     servo_increment_targets, with_joint_servo_state,
@@ -18,7 +18,8 @@ from cylinder_joint_actions import (
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_tray_vision import (
     TRAY_CENTER_CUE_PROTOCOL, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS, WRIST_TARGET_CUE_PROTOCOL,
-    estimate_from_robot_views, observed_tray_cue_state, tray_grasp_height_m, with_wrist_target_state,
+    capture_initial_tray_cue, estimate_from_robot_views, observed_tray_cue_state, tray_grasp_height_m,
+    with_wrist_target_state,
 )
 from export_carry_dataset import file_digest, verify_joint_reconstruction
 from run_wall_cylinder import CylinderTrial
@@ -59,6 +60,105 @@ def restore_correction(trial, episode, prior, snapshot):
         env.hold_targets = dict(zip(saved['hold_actuator_ids'].tolist(), saved['hold_targets'].tolist(), strict=True))
         env.applied_action[:] = saved['applied_base_action']
         mujoco.mj_forward(env.model, env.data)
+
+
+def training_frames(env, raw, states, absolute_actions, previous, router, estimate):
+    tasks = np.asarray([router.observe(state) for state in states], dtype=np.int64)
+    require(np.array_equal(np.unique(tasks), np.arange(len(PROGRESS_PROMPTS))), 'Demonstration misses a task phase')
+    active = tasks == 0
+    height = tray_grasp_height_m(env.config, env.grasp_height)
+    model_states = with_wrist_target_state(states, raw['state'], None, grasp_x_m=env.grasp_offset[0],
+                                         grasp_target_height_m=height)
+    model_states[active] = with_wrist_target_state(states[active], raw['state'][active], estimate,
+                                                  grasp_x_m=env.grasp_offset[0], grasp_target_height_m=height)
+    commands = raw['joint_command']
+    actions = absolute_actions.copy()
+    deltas = commands[:, :6] - previous[:, :6]
+    require(np.abs(deltas).max() <= ARM_SERVO_RATE_RAD_S * CONTROL_DT + 1e-12, 'Demonstration exceeds servo rate')
+    actions[:, :6] = deltas
+    decoded = servo_increment_targets(actions, previous, CONTROL_DT)
+    np.testing.assert_allclose(decoded[:, :6], commands[:, :6], atol=2e-9, rtol=0)
+    return model_states, actions, tasks
+
+
+def score_training_frames(trial, episode, metadata, base, model_states, actions, tasks):
+    bounds = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
+    for key, values in [('observation.state', model_states), ('action', actions)]:
+        require(np.isfinite(values).all() and np.all(values >= np.asarray(bounds[key]['q01']) - 1e-7)
+                and np.all(values <= np.asarray(bounds[key]['q99']) + 1e-7), f'Demonstration exceeds {key} normalization')
+    videos = verify_video(episode, metadata, len(tasks))
+    matched_frames = 0
+    for task, action in zip(tasks, actions, strict=True):
+        require(trial.progress_router.index == task, 'Teacher replay and labeled prompt phases diverge')
+        trial.step(action)
+        matched_frames += 1
+        if trial.done:
+            break
+    qualified = trial.success and trial.joint_limit_projected_frames == 0
+    if not qualified:
+        rejection = dict(
+            source=str(episode), frames_replayed=matched_frames,
+            simulated_seconds=float(trial.env.data.time), failure_reason=trial.reason,
+            joint_limit_projected_frames=trial.joint_limit_projected_frames,
+            final_task_gates=trial.task_gates, final_readings=trial.readings[-12:],
+            consecutive_readings_ml=trial.good_readings[-3:],
+        )
+        (trial.output/'physical-replay-rejected.json').write_text(json.dumps(rejection, indent=2)+'\n')
+    require(qualified, f'Demonstration failed the full physical replay: {trial.reason}')
+    return videos, matched_frames
+
+
+def prepare_reset(episode, reconstruction, base, output, case_file):
+    metadata = json.loads((episode/'metadata.json').read_text())
+    result = metadata['result']
+    case = json.loads(case_file.read_text())
+    config = json.loads((ROOT/'configs/cylinder_official_teacher_dev_v1.json').read_text())
+    require(result['success'] and result['geometry_audit_passed'] and result['grip_profile'] == 'official'
+            and result['initialization'] == 'scene_reset' and result['initial_state_provenance'] is None
+            and not result['starts_holding'] and result['grip_force_target_n'] is None,
+            'Expected a recorded official teacher demonstration from a scene reset')
+    expected_case = dict(volume=result['expected_volume_ml'], seed=result['seed'],
+                         jitter=result['position_jitter_m'], yaw_jitter=result['yaw_jitter_rad'],
+                         friction_scale=result['friction_scale'], mass_scale=result['mass_scale'])
+    require(case == expected_case, 'Recorded reset differs from the training case')
+    trial = CylinderTrial(case, config, output, action_space='joint', joint_servo_state=True,
+                          progress_protocol=PROGRESS_PROTOCOL, servo_increments=True)
+    env = trial.env
+    try:
+        require(trial.geometry_report['passed'] and trial.geometry_report['custom_pads'] == 0
+                and env.data.xpos[env.robot_root, 2] == 0., 'Official geometry or planar base calibration differs')
+        images, estimate = capture_initial_tray_cue(env)
+        rgb_files = {name: episode/f'initial_tray_{name}.png' for name in images}
+        recorded = {name: imageio.imread(path) for name, path in rgb_files.items()}
+        require(estimate is not None and estimate_from_robot_views(env, recorded) == estimate,
+                'Recorded and rendered RGB produce different reset cues')
+        pixel_delta = max(int(np.abs(recorded[name].astype(np.int16) - rgb).max()) for name, rgb in images.items())
+        router = CylinderProgressPrompts(trial.initial_base)
+        with np.load(episode/'trajectory.npz', allow_pickle=False) as raw:
+            count = metadata['frames']
+            require(metadata['fps'] == 20 and np.allclose(raw['timestamp'], np.arange(count)*CONTROL_DT),
+                    'Invalid reset demonstration timing')
+            np.testing.assert_array_equal(env.state_vector(), raw['state'][0])
+            joints, absolute_actions = verify_joint_reconstruction(episode, reconstruction, raw, count)
+            previous = np.vstack((bounded_joint_command(env), raw['joint_command'][:-1]))
+            states = with_joint_servo_state(joints, previous)
+            model_states, actions, tasks = training_frames(env, raw, states, absolute_actions, previous, router, estimate)
+        videos, matched = score_training_frames(trial, episode, metadata, base, model_states, actions, tasks)
+        report = dict(kind='certified_reset_wrist_target_teacher_demonstration', source=str(episode),
+                      volume_ml=case['volume'], seed=case['seed'], frames=count, physically_replayed_frames=matched,
+                      approach_target_frames=int(np.count_nonzero(tasks == 0)), training_case=str(case_file),
+                      reset_robot_state_exact=True, initial_rgb_cue=estimate, estimator_used_object_truth=False,
+                      reset_rgb_sha256={name: file_digest(path) for name, path in rgb_files.items()},
+                      reset_rgb_rerender_max_channel_difference=pixel_delta,
+                      trajectory_sha256=file_digest(episode/'trajectory.npz'), alignment_video=videos,
+                      geometry_audit_passed=True, teacher_full_task_succeeded=True, model_task_success_measured=False,
+                      max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_lift,
+                      reading_error_ml=abs(trial.good_readings[-1]-case['volume']), independent_cases_read=False)
+        np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)
+        (output/'certification.json').write_text(json.dumps(report, indent=2)+'\n')
+        return report
+    finally:
+        env.close()
 
 
 def prepare(episode, reconstruction, base, output):
@@ -130,20 +230,8 @@ def prepare(episode, reconstruction, base, output):
             previous = np.vstack((first_command, commands[:-1]))
             states = with_joint_servo_state(joints, previous)
             np.testing.assert_array_equal(observed_tray_cue_state(env, states[0], estimate, protocol), snapshot_state)
-            tasks = np.asarray([router.observe(s) for s in states],dtype=np.int64)
-            require(np.array_equal(np.unique(tasks), np.arange(len(PROGRESS_PROMPTS))), 'Correction misses a task phase')
+            model_states, actions, tasks = training_frames(env, raw, states, first_action, previous, router, estimate)
             active = tasks == 0
-            model_states = with_wrist_target_state(states, raw['state'], None, grasp_x_m=env.grasp_offset[0],
-                                                    grasp_target_height_m=tray_grasp_height_m(env.config, env.grasp_height))
-            model_states[active] = with_wrist_target_state(
-                states[active], raw['state'][active], estimate, grasp_x_m=env.grasp_offset[0],
-                grasp_target_height_m=tray_grasp_height_m(env.config, env.grasp_height))
-            actions = first_action.copy()
-            deltas = commands[:, :6] - previous[:, :6]
-            require(np.abs(deltas).max() <= ARM_SERVO_RATE_RAD_S * CONTROL_DT + 1e-12, 'Correction exceeds servo rate')
-            actions[:, :6] = deltas
-            decoded = servo_increment_targets(actions, previous, CONTROL_DT)
-            np.testing.assert_allclose(decoded[:, :6], commands[:, :6], atol=2e-9, rtol=0)
             if result['controller_parameters'].get('release_single_contact'):
                 releasing = np.flatnonzero(np.isin(raw['phase'], ('release_contact', 'withdraw_from_contact')))
                 require(releasing.size and releasing[0] == 0 and releasing[-1] + 1 < count,
@@ -219,32 +307,10 @@ def prepare(episode, reconstruction, base, output):
                                             source_error_rad=initial_error, final_error_rad=final_error,
                                             translation_m=xy_drift, corrective_frames=int(corrective.sum()))
 
-        bounds = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
-        for key, values in [('observation.state',model_states), ('action',actions)]:
-            require(np.isfinite(values).all() and np.all(values >= np.asarray(bounds[key]['q01']) - 1e-7)
-                    and np.all(values <= np.asarray(bounds[key]['q99']) + 1e-7), f'Correction exceeds {key} normalization')
-        videos = verify_video(episode, metadata, count)
         trial.progress_router = restore_router
         trial.progress_changes = []
         trial.update_progress()
-        matched_frames = 0
-        for task, action in zip(tasks, actions, strict=True):
-            require(trial.progress_router.index == task, 'Teacher replay and labeled prompt phases diverge')
-            trial.step(action)
-            matched_frames += 1
-            if trial.done:
-                break
-        qualified = trial.success and trial.joint_limit_projected_frames == 0
-        if not qualified:
-            rejection = dict(
-                source=str(episode), frames_replayed=matched_frames,
-                simulated_seconds=float(env.data.time), failure_reason=trial.reason,
-                joint_limit_projected_frames=trial.joint_limit_projected_frames,
-                final_task_gates=trial.task_gates, final_readings=trial.readings[-12:],
-                consecutive_readings_ml=trial.good_readings[-3:],
-            )
-            (output/'physical-replay-rejected.json').write_text(json.dumps(rejection,indent=2)+'\n')
-        require(qualified, f'Correction failed the full physical replay: {trial.reason}')
+        videos, matched_frames = score_training_frames(trial, episode, metadata, base, model_states, actions, tasks)
         report = dict(kind='certified_on_policy_wrist_target_teacher_correction', source=str(episode),
                       source_model_episode=str(prior), volume_ml=case['volume'], seed=case['seed'],
                       snapshot=snapshot, source_prefix_seconds=time, state_observations_exact_at_snapshot=True,
@@ -277,9 +343,11 @@ def main():
     parser.add_argument('--joint-reconstruction', type=Path, required=True)
     parser.add_argument('--base-dataset', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--training-reset-case', type=Path, help='Training case JSON for a full reset demonstration.')
     args = parser.parse_args()
-    print(json.dumps(prepare(args.episode.resolve(), args.joint_reconstruction.resolve(),
-                            args.base_dataset.resolve(), args.output.resolve())))
+    paths = (args.episode.resolve(), args.joint_reconstruction.resolve(), args.base_dataset.resolve(), args.output.resolve())
+    result = (prepare_reset(*paths, args.training_reset_case.resolve()) if args.training_reset_case else prepare(*paths))
+    print(json.dumps(result))
 
 
 if __name__ == '__main__':
