@@ -268,6 +268,10 @@ class InspectionFailure(RuntimeError):
     pass
 
 
+class ReadingFailure(InspectionFailure):
+    pass
+
+
 def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitter=0.0,yaw_jitter=0.0,
                    grip_opening=.010,motion_scale=1.0,read_lateral=.14,read_distance=READ_DISTANCE,
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
@@ -283,7 +287,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    align_near_grasp_forward=False,
                    wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False,
                    align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
-                   lateral_alignment_min_depth_m=None):
+                   lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=()):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -338,6 +342,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Eye alignment controller target must be within [0.5,2] pixels")
     if not isinstance(stable_read_samples, int) or stable_read_samples < 3:
         raise ValueError("Teacher readout requires at least three stable samples")
+    read_lateral_retry_offsets_m=tuple(read_lateral_retry_offsets_m)
+    if not all(np.isfinite(offset) for offset in read_lateral_retry_offsets_m):
+        raise ValueError("Reading retry offsets must be finite")
     if approach_base_reference is not None:
         approach_base_reference = np.asarray(approach_base_reference, dtype=float)
         if (reset_scene or start_holding or release_single_contact
@@ -379,6 +386,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     max_tilt=0.0;max_contact_loss=0.0
     readings=[];view_search=[]
     reading_retry_reason=None
+    lateral_read_attempts=[]
     if record:
         for cam in ("cylinder_overview","face_view"):
             writers[(cam,env.image_size)]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
@@ -793,20 +801,21 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             tip=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
             point=tip+offset
             return move(phase,point,1.,straight=True)
-        # The demonstration teacher may use simulator object pose to correct
-        # grasp-induced tilt. This is joint control, not an object attachment;
-        # the separate reading/height controller still consumes only pixels.
-        for _ in range(4):
-            axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
-            tilt=float(np.arccos(np.clip(axis[2],-1,1)))
-            if tilt<np.deg2rad(3 if use_current_view else 1):break
-            correction_axis=np.cross(axis,[0.,0.,1.])
-            correction_axis/=np.linalg.norm(correction_axis)
-            quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,correction_axis,.8*tilt)
-            correction=np.empty(9);mujoco.mju_quat2Mat(correction,quat)
-            rotation=correction.reshape(3,3)@env.data.xmat[env.gripper_body].reshape(3,3)
-            q=move("straighten",point,1.5)
-            for _ in range(10):tick("straighten",q,grip_opening)
+        def straighten_for_reading(q):
+            nonlocal rotation
+            # The teacher uses the object pose to correct tilt through joint commands.
+            for _ in range(4):
+                axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
+                tilt=float(np.arccos(np.clip(axis[2],-1,1)))
+                if tilt<np.deg2rad(3 if use_current_view else 1):break
+                correction_axis=np.cross(axis,[0.,0.,1.])
+                correction_axis/=np.linalg.norm(correction_axis)
+                quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,correction_axis,.8*tilt)
+                correction=np.empty(9);mujoco.mju_quat2Mat(correction,quat)
+                rotation=correction.reshape(3,3)@env.data.xmat[env.gripper_body].reshape(3,3)
+                q=move("straighten",point,1.5)
+                for _ in range(10):tick("straighten",q,grip_opening)
+            return q
         def needs_view(reading):
             if not reading["valid"]:return True
             # Coarse height alignment may observe a curved projected cap.
@@ -840,8 +849,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 readings.append(dict(time=float(env.data.time),**reading))
                 imageio.imwrite(output/f"reading_{suffix}.png",annotate(rgb,reading))
                 print(json.dumps(readings[-1]),flush=True)
-                if not reading["valid"]:raise InspectionFailure(f"unreadable:{reading['reason']}")
-                if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
+                if not reading["valid"]:raise ReadingFailure(f"unreadable:{reading['reason']}")
+                if needs_view(reading):raise ReadingFailure("liquid_boundary_occluded")
                 if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:return q
                 focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[camera_id])/2))
                 limit=.012 if use_current_view else .025
@@ -852,7 +861,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     point[2]+=dz
                     q=move("align_eye_level",point,1.2)
                     for _ in range(10):tick("align_eye_level",q,grip_opening)
-            raise InspectionFailure("eye_alignment_timeout")
+            raise ReadingFailure("eye_alignment_timeout")
 
         def hold_for_stable_reading(q):
             # Only consecutive observations after the latest alignment count.
@@ -865,17 +874,42 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 if abs(reading["eye_alignment_error_px"])>2:return "eye_alignment_drift"
             return None
 
-        for attempt in range(3 if use_current_view or retry_reading_from_current_view else 1):
-            q=align_camera_reading(q,attempt)
-            read_failure=hold_for_stable_reading(q)
-            if read_failure is None:break
-            if not use_current_view and retry_reading_from_current_view:
-                reading_retry_reason=read_failure
-                q=settle_at_current_view()
-                use_current_view=True
-        else:raise InspectionFailure(read_failure)
-        stable=[r["volume_ml"] for r in readings[-3:]]
-        if np.ptp(stable)>.4:raise InspectionFailure("reading_not_stable")
+        def acquire_reading(q, first_attempt):
+            nonlocal use_current_view, reading_retry_reason
+            for attempt in range(3 if use_current_view or retry_reading_from_current_view else 1):
+                q=align_camera_reading(q,first_attempt+attempt)
+                read_failure=hold_for_stable_reading(q)
+                if read_failure is None:
+                    stable=[r["volume_ml"] for r in readings[-3:]]
+                    if np.ptp(stable)>.4:raise ReadingFailure("reading_not_stable")
+                    return
+                if not use_current_view and retry_reading_from_current_view:
+                    reading_retry_reason=read_failure
+                    q=settle_at_current_view()
+                    use_current_view=True
+            raise ReadingFailure(read_failure)
+
+        offsets=(0.,*read_lateral_retry_offsets_m)
+        for index,offset in enumerate(offsets):
+            lateral=read_lateral+offset
+            if index:
+                use_current_view=False
+                # Translate sideways while holding the measured wrist angle and height.
+                rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
+                point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+                point[0]=env.data.cam_xpos[camera_id,0]+lateral
+                q=move("reposition_for_reading",point,1.5,straight=True)
+                for _ in range(20):tick("hold_for_reading",q,grip_opening)
+            q=straighten_for_reading(q)
+            attempt_start=float(env.data.time)
+            try:
+                acquire_reading(q,index*3)
+            except ReadingFailure as failure:
+                lateral_read_attempts.append(dict(lateral_m=lateral,start_seconds=attempt_start,failure=str(failure)))
+                if index==len(offsets)-1:raise
+            else:
+                lateral_read_attempts.append(dict(lateral_m=lateral,start_seconds=attempt_start,failure=None))
+                break
         if env.metrics()["bottle_tilt_rad"]>np.deg2rad(3):raise InspectionFailure("not_upright_for_reading")
         dof=env.model.joint("cylinder_free").dofadr[0]
         if np.linalg.norm(env.data.qvel[dof:dof+3])>.005 or np.linalg.norm(env.data.qvel[dof+3:dof+6])>.03:
@@ -969,6 +1003,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
     if stable_read_samples != 3:
         summary["controller_parameters"]["stable_read_samples"]=stable_read_samples
+    if read_lateral_retry_offsets_m:
+        summary["controller_parameters"]["read_lateral_retry_offsets_m"]=list(read_lateral_retry_offsets_m)
+        summary["lateral_read_attempts"]=lateral_read_attempts
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
