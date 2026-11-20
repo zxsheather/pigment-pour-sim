@@ -184,7 +184,7 @@ def prepare_reset(episode, reconstruction, base, output, case_file):
                       reset_rgb_rerender_max_channel_difference=pixel_delta,
                       trajectory_sha256=file_digest(episode/'trajectory.npz'), alignment_video=videos,
                       geometry_audit_passed=True, teacher_full_task_succeeded=True, model_task_success_measured=False,
-                      max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_lift,
+                      max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_supported_lift,
                       reading_error_ml=abs(trial.good_readings[-1]-case['volume']), independent_cases_read=False)
         np.savez_compressed(output/'model_training_frames.npz', state=model_states, action=actions, task_index=tasks)
         (output/'certification.json').write_text(json.dumps(report, indent=2)+'\n')
@@ -337,7 +337,7 @@ def prepare(episode, reconstruction, base, output):
                       trajectory_sha256=file_digest(episode/'trajectory.npz'),
                       frames=count, approach_target_frames=int(active.sum()), physically_replayed_frames=matched_frames,
                       geometry_audit_passed=True, teacher_full_task_succeeded=True, model_task_success_measured=False,
-                      max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_lift,
+                      max_slip_m=trial.max_slip, max_supported_lift_m=trial.max_supported_lift,
                       reading_error_ml=abs(trial.good_readings[-1]-case['volume']),
                       alignment_video=videos, independent_cases_read=False)
         if base_recovery is not None:

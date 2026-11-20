@@ -62,7 +62,9 @@ def audit(rollout, output):
                     raw_peak = dict(height_m=elevation, time_s=time,
                                     loaded_fingers=fingers, established_hold=trial.held,
                                     tilt_rad=metrics['bottle_tilt_rad'])
-                if trial.held and fingers == 2 and not metrics['forbidden_contacts']:
+                valid_load = (trial.held and fingers == 2 and not metrics['forbidden_contacts']
+                              and trial.reason not in ('lost_grasp', 'cylinder_tilt'))
+                if valid_load:
                     max_supported_lift = max(max_supported_lift, elevation)
                     if elevation >= .04 and first_supported_40mm is None:
                         first_supported_40mm = time
@@ -70,13 +72,17 @@ def audit(rollout, output):
                 'Terminal outcome did not reproduce')
         require(abs(raw_peak['height_m'] - case['max_lifted_m']) < 1e-9,
                 'Recorded height peak did not reproduce')
+        if 'max_supported_lift_m' in case:
+            require(abs(max_supported_lift - case['max_supported_lift_m']) < 1e-9,
+                    'Recorded supported lift did not reproduce')
         result = dict(rollout=str(rollout.resolve()), terminal_reason=trial.reason, raw_peak=raw_peak,
                       max_supported_lift_m=max_supported_lift, established_hold=trial.held,
                       loaded_finger_counts_after_command=contact_counts,
                       longest_consecutive_double_load_frames=longest_double,
                       longest_consecutive_double_load_seconds=longest_double * CONTROL_DT,
                       first_sustained_hold_s=first_hold, first_supported_lift_40mm_s=first_supported_40mm,
-                      observations_and_bounded_commands_exact=True, checkpoint_inference_rerun=False)
+                      observations_and_bounded_commands_exact=True, replay_task_gates=trial.task_gates,
+                      checkpoint_inference_rerun=False)
         if backoff:
             result.update(ik_backoff_trace_exact=True,
                           nearest_tool=dict(distance_m=closest[0], time_s=closest[1]) if sum(contact_counts) else None)

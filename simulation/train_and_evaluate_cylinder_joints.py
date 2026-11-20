@@ -42,14 +42,15 @@ def locate_saved_checkpoint(directory, step):
 
 
 def development_score(successes, case, approach):
-    gates = case['final_task_gates']
+    supported_lift = case.get('max_supported_lift_m', 0.)
+    gates = case['final_task_gates'] | {'lifted': supported_lift >= .04}
     stages = ('held', 'lifted', 'retreated', 'close_to_head')
     completed = next((i for i, gate in enumerate(stages) if not gates[gate]), len(stages))
     if completed == 0:
         return (successes, completed, approach['maximum_recorded_loaded_contacts'],
                 -approach['nearest']['grasp_distance_m'])
     return (successes, completed, -case['max_slip_m'],
-            min(.15, case['max_lifted_m']) if completed >= 2 else 0.)
+            min(.15, supported_lift) if completed >= 2 else 0.)
 
 
 def main():

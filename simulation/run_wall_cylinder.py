@@ -213,6 +213,7 @@ class CylinderTrial:
                                                      gripper_open_confirmation_mode)
         self.image_size=image_size;self.max_seconds=max_seconds
         self.held=False;self.contact_seconds=0.;self.lost_seconds=0.;self.max_slip=0.;self.max_tilt=0.;self.max_lift=0.
+        self.max_supported_lift=0.
         self.done=False;self.success=False;self.reason=None;self.rows=[];self.chunks=[];self.readings=[]
         self.observations=[]
         self.recovery_states=[]
@@ -299,17 +300,21 @@ class CylinderTrial:
         if not np.isfinite(env.data.qpos).all():self.fail("nonfinite_state");return
         if metrics["forbidden_contacts"]:self.fail(f"collision:{metrics['forbidden_contacts']}");return
         if self.progress_router is not None:self.update_progress()
+        loaded_fingers=metrics["grip_contacts"]
+        bilateral=loaded_fingers==2
         if not self.held:
-            self.contact_seconds=self.contact_seconds+CONTROL_DT if metrics["grip_contacts"]==2 and opening<.02 else 0.
+            self.contact_seconds=self.contact_seconds+CONTROL_DT if bilateral and opening<.02 else 0.
             if self.contact_seconds>=.25:
                 self.held=True;env.grasp_point_reference=env.grip_point_relative()
         else:
             self.max_slip=max(self.max_slip,metrics["bottle_slip_m"])
             self.max_tilt=max(self.max_tilt,metrics["bottle_tilt_rad"])
-            self.lost_seconds=self.lost_seconds+CONTROL_DT if metrics["grip_contacts"]<2 else 0.
+            self.lost_seconds=0. if bilateral else self.lost_seconds+CONTROL_DT
             if self.lost_seconds>.2 or self.max_slip>.025:self.fail("lost_grasp");return
             if metrics["bottle_tilt_rad"]>.12:self.fail("cylinder_tilt");return
         # Evaluation-only gates: they never generate or correct an action.
+        if self.held and bilateral:
+            self.max_supported_lift=max(self.max_supported_lift,lifted)
         center=env.data.xpos[env.cylinder_body]+env.data.xmat[env.cylinder_body].reshape(3,3)@np.array([0,0,.125])
         eye=env.data.cam_xpos[env.model.camera("face_view").id]
         retreat=float(self.initial_base[1]-env.base_pose()[1])
@@ -317,16 +322,16 @@ class CylinderTrial:
         linear_speed=float(np.linalg.norm(env.data.qvel[dof:dof+3]))
         angular_speed=float(np.linalg.norm(env.data.qvel[dof+3:dof+6]))
         still=(linear_speed<=.005 and angular_speed<=.03)
-        self.task_gates=dict(held=self.held,lifted=self.max_lift>=.04,retreated=retreat>=.20,
+        self.task_gates=dict(held=self.held,loaded_fingers=loaded_fingers,lifted=self.max_supported_lift>=.04,retreated=retreat>=.20,
             close_to_head=bool(np.linalg.norm(center-eye)<.45),upright=bool(metrics["bottle_tilt_rad"]<=np.deg2rad(3)),
             still=still,base_retreat_m=retreat,camera_distance_m=float(np.linalg.norm(center-eye)),
             linear_speed_m_s=linear_speed,angular_speed_rad_s=angular_speed)
-        eligible=(self.held and self.max_lift>=.04 and retreat>=.20 and np.linalg.norm(center-eye)<.45
+        eligible=(self.held and bilateral and self.max_supported_lift>=.04 and retreat>=.20 and np.linalg.norm(center-eye)<.45
                   and metrics["bottle_tilt_rad"]<=np.deg2rad(3) and still)
         if env.data.time>=self.next_read:
             self.next_read=float(env.data.time)+.25
             reading=read_volume(env.render("face_view")) if eligible else dict(valid=False,reason="physical_task_gates_not_met")
-            self.readings.append(dict(time=float(env.data.time),**reading))
+            self.readings.append(dict(time=float(env.data.time),loaded_fingers=loaded_fingers,**reading))
             good=(eligible and reading["valid"] and abs(reading["eye_alignment_error_px"])<=2
                   and reading.get("boundary_support_fraction",0)>=.5)
             if good:self.good_readings.append(reading["volume_ml"])
@@ -365,6 +370,7 @@ class CylinderTrial:
                 frames=self.joint_limit_projected_frames,margin_rad=.005),
             grip_profile="official",case=self.case,simulated_seconds=float(env.data.time),
             max_slip_m=self.max_slip,max_held_tilt_rad=self.max_tilt,max_lifted_m=self.max_lift,
+            max_supported_lift_m=self.max_supported_lift,
             expected_volume_ml=env.volume_ml,reading=reading,reading_history=self.readings,
             final_tilt_rad=env.metrics()["bottle_tilt_rad"],geometry_audit=self.geometry_report,
             inference_seconds=self.latencies,
@@ -544,6 +550,7 @@ def main():
                     if trial.done:break
             print(json.dumps(dict(case_status=[dict(seed=trial.case["seed"],seconds=float(trial.env.data.time),
                 held=trial.held,contacts=trial.env.metrics()["grip_contacts"],max_lifted_m=trial.max_lift,
+                max_supported_lift_m=trial.max_supported_lift,
                 max_slip_m=trial.max_slip,task_gates=trial.task_gates,
                 done=trial.done,reason=trial.reason) for trial in active])),flush=True)
     except BaseException as error:

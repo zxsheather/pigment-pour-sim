@@ -113,14 +113,17 @@ def verify_report(report, cases, model, config, controller, source_hashes, *, ac
         gates = result['final_task_gates']
         require(all(gates[k] for k in ('held', 'lifted', 'retreated', 'close_to_head', 'upright', 'still')),
                 'Incomplete physical task gates')
-        require(result['max_lifted_m'] >= .04 and result['max_slip_m'] <= .025
+        require(.04 <= result.get('max_supported_lift_m', 0.) <= result['max_lifted_m']
+                and gates.get('loaded_fingers') == 2, 'Expected supported lift and bilateral load')
+        require(result['max_slip_m'] <= .025
                 and result['max_held_tilt_rad'] <= .12 and result['final_tilt_rad'] <= math.radians(3)
                 and gates['base_retreat_m'] >= .20 and gates['camera_distance_m'] < .45
                 and gates['linear_speed_m_s'] <= .005 and gates['angular_speed_rad_s'] <= .03
                 and result['simulated_seconds'] <= 90.000001, 'Physical numeric gate failed')
         last = result['reading_history'][-3:]
-        require(len(last) == 3 and all(x['valid'] and abs(x['eye_alignment_error_px']) <= 2
-                and x.get('boundary_support_fraction', 0) >= .5 for x in last), 'Three valid RGB reads required')
+        require(len(last) == 3 and all(x['valid'] and x.get('loaded_fingers') == 2
+                and abs(x['eye_alignment_error_px']) <= 2 and x.get('boundary_support_fraction', 0) >= .5
+                for x in last), 'Three valid RGB reads under bilateral load required')
         require(all(b['time'] - a['time'] >= .25 - 1e-6 for a, b in zip(last, last[1:])),
                 'RGB reads are too close in time')
         volumes = [x['volume_ml'] for x in last]
