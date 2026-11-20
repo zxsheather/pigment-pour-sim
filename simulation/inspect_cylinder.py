@@ -278,7 +278,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
                    wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
-                   retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None):
+                   retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None,
+                   align_near_grasp=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -292,6 +293,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
     if align_from_clearance and (reset_scene or start_holding):
         raise ValueError("Wrist clearance alignment requires a saved unheld approach")
+    if align_near_grasp and (reset_scene or start_holding or align_from_clearance or release_single_contact):
+        raise ValueError("Near grasp alignment requires a saved unheld approach with the fingers clear")
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
@@ -400,7 +403,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                          slip=before_metrics["bottle_slip_m"],tilt=before_metrics["bottle_tilt_rad"],contacts=before_metrics["grip_contacts"]))
         if not np.isfinite(env.data.qpos).all():raise InspectionFailure("nonfinite_state")
         if metrics["forbidden_contacts"]:raise InspectionFailure(f"collision:{metrics['forbidden_contacts']}")
-        if align_from_clearance and (phase.startswith("wrist_clearance_") or phase in ("approach", "advance")):
+        if (align_from_clearance or align_near_grasp) and (
+                phase.startswith("wrist_clearance_") or phase in ("approach", "advance")):
             shift = np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder)
             if metrics["grip_contacts"] or shift > .005:
                 raise InspectionFailure("wrist_alignment_disturbed_cylinder")
@@ -626,19 +630,30 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 cylinder = env.data.xpos[env.cylinder_body].copy()
             if approach_heading_reference is not None:
                 restore_approach_heading(approach_heading_reference)
-            if align_from_clearance:
-                align_wrist_at_clearance()
-            approach_distance = .10 if wrist_clearance_rear_distance_m is None else min(.10, wrist_clearance_rear_distance_m)
-            approach=cylinder+[0,-approach_distance,approach_height]
-            if approach_heading_reference is not None:
-                wrist_rotation = env.data.xmat[env.gripper_body].reshape(3,3)
-                tip = env.data.xpos[env.gripper_body] + wrist_rotation@env.grasp_offset
-                if tip[2] > approach[2] + .002:
-                    # Lower while the wrist is still behind the tray after the tucked turn.
-                    tip[2] = approach[2]
-                    move("wrist_clearance_lower",tip,1.5,opening=.034,straight=True)
-            move("approach",approach,opening=.034,scale=approach_motion_scale,straight=align_from_clearance)
-            q=move("advance",cylinder+[0,0,approach_height],2,opening=.034,straight=align_from_clearance)
+            if align_near_grasp:
+                error = env.grip_point_relative() - env.grasp_offset
+                if np.linalg.norm(error) > .03 or env.metrics()["grip_contacts"]:
+                    raise InspectionFailure("near_grasp_alignment_requires_clear_fingers_within_30mm")
+                q = np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
+                              for i in range(1,7)])
+                for _ in range(12):tick("wrist_clearance_near_open",q,.034)
+                axis = env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
+                target = env.data.xpos[env.cylinder_body] + approach_height * axis
+                q = move("wrist_clearance_near_align",target,1.5,opening=.034,straight=True)
+            else:
+                if align_from_clearance:
+                    align_wrist_at_clearance()
+                approach_distance = .10 if wrist_clearance_rear_distance_m is None else min(.10, wrist_clearance_rear_distance_m)
+                approach=cylinder+[0,-approach_distance,approach_height]
+                if approach_heading_reference is not None:
+                    wrist_rotation = env.data.xmat[env.gripper_body].reshape(3,3)
+                    tip = env.data.xpos[env.gripper_body] + wrist_rotation@env.grasp_offset
+                    if tip[2] > approach[2] + .002:
+                        # Lower while the wrist is still behind the tray after the tucked turn.
+                        tip[2] = approach[2]
+                        move("wrist_clearance_lower",tip,1.5,opening=.034,straight=True)
+                move("approach",approach,opening=.034,scale=approach_motion_scale,straight=align_from_clearance)
+                q=move("advance",cylinder+[0,0,approach_height],2,opening=.034,straight=align_from_clearance)
             for _ in range(35):tick("close",q,grip_opening)
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
             env.grasp_reference=env._bottle_relative_position();held=True
@@ -839,6 +854,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["wrist_clearance_rear_distance_m"]=wrist_clearance_rear_distance_m
     if wrist_clearance_extra_lift_m is not None:
         summary["controller_parameters"]["wrist_clearance_extra_lift_m"]=wrist_clearance_extra_lift_m
+    if align_near_grasp:
+        summary["controller_parameters"]["align_near_grasp"]=True
     if wrist_clearance_open_after_retreat:
         summary["controller_parameters"]["wrist_clearance_open_after_retreat"]=True
     if wrist_clearance_align_before_lift:
