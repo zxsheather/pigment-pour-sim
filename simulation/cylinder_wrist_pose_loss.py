@@ -186,7 +186,7 @@ def base_commands_from_observation(requests, state, low, high, response):
 
 
 def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_prefix, world, settings):
-    """Match descent and restrain forward overshoot during a demonstrated high alignment."""
+    """Match descent and restrain forward overshoot during a demonstrated alignment."""
     yaw_low, yaw_high = state.new_tensor(settings['state_yaw_affine']).unbind()
     yaw = yaw_low + (state[:, 17] + 1.) * (yaw_high - yaw_low) * .5
     # Markers are in the starting base frame. Convert horizontal projections
@@ -200,9 +200,17 @@ def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_p
     aperture = aperture_low + (state[:, 6] + 1.) * (aperture_high - aperture_low) * .5
     depth_low, depth_high = settings['depth_range_m']
     height_low, height_high = settings['height_range_m']
-    eligible = ((state[:, 23] > 0.) & (forward_gap >= depth_low) & (forward_gap <= depth_high)
-                & (sideways_gap <= settings['max_sideways_gap_m']) & (-cue[:, 2] > height_low)
-                & (-cue[:, 2] <= height_high) & (aperture >= settings['min_aperture_m']))
+    height = -cue[:, 2]
+    in_region = ((forward_gap >= depth_low) & (forward_gap <= depth_high)
+                 & (height > height_low) & (height <= height_high))
+    near_region = settings.get('near_region')
+    if near_region is not None:
+        near_depth_low, near_depth_high = near_region['depth_range_m']
+        near_height_low, near_height_high = near_region['height_range_m']
+        in_region = in_region | ((forward_gap >= near_depth_low) & (forward_gap <= near_depth_high)
+                                 & (height > near_height_low) & (height <= near_height_high))
+    eligible = ((state[:, 23] > 0.) & in_region & (sideways_gap <= settings['max_sideways_gap_m'])
+                & (aperture >= settings['min_aperture_m']))
 
     teacher_shift = expected[..., 0, :] - measured_tip[:, None, :]
     teacher_depth = (teacher_shift[..., :2] * forward_axis[:, None, :]).sum(dim=-1)

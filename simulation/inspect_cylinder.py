@@ -511,7 +511,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         return clear
 
     def tuck_for_base_motion(phase, check_clearance):
-        q0 = env.data.qpos[env.arm_addresses].copy()
+        # A measured joint can briefly lie outside the allowed target range.
+        q0 = np.clip(env.data.qpos[env.arm_addresses], *env.ik_joint_bounds())
         q = np.asarray(CARRY_JOINTS)
         count = max(1,int(np.ceil(1.875*np.max(np.abs(q-q0))/(.45*CONTROL_DT))))
         phase_log.append(dict(phase=phase,start_seconds=float(env.data.time),target=q.tolist()))
