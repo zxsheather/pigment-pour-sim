@@ -44,6 +44,15 @@ def apply_base_motion(markers, base_velocity, step):
                         sine * x + cosine * y + ty[..., None], z), dim=-1)
 
 
+def slew_base_commands(requests, previous, lower, upper, step_limit):
+    """Apply the planar actuator limits from the last observable base command."""
+    commands = []
+    for requested in requests.clamp(lower, upper).unbind(dim=-2):
+        previous = previous + (requested - previous).clamp(-step_limit, step_limit)
+        commands.append(previous)
+    return torch.stack(commands, dim=-2)
+
+
 def wrist_pose_with_base_motion_loss(predicted, labels, proprioception, calibration,
                                     dof_mask=None, flow_loss_mask=None):
     """Supervise wrist pose after nominal base motion over the executed prefix."""
@@ -172,6 +181,13 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     low, high = state.new_tensor(calibration['base_action_affine']).unbind(0)
     planned_motion = low + (forecast[..., 7:9] + 1.) * (high - low) * .5
     teacher_motion = low + (reference[..., 7:9] + 1.) * (high - low) * .5
+    servo = calibration.get('base_command_response')
+    if servo is not None:
+        state_low, state_high = state.new_tensor(servo['previous_motion_affine']).unbind(0)
+        previous = state_low + (state[:, (25, 8)] + 1.) * (state_high - state_low) * .5
+        # Forward command is recorded in the observation. The measured yaw rate
+        # estimates the preceding yaw command. Labels are already applied commands.
+        planned_motion = slew_base_commands(planned_motion, previous, low, high, servo['step_limit'])
     step = calibration['base_control_dt_s']
     error = apply_base_motion(planned, planned_motion, step) - apply_base_motion(expected, teacher_motion, step)
     tip = error[..., 0, :]
