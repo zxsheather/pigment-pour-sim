@@ -275,7 +275,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
                    release_single_contact=False,release_retreat_m=0.,release_lift_m=0.,teacher_grasp_height_m=None,
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
-                   wrist_clearance_rear_distance_m=None,approach_heading_reference=None):
+                   wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
+                   wrist_clearance_open_after_retreat=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -290,6 +291,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
+    if wrist_clearance_open_after_retreat and not align_from_clearance:
+        raise ValueError("Delayed opening requires wrist clearance alignment")
     if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
         raise ValueError("Release retreat must be within [0,0.10] m")
     if release_retreat_m and not release_single_contact:
@@ -441,7 +444,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         rear_distance = .14 if wrist_clearance_rear_distance_m is None else wrist_clearance_rear_distance_m
         clear[1] = min(tip[1], cylinder[1]-rear_distance)
         if tip[1]-clear[1] > .002:
-            move("wrist_clearance_back",clear,1.5,opening=.034,straight=True)
+            opening = .034
+            if wrist_clearance_open_after_retreat:
+                # Keep the previous servo target until the fingers have cleared the cylinder.
+                gripper_servo = env.model.actuator("right_arm_gripper_left_joint_servo").id
+                opening = env.hold_targets[gripper_servo]
+            move("wrist_clearance_back",clear,1.5,opening=opening,straight=True)
         safe_height = cylinder[2]+approach_height+.045
         if clear[2] < safe_height-.002:
             clear[2] = safe_height
@@ -756,6 +764,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
     if wrist_clearance_rear_distance_m is not None:
         summary["controller_parameters"]["wrist_clearance_rear_distance_m"]=wrist_clearance_rear_distance_m
+    if wrist_clearance_open_after_retreat:
+        summary["controller_parameters"]["wrist_clearance_open_after_retreat"]=True
     if teacher_grasp_height_m is not None:
         summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
     if stable_read_samples != 3:
