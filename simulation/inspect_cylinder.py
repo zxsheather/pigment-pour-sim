@@ -280,6 +280,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
                    retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None,
                    align_near_grasp=False,hold_wrist_on_heading_return=False,
+                   align_near_grasp_forward=False,
                    wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
@@ -296,6 +297,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Wrist clearance alignment requires a saved unheld approach")
     if align_near_grasp and (reset_scene or start_holding or align_from_clearance or release_single_contact):
         raise ValueError("Near grasp alignment requires a saved unheld approach with the fingers clear")
+    if align_near_grasp_forward and not align_near_grasp:
+        raise ValueError("Forward alignment requires near grasp alignment")
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
@@ -671,8 +674,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 restore_approach_heading(approach_heading_reference)
             if align_near_grasp:
                 error = env.grip_point_relative() - env.grasp_offset
-                if np.linalg.norm(error) > .03 or env.metrics()["grip_contacts"]:
-                    raise InspectionFailure("near_grasp_alignment_requires_clear_fingers_within_30mm")
+                forward = (align_near_grasp_forward and 0. < error[0] <= .065
+                           and np.linalg.norm(error[1:]) <= .012)
+                if (np.linalg.norm(error) > .03 and not forward) or env.metrics()["grip_contacts"]:
+                    reason = ("near_grasp_alignment_requires_clear_fingers_in_approach_range" if align_near_grasp_forward
+                              else "near_grasp_alignment_requires_clear_fingers_within_30mm")
+                    raise InspectionFailure(reason)
                 q = np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
                               for i in range(1,7)])
                 for _ in range(12):tick("wrist_clearance_near_open",q,.034)
@@ -897,6 +904,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["wrist_clearance_align_at_grasp_height"]=True
     if align_near_grasp:
         summary["controller_parameters"]["align_near_grasp"]=True
+    if align_near_grasp_forward:
+        summary["controller_parameters"]["align_near_grasp_forward"]=True
     if wrist_clearance_open_after_retreat:
         summary["controller_parameters"]["wrist_clearance_open_after_retreat"]=True
     if wrist_clearance_align_before_lift:
