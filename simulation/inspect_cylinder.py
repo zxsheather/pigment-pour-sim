@@ -280,7 +280,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
                    retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None,
                    align_near_grasp=False,hold_wrist_on_heading_return=False,
-                   wrist_clearance_align_at_grasp_height=False):
+                   wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -314,6 +314,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Release retreat must be within [0,0.10] m")
     if release_retreat_m and not release_single_contact:
         raise ValueError("Release retreat requires single-contact recovery")
+    if release_retreat_before_open and not release_retreat_m:
+        raise ValueError("Retreat before opening requires a single-contact retreat distance")
     if not np.isfinite(release_lift_m) or not 0. <= release_lift_m <= .06:
         raise ValueError("Release lift must be within [0,0.06] m")
     if release_lift_m and (not release_single_contact or release_retreat_m):
@@ -602,6 +604,21 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 upward += sign * force[0] * contact.frame[2]
         return total > 0. and upward >= .8*total
 
+    def withdraw_from_single_contact(opening):
+        nonlocal rotation
+        nominal_rotation = rotation
+        rotation = env.data.xmat[env.gripper_body].reshape(3, 3).copy()
+        tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
+        away = -(rotation @ (env.grip_point_relative() - env.grasp_offset))
+        away[2] = 0.
+        distance = np.linalg.norm(away)
+        if distance <= .001:
+            raise InspectionFailure("single_contact_retreat_direction_undefined")
+        target = tip + release_retreat_m * away / distance
+        joints = move("withdraw_from_contact", target, seconds=1.5, opening=opening, straight=True)
+        rotation = nominal_rotation
+        return joints
+
     reason=None
     try:
         if start_holding:
@@ -630,20 +647,14 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
                     q = move("withdraw_from_contact", tip+[0,0,release_lift_m],1.2,opening=.034,straight=True)
                     rotation = nominal_rotation
+                if release_retreat_before_open:
+                    gripper_servo = env.model.actuator("right_arm_gripper_left_joint_servo").id
+                    q = withdraw_from_single_contact(env.hold_targets[gripper_servo])
                 stationary_ticks = 0
                 for tick_index in range(30):
-                    if tick_index == 12 and release_retreat_m and env.metrics()["grip_contacts"]:
-                        nominal_rotation = rotation
-                        rotation = env.data.xmat[env.gripper_body].reshape(3, 3).copy()
-                        tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
-                        away = -(rotation @ (env.grip_point_relative() - env.grasp_offset))
-                        away[2] = 0.
-                        distance = np.linalg.norm(away)
-                        if distance <= .001:
-                            raise InspectionFailure("single_contact_retreat_direction_undefined")
-                        q = move("withdraw_from_contact", tip + release_retreat_m * away / distance,
-                                 seconds=1.5, opening=.034, straight=True)
-                        rotation = nominal_rotation
+                    if (tick_index == 12 and release_retreat_m and not release_retreat_before_open
+                            and env.metrics()["grip_contacts"]):
+                        q = withdraw_from_single_contact(.034)
                     tick("release_contact", q, .034)
                     metrics = env.metrics()
                     settled = (tick_index >= 11 and metrics["grip_contacts"] == 0
@@ -904,6 +915,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
+        if release_retreat_before_open:
+            summary["controller_parameters"]["release_retreat_before_open"]=True
         if release_lift_m:
             summary["controller_parameters"]["release_lift_m"]=release_lift_m
     if align_from_clearance:
