@@ -277,7 +277,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
-                   wrist_clearance_retreat_from_reset=False):
+                   wrist_clearance_retreat_from_reset=False,read_from_current_view=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -285,6 +285,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Held recovery lift must be within [0,0.10] m")
     if held_initial_lift_m and (not start_holding or skip_retreat):
         raise ValueError("Initial lift requires a held transport recovery")
+    if read_from_current_view and (reset_scene or not start_holding or not skip_retreat):
+        raise ValueError("Reading from the current view requires a saved held reading state")
     if release_single_contact and (reset_scene or start_holding):
         raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
     if align_from_clearance and (reset_scene or start_holding):
@@ -567,7 +569,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if start_holding:
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("held_continuation_requires_two_contacts")
             env.grasp_reference=env._bottle_relative_position();held=True
-            env.grasp_point_reference=env.grip_point_relative()
+            if not read_from_current_view or env.grasp_point_reference is None:
+                env.grasp_point_reference=env.grip_point_relative()
             point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
             if held_initial_lift_m:
                 point=point+np.array([0.,0.,held_initial_lift_m])
@@ -646,17 +649,38 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 tick("back_away",q,grip_opening,-min(.10,1.5*distance))
             else:raise InspectionFailure("base_retreat_timeout")
             for _ in range(15):tick("back_away",q,grip_opening)
-        eye=env.data.cam_xpos[env.model.camera("face_view").id].copy()
-        point=eye+[read_lateral,read_distance,approach_height-(SCALE_ZERO+SCALE_SPAN/2)]
-        q=move("present",point,3)
-        for _ in range(20):tick("hold_for_reading",q,grip_opening)
+        camera_id=env.model.camera("face_view").id
+        if read_from_current_view:
+            open_servo=env.model.actuator("right_arm_gripper_left_joint_servo").id
+            grip_opening=env.hold_targets[open_servo]
+            q=np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
+                        for i in range(1,7)])
+            for _ in range(24):tick("hold_for_reading",q,grip_opening)
+            rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
+            point=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+            view_right=env.data.cam_xmat[camera_id].reshape(3,3)[:,0].copy()
+            view_right[2]=0.
+            view_right/=np.linalg.norm(view_right)
+            lateral_moves=iter((.012,-.024,.037,-.05))
+        else:
+            eye=env.data.cam_xpos[camera_id].copy()
+            point=eye+[read_lateral,read_distance,approach_height-(SCALE_ZERO+SCALE_SPAN/2)]
+            q=move("present",point,3)
+            for _ in range(20):tick("hold_for_reading",q,grip_opening)
+
+        def move_camera_offset(phase, offset):
+            nonlocal rotation, point
+            rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
+            tip=env.data.xpos[env.gripper_body]+rotation@env.grasp_offset
+            point=tip+offset
+            return move(phase,point,1.,straight=True)
         # The demonstration teacher may use simulator object pose to correct
         # grasp-induced tilt. This is joint control, not an object attachment;
         # the separate reading/height controller still consumes only pixels.
         for _ in range(4):
             axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
             tilt=float(np.arccos(np.clip(axis[2],-1,1)))
-            if tilt<np.deg2rad(1):break
+            if tilt<np.deg2rad(3 if read_from_current_view else 1):break
             correction_axis=np.cross(axis,[0.,0.,1.])
             correction_axis/=np.linalg.norm(correction_axis)
             quat=np.empty(4);mujoco.mju_axisAngle2Quat(quat,correction_axis,.8*tilt)
@@ -671,40 +695,62 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # to support the boundary, rather than a few unoccluded pixels.
             return (abs(reading["eye_alignment_error_px"])<=2
                     and reading["boundary_support_fraction"]<.5)
-        for iteration in range(6):
-            rgb=env.render("face_view")
-            reading=read_volume(rgb)
-            if needs_view(reading):
-                view_search.append(dict(time=float(env.data.time),iteration=iteration,reading=reading))
-                imageio.imwrite(output/f"view_rejected_{iteration:02d}.png",annotate(rgb,reading))
-                rotation_seed=rotation.copy()
-                for yaw in (.14,-.14,.28,-.28):
-                    c,s=np.cos(yaw),np.sin(yaw)
-                    rotation=np.array([[c,-s,0],[s,c,0],[0,0,1]])@rotation_seed
-                    q=move("find_scale",point,1.2)
-                    for _ in range(10):tick("find_scale",q,grip_opening)
-                    rgb=env.render("face_view");reading=read_volume(rgb)
-                    if not needs_view(reading):break
-            readings.append(dict(time=float(env.data.time),**reading))
-            imageio.imwrite(output/f"reading_{iteration:02d}.png",annotate(rgb,reading))
-            print(json.dumps(readings[-1]),flush=True)
-            if not reading["valid"]:raise InspectionFailure(f"unreadable:{reading['reason']}")
-            if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
-            if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:break
-            focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[env.model.camera("face_view").id])/2))
-            dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-.025,.025)
-            point[2]+=dz
-            q=move("align_eye_level",point,1.2)
-            for _ in range(10):tick("align_eye_level",q,grip_opening)
-        else:raise InspectionFailure("eye_alignment_timeout")
-        # Repeat observations while physically holding still; no ground-truth
-        # volume is used by the perception or height controller.
-        for _ in range(stable_read_samples):
-            for _ in range(5):tick("read_stable",q,grip_opening)
-            reading=read_volume(env.render("face_view"));readings.append(dict(time=float(env.data.time),**reading))
-            if not reading["valid"]:raise InspectionFailure(f"unstable_reading:{reading['reason']}")
-            if needs_view(reading):raise InspectionFailure("unstable_boundary_visibility")
-            if abs(reading["eye_alignment_error_px"])>2:raise InspectionFailure("eye_alignment_drift")
+        def align_camera_reading(q, attempt):
+            nonlocal rotation, point
+            for iteration in range(11 if read_from_current_view else 6):
+                suffix = f"{attempt}_{iteration:02d}" if attempt else f"{iteration:02d}"
+                rgb=env.render("face_view")
+                reading=read_volume(rgb)
+                if needs_view(reading):
+                    view_search.append(dict(time=float(env.data.time),iteration=iteration,reading=reading))
+                    imageio.imwrite(output/f"view_rejected_{suffix}.png",annotate(rgb,reading))
+                    if read_from_current_view:
+                        for lateral in lateral_moves:
+                            q=move_camera_offset("find_scale",lateral*view_right)
+                            rgb=env.render("face_view");reading=read_volume(rgb)
+                            if not needs_view(reading):break
+                    else:
+                        rotation_seed=rotation.copy()
+                        for yaw in (.14,-.14,.28,-.28):
+                            c,s=np.cos(yaw),np.sin(yaw)
+                            rotation=np.array([[c,-s,0],[s,c,0],[0,0,1]])@rotation_seed
+                            q=move("find_scale",point,1.2)
+                            for _ in range(10):tick("find_scale",q,grip_opening)
+                            rgb=env.render("face_view");reading=read_volume(rgb)
+                            if not needs_view(reading):break
+                readings.append(dict(time=float(env.data.time),**reading))
+                imageio.imwrite(output/f"reading_{suffix}.png",annotate(rgb,reading))
+                print(json.dumps(readings[-1]),flush=True)
+                if not reading["valid"]:raise InspectionFailure(f"unreadable:{reading['reason']}")
+                if needs_view(reading):raise InspectionFailure("liquid_boundary_occluded")
+                if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:return q
+                focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[camera_id])/2))
+                limit=.012 if read_from_current_view else .025
+                dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-limit,limit)
+                if read_from_current_view:
+                    q=move_camera_offset("align_eye_level",np.array([0.,0.,dz]))
+                else:
+                    point[2]+=dz
+                    q=move("align_eye_level",point,1.2)
+                    for _ in range(10):tick("align_eye_level",q,grip_opening)
+            raise InspectionFailure("eye_alignment_timeout")
+
+        def hold_for_stable_reading(q):
+            # Only consecutive observations after the latest alignment count.
+            for _ in range(stable_read_samples):
+                for _ in range(5):tick("read_stable",q,grip_opening)
+                reading=read_volume(env.render("face_view"))
+                readings.append(dict(time=float(env.data.time),**reading))
+                if not reading["valid"]:return f"unstable_reading:{reading['reason']}"
+                if needs_view(reading):return "unstable_boundary_visibility"
+                if abs(reading["eye_alignment_error_px"])>2:return "eye_alignment_drift"
+            return None
+
+        for attempt in range(3 if read_from_current_view else 1):
+            q=align_camera_reading(q,attempt)
+            read_failure=hold_for_stable_reading(q)
+            if read_failure is None:break
+        else:raise InspectionFailure(read_failure)
         stable=[r["volume_ml"] for r in readings[-3:]]
         if np.ptp(stable)>.4:raise InspectionFailure("reading_not_stable")
         if env.metrics()["bottle_tilt_rad"]>np.deg2rad(3):raise InspectionFailure("not_upright_for_reading")
@@ -779,6 +825,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["wrist_clearance_align_before_lift"]=True
     if wrist_clearance_retreat_from_reset:
         summary["controller_parameters"]["wrist_clearance_retreat_from_reset"]=True
+    if read_from_current_view:
+        summary["controller_parameters"]["read_from_current_view"]=True
     if teacher_grasp_height_m is not None:
         summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
     if stable_read_samples != 3:
