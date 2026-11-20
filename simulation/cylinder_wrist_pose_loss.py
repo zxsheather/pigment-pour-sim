@@ -166,14 +166,18 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
     return (calibration['weight'] * shortfall.square()).masked_fill(~frames, 0.)
 
 
-def near_approach_world_wrist_loss(planned, expected, forecast, reference, state, calibration,
-                                  valid, dof_mask):
-    """Supervise coordinated wrist and base outcomes close to a visible target."""
+def wrist_target_is_near(state, calibration):
     cue_low, cue_high = state.new_tensor(calibration['cue_affine']).unbind(0)
     cue = cue_low + (state[:, (18, 21, 22)] + 1.) * (cue_high - cue_low) * .5
     # Convert the stored asinh cue back to a displacement in meters.
     displacement = cue.sinh() * calibration['cue_near_scale_m']
-    near = (state[:, 23] > 0.) & (displacement.square().sum(-1) <= calibration['radius_m'] ** 2)
+    return (state[:, 23] > 0.) & (displacement.square().sum(-1) <= calibration['radius_m'] ** 2)
+
+
+def near_approach_world_wrist_loss(planned, expected, forecast, reference, state, calibration,
+                                  valid, dof_mask):
+    """Supervise coordinated wrist and base outcomes close to a visible target."""
+    near = wrist_target_is_near(state, calibration)
     if dof_mask is not None:
         valid = valid & dof_mask.reshape_as(reference)[..., 7:9].bool().all(dim=-1)
     active = near[:, None] & valid.cumprod(dim=1).bool()
@@ -194,6 +198,24 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     orientation = error[..., 1:, :] - tip[..., None, :]
     squared_error = tip.square().sum(-1) + .5 * orientation.square().sum((-2, -1))
     return (squared_error * (calibration['weight'] / calibration['scale_m'] ** 2)).masked_fill(~active, 0.)
+
+
+def near_grasp_roll_loss(planned, expected, state, valid_prefix, calibration, marker_offset):
+    """Match the wrist roll relative to gravity for nearby approach observations."""
+    # Components of the base up axis in the two wrist axes perpendicular to
+    # its shaft. These components are invariant to base yaw and translation.
+    planned_up = (planned[..., 2:, 2] - planned[..., :1, 2]) / marker_offset
+    expected_up = (expected[..., 2:, 2] - expected[..., :1, 2]) / marker_offset
+    planned_length = torch.linalg.vector_norm(planned_up, dim=-1, keepdim=True)
+    expected_length = torch.linalg.vector_norm(expected_up, dim=-1, keepdim=True)
+    # Roll becomes ambiguous when the shaft points vertically. Bound the
+    # normalization gradient and require a well-defined teacher target.
+    min_projection = .25
+    error = (planned_up / planned_length.clamp_min(min_projection)
+             - expected_up / expected_length.clamp_min(min_projection))
+    active = (wrist_target_is_near(state, calibration)[:, None] & valid_prefix
+              & (expected_length[..., 0] >= min_projection))
+    return (calibration['weight'] * error.square().sum(-1)).masked_fill(~active, 0.)
 
 
 def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibration,
@@ -248,6 +270,10 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     if world_wrist is not None:
         loss = loss + near_approach_world_wrist_loss(planned, expected, forecast, reference, state,
                                                    world_wrist, valid, dof_mask)
+    roll = calibration.get('near_grasp_roll')
+    if roll is not None:
+        loss = loss + near_grasp_roll_loss(planned, expected, state, valid_prefix, roll,
+                                          calibration['orientation_marker_offset_m'])
     loss = loss.masked_fill(~valid_prefix, 0.)
     padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
     release = calibration.get('release_opening')
