@@ -314,7 +314,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Delayed opening requires wrist clearance alignment")
     if wrist_clearance_align_before_lift and not align_from_clearance:
         raise ValueError("Early wrist rotation requires wrist clearance alignment")
-    if wrist_clearance_retreat_from_reset and not align_from_clearance:
+    if wrist_clearance_retreat_from_reset and not (align_from_clearance or align_near_grasp_at_current_depth):
         raise ValueError("Reset-relative retreat requires wrist clearance alignment")
     if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
         raise ValueError("Release retreat must be within [0,0.10] m")
@@ -692,7 +692,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     delta = env.data.xpos[env.cylinder_body] + approach_height * axis - measured_tip
                     gap = (env.data.qpos[env.model.joint("right_arm_gripper_left_joint").qposadr[0]]
                            - env.data.qpos[env.model.joint("right_arm_gripper_right_joint").qposadr[0]])
-                    if (not .025 <= delta[1] <= .075 or np.linalg.norm(delta[[0, 2]]) > .065 or gap < .035
+                    near = .025 <= delta[1] <= .075 and np.linalg.norm(delta[[0, 2]]) <= .065
+                    # A higher start needs more clearance before the wrist can lower.
+                    high = .040 <= delta[1] <= .075 and abs(delta[0]) <= .025 and .065 < -delta[2] <= .170
+                    if (not (near or high) or gap < .035
                             or env.metrics()["grip_contacts"]):
                         raise InspectionFailure("current_depth_alignment_requires_open_fingers_and_forward_clearance")
                 elif (np.linalg.norm(error) > .03 and not forward) or env.metrics()["grip_contacts"]:
