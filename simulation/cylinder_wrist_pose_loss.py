@@ -118,8 +118,8 @@ def servo_arm_targets(actions, anchor, calibration):
     return torch.stack(targets, dim=-2)
 
 
-def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow_loss_mask):
-    """Supervise the opening requested over a demonstrated widening prefix."""
+def release_opening_targets(reference, state, calibration, dof_mask, flow_loss_mask):
+    """Identify the teacher targets within a demonstrated widening prefix."""
     state_min, state_max = state.new_tensor(calibration['state_aperture_affine_m']).unbind()
     tracking_min, tracking_max = state.new_tensor(calibration['tracking_error_affine_m']).unbind()
     action_min, action_max = state.new_tensor(calibration['action_aperture_affine_m']).unbind()
@@ -127,7 +127,6 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
     tracking_error = tracking_min + (state[:, 24:25] + 1.) * (tracking_max-tracking_min) * .5
     previous_target = gap + tracking_error
     target = action_min + (reference[..., 6] + 1.) * (action_max-action_min) * .5
-    requested = action_min + (forecast[..., 6] + 1.) * (action_max-action_min) * .5
 
     valid = torch.ones_like(target, dtype=torch.bool)
     if dof_mask is not None:
@@ -140,6 +139,14 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
     gain = target - previous_target
     release = (widening & (gain >= calibration['minimum_opening_gain_m'])).any(dim=1, keepdim=True)
     frames = release & widening & (gain > calibration['allowed_target_drop_m'])
+    return target, frames
+
+
+def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow_loss_mask):
+    """Supervise the opening requested over a demonstrated widening prefix."""
+    target, frames = release_opening_targets(reference, state, calibration, dof_mask, flow_loss_mask)
+    action_min, action_max = state.new_tensor(calibration['action_aperture_affine_m']).unbind()
+    requested = action_min + (forecast[..., 6] + 1.) * (action_max-action_min) * .5
     # Training labels already describe bounded servo targets. Compare them
     # with the undamped request so a closing prediction still gets a gradient.
     shortfall = (target - requested).clamp_min(0.) / calibration['scale_m']
@@ -189,6 +196,11 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
         lateral_error = (tip * lateral_axis).sum(dim=-1)
         alignment_loss = closing['weight'] * (lateral_error / closing['scale_m']).square()
         loss = loss + alignment_loss.masked_fill(~closing_frames, 0.)
+    release_wrist = calibration.get('release_wrist')
+    if release_wrist is not None:
+        _, widening = release_opening_targets(reference, state, release_wrist, dof_mask, flow_loss_mask)
+        release_loss = squared_error * (release_wrist['weight'] / release_wrist['scale_m'] ** 2)
+        loss = loss + release_loss.masked_fill(~widening, 0.)
     loss = loss.masked_fill(~valid_prefix, 0.)
     padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
     release = calibration.get('release_opening')
