@@ -25,9 +25,13 @@ def denormalize_arm(values, affine):
 
 def wrist_markers_with_base_motion(joints, base_velocity, calibration):
     """Place joint targets in the starting base frame after each commanded twist."""
-    markers = wrist_markers(joints, calibration)
+    return apply_base_motion(wrist_markers(joints, calibration), base_velocity,
+                             calibration['base_control_dt_s'])
+
+
+def apply_base_motion(markers, base_velocity, step):
+    """Apply the commanded planar twist prefix to markers in the moving base frame."""
     forward, yaw_rate = base_velocity.unbind(-1)
-    step = calibration['base_control_dt_s']
     turn = yaw_rate * step
     heading = turn.cumsum(dim=-1)
     mid_heading = heading - turn / 2
@@ -153,6 +157,29 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
     return (calibration['weight'] * shortfall.square()).masked_fill(~frames, 0.)
 
 
+def near_approach_world_wrist_loss(planned, expected, forecast, reference, state, calibration,
+                                  valid, dof_mask):
+    """Supervise coordinated wrist and base outcomes close to a visible target."""
+    cue_low, cue_high = state.new_tensor(calibration['cue_affine']).unbind(0)
+    cue = cue_low + (state[:, (18, 21, 22)] + 1.) * (cue_high - cue_low) * .5
+    # Convert the stored asinh cue back to a displacement in meters.
+    displacement = cue.sinh() * calibration['cue_near_scale_m']
+    near = (state[:, 23] > 0.) & (displacement.square().sum(-1) <= calibration['radius_m'] ** 2)
+    if dof_mask is not None:
+        valid = valid & dof_mask.reshape_as(reference)[..., 7:9].bool().all(dim=-1)
+    active = near[:, None] & valid.cumprod(dim=1).bool()
+
+    low, high = state.new_tensor(calibration['base_action_affine']).unbind(0)
+    planned_motion = low + (forecast[..., 7:9] + 1.) * (high - low) * .5
+    teacher_motion = low + (reference[..., 7:9] + 1.) * (high - low) * .5
+    step = calibration['base_control_dt_s']
+    error = apply_base_motion(planned, planned_motion, step) - apply_base_motion(expected, teacher_motion, step)
+    tip = error[..., 0, :]
+    orientation = error[..., 1:, :] - tip[..., None, :]
+    squared_error = tip.square().sum(-1) + .5 * orientation.square().sum((-2, -1))
+    return (squared_error * (calibration['weight'] / calibration['scale_m'] ** 2)).masked_fill(~active, 0.)
+
+
 def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibration,
                                     dof_mask=None, flow_loss_mask=None):
     """Compare the FK of composed arm commands from a shared proprioceptive anchor."""
@@ -201,6 +228,10 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
         _, widening = release_opening_targets(reference, state, release_wrist, dof_mask, flow_loss_mask)
         release_loss = squared_error * (release_wrist['weight'] / release_wrist['scale_m'] ** 2)
         loss = loss + release_loss.masked_fill(~widening, 0.)
+    world_wrist = calibration.get('near_approach_world_wrist')
+    if world_wrist is not None:
+        loss = loss + near_approach_world_wrist_loss(planned, expected, forecast, reference, state,
+                                                   world_wrist, valid, dof_mask)
     loss = loss.masked_fill(~valid_prefix, 0.)
     padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
     release = calibration.get('release_opening')
