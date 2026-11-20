@@ -278,7 +278,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
                    wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
-                   retry_reading_from_current_view=False):
+                   retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -295,6 +295,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if wrist_clearance_rear_distance_m is not None and (
             not align_from_clearance or not .07 <= wrist_clearance_rear_distance_m <= .18):
         raise ValueError("Rear clearance requires wrist alignment and a distance in [0.07,0.18] m")
+    if wrist_clearance_extra_lift_m is not None and (
+            not align_from_clearance or not np.isfinite(wrist_clearance_extra_lift_m) or wrist_clearance_extra_lift_m < 0.):
+        raise ValueError("Wrist clearance lift requires alignment and a nonnegative height")
     if wrist_clearance_open_after_retreat and not align_from_clearance:
         raise ValueError("Delayed opening requires wrist clearance alignment")
     if wrist_clearance_align_before_lift and not align_from_clearance:
@@ -463,7 +466,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if wrist_clearance_align_before_lift:
             rotation = nominal
             move("wrist_clearance_rotate",clear,2,opening=.034,straight=True)
-        safe_height = cylinder[2]+approach_height+.045
+        lift = .045 if wrist_clearance_extra_lift_m is None else wrist_clearance_extra_lift_m
+        safe_height = cylinder[2]+approach_height+lift
         if clear[2] < safe_height-.002:
             clear[2] = safe_height
             move("wrist_clearance_up",clear,1.5,opening=.034,straight=True)
@@ -833,6 +837,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
     if wrist_clearance_rear_distance_m is not None:
         summary["controller_parameters"]["wrist_clearance_rear_distance_m"]=wrist_clearance_rear_distance_m
+    if wrist_clearance_extra_lift_m is not None:
+        summary["controller_parameters"]["wrist_clearance_extra_lift_m"]=wrist_clearance_extra_lift_m
     if wrist_clearance_open_after_retreat:
         summary["controller_parameters"]["wrist_clearance_open_after_retreat"]=True
     if wrist_clearance_align_before_lift:
