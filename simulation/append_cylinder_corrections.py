@@ -18,7 +18,7 @@ from cylinder_tray_vision import WRIST_TARGET_CUE_PROTOCOL
 from export_carry_dataset import LeRobotDataset, SourceVideoDataset, file_digest, share_immutable_video
 
 
-def append(base, qualifications, base_weights, output, *, held_only=False):
+def append(base, qualifications, base_weights, output, *, held_only=False, normalization=None):
     require(not output.exists(), 'Output exists')
     view = json.loads((base/'wrist_target_view_audit.json').read_text())
     bundle = json.loads(qualifications.read_text())
@@ -29,7 +29,23 @@ def append(base, qualifications, base_weights, output, *, held_only=False):
     rows = [case for case in bundle['results'] if case['qualified']]
     require(rows and len(rows) == bundle['qualified_count'], 'No verified teacher correction data')
     expected_tasks = np.arange(1 if held_only else 0, len(PROGRESS_PROMPTS))
-    norm = json.loads((base/'joint_norm_stats.json').read_text())['norm_stats']
+    base_normalization = base/'joint_norm_stats.json'
+    normalization = base_normalization if normalization is None else normalization
+    base_norm_document = json.loads(base_normalization.read_text())
+    norm_document = json.loads(normalization.read_text())
+    norm = norm_document['norm_stats']
+    original_state = base_norm_document['norm_stats']['observation.state']
+    requested_state = norm['observation.state']
+    if normalization != base_normalization:
+        allowed = base_norm_document | {'norm_stats': base_norm_document['norm_stats'] | {
+            'observation.state': original_state | {key: requested_state[key] for key in ('q01', 'q99')},
+        }}
+        require(norm_document == allowed
+                and np.all(np.asarray(requested_state['q01']) <= original_state['q01'])
+                and np.all(np.asarray(requested_state['q99']) >= original_state['q99']),
+                'New normalization may only widen existing observation quantile bounds')
+    original_norm_digest = file_digest(base_normalization)
+    requested_norm_digest = file_digest(normalization)
     old = arrow.dataset(base/'data',format='parquet').to_table().sort_by('index')
     old_frames = len(old)
     weights = np.load(base_weights, allow_pickle=False)
@@ -41,6 +57,8 @@ def append(base, qualifications, base_weights, output, *, held_only=False):
     with TemporaryDirectory(prefix=f'.{output.name}-', dir=output.parent) as temporary:
         path = Path(temporary)/'dataset'
         shutil.copytree(base, path)
+        if normalization != base_normalization:
+            shutil.copyfile(normalization, path/'joint_norm_stats.json')
         dataset = SourceVideoDataset(str(output), root=path, video_backend='pyav', vcodec='h264')
         dataset.keep_source_files_separate = True
         dataset.start_image_writer(num_threads=3)
@@ -101,8 +119,9 @@ def append(base, qualifications, base_weights, output, *, held_only=False):
         all_new = after.slice(old_frames)
         for name, values in zip(('observation.state','action','task_index'),map(np.concatenate,zip(*new_rows)),strict=True):
             np.testing.assert_array_equal(np.asarray(all_new[name].to_pylist()),values)
-        require(file_digest(path/'joint_norm_stats.json') == file_digest(base/'joint_norm_stats.json'),
-                'Original training normalization changed')
+        require(file_digest(path/'joint_norm_stats.json') == requested_norm_digest
+                and file_digest(base_normalization) == original_norm_digest,
+                'Normalization files changed during dataset construction')
         for relative, digest in video_hashes.items():
             share_immutable_video(base/relative,path/relative,digest)
         reopened = LeRobotDataset(str(output),root=path,video_backend='pyav')
@@ -128,7 +147,9 @@ def append(base, qualifications, base_weights, output, *, held_only=False):
         np.save(path/'frame-sampling-weights.npy',np.concatenate((weights,new_weights)))
         report = dict(kind='verified_wrist_target_correction_append',base=str(base),dataset=str(output),
                       qualifications=str(qualifications),new_episodes=len(rows),new_frames=len(all_new),
-                      episodes=len(manifest),frames=len(after),base_frames_exact=True,normalization_exact=True,
+                      episodes=len(manifest),frames=len(after),base_frames_exact=True,
+                      normalization_exact=original_norm_digest == requested_norm_digest,
+                      base_normalization_sha256=original_norm_digest,normalization_sha256=requested_norm_digest,
                       original_video_hardlinks=len(video_hashes),appended_video_hardlinks=len(seen)-len(video_hashes),
                       new_sampling_fraction=new_fraction,new_approach_fraction=approach_fraction,
                       held_only=held_only,
@@ -146,9 +167,12 @@ def main():
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--held-only',action='store_true',
                         help='Append certified lift/retreat and presentation continuations.')
+    parser.add_argument('--normalization', type=Path,
+                        help='Use explicitly widened observation bounds for the appended dataset.')
     args = parser.parse_args()
     print(json.dumps(append(args.base_dataset.resolve(),args.qualification_report.resolve(),
-                            args.base_weights.resolve(),args.output.resolve(),held_only=args.held_only)))
+                            args.base_weights.resolve(),args.output.resolve(),held_only=args.held_only,
+                            normalization=args.normalization.resolve() if args.normalization else None)))
 
 
 if __name__ == '__main__':
