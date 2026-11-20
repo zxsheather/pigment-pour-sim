@@ -1,0 +1,2271 @@
+{
+  "kind": "archived_genuine_hold_state_rgb_view_repair_and_matched_v61_training",
+  "observed_at": "2026-11-20T21:06:14.363396+08:00",
+  "independent_cases_read": false,
+  "all_rollouts_use_fixed_official_finger_geometry": true,
+  "original_model_only_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-continuous-v1-step1020-single-v1/episode_000",
+  "archived_full_replay_diverged_at_frame": 598,
+  "archived_replay_first_precision_attempt": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/first-robot-state-precision-mismatch.log",
+  "archived_diagnostic_documentation": {
+    "stopped": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/archived-stop-report.json",
+    "vertical_only": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/archived-stop-rgb-alignment-report.json",
+    "vertical_and_camera_lateral": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/archived-stop-rgb-view-recovery-report.json"
+  },
+  "stop_source_restoration": {
+    "kind": "station_keeping_after_verified_saved_wall_held_state",
+    "source": "/data/hlou/pigment-pour-study/runs/cylinder-continuous-v1-step1020-single-v1/episode_000",
+    "diagnostic_only": true,
+    "independent_cases_read": false,
+    "model_inference_rerun": false,
+    "original_complete_model_failure": "lost_grasp",
+    "original_held_grasp_prefix_commands": 190,
+    "maximum_robot_state_diff_before_held": 1.862645149230957e-09,
+    "late_states_restored_directly_from_archive": true,
+    "matched_slip_reference_max_error_m": 6.242559637617551e-14,
+    "maximum_archived_observation_roundoff": 8.881784197001252e-16,
+    "selected": [
+      {
+        "snapshot": 163,
+        "original_control_tick": 1304,
+        "time_s": 65.2000000001293,
+        "inherited_max_slip_m": 0.017690091027671693,
+        "verified_prior_lift_lower_bound_m": 0.11600275047006181,
+        "base_retreat_m": 0.535673357310169,
+        "camera_distance_m": 0.3826032111756418,
+        "rgb": {
+          "valid": true,
+          "reason": null,
+          "volume_ml": 24.864864864864863,
+          "eye_alignment_error_px": -13.5,
+          "boundary_support_fraction": 1.0
+        }
+      },
+      {
+        "snapshot": 174,
+        "original_control_tick": 1392,
+        "time_s": 69.6000000001503,
+        "inherited_max_slip_m": 0.019742054639521917,
+        "verified_prior_lift_lower_bound_m": 0.11600275047006181,
+        "base_retreat_m": 0.5721815080643192,
+        "camera_distance_m": 0.36501409457010325,
+        "rgb": {
+          "valid": true,
+          "reason": null,
+          "volume_ml": 24.642857142857142,
+          "eye_alignment_error_px": -46.5,
+          "boundary_support_fraction": 1.0
+        }
+      },
+      {
+        "snapshot": 183,
+        "original_control_tick": 1464,
+        "time_s": 73.20000000016749,
+        "inherited_max_slip_m": 0.0210198547033666,
+        "verified_prior_lift_lower_bound_m": 0.11600275047006181,
+        "base_retreat_m": 0.6011040780196073,
+        "camera_distance_m": 0.35883801553175987,
+        "rgb": {
+          "valid": true,
+          "reason": null,
+          "volume_ml": 24.875,
+          "eye_alignment_error_px": -56.5,
+          "boundary_support_fraction": 1.0
+        }
+      }
+    ]
+  },
+  "statically_holding": [
+    {
+      "snapshot": 163,
+      "time_s": 65.2000000001293,
+      "condition": "same-aperture",
+      "old_gap_m": 0.0043608110770583155,
+      "new_gap_m": 0.0043608110770583155,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5361282134219769,
+        "camera_distance_m": 0.38176441036387904,
+        "linear_speed_m_s": 0.0008177048782532952,
+        "angular_speed_rad_s": 0.0032615723388565686
+      },
+      "max_slip_m": 0.01820045129784203,
+      "steps": 80,
+      "final_rgb": {
+        "valid": false,
+        "reason": "ambiguous_liquid_boundary",
+        "volume_ml": null,
+        "eye_alignment_error_px": null,
+        "boundary_support_fraction": null
+      },
+      "reading_attempts": [
+        {
+          "time": 65.25000000012953,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.50000000013073,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 65.75000000013192,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.00000000013311,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.2500000001343,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.5000000001355,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 66.7500000001367,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.00000000013789,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.25000000013908,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.50000000014028,
+          "valid": true,
+          "volume_ml": 25.03615702479339,
+          "liquid_y": 371.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.53846153846155,
+          "anchor_x": 423.0,
+          "liquid_bbox": [
+            413,
+            371,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -12.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 67.75000000014147,
+          "valid": true,
+          "volume_ml": 25.0,
+          "liquid_y": 371.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.0,
+          "anchor_x": 421.0,
+          "liquid_bbox": [
+            413,
+            371,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -12.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.00000000014266,
+          "valid": true,
+          "volume_ml": 24.839710444674253,
+          "liquid_y": 372.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.61538461538464,
+          "anchor_x": 423.0,
+          "liquid_bbox": [
+            413,
+            372,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -11.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.25000000014386,
+          "valid": true,
+          "volume_ml": 24.84304932735426,
+          "liquid_y": 372.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.6666666666667,
+          "anchor_x": 423.5,
+          "liquid_bbox": [
+            413,
+            372,
+            20,
+            122
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -11.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.50000000014505,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 68.75000000014624,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 69.00000000014744,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    },
+    {
+      "snapshot": 163,
+      "time_s": 65.2000000001293,
+      "condition": "6mm-aperture",
+      "old_gap_m": 0.0043608110770583155,
+      "new_gap_m": 0.006,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5361282137773782,
+        "camera_distance_m": 0.3818399049935165,
+        "linear_speed_m_s": 0.0009236483323072423,
+        "angular_speed_rad_s": 0.0037725522927382032
+      },
+      "max_slip_m": 0.01818034812661346,
+      "steps": 80,
+      "final_rgb": {
+        "valid": false,
+        "reason": "ambiguous_liquid_boundary",
+        "volume_ml": null,
+        "eye_alignment_error_px": null,
+        "boundary_support_fraction": null
+      },
+      "reading_attempts": [
+        {
+          "time": 65.25000000012953,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.50000000013073,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 65.75000000013192,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.00000000013311,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.2500000001343,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 66.5000000001355,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 66.7500000001367,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.00000000013789,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.25000000013908,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 67.50000000014028,
+          "valid": true,
+          "volume_ml": 25.0,
+          "liquid_y": 371.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.0,
+          "anchor_x": 421.0,
+          "liquid_bbox": [
+            413,
+            371,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -12.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 67.75000000014147,
+          "valid": true,
+          "volume_ml": 24.839710444674253,
+          "liquid_y": 372.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.61538461538464,
+          "anchor_x": 423.0,
+          "liquid_bbox": [
+            413,
+            371,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -11.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.00000000014266,
+          "valid": true,
+          "volume_ml": 24.8,
+          "liquid_y": 372.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.0,
+          "anchor_x": 420.75,
+          "liquid_bbox": [
+            413,
+            372,
+            20,
+            122
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -11.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.25000000014386,
+          "valid": true,
+          "volume_ml": 24.848484848484848,
+          "liquid_y": 372.0,
+          "liquid_x": 423,
+          "y20": 396.0,
+          "y35": 321.75,
+          "anchor_x": 423.5,
+          "liquid_bbox": [
+            413,
+            372,
+            20,
+            122
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -11.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 68.50000000014505,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 68.75000000014624,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        },
+        {
+          "time": 69.00000000014744,
+          "valid": false,
+          "reason": "ambiguous_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    },
+    {
+      "snapshot": 174,
+      "time_s": 69.6000000001503,
+      "condition": "same-aperture",
+      "old_gap_m": 0.006988736987113953,
+      "new_gap_m": 0.006988736987113953,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5725194063449812,
+        "camera_distance_m": 0.3698118865431753,
+        "linear_speed_m_s": 0.0015164543049019982,
+        "angular_speed_rad_s": 0.007490658666204693
+      },
+      "max_slip_m": 0.01998928658573332,
+      "steps": 80,
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.849137931034484,
+        "eye_alignment_error_px": -46.5,
+        "boundary_support_fraction": 1.0
+      },
+      "reading_attempts": [
+        {
+          "time": 69.65000000015054,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.90000000015173,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.15000000015293,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.40000000015412,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 70.65000000015532,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 70.90000000015651,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.5,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.1500000001577,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.25,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.4000000001589,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.65000000016009,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.75,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.90000000016128,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.5,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.15000000016248,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.25,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.40000000016367,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.65000000016487,
+          "valid": true,
+          "volume_ml": 24.87012987012987,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 285.0,
+          "anchor_x": 412.75,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.90000000016606,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.15000000016725,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.40000000016845,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    },
+    {
+      "snapshot": 174,
+      "time_s": 69.6000000001503,
+      "condition": "6mm-aperture",
+      "old_gap_m": 0.006988736987113953,
+      "new_gap_m": 0.006,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5725194063144474,
+        "camera_distance_m": 0.36985633372873694,
+        "linear_speed_m_s": 0.000624234617819777,
+        "angular_speed_rad_s": 0.002944268478439489
+      },
+      "max_slip_m": 0.01997716314113173,
+      "steps": 80,
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.849137931034484,
+        "eye_alignment_error_px": -46.5,
+        "boundary_support_fraction": 1.0
+      },
+      "reading_attempts": [
+        {
+          "time": 69.65000000015054,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.90000000015173,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.15000000015293,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.40000000015412,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 70.65000000015532,
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        {
+          "time": 70.90000000015651,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.5,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.1500000001577,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.25,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.4000000001589,
+          "valid": true,
+          "volume_ml": 24.841112214498512,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.53846153846155,
+          "anchor_x": 413.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.65000000016009,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.75,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 71.90000000016128,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.5,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.15000000016248,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.25,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.40000000016367,
+          "valid": true,
+          "volume_ml": 24.84592445328032,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.61538461538464,
+          "anchor_x": 412.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            126
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.65000000016487,
+          "valid": true,
+          "volume_ml": 24.843918191603873,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.5833333333333,
+          "anchor_x": 411.5,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 72.90000000016606,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.15000000016725,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.40000000016845,
+          "valid": true,
+          "volume_ml": 24.849137931034484,
+          "liquid_y": 337.0,
+          "liquid_x": 411,
+          "y20": 362.0,
+          "y35": 284.6666666666667,
+          "anchor_x": 411.0,
+          "liquid_bbox": [
+            401,
+            337,
+            20,
+            127
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -46.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    },
+    {
+      "snapshot": 183,
+      "time_s": 73.20000000016749,
+      "condition": "same-aperture",
+      "old_gap_m": 0.00803230030462146,
+      "new_gap_m": 0.00803230030462146,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.6012782410302754,
+        "camera_distance_m": 0.3603619661909097,
+        "linear_speed_m_s": 0.00041626349765663963,
+        "angular_speed_rad_s": 0.0016085233032060934
+      },
+      "max_slip_m": 0.021391022878233378,
+      "steps": 80,
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.723837209302328,
+        "eye_alignment_error_px": -55.5,
+        "boundary_support_fraction": 1.0
+      },
+      "reading_attempts": [
+        {
+          "time": 73.25000000016773,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.50000000016892,
+          "valid": true,
+          "volume_ml": 24.89855072463768,
+          "liquid_y": 327.0,
+          "liquid_x": 376,
+          "y20": 353.0,
+          "y35": 273.38461538461536,
+          "anchor_x": 378.5,
+          "liquid_bbox": [
+            366,
+            327,
+            21,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 0.9411764705882353,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.75000000017012,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 377,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.25,
+          "liquid_bbox": [
+            367,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.00000000017131,
+          "valid": true,
+          "volume_ml": 24.764065335753177,
+          "liquid_y": 327.0,
+          "liquid_x": 377,
+          "y20": 352.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 374.25,
+          "liquid_bbox": [
+            367,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.2500000001725,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.25,
+          "liquid_bbox": [
+            367,
+            327,
+            21,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 0.9411764705882353,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.5000000001737,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.0,
+          "liquid_bbox": [
+            367,
+            327,
+            21,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 0.9411764705882353,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.7500000001749,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 379.0,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.00000000017609,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 379.0,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.25000000017728,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.75,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.50000000017847,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.5,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.75000000017967,
+          "valid": true,
+          "volume_ml": 24.90125673249551,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.42857142857144,
+          "anchor_x": 378.0,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.00000000018086,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            131
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.25000000018206,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.50000000018325,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.75000000018444,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 77.00000000018564,
+          "valid": true,
+          "volume_ml": 24.723837209302328,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.61538461538464,
+          "anchor_x": 377.25,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    },
+    {
+      "snapshot": 183,
+      "time_s": 73.20000000016749,
+      "condition": "6mm-aperture",
+      "old_gap_m": 0.00803230030462146,
+      "new_gap_m": 0.006,
+      "result": "timeout",
+      "physical_task_success": false,
+      "diagnostic_only": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.6012782379342295,
+        "camera_distance_m": 0.3602756878053949,
+        "linear_speed_m_s": 0.0005269121087685724,
+        "angular_speed_rad_s": 0.001963720251651587
+      },
+      "max_slip_m": 0.021414371277878395,
+      "steps": 80,
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.719264278799614,
+        "eye_alignment_error_px": -55.5,
+        "boundary_support_fraction": 1.0
+      },
+      "reading_attempts": [
+        {
+          "time": 73.25000000016773,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.50000000016892,
+          "valid": true,
+          "volume_ml": 24.89855072463768,
+          "liquid_y": 327.0,
+          "liquid_x": 376,
+          "y20": 353.0,
+          "y35": 273.38461538461536,
+          "anchor_x": 378.75,
+          "liquid_bbox": [
+            366,
+            327,
+            21,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 0.9411764705882353,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 73.75000000017012,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 377,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.25,
+          "liquid_bbox": [
+            367,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.00000000017131,
+          "valid": true,
+          "volume_ml": 24.764065335753177,
+          "liquid_y": 327.0,
+          "liquid_x": 377,
+          "y20": 352.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 374.25,
+          "liquid_bbox": [
+            367,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.2500000001725,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 377,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.25,
+          "liquid_bbox": [
+            367,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.5000000001737,
+          "valid": true,
+          "volume_ml": 24.892473118279568,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.2857142857143,
+          "anchor_x": 379.0,
+          "liquid_bbox": [
+            367,
+            327,
+            21,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 0.9411764705882353,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 74.7500000001749,
+          "valid": true,
+          "volume_ml": 24.71014492753623,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.38461538461536,
+          "anchor_x": 379.0,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.00000000017609,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.75,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.25000000017728,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.75,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.50000000017847,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.5,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 75.75000000017967,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.5,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.00000000018086,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 378.25,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            130
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.25000000018206,
+          "valid": true,
+          "volume_ml": 24.903288201160542,
+          "liquid_y": 327.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.46153846153845,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            327,
+            20,
+            131
+          ],
+          "boundary_support_columns": 15,
+          "boundary_support_fraction": 0.9375,
+          "eye_alignment_error_px": -56.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.50000000018325,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 76.75000000018444,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        {
+          "time": 77.00000000018564,
+          "valid": true,
+          "volume_ml": 24.719264278799614,
+          "liquid_y": 328.0,
+          "liquid_x": 378,
+          "y20": 353.0,
+          "y35": 273.53846153846155,
+          "anchor_x": 377.5,
+          "liquid_bbox": [
+            368,
+            328,
+            20,
+            130
+          ],
+          "boundary_support_columns": 16,
+          "boundary_support_fraction": 1.0,
+          "eye_alignment_error_px": -55.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        }
+      ],
+      "number_of_consecutive_valid_readings": 0,
+      "reading_values_ml": []
+    }
+  ],
+  "rgb_vertical_only": [
+    {
+      "source_snapshot": 174,
+      "time_s": 69.6000000001503,
+      "continued_same_original_grasp_reference": true,
+      "included_original_prior_slip": true,
+      "base_commands_zero_and_previous_gripper_target_held": true,
+      "all_height_updates_determined_by_rgb": true,
+      "diagnostic_teacher_only": true,
+      "success": false,
+      "failure_reason": "calibration_anchors_not_visible",
+      "max_slip_m": 0.020122096968125183,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5725193863460134,
+        "camera_distance_m": 0.36748141766311443,
+        "linear_speed_m_s": 0.0008347646390535964,
+        "angular_speed_rad_s": 0.002847676915262906
+      },
+      "good_readings_ml": [],
+      "measurements": [
+        {
+          "time_s": 70.80000000015603,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.841112214498512,
+            "eye_alignment_error_px": -46.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.025
+        },
+        {
+          "time_s": 72.60000000016463,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.85961123110151,
+            "eye_alignment_error_px": -17.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.014874101308836402
+        },
+        {
+          "time_s": 74.40000000017322,
+          "image": {
+            "valid": false,
+            "reason": "calibration_anchors_not_visible",
+            "volume_ml": null,
+            "eye_alignment_error_px": null,
+            "boundary_support_fraction": null
+          }
+        }
+      ],
+      "final_rgb": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible",
+        "volume_ml": null,
+        "eye_alignment_error_px": null,
+        "boundary_support_fraction": null
+      }
+    },
+    {
+      "source_snapshot": 183,
+      "time_s": 73.20000000016749,
+      "continued_same_original_grasp_reference": true,
+      "included_original_prior_slip": true,
+      "base_commands_zero_and_previous_gripper_target_held": true,
+      "all_height_updates_determined_by_rgb": true,
+      "diagnostic_teacher_only": true,
+      "success": false,
+      "failure_reason": "calibration_anchors_not_visible",
+      "max_slip_m": 0.0211894431688108,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.6012781951543837,
+        "camera_distance_m": 0.3580876716395306,
+        "linear_speed_m_s": 0.0013985844960840215,
+        "angular_speed_rad_s": 0.0037303483903795088
+      },
+      "good_readings_ml": [],
+      "measurements": [
+        {
+          "time_s": 74.40000000017322,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.892473118279568,
+            "eye_alignment_error_px": -56.5,
+            "boundary_support_fraction": 0.9411764705882353
+          },
+          "requested_vertical_shift_m": -0.025
+        },
+        {
+          "time_s": 76.20000000018182,
+          "image": {
+            "valid": false,
+            "reason": "calibration_anchors_not_visible",
+            "volume_ml": null,
+            "eye_alignment_error_px": null,
+            "boundary_support_fraction": null
+          }
+        }
+      ],
+      "final_rgb": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible",
+        "volume_ml": null,
+        "eye_alignment_error_px": null,
+        "boundary_support_fraction": null
+      }
+    }
+  ],
+  "rgb_smaller_vertical_and_lateral_search": [
+    {
+      "source_snapshot": 174,
+      "time_s": 69.6000000001503,
+      "continued_same_original_grasp_reference": true,
+      "included_original_prior_slip": true,
+      "base_commands_zero_and_previous_gripper_target_held": true,
+      "all_height_updates_determined_by_rgb": true,
+      "lateral_search_only_after_unsupported_image": true,
+      "diagnostic_teacher_only": true,
+      "success": true,
+      "failure_reason": null,
+      "max_slip_m": 0.020555703175953892,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.5725194048619359,
+        "camera_distance_m": 0.36740488938071164,
+        "linear_speed_m_s": 0.00046269010323105877,
+        "angular_speed_rad_s": 0.0024127408282205135
+      },
+      "good_readings_ml": [
+        24.84764542936288,
+        24.87012987012987,
+        24.87012987012987
+      ],
+      "measurements": [
+        {
+          "time_s": 70.80000000015603,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.841112214498512,
+            "eye_alignment_error_px": -46.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 72.3000000001632,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.85961123110151,
+            "eye_alignment_error_px": -32.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 73.80000000017036,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.87012987012987,
+            "eye_alignment_error_px": -18.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 75.30000000017752,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.875,
+            "eye_alignment_error_px": -4.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.0038247689079865034
+        }
+      ],
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.87012987012987,
+        "eye_alignment_error_px": 0.5,
+        "boundary_support_fraction": 1.0
+      }
+    },
+    {
+      "source_snapshot": 183,
+      "time_s": 73.20000000016749,
+      "continued_same_original_grasp_reference": true,
+      "included_original_prior_slip": true,
+      "base_commands_zero_and_previous_gripper_target_held": true,
+      "all_height_updates_determined_by_rgb": true,
+      "lateral_search_only_after_unsupported_image": true,
+      "diagnostic_teacher_only": true,
+      "success": true,
+      "failure_reason": null,
+      "max_slip_m": 0.02228280919502579,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.6012782093035405,
+        "camera_distance_m": 0.3569217482852885,
+        "linear_speed_m_s": 0.000757522260400185,
+        "angular_speed_rad_s": 0.0023609960977375778
+      },
+      "good_readings_ml": [
+        24.932249322493227,
+        24.936708860759495,
+        24.936708860759495
+      ],
+      "measurements": [
+        {
+          "time_s": 74.40000000017322,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.892473118279568,
+            "eye_alignment_error_px": -56.5,
+            "boundary_support_fraction": 0.9411764705882353
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 75.90000000018038,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.751461988304094,
+            "eye_alignment_error_px": -41.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 77.40000000018755,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.91007194244604,
+            "eye_alignment_error_px": -27.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.012
+        },
+        {
+          "time_s": 78.90000000019471,
+          "image": {
+            "valid": false,
+            "reason": "calibration_anchors_not_visible",
+            "volume_ml": null,
+            "eye_alignment_error_px": null,
+            "boundary_support_fraction": null
+          },
+          "requested_camera_lateral_shift_m": 0.012
+        },
+        {
+          "time_s": 80.40000000020187,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.923354373309287,
+            "eye_alignment_error_px": -12.5,
+            "boundary_support_fraction": 1.0
+          },
+          "requested_vertical_shift_m": -0.010624358077740287
+        },
+        {
+          "time_s": 81.90000000020903,
+          "image": {
+            "valid": true,
+            "reason": null,
+            "volume_ml": 24.936708860759495,
+            "eye_alignment_error_px": 0.5,
+            "boundary_support_fraction": 1.0
+          }
+        }
+      ],
+      "final_rgb": {
+        "valid": true,
+        "reason": null,
+        "volume_ml": 24.936708860759495,
+        "eye_alignment_error_px": 0.5,
+        "boundary_support_fraction": 1.0
+      }
+    }
+  ],
+  "training_sampler": {
+    "kind": "stationary_reads_and_final_vertical_alignment_weights",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-approach-coverage-v60",
+    "base_weights": "/data/hlou/pigment-pour-study/runs/cylinder-approach-coverage-v60/v60-sampling.npy",
+    "weights": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/v61-sampling.npy",
+    "sampler_sha256": "672caac9eeaf0aee36125611dd39a9b04d09b8a1dfa4d6223a98e3688b7e8994",
+    "frame_count": 106544,
+    "fitting_examples": 101217,
+    "groups": {
+      "final_height_and_view_alignment": {
+        "fit_anchors": 7271,
+        "episodes": 163,
+        "old_share": 0.0214955068486717,
+        "new_share": 0.04
+      },
+      "stable_read_hold": {
+        "fit_anchors": 1471,
+        "episodes": 164,
+        "old_share": 0.006843125918045269,
+        "new_share": 0.03
+      },
+      "other_presentation": {
+        "fit_anchors": 35141,
+        "episodes": 164,
+        "old_share": 0.1137631860811238,
+        "new_share": 0.07210181884784078
+      }
+    },
+    "fitting_presentation_share": 0.1421018188478408,
+    "fitting_total_weight_unchanged": true,
+    "other_raw_weights_exact": true,
+    "height_frames_before_read_max": 90,
+    "view_search_frames_before_read_max": 130,
+    "horizon": 8,
+    "fit_seed": 48,
+    "independent_cases_read": false
+  },
+  "v60_original_stopping_coverage": {
+    "kind": "actual_draw_mass_for_teacher_stop_phase_in_v60",
+    "source": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-approach-coverage-v60",
+    "official_fit_split": true,
+    "independent_cases_read": false,
+    "phase_support": {
+      "align_eye_level": {
+        "fitted_anchors": 14997,
+        "episode_count": 163,
+        "probability": 0.0483060167092164
+      },
+      "back_away": {
+        "fitted_anchors": 12825,
+        "episode_count": 162,
+        "probability": 0.09384876869442399
+      },
+      "find_scale": {
+        "fitted_anchors": 4415,
+        "episode_count": 53,
+        "probability": 0.020484242410756227
+      },
+      "hold_for_reading": {
+        "fitted_anchors": 3093,
+        "episode_count": 164,
+        "probability": 0.009899225131598929
+      },
+      "present": {
+        "fitted_anchors": 14112,
+        "episode_count": 164,
+        "probability": 0.041580064686871296
+      },
+      "read_stable": {
+        "fitted_anchors": 2570,
+        "episode_count": 164,
+        "probability": 0.010223577003285418
+      },
+      "straighten": {
+        "fitted_anchors": 1003,
+        "episode_count": 20,
+        "probability": 0.00019986218299688368
+      }
+    },
+    "held_read_windows": {
+      "present": {
+        "fitted_anchors": 43883,
+        "episode_count": 164,
+        "probability": 0.1421018188478408
+      },
+      "final_read": {
+        "fitted_anchors": 2570,
+        "episode_count": 164,
+        "probability": 0.010223577003285418
+      },
+      "format_full_eight_valid_read": {
+        "fitted_anchors": 1471,
+        "episode_count": 164,
+        "probability": 0.006843125918045269
+      },
+      "full_eight_exact_joint_and_base_hold": {
+        "fitted_anchors": 1424,
+        "episode_count": 158,
+        "probability": 0.006822734040042137
+      },
+      "full_eight_quiet_joint_and_base": {
+        "fitted_anchors": 1471,
+        "episode_count": 164,
+        "probability": 0.006843125918045269
+      },
+      "present_now_moving_next_full_eight_quiet": {
+        "fitted_anchors": 711,
+        "episode_count": 164,
+        "probability": 0.0022861776158340226
+      },
+      "final_read_high_velocity_before_hold": {
+        "fitted_anchors": 0,
+        "episode_count": 0,
+        "probability": 0.0
+      }
+    },
+    "all_frames": 106544,
+    "fit_count": 101217
+  },
+  "v61_same_data_and_parent_configuration": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/train-v61.yml",
+  "v61_data_validation": "/data/hlou/pigment-pour-study/runs/cylinder-stopping-diagnostic-v61/data-validation.json",
+  "v61_queued_launcher_pid": 2171392,
+  "first_audit_watcher_pid": 2184848,
+  "v61_data_check_passed": true,
+  "latest_model_curves": {
+    "56": {
+      "status": "audit_1024",
+      "rollouts": [
+        {
+          "step": 128,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 1,
+          "reported_raw_lift_m": 0.0012563190334360375,
+          "nearest_saved_grasp_distance_m": 0.06565398842555335
+        },
+        {
+          "step": 256,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.1150830717735583
+        },
+        {
+          "step": 384,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.10234772046818931
+        },
+        {
+          "step": 512,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 1,
+          "reported_raw_lift_m": 0.001317436236982883,
+          "nearest_saved_grasp_distance_m": 0.0687218294035279
+        },
+        {
+          "step": 640,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.14492654649382122
+        },
+        {
+          "step": 768,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.21118666644825715
+        },
+        {
+          "step": 896,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.1238140123929424
+        }
+      ]
+    },
+    "57": {
+      "status": "neural_evaluation_640",
+      "rollouts": [
+        {
+          "step": 128,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.10785059901741947
+        },
+        {
+          "step": 256,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.10315806156733016
+        },
+        {
+          "step": 384,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.0900997576582694
+        },
+        {
+          "step": 512,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.059876279772585264
+        }
+      ]
+    },
+    "58": {
+      "status": "neural_evaluation_640",
+      "rollouts": [
+        {
+          "step": 128,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.0943989381687578
+        },
+        {
+          "step": 256,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.17663856737263756
+        },
+        {
+          "step": 384,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.08406024713056721
+        },
+        {
+          "step": 512,
+          "success": false,
+          "time_s": 90.00000000024771,
+          "failure": "timeout",
+          "snapshot_maximum_loaded_fingers": 0,
+          "reported_raw_lift_m": 0.0,
+          "nearest_saved_grasp_distance_m": 0.16399658692154626
+        }
+      ]
+    },
+    "59": {
+      "status": "no_driver_started",
+      "rollouts": []
+    },
+    "60": {
+      "status": "no_driver_started",
+      "rollouts": []
+    },
+    "61": {
+      "status": "no_driver_started",
+      "rollouts": []
+    }
+  },
+  "v57_step512_physical_replay": null,
+  "any_candidate_found": false
+}
