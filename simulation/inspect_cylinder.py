@@ -281,7 +281,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None,
                    align_near_grasp=False,hold_wrist_on_heading_return=False,
                    align_near_grasp_forward=False,
-                   wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False):
+                   wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False,
+                   align_heading_before_base_advance=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -335,6 +336,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if (reset_scene or start_holding or release_single_contact
                 or approach_base_reference.shape != (3,) or not np.isfinite(approach_base_reference).all()):
             raise ValueError("Approach base recovery requires finite reset odometry and a saved unheld state")
+    if align_heading_before_base_advance and approach_base_reference is None:
+        raise ValueError("Aligning before base advance requires a base recovery reference")
     if approach_heading_reference is not None and (
             not align_from_clearance or approach_base_reference is not None
             or release_single_contact or not np.isfinite(approach_heading_reference)):
@@ -578,8 +581,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             distance, lateral = float(displacement@direction), float(displacement@left)
             heading_offset = np.arctan2(lateral,max(.09,distance)) * np.clip((distance-.015)/.06,0,1)
             heading_error = reference[2]+heading_offset-pose[2]
-            yaw = float(np.clip(1.8*np.arctan2(np.sin(heading_error),np.cos(heading_error)),-.15,.15))
+            heading_error = np.arctan2(np.sin(heading_error),np.cos(heading_error))
+            yaw = float(np.clip(1.8*heading_error,-.15,.15))
             speed = min(.09, max(0., 1.6*(distance-.008))) if distance > .012 else 0.
+            if align_heading_before_base_advance:
+                # Avoid accumulating lateral error while the base is still turning.
+                speed *= float(np.clip((.12-abs(heading_error))/.09,0.,1.))
             tick(phase,q,.034,forward=speed,yaw=yaw)
             require_clearance()
             velocity = env.base_velocity()
@@ -930,6 +937,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             summary["controller_parameters"]["release_lift_m"]=release_lift_m
     if align_from_clearance:
         summary["controller_parameters"]["align_from_clearance"]=True
+    if align_heading_before_base_advance:
+        summary["controller_parameters"]["align_heading_before_base_advance"]=True
     if approach_heading_reference is not None:
         summary["controller_parameters"]["approach_heading_reference_rad"]=float(approach_heading_reference)
     if hold_wrist_on_heading_return:
