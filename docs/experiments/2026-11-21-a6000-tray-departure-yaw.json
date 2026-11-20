@@ -1,0 +1,140 @@
+{
+  "kind": "verified_tray_departure_and_symmetric_yaw_candidate",
+  "as_of": "2026-11-21T03:52:41.801917+08:00",
+  "existing_runs_unchanged": true,
+  "same_recorded_rgb_clips_reused": true,
+  "independent_cases_read": false,
+  "successful_model_inference": false,
+  "right_finger_teacher": {
+    "kind": "certified_teacher_tray_departure_with_three_rgb_cameras",
+    "frames": 1226,
+    "source": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-384-seed-881951/demonstration",
+    "seed": 881951,
+    "source_checkpoint": 384,
+    "approach_target_frames": 530,
+    "teacher_full_task_succeeded": true,
+    "geometry_audit_passed": true,
+    "independent_cases_read": false,
+    "departure_frames": 12,
+    "physically_replayed_frames": 929,
+    "teacher_state_errors": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_slip_m": 0.009945609488751906,
+    "max_supported_lift_m": 0.11942301734136418,
+    "reading_error_ml": 0.06268011527377837,
+    "videos": {
+      "face_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-384-seed-881951/demonstration/face_view.mp4",
+        "sha256": "10e4cd6dec9f98a524cca6425e65bd074cae0bc623b3961fbad2f563d5ac1411",
+        "frames": 1226
+      },
+      "left_wrist_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-384-seed-881951/demonstration/left_wrist_view.mp4",
+        "sha256": "8a2d32b0a88b7166d28b46cea656e6177df61d7985afc104285824cff59934ab",
+        "frames": 1226
+      },
+      "right_wrist_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-384-seed-881951/demonstration/right_wrist_view.mp4",
+        "sha256": "73dd0dfd7c837338cdfd13af041808ffd9909b819796c65e7ea34d13e6cb3f9d",
+        "frames": 1226
+      }
+    }
+  },
+  "left_finger_teacher": {
+    "kind": "recertified_left_finger_tray_departure_yaw_only",
+    "teacher_full_task_succeeded": true,
+    "geometry_audit_passed": true,
+    "source": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-512-seed-881950/demonstration",
+    "seed": 881950,
+    "source_checkpoint": 512,
+    "frames": 962,
+    "physically_replayed_frames": 909,
+    "approach_target_frames": 468,
+    "departure_frames": 28,
+    "trajectory_sha256": "f925dc389826dfe9c731b266b38573c59754eb51b348ce589df672cd3f3c7c49",
+    "source_arrays_sha256": "335deece7f92308682a0d5f28a7dede5af020f6be9d7e06c5b033adabfd677cc",
+    "max_slip_m": 0.009864152232449496,
+    "max_supported_lift_m": 0.11950681028080623,
+    "reading_error_ml": 0.11111111111111072,
+    "alignment_video": {
+      "face_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-512-seed-881950/demonstration/face_view.mp4",
+        "sha256": "244cc2c9bc8ed619b151395b3e57efd1cbd1ed8a157a2385282e4a7596cb26c5",
+        "frames": 962
+      },
+      "left_wrist_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-512-seed-881950/demonstration/left_wrist_view.mp4",
+        "sha256": "b67aa7498e8f09cb0304941115e018f495c47e3f2439238b3885f80eb188100b",
+        "frames": 962
+      },
+      "right_wrist_view": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-near-descent-direction-v86/teacher-tuck-replay/training-tray-departure-captures/step-512-seed-881950/demonstration/right_wrist_view.mp4",
+        "sha256": "13021dec79a8184c004feeec783c5a64057bf758291a55a7ec4d5b20caa0bb39",
+        "frames": 962
+      }
+    },
+    "yaw_column": 17,
+    "old_yaw_bounds_rad": [
+      0.9,
+      2.250365114212036
+    ],
+    "new_yaw_bounds_rad": [
+      0.89975,
+      2.250615114212036
+    ],
+    "original_yaw_overflow_frames": 42,
+    "original_yaw_overflow_during_departure": 20,
+    "model_task_success_measured": false,
+    "independent_cases_read": false,
+    "current_training_normalizers_modified": false,
+    "original_norm_sha256": "861c03294ce8fe231ca3d613a1203a67c1fbc14d769d067d7edfb585d20f8216",
+    "candidate_norm_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23"
+  },
+  "official_state_projection": {
+    "kind": "official_normalizer_projection_preservation_under_symmetric_yaw_expansion",
+    "original_normalizer": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-near-descent-v85/joint_norm_stats.json",
+    "candidate_normalizer": "/data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/joint_norm_stats.json",
+    "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024/model.safetensors",
+    "comparison_frames": 4096,
+    "base_rows": 152849,
+    "unaffected_columns_bit_exact": true,
+    "existing_action_normalization_bit_exact": true,
+    "mask_weights_equal": true,
+    "yaw_column": 17,
+    "relative_projection_scale": 1.0003702702289459,
+    "original_yaw_bounds": [
+      0.9,
+      2.250365114212036
+    ],
+    "new_yaw_bounds": [
+      0.89975,
+      2.250615114212036
+    ],
+    "calibration_fields_adjusted": [
+      "joint_servo_wrist_pose_loss.near_approach_world_wrist.high_approach_alignment.state_yaw_affine"
+    ],
+    "bias_free": true,
+    "max_f32_projection_difference": 2.384185791015625e-07,
+    "max_bf16_projection_difference": 0.0078125,
+    "widened_float32_yaw_probe_distinct": true,
+    "used_official_projection_method": true,
+    "model_inference_called": false,
+    "training_configuration_changed": false,
+    "independent_cases_read": false
+  },
+  "paired_candidate_validation": {
+    "launcher_pid": 2904762,
+    "live": true,
+    "command": "bash /data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/validate-left-and-right-data.sh ",
+    "official_loader": null
+  },
+  "source_sha256": {
+    "/data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/recertify-left-departure-root.py": "b7dbd00a6cccdc31e39fc3c79c0f6da76258a877eb7655032f55ff08ed5ca821",
+    "/data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/verify-yaw-projection.py": "167d1b68ee044381fc66fdd3f7cf0e441ceb321bcecb2da7d508c866f87e9e7f",
+    "/data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/prepare-left-and-right-data.py": "f1b54853a5a0e8b828b5c5ad4c59cfa2e6015a8f562d7765aac309f094b05c66",
+    "/data/hlou/pigment-pour-study/runs/cylinder-tray-departure-v87/yaw-only-recertification/architecture-yaw-only.json": "4228e54f01e8945348d9f442d86908c68f0a948c744aef45ce251496cee00183"
+  }
+}
