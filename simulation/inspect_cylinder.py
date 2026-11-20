@@ -279,7 +279,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
                    wrist_clearance_retreat_from_reset=False,read_from_current_view=False,
                    retry_reading_from_current_view=False,wrist_clearance_extra_lift_m=None,
-                   align_near_grasp=False):
+                   align_near_grasp=False,hold_wrist_on_heading_return=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -331,6 +331,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             not align_from_clearance or approach_base_reference is not None
             or release_single_contact or not np.isfinite(approach_heading_reference)):
         raise ValueError("Heading recovery requires a finite yaw reference and a saved clearance approach")
+    if hold_wrist_on_heading_return and approach_heading_reference is None:
+        raise ValueError("Holding the wrist during heading recovery requires a heading reference")
     approach_height = env.grasp_height
     if teacher_grasp_height_m is not None:
         # The existing cylinder collision wall spans 6–245 mm above the base.
@@ -492,6 +494,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         return q
 
     def restore_approach_heading(reference):
+        nonlocal rotation
         phase = "restore_approach_heading"
         if env.metrics()["grip_contacts"]:
             raise InspectionFailure("heading_recovery_requires_contact_free_start")
@@ -501,7 +504,22 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     or np.linalg.norm(env.data.xpos[env.cylinder_body]-cylinder) > .005):
                 raise InspectionFailure("heading_recovery_disturbed_cylinder")
 
-        q = tuck_for_base_motion("tuck_for_heading_return", require_clearance)
+        if hold_wrist_on_heading_return:
+            nominal = rotation
+            rotation = env.data.xmat[env.gripper_body].reshape(3,3).copy()
+            tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
+            clearance = tip.copy()
+            clearance[1] = min(tip[1], cylinder[1] - .14)
+            if tip[1] - clearance[1] > .002:
+                gripper = env.model.actuator("right_arm_gripper_left_joint_servo").id
+                move("wrist_clearance_heading_retreat",clearance,1.5,
+                     opening=env.hold_targets[gripper],straight=True)
+            rotation = nominal
+            q = env.data.qpos[env.arm_addresses].copy()
+            wrist_rotation = env.data.xmat[env.gripper_body].reshape(3,3).copy()
+            wrist_tip = env.data.xpos[env.gripper_body] + wrist_rotation @ env.grasp_offset
+        else:
+            q = tuck_for_base_motion("tuck_for_heading_return", require_clearance)
         start = env.base_pose()
         attempt = dict(phase=phase,start_seconds=float(env.data.time),start_pose=start.tolist(),
                        target_yaw_rad=float(reference))
@@ -510,6 +528,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         for _ in range(120):
             error = angle_difference(reference, env.base_pose()[2])
             yaw = float(np.clip(2.2*error,-.16,.16)) if abs(error) > .006 else 0.
+            if hold_wrist_on_heading_return:
+                q, residual = env.inverse_kinematics(wrist_tip, wrist_rotation, initial=q)
+                if residual > .002:
+                    raise InspectionFailure(f"wrist_hold_unreachable_during_heading_return:{residual:.4f}")
             tick(phase,q,.034,yaw=yaw)
             require_clearance()
             pose = env.base_pose()
@@ -880,6 +902,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["align_from_clearance"]=True
     if approach_heading_reference is not None:
         summary["controller_parameters"]["approach_heading_reference_rad"]=float(approach_heading_reference)
+    if hold_wrist_on_heading_return:
+        summary["controller_parameters"]["hold_wrist_on_heading_return"]=True
     if final_reading["valid"]:
         summary["absolute_reading_error_ml"]=abs(final_reading["volume_ml"]-env.volume_ml)
         if reason is None and summary["absolute_reading_error_ml"]>.5:

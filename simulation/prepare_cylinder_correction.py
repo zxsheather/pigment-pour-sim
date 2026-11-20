@@ -108,6 +108,38 @@ def score_training_frames(trial, episode, metadata, base, model_states, actions,
     return videos, matched_frames
 
 
+def verify_heading_recovery(raw, actions, reference, first_alignment, hold_wrist):
+    turning = np.flatnonzero(raw['phase'] == 'restore_approach_heading')
+    tucked = np.flatnonzero(raw['phase'] == 'tuck_for_heading_return')
+    require(turning.size and turning[-1] < first_alignment,
+            'Missing contact-free heading recovery before wrist alignment')
+    if hold_wrist:
+        clearing = np.flatnonzero(raw['phase'] == 'wrist_clearance_heading_retreat')
+        require(not tucked.size and (not clearing.size or clearing[-1] < turning[0]),
+                'Wrist clearance must precede the coordinated heading return')
+    else:
+        require(tucked.size and tucked[-1] < turning[0], 'The arm must tuck before the heading return')
+    poses = raw['base_pose']
+    after = int(turning[-1]) + 1
+    initial_error = angle_difference(reference, poses[0, 2])
+    final_error = angle_difference(reference, poses[after, 2])
+    start_xy = poses[turning[0], :2]
+    if hold_wrist:
+        xy = poses[turning[0]:after+1, :2]
+        xy_drift = float(np.linalg.norm(xy - start_xy, axis=1).max())
+    else:
+        xy_drift = float(np.linalg.norm(poses[after, :2] - start_xy))
+    corrective = actions[turning, 8] * np.sign(initial_error) > .01
+    require(abs(initial_error) >= .035 and abs(final_error) <= .006 and xy_drift <= .008
+            and (hold_wrist or np.all(actions[turning, 7] == 0)) and corrective.any(),
+            'Recorded heading recovery did not restore the reset yaw in place')
+    result = dict(frames=int(turning.size), tuck_frames=int(tucked.size), source_error_rad=initial_error,
+                  final_error_rad=final_error, translation_m=xy_drift, corrective_frames=int(corrective.sum()))
+    if hold_wrist:
+        result['wrist_clearance_frames'] = int(clearing.size)
+    return result
+
+
 def prepare_reset(episode, reconstruction, base, output, case_file):
     metadata = json.loads((episode/'metadata.json').read_text())
     result = metadata['result']
@@ -290,22 +322,8 @@ def prepare(episode, reconstruction, base, output):
                 if recovery_stage == 'restore_heading_then_clearance_wrist_alignment':
                     reference = provenance['reset_base_heading_rad']
                     require(reference == trial.initial_base[2], 'Heading reference differs from reset odometry')
-                    turning = np.flatnonzero(raw['phase'] == 'restore_approach_heading')
-                    tucked = np.flatnonzero(raw['phase'] == 'tuck_for_heading_return')
-                    require(turning.size and tucked.size and tucked[-1] < turning[0] <= turning[-1] < aligns[0],
-                            'Missing contact-free heading recovery before wrist alignment')
-                    poses = raw['base_pose']
-                    after = int(turning[-1]) + 1
-                    initial_error = angle_difference(reference, poses[0, 2])
-                    final_error = angle_difference(reference, poses[after, 2])
-                    xy_drift = float(np.linalg.norm(poses[after, :2] - poses[turning[0], :2]))
-                    corrective = actions[turning, 8] * np.sign(initial_error) > .01
-                    require(abs(initial_error) >= .035 and abs(final_error) <= .006 and xy_drift <= .008
-                            and np.all(actions[turning, 7] == 0) and corrective.any(),
-                            'Recorded heading recovery did not restore the reset yaw in place')
-                    heading_recovery = dict(frames=int(turning.size), tuck_frames=int(tucked.size),
-                                            source_error_rad=initial_error, final_error_rad=final_error,
-                                            translation_m=xy_drift, corrective_frames=int(corrective.sum()))
+                    hold_wrist = result['controller_parameters'].get('hold_wrist_on_heading_return', False)
+                    heading_recovery = verify_heading_recovery(raw, actions, reference, aligns[0], hold_wrist)
 
         trial.progress_router = restore_router
         trial.progress_changes = []
