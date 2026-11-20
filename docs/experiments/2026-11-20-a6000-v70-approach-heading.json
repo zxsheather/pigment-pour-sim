@@ -1346,5 +1346,149 @@
       "model_loaded": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step128-single/model_load.json"
     }
   ],
-  "independent_cases_read": false
+  "independent_cases_read": false,
+  "v63_step256_base_command_factorial": {
+    "source_model_summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single/summary.json",
+    "full_replay_sources": [
+      "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/following-checkpoints-replay-report.json",
+      "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/v63-step256-isolated-forward-replay-report.json"
+    ],
+    "results": [
+      {
+        "variant": "recorded",
+        "nearest_distance_m": 0.11183161089038907,
+        "nearest_time_s": 14.95000000000678,
+        "base_xy_delta_m": [
+          -0.0037437814471047437,
+          -0.04103607632126566
+        ],
+        "base_yaw_delta_deg": -6.102842108044453,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": true,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_yaw",
+        "nearest_distance_m": 0.09499184349501999,
+        "nearest_time_s": 16.200000000007595,
+        "base_xy_delta_m": [
+          9.857075097263746e-07,
+          -0.04810393721448186
+        ],
+        "base_yaw_delta_deg": -0.004195413114128071,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "correct_after_5deg",
+        "nearest_distance_m": 0.09531372000238891,
+        "nearest_time_s": 16.200000000007595,
+        "base_xy_delta_m": [
+          -0.0020526628979798955,
+          -0.04803400733890073
+        ],
+        "base_yaw_delta_deg": -0.3046473028725789,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_forward",
+        "nearest_distance_m": 0.06801916477465961,
+        "nearest_time_s": 16.25000000000748,
+        "base_xy_delta_m": [
+          -1.4153427092544746e-06,
+          -1.32223471283055e-05
+        ],
+        "base_yaw_delta_deg": -6.253464787529728,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": true,
+        "original_forward_preserved": false,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_yaw_and_forward",
+        "nearest_distance_m": 0.060543934506471504,
+        "nearest_time_s": 16.050000000007945,
+        "base_xy_delta_m": [
+          4.718645520651599e-06,
+          -4.159418799321024e-05
+        ],
+        "base_yaw_delta_deg": -0.003258407078831994,
+        "result": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "finger_counts": [
+          320,
+          15,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": false,
+        "established_hold": false
+      },
+      {
+        "variant": "correct_yaw_zero_forward",
+        "nearest_distance_m": 0.058929718018522405,
+        "nearest_time_s": 16.050000000007945,
+        "base_xy_delta_m": [
+          4.47658004154583e-06,
+          -3.928996321972411e-05
+        ],
+        "base_yaw_delta_deg": -0.30524525639085687,
+        "result": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "finger_counts": [
+          320,
+          14,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": false,
+        "established_hold": false
+      }
+    ],
+    "neural_forward_ran": false,
+    "independent_cases_read": false,
+    "eligible_as_model_acceptance": false
+  }
 }
