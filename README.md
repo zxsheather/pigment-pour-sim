@@ -15,6 +15,10 @@
 
 新增 [量筒拿近与读数](docs/cylinder-inspection.md)：量筒任务默认使用官方 URDF 的平行手指碰撞几何，不添加定制指垫或 V 槽；接触材质参数明确标为未标定假设。历史 V 形改装的 8/8 与默认硬件基线分开记录。动作由程序教师生成，尚非 Wall 策略结果。
 
+## 真机资料
+
+比赛的 Wallx 推理教程提供量子一号 Pro 的双臂、夹爪和三路相机调用示例。量筒任务还需核对现场夹爪型号、关节增量到真机指令的映射，以及底盘控制接口。[Wallx API + 推理教程](https://x2-robot.feishu.cn/docx/OFubdX1yYoyMT2x7uV9cGLZBn3e) · [量筒任务的接口核对项](docs/cylinder-inspection.md#真机接口参考)
+
 ## 文件
 
 ```text
