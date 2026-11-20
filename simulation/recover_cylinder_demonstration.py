@@ -153,7 +153,8 @@ def collect(a, controller, output):
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
-        if controller.get("teacher",{}).get("release_lift_m"):
+        teacher = controller.get("teacher",{})
+        if teacher.get("release_lift_m") or teacher.get("wrist_clearance_retreat_from_reset"):
             provenance["reset_base_y_m"]=float(initial_base[1])
         if a.restore_approach_base:
             provenance["recovery_stage"]="restore_base_then_grasp"
