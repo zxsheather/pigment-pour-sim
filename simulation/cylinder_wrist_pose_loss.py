@@ -185,8 +185,7 @@ def base_commands_from_observation(requests, state, low, high, response):
     return slew_base_commands(requests, previous, low, high, response['step_limit'])
 
 
-def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_prefix, world, settings):
-    """Match descent and restrain forward overshoot during a demonstrated alignment."""
+def approach_alignment_frame(state, world, settings):
     yaw_low, yaw_high = state.new_tensor(settings['state_yaw_affine']).unbind()
     yaw = yaw_low + (state[:, 17] + 1.) * (yaw_high - yaw_low) * .5
     # Markers are in the starting base frame. Convert horizontal projections
@@ -194,10 +193,16 @@ def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_p
     forward_axis = torch.stack((yaw.sin(), yaw.cos()), dim=-1)
     sideways_axis = torch.stack((yaw.cos(), -yaw.sin()), dim=-1)
     cue = wrist_target_displacement(state, world)
-    forward_gap = (cue[:, :2] * forward_axis).sum(dim=-1)
-    sideways_gap = (cue[:, :2] * sideways_axis).sum(dim=-1).abs()
     aperture_low, aperture_high = state.new_tensor(settings['state_aperture_affine_m']).unbind()
     aperture = aperture_low + (state[:, 6] + 1.) * (aperture_high - aperture_low) * .5
+    return forward_axis, sideways_axis, cue, aperture
+
+
+def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_prefix, world, settings):
+    """Match descent and restrain forward overshoot during a demonstrated alignment."""
+    forward_axis, sideways_axis, cue, aperture = approach_alignment_frame(state, world, settings)
+    forward_gap = (cue[:, :2] * forward_axis).sum(dim=-1)
+    sideways_gap = (cue[:, :2] * sideways_axis).sum(dim=-1).abs()
     depth_low, depth_high = settings['depth_range_m']
     height_low, height_high = settings['height_range_m']
     height = -cue[:, 2]
@@ -221,6 +226,39 @@ def high_approach_alignment_loss(planned, expected, measured_tip, state, valid_p
     high_excess = error[..., 2].clamp_min(0.)
     loss = (forward_excess.square() + high_excess.square()) * (settings['weight'] / settings['scale_m'] ** 2)
     return loss.masked_fill(~(eligible[:, None] & lowering & valid_prefix), 0.)
+
+
+def lateral_approach_alignment_loss(planned, expected, measured_tip, state, valid_prefix, world, settings):
+    """Supervise a demonstrated rear clearance move or lateral alignment before advancing."""
+    forward, sideways, cue, aperture = approach_alignment_frame(state, world, settings)
+    depth = (cue[:, :2] * forward).sum(dim=-1)
+    side = (cue[:, :2] * sideways).sum(dim=-1)
+    height = -cue[:, 2]
+    depth_min, depth_max = settings['depth_range_m']
+    side_min, side_max = settings['sideways_range_m']
+    height_min, height_max = settings['height_range_m']
+    eligible = ((state[:, 23] > 0.) & (aperture >= settings['min_aperture_m'])
+                & (depth >= depth_min) & (depth <= depth_max)
+                & (side.abs() >= side_min) & (side.abs() <= side_max)
+                & (height >= height_min) & (height <= height_max))
+
+    teacher_shift = expected[..., 0, :] - measured_tip[:, None, :]
+    teacher_depth = (teacher_shift[..., :2] * forward[:, None, :]).sum(dim=-1)
+    teacher_side = (teacher_shift[..., :2] * sideways[:, None, :]).sum(dim=-1)
+    direction = side.sign()[:, None]
+    movement = settings['min_teacher_movement_m']
+    drift = settings['max_teacher_drift_m']
+    retreat = ((teacher_depth <= -movement) & (teacher_side.abs() <= drift)
+               & (teacher_shift[..., 2].abs() <= drift))
+    align = ((direction * teacher_side >= movement) & (teacher_depth.abs() <= drift))
+
+    error = planned[..., 0, :] - expected[..., 0, :]
+    forward_excess = (error[..., :2] * forward[:, None, :]).sum(dim=-1).clamp_min(0.)
+    lateral_error = (error[..., :2] * sideways[:, None, :]).sum(dim=-1)
+    lateral_shortfall = (-direction * lateral_error).clamp_min(0.)
+    lateral_penalty = torch.where(retreat, lateral_error.square(), lateral_shortfall.square())
+    loss = (forward_excess.square() + lateral_penalty) * (settings['weight'] / settings['scale_m'] ** 2)
+    return loss.masked_fill(~(eligible[:, None] & (retreat | align) & valid_prefix), 0.)
 
 
 def near_approach_world_wrist_loss(planned, expected, forecast, reference, state, calibration,
@@ -248,6 +286,7 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     loss = squared_error * (calibration['weight'] / calibration['scale_m'] ** 2)
     progress = calibration.get('approach_progress')
     alignment = calibration.get('high_approach_alignment')
+    lateral = calibration.get('lateral_approach_alignment')
     if servo is None and progress is not None:
         bounded = base_commands_from_observation(planned_motion, state, low, high,
                                                  progress['base_command_response'])
@@ -263,13 +302,16 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
         shortfall = (planned_distance - teacher_distance).clamp_min(0.)
         loss = loss + (progress['weight'] * (shortfall / progress['scale_m']).square()).masked_fill(~advancing, 0.)
     loss = loss.masked_fill(~active, 0.)
+    alignment_prefix = valid_prefix
+    if (alignment is not None or lateral is not None) and dof_mask is not None:
+        gripper_valid = dof_mask.reshape_as(reference)[..., 6].bool()
+        alignment_prefix = (valid & gripper_valid).cumprod(dim=1).bool()
     if alignment is not None:
-        alignment_prefix = valid_prefix
-        if dof_mask is not None:
-            gripper_valid = dof_mask.reshape_as(reference)[..., 6].bool()
-            alignment_prefix = (valid & gripper_valid).cumprod(dim=1).bool()
         loss = loss + high_approach_alignment_loss(planned_world, expected_world, measured_tip, state,
                                                   alignment_prefix, calibration, alignment)
+    if lateral is not None:
+        loss = loss + lateral_approach_alignment_loss(planned_world, expected_world, measured_tip, state,
+                                                     alignment_prefix, calibration, lateral)
     return loss
 
 
@@ -365,7 +407,8 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     world_wrist = calibration.get('near_approach_world_wrist')
     if world_wrist is not None:
         measured_tip = None
-        if world_wrist.get('approach_progress') is not None or world_wrist.get('high_approach_alignment') is not None:
+        if any(world_wrist.get(key) is not None for key in (
+                'approach_progress', 'high_approach_alignment', 'lateral_approach_alignment')):
             measured_tip = wrist_markers(measured, calibration)[..., 0, :]
         loss = loss + near_approach_world_wrist_loss(planned, expected, forecast, reference, state,
                                                    world_wrist, valid, dof_mask, measured_tip)
