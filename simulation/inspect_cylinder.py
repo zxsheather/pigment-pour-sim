@@ -278,6 +278,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
                    release_single_contact=False,release_retreat_m=0.,release_retreat_seconds=1.5,
+                   release_retreat_along_contact_normal=False,
                    release_lift_m=0.,teacher_grasp_height_m=None,
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
@@ -341,6 +342,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Release retreat requires single-contact recovery")
     if release_retreat_before_open and not release_retreat_m:
         raise ValueError("Retreat before opening requires a single-contact retreat distance")
+    if release_retreat_along_contact_normal and not release_retreat_before_open:
+        raise ValueError("Retreat along the contact normal requires retreating before opening")
     if not np.isfinite(release_lift_m) or not 0. <= release_lift_m <= .06:
         raise ValueError("Release lift must be within [0,0.06] m")
     if release_lift_m and (not release_single_contact or release_retreat_m):
@@ -624,8 +627,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         else:
             raise InspectionFailure("approach_base_recovery_timeout")
 
-    def has_upward_finger_contact():
-        total = upward = 0.
+    def finger_contact_force():
+        total = 0.
+        outward = np.zeros(3)
         force = np.empty(6)
         for i, contact in enumerate(env.data.contact):
             first, second = env.model.geom_bodyid[[contact.geom1, contact.geom2]]
@@ -638,16 +642,19 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             mujoco.mj_contactForce(env.model, env.data, i, force)
             if force[0] > .05:
                 total += force[0]
-                upward += sign * force[0] * contact.frame[2]
-        return total > 0. and upward >= .8*total
+                outward += sign * force[0] * contact.frame[:3]
+        return total, outward
 
     def withdraw_from_single_contact(opening):
         nonlocal rotation
         nominal_rotation = rotation
         rotation = env.data.xmat[env.gripper_body].reshape(3, 3).copy()
         tip = env.data.xpos[env.gripper_body] + rotation @ env.grasp_offset
-        away = -(rotation @ (env.grip_point_relative() - env.grasp_offset))
-        away[2] = 0.
+        if release_retreat_along_contact_normal:
+            _, away = finger_contact_force()
+        else:
+            away = -(rotation @ (env.grip_point_relative() - env.grasp_offset))
+            away[2] = 0.
         distance = np.linalg.norm(away)
         if distance <= .001:
             raise InspectionFailure("single_contact_retreat_direction_undefined")
@@ -677,7 +684,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 q = env.data.qpos[env.arm_addresses].copy()
                 cylinder_dof = env.model.joint("cylinder_free").dofadr[0]
                 if release_lift_m:
-                    if not has_upward_finger_contact():
+                    total_force, outward = finger_contact_force()
+                    if total_force <= 0. or outward[2] < .8*total_force:
                         raise InspectionFailure("release_lift_requires_upward_contact_normal")
                     nominal_rotation = rotation
                     rotation = env.data.xmat[env.gripper_body].reshape(3,3).copy()
@@ -1052,6 +1060,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             summary["controller_parameters"]["release_retreat_seconds"]=release_retreat_seconds
         if release_retreat_before_open:
             summary["controller_parameters"]["release_retreat_before_open"]=True
+        if release_retreat_along_contact_normal:
+            summary["controller_parameters"]["release_retreat_along_contact_normal"]=True
         if release_lift_m:
             summary["controller_parameters"]["release_lift_m"]=release_lift_m
     if align_from_clearance:
