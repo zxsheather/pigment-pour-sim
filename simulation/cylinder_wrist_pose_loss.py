@@ -292,9 +292,9 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
     return loss.masked_fill(~(eligible[:, None] & (retreat | align) & valid_prefix), 0.)
 
 
-def aligned_open_advance_loss(planned, expected, measured_tip, forecast, reference, state,
-                             valid_prefix, world, settings):
-    """Supervise advance and a minimum opening on aligned demonstration windows."""
+def open_approach_advance_loss(planned, expected, measured_tip, forecast, reference, state,
+                              valid_prefix, world, settings):
+    """Match open-finger advance and, when demonstrated, lateral correction."""
     cue = wrist_target_displacement(state, world)
     depth_min, depth_max = settings['depth_range_m']
     state_low, state_high = state.new_tensor(settings['state_aperture_affine_m']).unbind()
@@ -303,19 +303,34 @@ def aligned_open_advance_loss(planned, expected, measured_tip, forecast, referen
     teacher_gap = action_low + (reference[..., 6] + 1.) * (action_high - action_low) * .5
     requested_gap = action_low + (forecast[..., 6] + 1.) * (action_high - action_low) * .5
     min_gap = settings['min_open_aperture_m']
+    min_measured_gap = settings.get('min_measured_aperture_m', min_gap)
     region = ((state[:, 23] > 0.) & (cue[:, 0] >= depth_min) & (cue[:, 0] <= depth_max)
               & (cue[:, 1].abs() <= settings['max_sideways_gap_m'])
-              & (cue[:, 2].abs() <= settings['max_vertical_gap_m']) & (measured_gap >= min_gap))
+              & (cue[:, 2].abs() <= settings['max_vertical_gap_m']) & (measured_gap >= min_measured_gap))
 
-    axis = torch.nn.functional.normalize(cue, dim=-1)
     teacher_shift = expected[..., 0, :] - measured_tip[:, None, :]
-    teacher_progress = (teacher_shift * axis[:, None, :]).sum(dim=-1)
+    difference = expected[..., 0, :] - planned[..., 0, :]
+    lateral = settings.get('lateral_correction')
+    if lateral is None:
+        axis = torch.nn.functional.normalize(cue, dim=-1)
+        teacher_progress = (teacher_shift * axis[:, None, :]).sum(dim=-1)
+        deficit = (difference * axis[:, None, :]).sum(dim=-1)
+        lateral_loss = 0.
+    else:
+        direction = cue[:, 1].sign()[:, None]
+        teacher_side = direction * teacher_shift[..., 1]
+        region &= ((cue[:, 1].abs() >= lateral['min_sideways_gap_m'])
+                   & (teacher_side[:, -1] >= lateral['min_teacher_motion_m']))
+        teacher_progress = teacher_shift[..., 0]
+        deficit = difference[..., 0]
+        lateral_error = (direction * difference[..., 1]).clamp_min(0.) / lateral['scale_m']
+        lateral_loss = lateral['weight'] * lateral_error.square()
     eligible = (region & valid_prefix[:, -1] & (teacher_gap >= min_gap).all(dim=1)
                 & (teacher_progress[:, -1] >= settings['min_teacher_progress_m']))
-    deficit = ((expected[..., 0, :] - planned[..., 0, :]) * axis[:, None, :]).sum(dim=-1)
     progress_error = deficit.clamp_min(0.) / settings['progress_scale_m']
     gap_error = (min_gap - requested_gap).clamp_min(0.) / settings['aperture_scale_m']
-    loss = settings['progress_weight'] * progress_error.square() + settings['aperture_weight'] * gap_error.square()
+    loss = (settings['progress_weight'] * progress_error.square()
+            + settings['aperture_weight'] * gap_error.square() + lateral_loss)
     return loss.masked_fill(~(eligible[:, None] & valid_prefix), 0.)
 
 
@@ -346,6 +361,7 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     alignment = calibration.get('high_approach_alignment')
     lateral = calibration.get('lateral_approach_alignment')
     aligned_advance = calibration.get('aligned_open_advance')
+    lateral_advance = calibration.get('open_lateral_advance')
     if servo is None and progress is not None:
         bounded = base_commands_from_observation(planned_motion, state, low, high,
                                                  progress['base_command_response'])
@@ -371,7 +387,8 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     if far_loss is not None:
         loss = loss + far_loss
     alignment_prefix = valid_prefix
-    if (alignment is not None or lateral is not None or aligned_advance is not None) and dof_mask is not None:
+    if dof_mask is not None and any(setting is not None for setting in
+                                    (alignment, lateral, aligned_advance, lateral_advance)):
         gripper_valid = dof_mask.reshape_as(reference)[..., 6].bool()
         alignment_prefix = (valid & gripper_valid).cumprod(dim=1).bool()
     if alignment is not None:
@@ -380,9 +397,10 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     if lateral is not None:
         loss = loss + lateral_approach_alignment_loss(planned_world, expected_world, measured_tip, state,
                                                      alignment_prefix, calibration, lateral)
-    if aligned_advance is not None:
-        loss = loss + aligned_open_advance_loss(planned_world, expected_world, measured_tip, forecast,
-                                                reference, state, alignment_prefix, calibration, aligned_advance)
+    for advance in (aligned_advance, lateral_advance):
+        if advance is not None:
+            loss = loss + open_approach_advance_loss(planned_world, expected_world, measured_tip, forecast,
+                                                     reference, state, alignment_prefix, calibration, advance)
     return loss
 
 
@@ -480,7 +498,7 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
         measured_tip = None
         if any(world_wrist.get(key) is not None for key in (
                 'approach_progress', 'high_approach_alignment', 'lateral_approach_alignment',
-                'aligned_open_advance')):
+                'aligned_open_advance', 'open_lateral_advance')):
             measured_tip = wrist_markers(measured, calibration)[..., 0, :]
         loss = loss + near_approach_world_wrist_loss(planned, expected, forecast, reference, state,
                                                    world_wrist, valid, dof_mask, measured_tip)
