@@ -67,6 +67,9 @@ def main():
     run, parent = args.run.resolve(), args.parent.resolve()
     config = run/'train.yml'
     cfg = yaml.safe_load(config.read_text())
+    dataset = Path(cfg['data']['lerobot_config']['root'])
+    prompt_view = dataset / 'far_approach_prompt_view.json'
+    far_approach_prompt = json.loads(prompt_view.read_text())['protocol'] if prompt_view.is_file() else None
     action_space = args.action_space
     if action_space == 'joint':
         require(joint_action_representation(cfg['task']['dof_config']),
@@ -149,7 +152,7 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):signal.signal(sig, interrupted)
     save()
     try:
-        episodes=json.loads((Path(cfg['data']['lerobot_config']['root'])/'meta/info.json').read_text())['total_episodes']
+        episodes=json.loads((dataset/'meta/info.json').read_text())['total_episodes']
         call([python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
               f'--master_port={args.data_port}', str(scripts/validator),
               '--config', str(config), '--check-episode', '0', '--check-episode', str(episodes//2),
@@ -169,6 +172,10 @@ def main():
                     raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
                 time.sleep(10)
             checkpoint = locate_saved_checkpoint(checkpoint_dir, step)
+            if far_approach_prompt is not None:
+                saved_config = json.loads((checkpoint/'config.json').read_text())
+                require(saved_config.get('joint_far_approach_prompt') == far_approach_prompt,
+                        'Checkpoint did not retain the training language protocol')
             output = root/f'runs/{run.name}-step{step}-single'
             audit = [python, str(scripts/'audit_wall_checkpoint.py'), '--base', str(parent),
                      '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')]
@@ -185,6 +192,8 @@ def main():
             require(report['evaluation_complete'] and report['action_space'] == action_space
                     and report['total'] == 1 and report['gripper_open_confirmations'] == 0,
                     'Incomplete or unexpected policy evaluation')
+            require(report.get('far_approach_prompt_protocol') == far_approach_prompt,
+                    'Policy evaluation used an unexpected range-conditioned prompt protocol')
             approach = measure_rollout(output)
             (output/'grasp-approach-audit.json').write_text(json.dumps(approach, indent=2)+'\n')
             score = development_score(report['successes'], report['episodes'][0], approach)

@@ -61,13 +61,15 @@ def case_set_digest(cases):
 
 
 def verify_report(report, cases, model, config, controller, source_hashes, *, action_space='joint',
-                  progress_protocol=None, joint_representation=None):
+                  progress_protocol=None, joint_representation=None, far_approach_prompt_protocol=None):
     require(report['evaluation_complete'] and not report['probe_only'], 'Incomplete/probe evaluation')
     require(action_space in ('joint', 'cartesian') and report['action_space'] == action_space,
             'Unexpected neural action space')
     require(report['model'] == str(model) and report['config'] == str(config), 'Candidate/config mismatch')
     require(report['controller'] == controller, 'Physical controller configuration changed')
     require(report.get('progress_protocol') == progress_protocol, 'Language protocol changed')
+    require(report.get('far_approach_prompt_protocol') == far_approach_prompt_protocol,
+            'Range-conditioned prompt protocol changed')
     require(report.get('joint_action_representation') == joint_representation, 'Action representation changed')
     settings = dict(execution_prefix=8, policy_batch_size=1, flow_steps=10, flow_noise='random',
                     action_filter_seconds=0., temporal_ensemble_predictions=0,
@@ -85,6 +87,8 @@ def verify_report(report, cases, model, config, controller, source_hashes, *, ac
         require(result['policy'] == 'wall_oss_full_cylinder' and result['action_space'] == action_space,
                 'Expected genuine neural policy output')
         require(result.get('progress_protocol') == progress_protocol, 'Episode language protocol changed')
+        require(result.get('far_approach_prompt_protocol') == far_approach_prompt_protocol,
+                'Episode range-conditioned prompt protocol changed')
         if joint_representation == JOINT_SERVO_INCREMENT:
             require(result['joint_action_representation'] == joint_representation,
                     'Episode action representation changed')
@@ -168,6 +172,7 @@ def main():
     single = json.loads(Path(candidate['single_summary']).read_text())
     action_space = single['action_space']
     progress_protocol = single.get('progress_protocol')
+    far_approach_prompt_protocol = single.get('far_approach_prompt_protocol')
     joint_representation = single.get('joint_action_representation')
     require(candidate.get('action_space', 'joint') == action_space, 'Candidate action space changed')
     require(candidate.get('goal_complete') is False, 'Expected a provisional candidate')
@@ -177,7 +182,8 @@ def main():
     hashes = single['episodes'][0]['source_sha256']
     require(all(digest(scripts / name) == sha for name, sha in hashes.items()), 'Candidate execution source is stale')
     verify_report(single, [dict(volume=25., seed=100)], model, config, controller, hashes,
-                  action_space=action_space, progress_protocol=progress_protocol, joint_representation=joint_representation)
+                  action_space=action_space, progress_protocol=progress_protocol, joint_representation=joint_representation,
+                  far_approach_prompt_protocol=far_approach_prompt_protocol)
     from audit_wall_checkpoint import saved_checkpoint_position
 
     require(model.parent == run / 'checkpoints', 'Unexpected checkpoint location')
@@ -208,6 +214,8 @@ def main():
                  source_sha256=hashes, acceptance_source_sha256=digest(Path(__file__)),
                  config_sha256=digest(config), controller_sha256=digest(controller_path),
                  status='running', completed_suites=[], goal_complete=False)
+    if far_approach_prompt_protocol is not None:
+        state['far_approach_prompt_protocol'] = far_approach_prompt_protocol
     def save():
         (output / 'acceptance-status.json').write_text(json.dumps(state, indent=2) + '\n')
     save()
@@ -238,7 +246,8 @@ def main():
                 subprocess.run(argv, env=env, cwd=root, stdout=log, stderr=subprocess.STDOUT, check=True)
             report = json.loads((output / name / 'summary.json').read_text())
             verify_report(report, cases, model, config, controller, hashes,
-                          action_space=action_space, progress_protocol=progress_protocol, joint_representation=joint_representation)
+                          action_space=action_space, progress_protocol=progress_protocol, joint_representation=joint_representation,
+                          far_approach_prompt_protocol=far_approach_prompt_protocol)
             state['completed_suites'].append(dict(name=name, successes=count, total=count,
                 summary=str(output / name / 'summary.json'), summary_sha256=digest(output / name / 'summary.json')))
             save()

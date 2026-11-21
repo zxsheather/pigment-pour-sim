@@ -22,6 +22,9 @@ from cylinder_joint_actions import (JOINT_SERVO_INCREMENT,JOINT_SERVO_STATE_WIDT
     absolute_joint_chunk,joint_action_to_targets,joint_state_width,robot_joint_observation,bounded_joint_command,
     joint_action_representation,servo_increment_targets,with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
+from cylinder_far_approach_prompt import (
+    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+)
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL,
                                   capture_initial_tray_cue, observed_tray_cue_state)
 from cylinder_reader import read_volume
@@ -37,6 +40,7 @@ SOURCE_SHA256={name:hashlib.sha256((Path(__file__).parent/name).read_bytes()).he
                             "inspect_cylinder.py","carry_env.py","audit_gripper.py","cylinder_reader.py",
                             "robot_action_filter.py","robot_state_normalization.py","cylinder_joint_actions.py",
                             "cylinder_wrist_cue.py","cylinder_progress_prompts.py","cylinder_tray_vision.py",
+                            "cylinder_far_approach_prompt.py",
                             "scene_config.json")}
 
 
@@ -75,6 +79,12 @@ class CylinderWallPolicy(CarryWallPolicy):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
         if (layout==JOINT_WRIST_TARGET_STATE_LAYOUT)!=(self.tray_cue_protocol==WRIST_TARGET_CUE_PROTOCOL):
             raise ValueError('Wrist target cues require matching observation layout')
+        self.far_approach_prompt_protocol = getattr(self._model.config, 'joint_far_approach_prompt', None)
+        if self.far_approach_prompt_protocol is not None:
+            if (self.far_approach_prompt_protocol != FAR_APPROACH_PROMPT_PROTOCOL
+                    or self.tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL):
+                raise ValueError('Range-conditioned prompts require the RGB wrist-target cue')
+            self.load_report['far_approach_prompt_protocol'] = self.far_approach_prompt_protocol
         if unclipped_robot_state:
             if self.state_width!=26 or self._model.config.use_state_string_representation:
                 raise ValueError("State unclipping experiment requires 26D continuous robot state")
@@ -154,7 +164,7 @@ class CylinderTrial:
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
                  gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
                  joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None,servo_increments=False,
-                 cartesian_ik_backoff=False):
+                 cartesian_ik_backoff=False,far_approach_prompt_protocol=None):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
@@ -165,6 +175,10 @@ class CylinderTrial:
         if tray_cue_protocol is not None and (
                 tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
+        if far_approach_prompt_protocol is not None and (
+                far_approach_prompt_protocol != FAR_APPROACH_PROMPT_PROTOCOL
+                or tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL):
+            raise ValueError('Range-conditioned prompts require the RGB wrist-target cue')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
                                         temporal_ensemble,prediction_samples!=1,gripper_open_confirmations,
                                         cartesian_ik_backoff)):
@@ -183,6 +197,7 @@ class CylinderTrial:
         self.env.reset_inspection(seed=case["seed"],jitter=case.get("jitter",.004),yaw_jitter=case.get("yaw_jitter",0.))
         self.initial_wrist_cue=None
         self.tray_cue_protocol=tray_cue_protocol
+        self.far_approach_prompt_protocol = far_approach_prompt_protocol
         self.initial_tray_cue=None
         self.initial_tray_images=[]
         if tray_cue_protocol:
@@ -246,7 +261,11 @@ class CylinderTrial:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         record=dict(time=float(self.env.data.time),state=observation["state"].copy())
         if self.progress_router is not None:
-            observation['instruction']=record['instruction']=self.progress_router.instruction
+            instruction = self.progress_router.instruction
+            if self.far_approach_prompt_protocol is not None:
+                prompt_index = range_conditioned_prompt_indices(observation['state'], self.progress_router.index)
+                instruction = RANGE_CONDITIONED_PROMPTS[int(prompt_index)]
+            observation['instruction']=record['instruction']=instruction
         self.observations.append(record)
         physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
         mujoco.mj_getState(self.env.model,self.env.data,physics,self.recovery_spec)
@@ -391,6 +410,8 @@ class CylinderTrial:
         if self.progress_router is not None:
             summary.update(progress_protocol=PROGRESS_PROTOCOL,prompt_changes=self.progress_changes,
                            progress_initial_joint_command=self.progress_initial_joint_command)
+        if self.far_approach_prompt_protocol is not None:
+            summary['far_approach_prompt_protocol'] = self.far_approach_prompt_protocol
         if self.servo_increments:
             summary['joint_action_representation']=JOINT_SERVO_INCREMENT
         if self.tray_cue_protocol:
@@ -501,6 +522,7 @@ def main():
                          servo_increments=policy.joint_action_representation==JOINT_SERVO_INCREMENT,
                          joint_wrist_cue=policy.joint_wrist_cue,
                          progress_protocol=policy.progress_protocol,tray_cue_protocol=policy.tray_cue_protocol,
+                         far_approach_prompt_protocol=policy.far_approach_prompt_protocol,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
@@ -581,6 +603,8 @@ def main():
                     unclipped_robot_state=args.unclipped_robot_state,
                     evaluation_complete=all(not r["evaluation_interrupted"] for r in results),
                     successes=sum(r["success"] for r in results),total=len(results))
+        if policy.far_approach_prompt_protocol is not None:
+            report['far_approach_prompt_protocol'] = policy.far_approach_prompt_protocol
         (args.output/"summary.json").write_text(json.dumps(report,indent=2)+"\n")
         print(json.dumps(dict(successes=report["successes"],total=report["total"])),flush=True)
 

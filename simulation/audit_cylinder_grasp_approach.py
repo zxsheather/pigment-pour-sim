@@ -12,8 +12,11 @@ from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_INCREMENT, JOI
                                     bounded_joint_command, robot_joint_observation, with_joint_servo_state,
                                     servo_increment_targets, with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
+from cylinder_far_approach_prompt import (
+    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+)
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
-                                  estimate_from_robot_views, observed_tray_cue_state)
+                                  WRIST_TARGET_CUE_PROTOCOL, estimate_from_robot_views, observed_tray_cue_state)
 from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
 
@@ -31,7 +34,17 @@ def verify_progress_prompts(initial_base, initial_command, episode, observations
     sample_indices = np.searchsorted(times, sample_times)
     require(np.all(sample_indices < len(times)), 'A language observation has no recorded robot state')
     np.testing.assert_array_equal(times[sample_indices], sample_times)
-    np.testing.assert_array_equal(np.asarray(PROGRESS_PROMPTS)[phase[sample_indices]], observations['instruction'])
+    sampled_phases = phase[sample_indices]
+    far_protocol = episode.get('far_approach_prompt_protocol')
+    if far_protocol is None:
+        expected = np.asarray(PROGRESS_PROMPTS)[sampled_phases]
+    else:
+        require(far_protocol == FAR_APPROACH_PROMPT_PROTOCOL
+                and episode.get('tray_cue_protocol') == WRIST_TARGET_CUE_PROTOCOL,
+                'Unexpected range-conditioned prompt protocol')
+        chosen = range_conditioned_prompt_indices(observations['state'], sampled_phases)
+        expected = np.asarray(RANGE_CONDITIONED_PROMPTS)[chosen]
+    np.testing.assert_array_equal(expected, observations['instruction'])
     changes = [dict(time_s=float(times[i]), task_index=int(phase[i]))
                for i in np.flatnonzero(np.diff(phase, prepend=-1))]
     reported = [row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
@@ -98,6 +111,8 @@ def measure_rollout(folder, *, pose_breakdown=False):
         initial_base = env.base_pose().copy()
         progress = episode.get('progress_protocol')
         require(progress == summary.get('progress_protocol'), 'Progress protocol differs between episode and rollout')
+        require(episode.get('far_approach_prompt_protocol') == summary.get('far_approach_prompt_protocol'),
+                'Range-conditioned prompt protocol differs between episode and rollout')
         increment = summary.get('joint_action_representation') == JOINT_SERVO_INCREMENT
         if increment:
             require(progress and episode['joint_action_representation'] == JOINT_SERVO_INCREMENT,

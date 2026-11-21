@@ -15,6 +15,9 @@ import torch
 import torch.distributed as dist
 
 from carry_env import CONTROL_DT
+from cylinder_far_approach_prompt import (
+    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+)
 from cylinder_joint_actions import (
     ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, absolute_joint_chunk,
     joint_action_representation, joint_state_width, require,
@@ -75,6 +78,32 @@ def main():
         ids = np.asarray(raw_frame['episode_index'])
         frames = np.asarray(raw_frame['frame_index'])
         train_indices = np.asarray(inner.train_dataset.indices, dtype=int)
+        prompt_view = Path(cfg.data.lerobot_config['root']) / 'far_approach_prompt_view.json'
+        far_protocol = getattr(model_config, 'joint_far_approach_prompt', None)
+        require(prompt_view.is_file() == (far_protocol is not None),
+                'Training language view and model prompt protocol must agree')
+        prompt_checks = []
+        if far_protocol is not None:
+            require(far_protocol == FAR_APPROACH_PROMPT_PROTOCOL
+                    and json.loads(prompt_view.read_text())['protocol'] == far_protocol,
+                    'Invalid range-conditioned training language protocol')
+            task_indices = np.asarray(raw_frame['task_index'])[train_indices]
+            for task_id, expected_prompt in enumerate(RANGE_CONDITIONED_PROMPTS):
+                candidates = np.flatnonzero(task_indices == task_id)
+                require(len(candidates) > 0, 'A prompt has no training anchor')
+                subset_index = int(candidates[0])
+                source = inner.hf_dataset[int(train_indices[subset_index])]
+                measured = source['observation.state'].numpy()
+                phase = 0 if task_id == len(RANGE_CONDITIONED_PROMPTS) - 1 else task_id
+                require(int(range_conditioned_prompt_indices(measured, phase)) == task_id,
+                        'Measured training input does not select its recorded prompt')
+                sample = inner[subset_index]
+                tokens = loader.collate_fn([sample])['input_ids'][0]
+                decoded = processors['processor'].tokenizer.decode(tokens.tolist(), skip_special_tokens=True)
+                require(source['task'] == expected_prompt and expected_prompt in decoded,
+                        'Recorded language prompt did not enter the training tokens')
+                prompt_checks.append(dict(task_index=task_id, prompt=expected_prompt,
+                                          source_label_matches=True, collated_tokens_match=True))
         episodes = args.check_episode or [0, int(ids.max())]
         checks = []
         for episode in episodes:
@@ -154,6 +183,9 @@ def main():
             distributed_backend='gloo', neural_weights_loaded=False,
             model_forward=False, backward=False, task_success_measured=False,
             source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+        if far_protocol is not None:
+            report['far_approach_prompt_protocol'] = far_protocol
+            report['far_approach_prompt_checks'] = prompt_checks
         args.output.write_text(json.dumps(report, indent=2)+'\n')
         print(json.dumps(report), flush=True)
     finally:
