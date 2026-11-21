@@ -13,7 +13,7 @@ from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_INCREMENT, JOI
                                     servo_increment_targets, with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
 from cylinder_far_approach_prompt import (
-    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+    RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
 )
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
                                   WRIST_TARGET_CUE_PROTOCOL, estimate_from_robot_views, observed_tray_cue_state)
@@ -39,16 +39,17 @@ def verify_progress_prompts(initial_base, initial_command, episode, observations
     if far_protocol is None:
         expected = np.asarray(PROGRESS_PROMPTS)[sampled_phases]
     else:
-        require(far_protocol == FAR_APPROACH_PROMPT_PROTOCOL
+        require(far_protocol in RANGE_CONDITIONED_PROMPT_PROTOCOLS
                 and episode.get('tray_cue_protocol') == WRIST_TARGET_CUE_PROTOCOL,
                 'Unexpected range-conditioned prompt protocol')
-        chosen = range_conditioned_prompt_indices(observations['state'], sampled_phases)
-        expected = np.asarray(RANGE_CONDITIONED_PROMPTS)[chosen]
+        chosen = range_conditioned_prompt_indices(observations['state'], sampled_phases, far_protocol)
+        expected = np.asarray(range_conditioned_prompts(far_protocol))[chosen]
     np.testing.assert_array_equal(expected, observations['instruction'])
     changes = [dict(time_s=float(times[i]), task_index=int(phase[i]))
                for i in np.flatnonzero(np.diff(phase, prepend=-1))]
     reported = [row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
     require(reported == changes, 'Recorded prompt changes do not match robot progress')
+    return sampled_phases
 
 
 def verify_servo_increments(directory, initial_command, observations, trajectory):
@@ -136,8 +137,10 @@ def measure_rollout(folder, *, pose_breakdown=False):
         with (np.load(directory / 'recovery_physics.npz') as physics,
               np.load(directory / 'model_observations.npz') as observations,
               np.load(directory / 'trajectory.npz') as trajectory):
+            sampled_phases = None
             if progress:
-                verify_progress_prompts(initial_base, bounded_joint_command(env), episode, observations, trajectory)
+                sampled_phases = verify_progress_prompts(
+                    initial_base, bounded_joint_command(env), episode, observations, trajectory)
             if increment:
                 verify_servo_increments(directory, bounded_joint_command(env), observations, trajectory)
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
@@ -155,7 +158,7 @@ def measure_rollout(folder, *, pose_breakdown=False):
                         env.applied_action[:] = physics['applied_base_action'][i]
                     reproduced = robot_joint_observation(env, servo_state=servo_state)
                     if tray_protocol:
-                        approach = observations['instruction'][i] == PROGRESS_PROMPTS[0]
+                        approach = sampled_phases[i] == 0
                         reproduced = observed_tray_cue_state(env, reproduced, tray_cue if approach else None, tray_protocol)
                     elif wrist_cue is not None:
                         if i == 0 and wrist_rgb.is_file():

@@ -16,7 +16,7 @@ import torch.distributed as dist
 
 from carry_env import CONTROL_DT
 from cylinder_far_approach_prompt import (
-    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+    RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
 )
 from cylinder_joint_actions import (
     ARM_SERVO_RATE_RAD_S, JOINT_SERVO_INCREMENT, absolute_joint_chunk,
@@ -84,18 +84,19 @@ def main():
                 'Training language view and model prompt protocol must agree')
         prompt_checks = []
         if far_protocol is not None:
-            require(far_protocol == FAR_APPROACH_PROMPT_PROTOCOL
+            require(far_protocol in RANGE_CONDITIONED_PROMPT_PROTOCOLS
                     and json.loads(prompt_view.read_text())['protocol'] == far_protocol,
                     'Invalid range-conditioned training language protocol')
             task_indices = np.asarray(raw_frame['task_index'])[train_indices]
-            for task_id, expected_prompt in enumerate(RANGE_CONDITIONED_PROMPTS):
+            prompts = range_conditioned_prompts(far_protocol)
+            for task_id, expected_prompt in enumerate(prompts):
                 candidates = np.flatnonzero(task_indices == task_id)
                 require(len(candidates) > 0, 'A prompt has no training anchor')
                 subset_index = int(candidates[0])
                 source = inner.hf_dataset[int(train_indices[subset_index])]
                 measured = source['observation.state'].numpy()
-                phase = 0 if task_id == len(RANGE_CONDITIONED_PROMPTS) - 1 else task_id
-                require(int(range_conditioned_prompt_indices(measured, phase)) == task_id,
+                phase = 0 if task_id == len(prompts) - 1 else task_id
+                require(int(range_conditioned_prompt_indices(measured, phase, far_protocol)) == task_id,
                         'Measured training input does not select its recorded prompt')
                 sample = inner[subset_index]
                 tokens = loader.collate_fn([sample])['input_ids'][0]

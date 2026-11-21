@@ -1,4 +1,4 @@
-"""Create a language-only dataset view with a far approach prompt."""
+"""Create a language-only dataset view with a range-conditioned approach prompt."""
 
 import argparse
 import json
@@ -13,8 +13,9 @@ import pyarrow.dataset as arrow
 import pyarrow.parquet as pq
 
 from cylinder_far_approach_prompt import (
-    FAR_APPROACH_DISTANCE_M, FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS,
-    range_conditioned_prompt_indices,
+    CLEARANCE_APPROACH_RANGE_M, CLEARANCE_MAX_APERTURE_M,
+    FAR_APPROACH_DISTANCE_M, FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPT_PROTOCOLS,
+    range_conditioned_prompt_indices, range_conditioned_prompts,
 )
 from cylinder_joint_actions import require
 from cylinder_progress_prompts import PROGRESS_PROMPTS
@@ -23,8 +24,9 @@ from export_cylinder_joint_dataset import digest
 from export_cylinder_progress_prompts import replace_column, task_statistics
 
 
-def export(source, output):
+def export(source, output, protocol=FAR_APPROACH_PROMPT_PROTOCOL):
     require(not output.exists(), 'Output already exists')
+    prompts = range_conditioned_prompts(protocol)
     info = json.loads((source / 'meta/info.json').read_text())
     cue = json.loads((source / 'wrist_target_view_audit.json').read_text())
     require(cue['observations_protocol'] == WRIST_TARGET_CUE_PROTOCOL,
@@ -45,13 +47,13 @@ def export(source, output):
             and np.all(np.diff(episode_ids) >= 0), 'Episode ordering changed')
     phase = np.asarray(frames['task_index'])
     state = np.asarray(frames['observation.state'].to_pylist(), dtype=np.float32)
-    task_ids = range_conditioned_prompt_indices(state, phase)
-    num_tasks = len(RANGE_CONDITIONED_PROMPTS)
+    task_ids = range_conditioned_prompt_indices(state, phase, protocol)
+    num_tasks = len(prompts)
     counts = np.bincount(task_ids, minlength=num_tasks)
     require((counts > 0).all(), 'The input corpus must contain observations for each prompt')
     global_stats = task_statistics(task_ids)
     blocks = np.split(task_ids, np.flatnonzero(np.diff(episode_ids)) + 1)
-    descriptions = [[RANGE_CONDITIONED_PROMPTS[i] for i in np.unique(block)] for block in blocks]
+    descriptions = [[prompts[i] for i in np.unique(block)] for block in blocks]
     per_episode_stats = [task_statistics(block) for block in blocks]
 
     with TemporaryDirectory(prefix=f'.{output.name}-', dir=output.parent) as temporary:
@@ -76,7 +78,7 @@ def export(source, output):
                 table = replace_column(table, f'stats/task_index/{key}', [per_episode_stats[i][key] for i in ids])
             pq.write_table(table, dest / file.relative_to(source))
         tasks = pa.Table.from_arrays(
-            [pa.array(range(num_tasks)), pa.array(RANGE_CONDITIONED_PROMPTS)], schema=template.schema)
+            [pa.array(range(num_tasks)), pa.array(prompts)], schema=template.schema)
         pq.write_table(tasks, dest / 'meta/tasks.parquet')
         info['total_tasks'] = num_tasks
         (dest / 'meta/info.json').write_text(json.dumps(info, indent=2) + '\n')
@@ -86,11 +88,16 @@ def export(source, output):
         for name in ('demonstration_provenance.json', 'joint_norm_stats.json', 'wrist_target_view_audit.json'):
             shutil.copyfile(source / name, dest / name)
         report = dict(kind='far_approach_prompt_view', source=str(source), dataset=str(output),
-                      protocol=FAR_APPROACH_PROMPT_PROTOCOL, distance_m=FAR_APPROACH_DISTANCE_M,
-                      prompts=RANGE_CONDITIONED_PROMPTS, frames_per_prompt=counts.tolist(),
+                      protocol=protocol, prompts=prompts, frames_per_prompt=counts.tolist(),
                       frames=len(task_ids), episodes=len(blocks), shared_videos=len(videos),
-                      non_language_frame_data_exact=True, measured_rgb_target_and_progress_only=True,
+                      non_language_frame_data_exact=True,
                       normalizer_sha256=digest(dest / 'joint_norm_stats.json'), independent_cases_read=False)
+        if protocol == FAR_APPROACH_PROMPT_PROTOCOL:
+            report.update(distance_m=FAR_APPROACH_DISTANCE_M, measured_rgb_target_and_progress_only=True)
+        else:
+            report.update(distance_range_m=CLEARANCE_APPROACH_RANGE_M,
+                          maximum_measured_aperture_m=CLEARANCE_MAX_APERTURE_M,
+                          measured_rgb_target_aperture_and_progress_only=True)
         (dest / 'far_approach_prompt_view.json').write_text(json.dumps(report, indent=2) + '\n')
         dest.rename(output)
     return report
@@ -100,8 +107,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base-dataset', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--protocol', choices=RANGE_CONDITIONED_PROMPT_PROTOCOLS, default=FAR_APPROACH_PROMPT_PROTOCOL)
     args = parser.parse_args()
-    print(json.dumps(export(args.base_dataset.resolve(), args.output.resolve())), flush=True)
+    print(json.dumps(export(args.base_dataset.resolve(), args.output.resolve(), args.protocol)), flush=True)
 
 
 if __name__ == '__main__':

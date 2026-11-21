@@ -63,6 +63,8 @@ def main():
     parser.add_argument('--action-space', choices=('joint', 'cartesian'), default='joint')
     parser.add_argument('--training-wall-root', type=Path,
                         help='Wall-X source copy used by the trainer subprocess.')
+    parser.add_argument('--evaluate-resumed-checkpoint', action='store_true',
+                        help='Also evaluate the previously saved training checkpoint used to resume.')
     args = parser.parse_args()
     run, parent = args.run.resolve(), args.parent.resolve()
     config = run/'train.yml'
@@ -100,6 +102,8 @@ def main():
         require(proof['passed'] and proof['checkpoint'] == str(resume), 'Resume checkpoint audit failed')
     else:
         require(resume == parent/'model.safetensors', 'Parent/config mismatch')
+    require(not args.evaluate_resumed_checkpoint or (resume_step > 0 and resume.parent == checkpoint_dir),
+            'Evaluating the resume checkpoint requires a complete checkpoint in this run')
     require(not (run/'execution-status.json').exists(), 'Existing execution must be inspected, not restarted')
     scripts = Path(__file__).resolve().parent
     root = Path.cwd()
@@ -115,7 +119,8 @@ def main():
         trainer_env = os.environ | dict(PYTHONPATH=str(training_wall))
     state = dict(stage='data_validation', started=time.time(), driver_pid=os.getpid(),
                  parent=str(parent), action_space=action_space, history=[], goal_complete=False,
-                 resumed_checkpoint=str(resume) if resume_step else None, resumed_step=resume_step)
+                 resumed_checkpoint=str(resume) if resume_step else None, resumed_step=resume_step,
+                 evaluate_resumed_checkpoint=args.evaluate_resumed_checkpoint)
     trainer = None
     active_call = None
 
@@ -166,12 +171,16 @@ def main():
         visited = []
         best = None
         best_score = None
-        for step in range(resume_step + interval, steps, interval):
-            while not checkpoint_saved_at(args.log, step):
-                if trainer.poll() is not None:
-                    raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
-                time.sleep(10)
-            checkpoint = locate_saved_checkpoint(checkpoint_dir, step)
+        first_step = resume_step if args.evaluate_resumed_checkpoint else resume_step + interval
+        for step in range(first_step, steps, interval):
+            if step == resume_step:
+                checkpoint = resume
+            else:
+                while not checkpoint_saved_at(args.log, step):
+                    if trainer.poll() is not None:
+                        raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
+                    time.sleep(10)
+                checkpoint = locate_saved_checkpoint(checkpoint_dir, step)
             if far_approach_prompt is not None:
                 saved_config = json.loads((checkpoint/'config.json').read_text())
                 require(saved_config.get('joint_far_approach_prompt') == far_approach_prompt,

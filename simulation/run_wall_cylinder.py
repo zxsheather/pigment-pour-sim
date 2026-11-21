@@ -23,7 +23,7 @@ from cylinder_joint_actions import (JOINT_SERVO_INCREMENT,JOINT_SERVO_STATE_WIDT
     joint_action_representation,servo_increment_targets,with_joint_wrist_cue_state)
 from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
 from cylinder_far_approach_prompt import (
-    FAR_APPROACH_PROMPT_PROTOCOL, RANGE_CONDITIONED_PROMPTS, range_conditioned_prompt_indices,
+    RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
 )
 from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL,
                                   capture_initial_tray_cue, observed_tray_cue_state)
@@ -81,7 +81,7 @@ class CylinderWallPolicy(CarryWallPolicy):
             raise ValueError('Wrist target cues require matching observation layout')
         self.far_approach_prompt_protocol = getattr(self._model.config, 'joint_far_approach_prompt', None)
         if self.far_approach_prompt_protocol is not None:
-            if (self.far_approach_prompt_protocol != FAR_APPROACH_PROMPT_PROTOCOL
+            if (self.far_approach_prompt_protocol not in RANGE_CONDITIONED_PROMPT_PROTOCOLS
                     or self.tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL):
                 raise ValueError('Range-conditioned prompts require the RGB wrist-target cue')
             self.load_report['far_approach_prompt_protocol'] = self.far_approach_prompt_protocol
@@ -176,7 +176,7 @@ class CylinderTrial:
                 tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
         if far_approach_prompt_protocol is not None and (
-                far_approach_prompt_protocol != FAR_APPROACH_PROMPT_PROTOCOL
+                far_approach_prompt_protocol not in RANGE_CONDITIONED_PROMPT_PROTOCOLS
                 or tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL):
             raise ValueError('Range-conditioned prompts require the RGB wrist-target cue')
         if action_space=='joint' and any((action_filter_seconds,cartesian_speed_limit,angular_speed_limit,
@@ -263,8 +263,9 @@ class CylinderTrial:
         if self.progress_router is not None:
             instruction = self.progress_router.instruction
             if self.far_approach_prompt_protocol is not None:
-                prompt_index = range_conditioned_prompt_indices(observation['state'], self.progress_router.index)
-                instruction = RANGE_CONDITIONED_PROMPTS[int(prompt_index)]
+                protocol = self.far_approach_prompt_protocol
+                prompt_index = range_conditioned_prompt_indices(observation['state'], self.progress_router.index, protocol)
+                instruction = range_conditioned_prompts(protocol)[int(prompt_index)]
             observation['instruction']=record['instruction']=instruction
         self.observations.append(record)
         physics=np.empty(mujoco.mj_stateSize(self.env.model,self.recovery_spec))
