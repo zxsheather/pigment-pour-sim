@@ -277,7 +277,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    grasp_roll=0.,upright_gain=0.,record_training=False,training_image_size=224,
                    reset_scene=True,initial_state_provenance=None,start_holding=False,skip_retreat=False,
                    held_initial_lift_m=0.,eye_alignment_target_px=2.,approach_motion_scale=None,
-                   release_single_contact=False,release_retreat_m=0.,release_lift_m=0.,teacher_grasp_height_m=None,
+                   release_single_contact=False,release_retreat_m=0.,release_retreat_seconds=1.5,
+                   release_lift_m=0.,teacher_grasp_height_m=None,
                    stable_read_samples=3,approach_base_reference=None,align_from_clearance=False,
                    wrist_clearance_rear_distance_m=None,approach_heading_reference=None,
                    wrist_clearance_open_after_retreat=False,wrist_clearance_align_before_lift=False,
@@ -327,6 +328,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Reset-relative retreat requires wrist clearance alignment")
     if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
         raise ValueError("Release retreat must be within [0,0.10] m")
+    if not np.isfinite(release_retreat_seconds) or release_retreat_seconds <= 0.:
+        raise ValueError("Release retreat duration must be finite and positive")
     if release_retreat_m and not release_single_contact:
         raise ValueError("Release retreat requires single-contact recovery")
     if release_retreat_before_open and not release_retreat_m:
@@ -641,7 +644,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if distance <= .001:
             raise InspectionFailure("single_contact_retreat_direction_undefined")
         target = tip + release_retreat_m * away / distance
-        joints = move("withdraw_from_contact", target, seconds=1.5, opening=opening, straight=True)
+        joints = move("withdraw_from_contact", target, seconds=release_retreat_seconds, opening=opening, straight=True)
         rotation = nominal_rotation
         return joints
 
@@ -1010,6 +1013,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
         summary["controller_parameters"]["release_retreat_m"]=release_retreat_m
+        if release_retreat_m and release_retreat_seconds != 1.5:
+            summary["controller_parameters"]["release_retreat_seconds"]=release_retreat_seconds
         if release_retreat_before_open:
             summary["controller_parameters"]["release_retreat_before_open"]=True
         if release_lift_m:
