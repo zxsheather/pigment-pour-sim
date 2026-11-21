@@ -322,17 +322,26 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
         bounded = base_commands_from_observation(planned_motion, state, low, high,
                                                  progress['base_command_response'])
         planned_world = apply_base_motion(planned, bounded, step)
+    far_loss = None
     if progress is not None:
         displacement = wrist_target_displacement(state, calibration)
         target = measured_tip + displacement
         start_distance = torch.linalg.vector_norm(displacement, dim=-1, keepdim=True)
         teacher_distance = torch.linalg.vector_norm(expected_world[..., 0, :] - target[:, None, :], dim=-1)
         planned_distance = torch.linalg.vector_norm(planned_world[..., 0, :] - target[:, None, :], dim=-1)
-        advancing = ((start_distance >= progress['min_distance_m'])
-                     & (start_distance - teacher_distance >= progress['min_progress_m']))
+        teacher_progress = start_distance - teacher_distance
+        advancing = (start_distance >= progress['min_distance_m']) & (teacher_progress >= progress['min_progress_m'])
         shortfall = (planned_distance - teacher_distance).clamp_min(0.)
         loss = loss + (progress['weight'] * (shortfall / progress['scale_m']).square()).masked_fill(~advancing, 0.)
+        far = progress.get('far')
+        if far is not None:
+            far_start = ((state[:, 23:24] > 0.) & ~near[:, None]
+                         & (start_distance <= far['max_distance_m']))
+            far_valid = far_start & valid_prefix & (teacher_progress >= far['min_progress_m'])
+            far_loss = (far['weight'] * (shortfall / far['scale_m']).square()).masked_fill(~far_valid, 0.)
     loss = loss.masked_fill(~active, 0.)
+    if far_loss is not None:
+        loss = loss + far_loss
     alignment_prefix = valid_prefix
     if (alignment is not None or lateral is not None) and dof_mask is not None:
         gripper_valid = dof_mask.reshape_as(reference)[..., 6].bool()
