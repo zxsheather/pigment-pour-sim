@@ -290,8 +290,13 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False,
                    align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
                    lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
-                   near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10):
+                   near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
+                   grasp_close_ticks=35,initial_lift_seconds=2.):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
+    if type(grasp_close_ticks) is not int or grasp_close_ticks < 1:
+        raise ValueError("Grasp closing must last a positive number of control ticks")
+    if not np.isfinite(initial_lift_seconds) or initial_lift_seconds <= 0.:
+        raise ValueError("Initial lift duration must be finite and positive")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
     if not np.isfinite(held_initial_lift_m) or not 0<=held_initial_lift_m<=.10:
@@ -773,11 +778,11 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 if not wrist_clearance_align_at_grasp_height or not np.array_equal(aligned, approach):
                     move("approach",approach,opening=.034,scale=approach_motion_scale,straight=align_from_clearance)
                 q=move("advance",cylinder+[0,0,approach_height],2,opening=.034,straight=align_from_clearance)
-            for _ in range(35):tick("close",q,grip_opening)
+            for _ in range(grasp_close_ticks):tick("close",q,grip_opening)
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
             env.grasp_reference=env._bottle_relative_position();held=True
             env.grasp_point_reference=env.grip_point_relative()
-            move("lift",cylinder+[0,0,approach_height+.04],2)
+            move("lift",cylinder+[0,0,approach_height+.04],initial_lift_seconds)
             q=move("retract",cylinder+[0,-.15,approach_height+.12],3)
         if not skip_retreat:
             target_y=env.base_pose()[1]-.24
@@ -1018,6 +1023,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  liquid_model="Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics")
     if approach_motion_scale is not None:
         summary["controller_parameters"]["approach_motion_scale"]=approach_motion_scale
+    if not start_holding and grasp_close_ticks != 35:
+        summary["controller_parameters"]["grasp_close_ticks"] = grasp_close_ticks
+    if not start_holding and initial_lift_seconds != 2.:
+        summary["controller_parameters"]["initial_lift_seconds"] = float(initial_lift_seconds)
     if wrist_clearance_rear_distance_m is not None:
         summary["controller_parameters"]["wrist_clearance_rear_distance_m"]=wrist_clearance_rear_distance_m
     if wrist_clearance_extra_lift_m is not None:
