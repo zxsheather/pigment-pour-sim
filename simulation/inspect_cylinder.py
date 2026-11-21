@@ -783,6 +783,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             target_y=env.base_pose()[1]-.24
             if release_lift_m or wrist_clearance_retreat_from_reset:
                 target_y = min(target_y, initial_state_provenance['reset_base_y_m']-.24)
+            phase_log.append(dict(phase="back_away", start_seconds=float(env.data.time),
+                                  target_base_y_m=float(target_y)))
             for _ in range(150):
                 distance=env.base_pose()[1]-target_y
                 if distance<.008:break
@@ -973,6 +975,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                  lifted_m=float(env.data.xpos[env.cylinder_body,2]-original_z),
                  final_tilt_rad=metrics["bottle_tilt_rad"],max_slip_m=max_slip,
                  final_contacts=metrics["grip_contacts"],phases=phase_log,
+                 last_control_phase=rows[-1]["phase"] if rows else None,
                  expected_volume_ml=env.volume_ml,reading=final_reading,reading_history=readings,
                  view_search_history=view_search,neq=env.model.neq,
                  policy="privileged_pose_teacher",perception="RGB only; 20/35 mL color calibration anchors",
