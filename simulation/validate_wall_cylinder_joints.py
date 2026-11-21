@@ -30,6 +30,34 @@ from wall_x._vendor.harrix.adapters.qwen_vlact import _normalize_real_prefix
 from wall_x._vendor.harrix.utils.normalizer import build_normalizers
 
 
+def check_stratified_sampling(sampler, config, train_indices):
+    block_size = config['frame_sampling_block_size']
+    require(getattr(sampler, 'block_size', None) == block_size, 'Stratified sampler not activated')
+    labels = np.load(config['frame_sampling_groups_path'], allow_pickle=False)[train_indices]
+    groups, indices = np.unique(labels, return_inverse=True)
+    require(len(sampler.group_members) == len(groups), 'Sampler has different training groups')
+    for group_index, members in enumerate(sampler.group_members):
+        require(np.array_equal(members.numpy(), np.flatnonzero(indices == group_index)),
+                'Sampling groups misaligned with the training split')
+    mass = np.bincount(indices, weights=sampler.weights.numpy())
+    expected_per_block = mass / mass.sum() * block_size
+    draws = np.fromiter(sampler, dtype=np.int64, count=len(sampler))
+    blocks = len(draws) // block_size
+    require(blocks > 0, 'No complete blocks in the training sampler')
+    sampled_groups = indices[draws[:blocks * block_size]].reshape(blocks, block_size)
+    group_summary = {}
+    for group_index, tag in enumerate(groups):
+        counts = (sampled_groups == group_index).sum(axis=1)
+        expected = expected_per_block[group_index]
+        require(bool((counts >= np.floor(expected + 1e-10)).all())
+                and bool((counts <= np.ceil(expected - 1e-10)).all()),
+                'Sampling blocks have incorrect group counts')
+        group_summary[str(tag)] = dict(expected_per_block=float(expected),
+                                       minimum_per_block=int(counts.min()),
+                                       maximum_per_block=int(counts.max()))
+    return dict(block_size=block_size, complete_blocks=blocks, groups=group_summary)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
@@ -187,6 +215,9 @@ def main():
         if far_protocol is not None:
             report['far_approach_prompt_protocol'] = far_protocol
             report['far_approach_prompt_checks'] = prompt_checks
+        if cfg.data.lerobot_config.get('frame_sampling_groups_path') is not None:
+            report['stratified_sampling'] = check_stratified_sampling(
+                loader.sampler, cfg.data.lerobot_config, train_indices)
         args.output.write_text(json.dumps(report, indent=2)+'\n')
         print(json.dumps(report), flush=True)
     finally:

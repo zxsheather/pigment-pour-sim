@@ -24,7 +24,9 @@ def main():
             from wall_x.data.backends.lerobot.recovery_sampler import RecoveryDistributedSampler
             sampler = RecoveryDistributedSampler(
                 self, weights_path=weights_path, num_replicas=self.world_size,
-                rank=self.rank, shuffle=True, seed=self.seed, drop_last=True)
+                rank=self.rank, shuffle=True, seed=self.seed, drop_last=True,
+                groups_path=self.lerobot_config.get("frame_sampling_groups_path"),
+                block_size=self.lerobot_config.get("frame_sampling_block_size"))
         else:
 '''+"\n".join("    "+line for line in original.splitlines())
     assert "RecoveryDistributedSampler" not in old, "Already patched"
@@ -40,6 +42,7 @@ def main():
         after_sha256=hashlib.sha256(new.encode()).hexdigest(),
         helper_sha256=hashlib.sha256(helper.read_bytes()).hexdigest(),
         option="data.lerobot_config.frame_sampling_weights_path",
+        stratification_options=["frame_sampling_groups_path", "frame_sampling_block_size"],
         change="Weighted seeded training-frame sampling only when explicitly configured; no validation/inference/model changes")
     a.output.write_text(json.dumps(report, indent=2)+"\n")
     print(json.dumps(report))
