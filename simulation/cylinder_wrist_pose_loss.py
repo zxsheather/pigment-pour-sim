@@ -341,6 +341,45 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
     return loss.masked_fill(~(eligible[:, None] & (retreat | align) & valid_prefix), 0.)
 
 
+def open_depth_alignment_loss(planned, expected, measured_tip, forecast, reference, state,
+                              valid_prefix, teacher_motion, world, settings):
+    """Keep the gripper open and match wrist alignment with a still base."""
+    forward, sideways, cue, aperture = approach_alignment_frame(state, world, settings)
+    depth = (cue[:, :2] * forward).sum(dim=-1)
+    side = (cue[:, :2] * sideways).sum(dim=-1)
+    offset = torch.stack((side, cue[:, 2]), dim=-1)
+    initial_error = torch.linalg.vector_norm(offset, dim=-1)
+    depth_low, depth_high = settings['depth_range_m']
+    error_low, error_high = settings['plane_error_range_m']
+    min_gap = settings['min_open_aperture_m']
+    region = ((state[:, 23] > 0.) & (aperture >= min_gap)
+              & (depth >= depth_low) & (depth <= depth_high)
+              & (initial_error >= error_low) & (initial_error <= error_high))
+
+    goal = measured_tip[:, None, :] + cue[:, None, :]
+    residual = expected[..., 0, :] - goal
+    expected_error = torch.linalg.vector_norm(torch.stack((
+        (residual[..., :2] * sideways[:, None, :]).sum(dim=-1), residual[..., 2]), dim=-1), dim=-1)
+    teacher_depth = ((expected[..., 0, :2] - measured_tip[:, None, :2])
+                     * forward[:, None, :]).sum(dim=-1)
+    low, high = state.new_tensor(settings['action_aperture_affine_m']).unbind()
+    teacher_gap = low + (reference[..., 6] + 1.) * (high - low) * .5
+    still = (teacher_motion.abs() <= state.new_tensor(settings['max_teacher_base_motion'])).all(dim=(-2, -1))
+    eligible = (region & still & valid_prefix[:, -1] & (teacher_gap >= min_gap).all(dim=1)
+                & (teacher_depth.abs() <= settings['max_teacher_depth_change_m']).all(dim=1)
+                & (initial_error - expected_error[:, -1] >= settings['min_teacher_alignment_m']))
+
+    residual = planned[..., 0, :] - goal
+    planned_error = torch.linalg.vector_norm(torch.stack((
+        (residual[..., :2] * sideways[:, None, :]).sum(dim=-1), residual[..., 2]), dim=-1), dim=-1)
+    depth_error = ((planned[..., 0, :2] - expected[..., 0, :2]) * forward[:, None, :]).sum(dim=-1)
+    requested_gap = low + (forecast[..., 6] + 1.) * (high - low) * .5
+    shortfall = (planned_error - expected_error).clamp_min(0.)
+    plane_loss = settings['weight'] * (depth_error.square() + shortfall.square()) / settings['scale_m'] ** 2
+    gap_loss = settings['aperture_weight'] * ((min_gap - requested_gap).clamp_min(0.) / settings['aperture_scale_m']).square()
+    return (plane_loss + gap_loss).masked_fill(~eligible[:, None], 0.)
+
+
 def open_approach_advance_loss(planned, expected, measured_tip, forecast, reference, state,
                               valid_prefix, world, settings):
     """Match open-finger advance and, when demonstrated, lateral correction."""
@@ -409,6 +448,7 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     progress = calibration.get('approach_progress')
     alignment = calibration.get('high_approach_alignment')
     lateral = calibration.get('lateral_approach_alignment')
+    depth_alignment = calibration.get('open_depth_alignment')
     aligned_advance = calibration.get('aligned_open_advance')
     lateral_advance = calibration.get('open_lateral_advance')
     if servo is None and progress is not None:
@@ -437,7 +477,7 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
         loss = loss + far_loss
     alignment_prefix = valid_prefix
     if dof_mask is not None and any(setting is not None for setting in
-                                    (alignment, lateral, aligned_advance, lateral_advance)):
+                                    (alignment, lateral, depth_alignment, aligned_advance, lateral_advance)):
         gripper_valid = dof_mask.reshape_as(reference)[..., 6].bool()
         alignment_prefix = (valid & gripper_valid).cumprod(dim=1).bool()
     if alignment is not None:
@@ -446,6 +486,9 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     if lateral is not None:
         loss = loss + lateral_approach_alignment_loss(planned_world, expected_world, measured_tip, state,
                                                      alignment_prefix, calibration, lateral)
+    if depth_alignment is not None:
+        loss = loss + open_depth_alignment_loss(planned, expected, measured_tip, forecast, reference, state,
+                                                 alignment_prefix, teacher_motion, calibration, depth_alignment)
     for advance in (aligned_advance, lateral_advance):
         if advance is not None:
             loss = loss + open_approach_advance_loss(planned_world, expected_world, measured_tip, forecast,
@@ -546,7 +589,7 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     if world_wrist is not None:
         measured_tip = None
         if any(world_wrist.get(key) is not None for key in (
-                'approach_progress', 'high_approach_alignment', 'lateral_approach_alignment',
+                'approach_progress', 'high_approach_alignment', 'lateral_approach_alignment', 'open_depth_alignment',
                 'aligned_open_advance', 'open_lateral_advance')):
             measured_tip = wrist_markers(measured, calibration)[..., 0, :]
         loss = loss + near_approach_world_wrist_loss(planned, expected, forecast, reference, state,
