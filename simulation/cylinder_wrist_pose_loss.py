@@ -197,6 +197,36 @@ def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_l
     return loss.masked_fill(~frames, 0.)
 
 
+def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask, settings):
+    """Supervise vertical progress during a demonstrated held lift with a still base."""
+    gap_low, gap_high = state.new_tensor(settings['state_aperture_affine_m']).unbind()
+    error_low, error_high = state.new_tensor(settings['tracking_error_affine_m']).unbind()
+    opening_low, opening_high = state.new_tensor(settings['action_aperture_affine_m']).unbind()
+    base_low, base_high = state.new_tensor(settings['base_forward_affine_m_s']).unbind()
+    yaw_low, yaw_high = state.new_tensor(settings['base_yaw_affine_rad_s']).unbind()
+    gap = gap_low + (state[:, 6:7] + 1.) * (gap_high - gap_low) * .5
+    error = error_low + (state[:, 24:25] + 1.) * (error_high - error_low) * .5
+    opening = opening_low + (reference[..., 6] + 1.) * (opening_high - opening_low) * .5
+    base_forward = base_low + (reference[..., 7] + 1.) * (base_high - base_low) * .5
+    base_yaw = yaw_low + (reference[..., 8] + 1.) * (yaw_high - yaw_low) * .5
+
+    low, high = settings['measured_aperture_range_m']
+    held = ((state[:, 23:24] <= settings['cue_validity_threshold']) & (gap >= low) & (gap <= high)
+            & (error <= -settings['minimum_preload_m']))
+    retaining = ((opening <= settings['max_teacher_aperture_m'])
+                 & (base_forward.abs() <= settings['max_base_speed_m_s'])
+                 & (base_yaw.abs() <= settings['max_base_yaw_rad_s']))
+    if dof_mask is not None:
+        retaining &= dof_mask.reshape_as(reference)[..., 6:9].bool().all(dim=-1)
+    prefix = valid_prefix & retaining.cumprod(dim=1).bool()
+    expected_z = expected[..., 0, 2]
+    planned_z = planned[..., 0, 2]
+    upward_label = (expected_z - anchor_tip[:, 2:3] >= settings['minimum_teacher_rise_m']) & prefix
+    frames = held & upward_label.any(dim=1, keepdim=True) & prefix
+    shortfall = (expected_z - planned_z).clamp_min(0.) / settings['scale_m']
+    return (settings['weight'] * shortfall.square()).masked_fill(~frames, 0.)
+
+
 def wrist_target_displacement(state, calibration):
     cue_low, cue_high = state.new_tensor(calibration['cue_affine']).unbind(0)
     cue = cue_low + (state[:, (18, 21, 22)] + 1.) * (cue_high - cue_low) * .5
@@ -525,6 +555,10 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     if roll is not None:
         loss = loss + near_grasp_roll_loss(planned, expected, state, valid_prefix, roll,
                                           calibration['orientation_marker_offset_m'])
+    lift = calibration.get('held_vertical_lift')
+    if lift is not None:
+        anchor_tip = wrist_markers(anchor, calibration)[..., 0, :]
+        loss = loss + held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask, lift)
     loss = loss.masked_fill(~valid_prefix, 0.)
     padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
     release = calibration.get('release_opening')
