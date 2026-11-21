@@ -397,6 +397,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
     readings=[];view_search=[]
     reading_retry_reason=None
     lateral_read_attempts=[]
+    extra_stillness_samples = 0
     if record:
         for cam in ("cylinder_overview","face_view"):
             writers[(cam,env.image_size)]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
@@ -875,9 +876,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     for _ in range(10):tick("align_eye_level",q,grip_opening)
             raise ReadingFailure("eye_alignment_timeout")
 
-        def hold_for_stable_reading(q):
+        def hold_for_stable_reading(q, sample_count=stable_read_samples):
             # Only consecutive observations after the latest alignment count.
-            for _ in range(stable_read_samples):
+            for _ in range(sample_count):
                 for _ in range(5):tick("read_stable",q,grip_opening)
                 reading=read_volume(env.render("face_view"))
                 readings.append(dict(time=float(env.data.time),**reading))
@@ -924,8 +925,28 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 break
         if env.metrics()["bottle_tilt_rad"]>np.deg2rad(3):raise InspectionFailure("not_upright_for_reading")
         dof=env.model.joint("cylinder_free").dofadr[0]
-        if np.linalg.norm(env.data.qvel[dof:dof+3])>.005 or np.linalg.norm(env.data.qvel[dof+3:dof+6])>.03:
-            raise InspectionFailure("cylinder_not_still_for_reading")
+
+        def cylinder_is_still():
+            velocity = env.data.qvel[dof:dof+6]
+            return np.linalg.norm(velocity[:3]) <= .005 and np.linalg.norm(velocity[3:]) <= .03
+
+        if not cylinder_is_still():
+            # Keep the command used for the last successful camera alignment.
+            hold_joints = np.array([env.hold_targets[env.model.actuator(f"right_arm_joint{i}_servo").id]
+                                    for i in range(1, 7)])
+            consecutive = 0
+            for extra_stillness_samples in range(1, 9):
+                read_failure = hold_for_stable_reading(hold_joints, sample_count=1)
+                metrics = env.metrics()
+                if (read_failure is not None or not cylinder_is_still() or metrics["grip_contacts"] != 2
+                        or metrics["bottle_tilt_rad"] > np.deg2rad(3)):
+                    consecutive = 0
+                    continue
+                consecutive += 1
+                if consecutive >= 3 and np.ptp([reading["volume_ml"] for reading in readings[-3:]]) <= .4:
+                    break
+            else:
+                raise InspectionFailure("cylinder_not_still_for_reading")
     except InspectionFailure as failure:
         reason=str(failure)
     finally:
@@ -1046,6 +1067,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         if reason is None and summary["absolute_reading_error_ml"]>.5:
             summary["success"]=False;summary["failure_reason"]="reading_inaccurate"
     dof=env.model.joint("cylinder_free").dofadr[0]
+    if extra_stillness_samples:
+        summary["extra_stillness_samples"] = extra_stillness_samples
     summary["final_linear_speed_m_s"]=float(np.linalg.norm(env.data.qvel[dof:dof+3]))
     summary["final_angular_speed_rad_s"]=float(np.linalg.norm(env.data.qvel[dof+3:dof+6]))
     np.savez_compressed(output/"final_physics.npz",qpos=env.data.qpos,qvel=env.data.qvel,
