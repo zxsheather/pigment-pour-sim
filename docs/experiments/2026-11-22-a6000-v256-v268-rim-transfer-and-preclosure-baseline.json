@@ -1,5 +1,5 @@
 {
-  "snapshot": "2026-11-22T02:17:04.318850+08:00",
+  "snapshot": "2026-11-22T02:19:37.804685+08:00",
   "model_runs": {
     "166": {
       "status": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-and-loaded-recovery-bc-v166-a6000/execution-status.json",
@@ -65,7 +65,7 @@
       "driver_live": true,
       "latest_evaluated_step": 768,
       "trainer_pid": 2115607,
-      "trainer_live": true,
+      "trainer_live": false,
       "closed_loop": [
         {
           "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-lateral-sampled-bc-v212-a6000-step128-single/summary.json",
@@ -209,10 +209,10 @@
     },
     "224": {
       "status": "/data/hlou/pigment-pour-study/runs/cylinder-joint-high-right-recovery-bc-v224-a6000/execution-status.json",
-      "phase": "neural_evaluation_256",
+      "phase": "neural_evaluation_384",
       "driver_pid": 2531702,
       "driver_live": true,
-      "latest_evaluated_step": 128,
+      "latest_evaluated_step": 256,
       "trainer_pid": 2547289,
       "trainer_live": true,
       "closed_loop": [
@@ -236,6 +236,29 @@
             "base_retreat_m": 0.27402716755014356,
             "camera_distance_m": 0.9357919218042781,
             "linear_speed_m_s": 8.511187445711624e-14,
+            "angular_speed_rad_s": 0.0
+          }
+        },
+        {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-high-right-recovery-bc-v224-a6000-step256-single/summary.json",
+          "sha256": "29962bc3e166b5d98d2d07da9ad0fde11be0d7ce3544231404ff0412b8ececef",
+          "step": 256,
+          "success": false,
+          "failure_reason": "timeout",
+          "max_supported_lift_m": 0.0,
+          "max_slip_m": 0.0,
+          "max_held_tilt_rad": 0.0,
+          "final_task_gates": {
+            "held": false,
+            "loaded_fingers": 0,
+            "lifted": false,
+            "retreated": true,
+            "close_to_head": false,
+            "upright": true,
+            "still": true,
+            "base_retreat_m": 0.31312404409099304,
+            "camera_distance_m": 0.9624552070716195,
+            "linear_speed_m_s": 8.515918374385694e-14,
             "angular_speed_rad_s": 0.0
           }
         }
@@ -1956,11 +1979,68 @@
     },
     "261": {
       "pid": 2844111,
-      "live": true,
-      "completed": false,
+      "live": false,
+      "completed": true,
       "source": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/admit-and-validate-v261-rim.py",
         "sha256": "e97b2dac6703ae3d615e2d0115d3410db793955233e912b87a1d532852c6f0cb"
+      },
+      "receipt": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/v261-verified-joint-training-inputs.json",
+        "sha256": "405a7e740d47abb4ef3412f45b64c8bc7e408b8dbcf2c57f4b4babcfb322c7e6"
+      },
+      "result": {
+        "dataset": {
+          "kind": "verified_wrist_target_correction_append",
+          "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v232-plus-preclosure-v247",
+          "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v247-plus-tray-rim-v261",
+          "qualifications": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/v261-rebased-rim-qualifications.json",
+          "new_episodes": 4,
+          "new_frames": 3281,
+          "episodes": 316,
+          "frames": 229093,
+          "base_frames_exact": true,
+          "normalization_exact": true,
+          "original_video_hardlinks": 787,
+          "appended_video_hardlinks": 12,
+          "new_sampling_fraction": 0.2,
+          "new_approach_fraction": 0.75,
+          "held_only": false,
+          "reader_reopen_passed": true,
+          "independent_cases_read": false
+        },
+        "admitted_seeds": [
+          882128,
+          882129,
+          882130,
+          882132
+        ],
+        "training_config": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/train-v261.yml",
+        "parent_model": {
+          "source_path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000/checkpoints/0_512",
+          "pinned_path": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-warm-start-v121/checkpoint-v102-step512",
+          "weight_bytes": 8978728776,
+          "checkpoint_sha256": "f358813ef639a16f94213001ed4b59e20a02b506ba1c5fa2f18f0c828b28915f",
+          "same_inode_as_source": true,
+          "copied_model_bytes": 0,
+          "base_normalizer_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+          "source_real_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000-step512-single/summary.json",
+          "source_success": false,
+          "warm_start_uses_model_weights": true,
+          "independent_cases_read": false
+        },
+        "training_weights_sha256": "420119efd67347b45e59768430665dd518aa10322ed8f633297d4e5ff4aac5ef",
+        "preserved_v247_weights_sha256": "b3d421a40780dfe8302f61e3e21f7440df4925c882a26a21ae64d6f06502d239",
+        "effective_new_sampling_fraction": 0.05,
+        "new_weight_fractions": {
+          "tucking": 0.35,
+          "base_return": 0.25,
+          "remaining": 0.4
+        },
+        "data_validation_sha256": "43c17e2ca6b8295ef9caad9e1a52ad678564d6d1a12f36fba9bc84ba57ff4aed",
+        "certified_rows_and_sampling": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/v261-certified-rim-rows-and-sampling.json",
+        "training_only_data": true,
+        "independent_cases_read": false
       },
       "retained_initial_parent_reference_failure": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/attempt-1-parent-receipt-reference/admit-and-validate-v261-rim.log",
@@ -2277,11 +2357,279 @@
     },
     "263": {
       "pid": 2844114,
-      "live": true,
-      "completed": false,
+      "live": false,
+      "completed": true,
       "source": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-actual-rim-sampling-v263/audit-v263-admitted-rim-sampling.py",
         "sha256": "9c03f4e38a352e5721f9d7c7c0215ede0ab7be55b3ad6775c894a2d2ad760166"
+      },
+      "receipt": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-actual-rim-sampling-v263/v263-actual-rim-sampling-neighborhoods.json",
+        "sha256": "552def16a328eb4745c3c99b54fa01c4fed8025730e9c615f9b74ab58e1f0125"
+      },
+      "result": {
+        "baseline_receipt": "/data/hlou/pigment-pour-study/runs/cylinder-preclosure-admission-v247/v247-verified-joint-training-inputs.json",
+        "verified_receipt": "/data/hlou/pigment-pour-study/runs/cylinder-rim-admission-v261/v261-verified-joint-training-inputs.json",
+        "verified_receipt_sha256": "405a7e740d47abb4ef3412f45b64c8bc7e408b8dbcf2c57f4b4babcfb322c7e6",
+        "actual_old_weights_unchanged": true,
+        "baseline": [
+          {
+            "source": "v140-896",
+            "tick": 376,
+            "target_mm": [
+              68.79008483886719,
+              103.61524963378906,
+              36.369083404541016
+            ],
+            "windows": 21,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.05448197348025119,
+            "min_normalized_rms": 0.0453530429752606
+          },
+          {
+            "source": "v140-896",
+            "tick": 384,
+            "target_mm": [
+              57.384056091308594,
+              111.32450103759766,
+              38.067020416259766
+            ],
+            "windows": 15,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.04978955934512328,
+            "min_normalized_rms": 0.04501827691102207
+          },
+          {
+            "source": "v140-896",
+            "tick": 392,
+            "target_mm": [
+              50.907752990722656,
+              110.664306640625,
+              42.090614318847656
+            ],
+            "windows": 20,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.06261370243220306,
+            "min_normalized_rms": 0.04732195263130111
+          },
+          {
+            "source": "v183-640",
+            "tick": 448,
+            "target_mm": [
+              45.03666305541992,
+              101.58627319335938,
+              35.19009780883789
+            ],
+            "windows": 11,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.051293518621371464,
+            "min_normalized_rms": 0.037039869824920545
+          },
+          {
+            "source": "v183-640",
+            "tick": 456,
+            "target_mm": [
+              52.33970642089844,
+              100.6839370727539,
+              31.468448638916016
+            ],
+            "windows": 0,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.0,
+            "min_normalized_rms": 0.0388800465918217
+          },
+          {
+            "source": "v183-640",
+            "tick": 464,
+            "target_mm": [
+              64.52470397949219,
+              111.14187622070312,
+              15.647239685058594
+            ],
+            "windows": 2,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.0848480650858171,
+            "min_normalized_rms": 0.04173272469799376
+          },
+          {
+            "source": "v212-256",
+            "tick": 864,
+            "target_mm": [
+              219.61692810058594,
+              105.42884826660156,
+              3.6221961975097656
+            ],
+            "windows": 14,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.007399440206389596,
+            "min_normalized_rms": 0.04745267939180893
+          },
+          {
+            "source": "v212-256",
+            "tick": 872,
+            "target_mm": [
+              213.42648315429688,
+              111.313232421875,
+              9.781895637512207
+            ],
+            "windows": 17,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.018076197854281783,
+            "min_normalized_rms": 0.0472123081438398
+          },
+          {
+            "source": "v212-256",
+            "tick": 880,
+            "target_mm": [
+              217.67591857910156,
+              109.93086242675781,
+              1.2614390850067139
+            ],
+            "windows": 7,
+            "added_windows": 0,
+            "added_in_neighborhood": 0,
+            "matching_weight_fraction": 0.0007821044022464308,
+            "min_normalized_rms": 0.04987563835824552
+          }
+        ],
+        "admitted": [
+          {
+            "source": "v140-896",
+            "tick": 376,
+            "target_mm": [
+              68.79008483886719,
+              103.61524963378906,
+              36.369083404541016
+            ],
+            "windows": 46,
+            "added_windows": 29,
+            "added_in_neighborhood": 37,
+            "matching_weight_fraction": 0.6989644329301725,
+            "min_normalized_rms": 0.0007634240352039822
+          },
+          {
+            "source": "v140-896",
+            "tick": 384,
+            "target_mm": [
+              57.384056091308594,
+              111.32450103759766,
+              38.067020416259766
+            ],
+            "windows": 48,
+            "added_windows": 34,
+            "added_in_neighborhood": 42,
+            "matching_weight_fraction": 0.745667520416254,
+            "min_normalized_rms": 0.0173674366731895
+          },
+          {
+            "source": "v140-896",
+            "tick": 392,
+            "target_mm": [
+              50.907752990722656,
+              110.664306640625,
+              42.090614318847656
+            ],
+            "windows": 58,
+            "added_windows": 37,
+            "added_in_neighborhood": 45,
+            "matching_weight_fraction": 0.7674934932689969,
+            "min_normalized_rms": 0.01995521615391873
+          },
+          {
+            "source": "v183-640",
+            "tick": 448,
+            "target_mm": [
+              45.03666305541992,
+              101.58627319335938,
+              35.19009780883789
+            ],
+            "windows": 51,
+            "added_windows": 43,
+            "added_in_neighborhood": 49,
+            "matching_weight_fraction": 0.8488124101239057,
+            "min_normalized_rms": 0.0011023461926919986
+          },
+          {
+            "source": "v183-640",
+            "tick": 456,
+            "target_mm": [
+              52.33970642089844,
+              100.6839370727539,
+              31.468448638916016
+            ],
+            "windows": 40,
+            "added_windows": 40,
+            "added_in_neighborhood": 46,
+            "matching_weight_fraction": 0.7718010952995046,
+            "min_normalized_rms": 0.029565896596140836
+          },
+          {
+            "source": "v183-640",
+            "tick": 464,
+            "target_mm": [
+              64.52470397949219,
+              111.14187622070312,
+              15.647239685058594
+            ],
+            "windows": 24,
+            "added_windows": 24,
+            "added_in_neighborhood": 29,
+            "matching_weight_fraction": 0.6453399908048582,
+            "min_normalized_rms": 0.03831909130134091
+          },
+          {
+            "source": "v212-256",
+            "tick": 864,
+            "target_mm": [
+              219.61692810058594,
+              105.42884826660156,
+              3.6221961975097656
+            ],
+            "windows": 34,
+            "added_windows": 21,
+            "added_in_neighborhood": 27,
+            "matching_weight_fraction": 0.5264238206203429,
+            "min_normalized_rms": 0.0009817332067974369
+          },
+          {
+            "source": "v212-256",
+            "tick": 872,
+            "target_mm": [
+              213.42648315429688,
+              111.313232421875,
+              9.781895637512207
+            ],
+            "windows": 35,
+            "added_windows": 20,
+            "added_in_neighborhood": 26,
+            "matching_weight_fraction": 0.7039101121790601,
+            "min_normalized_rms": 0.01933652893983979
+          },
+          {
+            "source": "v212-256",
+            "tick": 880,
+            "target_mm": [
+              217.67591857910156,
+              109.93086242675781,
+              1.2614390850067139
+            ],
+            "windows": 25,
+            "added_windows": 20,
+            "added_in_neighborhood": 26,
+            "matching_weight_fraction": 0.14417279156235857,
+            "min_normalized_rms": 0.01674623616963152
+          }
+        ],
+        "independent_cases_read": false,
+        "model_success_measured": false
       },
       "retained_initial_parent_reference_failure": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-actual-rim-sampling-v263/attempt-1-parent-receipt-reference/audit-v263-admitted-rim-sampling.log",
@@ -2415,6 +2763,16 @@
           "source_attempt": "v262"
         }
       ]
+    },
+    "268": {
+      "pid": 2932370,
+      "live": true,
+      "completed": false,
+      "source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-44ml-early-rim-egl-v268/record-v268-44ml-early-rim-egl.py",
+        "sha256": "b245bbbbfdb3793f5ea0c772bbab29661debe9dc5df29e3cfaedf50992a24c26"
+      },
+      "camera_certificates": []
     },
     "257": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-preclosure-official-probe-v257/v247-parent/v257-official-fixed-state-aperture-probe.json",
@@ -3648,11 +4006,215 @@
     "266": {
       "384": {
         "pid": 2860721,
-        "live": true,
-        "completed": false,
+        "live": false,
+        "completed": true,
         "source": {
           "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-high-volume-rim-v266/tick-384/run-v266-early-rim.py",
           "sha256": "871fb0075b57fd7f65f2820e8e094327209b0bf1124c166994cb4899a560408a"
+        },
+        "receipt": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-high-volume-rim-v266/tick-384/v266-384-early-high-volume-rim.json",
+          "sha256": "d21893605594cfcba6c413124264b7fb34cc3013bd54b79f06b1f20edd55eba5"
+        },
+        "result": {
+          "results": [
+            {
+              "case": {
+                "seed": 882133,
+                "volume": 44.0,
+                "jitter": 0.003,
+                "yaw_jitter": 0.0,
+                "friction_scale": 1.0,
+                "mass_scale": 1.0
+              },
+              "source": "v212-256",
+              "tick": 384,
+              "mode": "base_then_level_approach",
+              "eligible": true,
+              "start_state": {
+                "time_s": 19.200000000000603,
+                "loaded_fingers": 0,
+                "finger_force_n": [
+                  0.0,
+                  0.0
+                ],
+                "aperture_m": 0.04340192332863808,
+                "grasp_error_local_m": [
+                  0.12289329500414435,
+                  0.01267358769397277,
+                  0.005583432183249377
+                ],
+                "grasp_error_m": 0.12367116275412555,
+                "tilt_rad": 0.0,
+                "height_m": 0.7657844891595746,
+                "base_pose": [
+                  0.6121362920177341,
+                  -0.4077743598955305,
+                  1.4811673605434676
+                ],
+                "held": false,
+                "progress_prompt": 0,
+                "forbidden_contacts": []
+              },
+              "visual_target_mm": [
+                118.3517837524414,
+                32.32719802856445,
+                -15.630755424499512
+              ],
+              "reset_rgb_cue": {
+                "world_xy_m": [
+                  0.8801198590971677,
+                  0.302597869833426
+                ],
+                "method": "blue_bearings"
+              },
+              "teacher": {
+                "case": {
+                  "seed": 882133,
+                  "volume": 44.0,
+                  "jitter": 0.003,
+                  "yaw_jitter": 0.0,
+                  "friction_scale": 1.0,
+                  "mass_scale": 1.0
+                },
+                "mode": "base_then_level_approach",
+                "source": {
+                  "time_s": 19.200000000000603,
+                  "loaded_fingers": 0,
+                  "finger_force_n": [
+                    0.0,
+                    0.0
+                  ],
+                  "aperture_m": 0.04340192332863808,
+                  "grasp_error_local_m": [
+                    0.12289329500414435,
+                    0.01267358769397277,
+                    0.005583432183249377
+                  ],
+                  "grasp_error_m": 0.12367116275412555,
+                  "tilt_rad": 0.0,
+                  "height_m": 0.7657844891595746,
+                  "base_pose": [
+                    0.6121362920177341,
+                    -0.4077743598955305,
+                    1.4811673605434676
+                  ],
+                  "held": false,
+                  "progress_prompt": 0,
+                  "forbidden_contacts": [],
+                  "tick": 384
+                },
+                "teacher_success": true,
+                "teacher_failure": null,
+                "strict": {
+                  "success": true,
+                  "reason": null,
+                  "slip_m": 0.012929303302171558,
+                  "supported_lift_m": 0.1191891766990365,
+                  "readings_ml": [
+                    43.87323943661972,
+                    43.87323943661972,
+                    43.87323943661972
+                  ],
+                  "gates": {
+                    "held": true,
+                    "loaded_fingers": 2,
+                    "lifted": true,
+                    "retreated": true,
+                    "close_to_head": true,
+                    "upright": true,
+                    "still": true,
+                    "base_retreat_m": 0.24439380049357218,
+                    "camera_distance_m": 0.4416313087308251,
+                    "linear_speed_m_s": 0.00055414814521101,
+                    "angular_speed_rad_s": 0.0018806957459007805
+                  },
+                  "geometry_audit": {
+                    "passed": true,
+                    "default_profile": "official",
+                    "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+                    "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+                    "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+                    "custom_pads": 0,
+                    "geometry_import": "Unchanged union of the source convex solids",
+                    "fingers": [
+                      {
+                        "link": "left_arm_gripper_left_link",
+                        "source_file": "mesh/collision/gripper_left_link.STL",
+                        "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+                        "convex_solids": 3,
+                        "compiled_contact_geoms": 3,
+                        "urdf_effort_limit_n": 20.0,
+                        "maximum_vertex_error_m": 1.8767490163088206e-09
+                      },
+                      {
+                        "link": "left_arm_gripper_right_link",
+                        "source_file": "mesh/collision/gripper_right_link.STL",
+                        "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+                        "convex_solids": 2,
+                        "compiled_contact_geoms": 2,
+                        "urdf_effort_limit_n": 20.0,
+                        "maximum_vertex_error_m": 1.880467725507178e-09
+                      },
+                      {
+                        "link": "right_arm_gripper_left_link",
+                        "source_file": "mesh/collision/gripper_left_link.STL",
+                        "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+                        "convex_solids": 3,
+                        "compiled_contact_geoms": 3,
+                        "urdf_effort_limit_n": 20.0,
+                        "maximum_vertex_error_m": 1.8767490163088206e-09
+                      },
+                      {
+                        "link": "right_arm_gripper_right_link",
+                        "source_file": "mesh/collision/gripper_right_link.STL",
+                        "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+                        "convex_solids": 2,
+                        "compiled_contact_geoms": 2,
+                        "urdf_effort_limit_n": 20.0,
+                        "maximum_vertex_error_m": 1.880467725507178e-09
+                      }
+                    ],
+                    "contact_model": {
+                      "friction": [
+                        1.0,
+                        0.005,
+                        0.0001
+                      ],
+                      "condim": 3,
+                      "noslip_iterations": 0,
+                      "calibration": "Nominal simulator defaults; not measured hardware properties"
+                    }
+                  }
+                },
+                "teacher_only": true,
+                "origin_is_development_case": false,
+                "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-early-high-volume-rim-v266/tick-384/v212-256/training-teacher-tests/seed-882133-base_then_level_approach/teacher/trajectory.npz",
+                "development_layout_excluded_from_training": true
+              },
+              "trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-early-high-volume-rim-v266/tick-384/v212-256/training-teacher-tests/seed-882133-base_then_level_approach/teacher/trajectory.npz",
+              "trajectory_sha256": "f8826f3185acbff86aacf071f9c9e7aea26ecc9f3b977edbc3ea38bf116656b0",
+              "labels": {
+                "frames": 1861,
+                "approach_frames": 352,
+                "violations": {
+                  "observation.state": {},
+                  "action": {}
+                },
+                "immutable_normalizer_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+                "teacher_only": true,
+                "independent_cases_read": false,
+                "training_arrays": "/data/hlou/pigment-pour-study/runs/cylinder-early-high-volume-rim-v266/tick-384/seed-882133/preflight-model-training.npz",
+                "training_arrays_sha256": "d09cff5a74b8289c8afb8efc4beaefd87357b963829db6970d2ad331c5127523"
+              }
+            }
+          ],
+          "teacher_only": true,
+          "independent_cases_read": false,
+          "camera_certification_required": true,
+          "source_geometry_unchanged": true,
+          "grasp_height_uses_scene_default": true,
+          "base_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v232-plus-preclosure-v247"
         }
       },
       "528": {
@@ -3772,6 +4334,20 @@
           "grasp_height_uses_scene_default": true,
           "base_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v232-plus-preclosure-v247"
         }
+      }
+    },
+    "267": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-rim-training-queue-v267/v267-rim-training-queue-status.json",
+      "sha256": "ce2fb25aef3a7ab57006ebbdb30dfc573506228703e6aa4f1fab42355b4184b1",
+      "phase": "waiting_for_v247_and_its_retained_comparisons",
+      "time": 1795285137.1881204,
+      "independent_cases_read": false,
+      "training_interrupted": false,
+      "pid": 2923142,
+      "live": true,
+      "script": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-rim-training-queue-v267/queue-v267-rim-after-v247.py",
+        "sha256": "9af0e84bf6215821f45dbbe59d58ca8507335411f4821c900db0ace4d46a5197"
       }
     }
   },
