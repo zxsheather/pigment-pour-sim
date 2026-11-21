@@ -1,0 +1,536 @@
+{
+  "kind": "v89_v90_reset_followup_and_v91_data_comparison",
+  "verified_at": "2026-11-21T15:03:50.237360+08:00",
+  "final_independent_cases_read": false,
+  "genuine_full_case_candidate_ready": false,
+  "v89": {
+    "current": "neural_evaluation_256",
+    "driver": {
+      "pid": 2814498,
+      "live": true,
+      "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/checkpoints/0_384 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000/driver.log --data-port 30255 --train-port 30256 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/wall-x"
+    },
+    "training": {
+      "pid": 2822915,
+      "live": true,
+      "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python -m torch.distributed.run --nproc_per_node=1 --master_port=30256 /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py --config /data/hlou/pigment-pour-study/runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000/train.yml"
+    },
+    "last_training_iteration": 370,
+    "completed_neural_resets": [
+      {
+        "summary": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000-step128-single/summary.json",
+          "sha256": "8cad9c67b9750d6baccdddf2fde8ed46976ff4df2d9c100a3b221136c966a905"
+        },
+        "step": 128,
+        "execution_steps": 8,
+        "result": {
+          "case": {
+            "volume": 25.0,
+            "seed": 100,
+            "jitter": 0.004
+          },
+          "success": false,
+          "failure_reason": "timeout",
+          "simulated_seconds": 90.00000000024771,
+          "max_supported_lift_m": 0.0,
+          "max_slip_m": 0.0,
+          "geometry_audit": {
+            "passed": true,
+            "default_profile": "official",
+            "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+            "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+            "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+            "custom_pads": 0,
+            "geometry_import": "Unchanged union of the source convex solids",
+            "fingers": [
+              {
+                "link": "left_arm_gripper_left_link",
+                "source_file": "mesh/collision/gripper_left_link.STL",
+                "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+                "convex_solids": 3,
+                "compiled_contact_geoms": 3,
+                "urdf_effort_limit_n": 20.0,
+                "maximum_vertex_error_m": 1.8767490163088206e-09
+              },
+              {
+                "link": "left_arm_gripper_right_link",
+                "source_file": "mesh/collision/gripper_right_link.STL",
+                "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+                "convex_solids": 2,
+                "compiled_contact_geoms": 2,
+                "urdf_effort_limit_n": 20.0,
+                "maximum_vertex_error_m": 1.880467725507178e-09
+              },
+              {
+                "link": "right_arm_gripper_left_link",
+                "source_file": "mesh/collision/gripper_left_link.STL",
+                "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+                "convex_solids": 3,
+                "compiled_contact_geoms": 3,
+                "urdf_effort_limit_n": 20.0,
+                "maximum_vertex_error_m": 1.8767490163088206e-09
+              },
+              {
+                "link": "right_arm_gripper_right_link",
+                "source_file": "mesh/collision/gripper_right_link.STL",
+                "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+                "convex_solids": 2,
+                "compiled_contact_geoms": 2,
+                "urdf_effort_limit_n": 20.0,
+                "maximum_vertex_error_m": 1.880467725507178e-09
+              }
+            ],
+            "contact_model": {
+              "friction": [
+                1.0,
+                0.005,
+                0.0001
+              ],
+              "condim": 3,
+              "noslip_iterations": 0,
+              "calibration": "Nominal simulator defaults; not measured hardware properties"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "v90": {
+    "current": "neural_evaluation_128",
+    "driver": {
+      "pid": 2906440,
+      "live": true,
+      "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-held-aperture-v84-bc-v90-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/checkpoints/0_384 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-held-aperture-v84-bc-v90-a6000/driver.log --data-port 30257 --train-port 30258 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/wall-x"
+    },
+    "training": {
+      "pid": 2921067,
+      "live": true,
+      "command": "/data/hlou/pigment-pour-study/.venv-wall/bin/python -m torch.distributed.run --nproc_per_node=1 --master_port=30258 /data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/wall-x/wall_x/trainer/fsdp_trainer/train_fsdp.py --config /data/hlou/pigment-pour-study/runs/cylinder-joint-held-aperture-v84-bc-v90-a6000/train.yml"
+    },
+    "last_training_iteration": 245,
+    "completed_neural_resets": []
+  },
+  "matched_held_cutover_128": {
+    "same_two_teacher_states": true,
+    "shared_training_cases": true,
+    "model_step": 128,
+    "max_seconds_after_takeover": 4.0,
+    "cpu": true,
+    "complete_reset_validation": false,
+    "teacher_controls": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/matched-held-cutover-128/teacher-controls.json",
+      "sha256": "8b971731f2733e37bb3e60899f07f6484a51a8d845f8137ba73ed3a8aa698954"
+    },
+    "probe": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/matched-held-cutover-128/probe-matched-held-cutover.py",
+      "sha256": "d0050d796ac344c49ad430adf96a361dd1f3cfa5afac9e4763552032d1001aee"
+    },
+    "probes": {
+      "v89": {
+        "process": {
+          "pid": 3062453,
+          "live": true,
+          "command": "bash /data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/matched-held-cutover-128/launch-case.sh v89"
+        },
+        "individual_scenes": [],
+        "result": null
+      },
+      "v90": {
+        "process": {
+          "pid": 3062454,
+          "live": true,
+          "command": "bash /data/hlou/pigment-pour-study/runs/cylinder-held-aperture-v90/matched-held-cutover-128/launch-case.sh v90"
+        },
+        "individual_scenes": [],
+        "result": null
+      }
+    }
+  },
+  "early_opening_41ml_teacher_trials": {
+    "source": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml-qualification.json",
+      "sha256": "cf081834521387987ceaf91d6e08fae02ea3c34e13be99f7ab7c3c2c180a2edd"
+    },
+    "result": {
+      "kind": "paired_v84_earlier_single_contact_41ml_qualification",
+      "teacher_only": true,
+      "source_fixture": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/summary.json",
+      "counts_as_actual_model_task_success": false,
+      "independent_cases_read": false,
+      "results": [
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "retreat_before_open",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 0,
+            "frame": 320,
+            "time_s": 16.00000000000806,
+            "aperture_m": 0.04654342040419579,
+            "base_retreat_m": 0.007142070963565783,
+            "wrist_shaft_error_deg": 6.658726839399858,
+            "max_right_joint_speed_rad_s": 0.058741187206138766,
+            "grasp_distance_m": 0.028006360467581874,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0016387363558716395,
+            "cylinder_tilt_rad": 0.04592334499903183,
+            "cylinder_linear_speed_m_s": 0.0005045044637656068
+          },
+          "task_success": false,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f320-retreat_before_open/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": true,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": false,
+          "reason": "single_contact_release_did_not_settle",
+          "strict": null
+        },
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "open_then_retreat",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 0,
+            "frame": 320,
+            "time_s": 16.00000000000806,
+            "aperture_m": 0.04654342040419579,
+            "base_retreat_m": 0.007142070963565783,
+            "wrist_shaft_error_deg": 6.658726839399858,
+            "max_right_joint_speed_rad_s": 0.058741187206138766,
+            "grasp_distance_m": 0.028006360467581874,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0016387363558716395,
+            "cylinder_tilt_rad": 0.04592334499903183,
+            "cylinder_linear_speed_m_s": 0.0005045044637656068
+          },
+          "task_success": false,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f320-open_then_retreat/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": false,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": false,
+          "reason": "unreadable:ambiguous_liquid_boundary",
+          "strict": null
+        },
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "retreat_before_open",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 1,
+            "frame": 328,
+            "time_s": 16.40000000000713,
+            "aperture_m": 0.04214889273047447,
+            "base_retreat_m": 0.008747828482967235,
+            "wrist_shaft_error_deg": 6.6287370072472145,
+            "max_right_joint_speed_rad_s": 0.10853306352019114,
+            "grasp_distance_m": 0.02446067347096778,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0017076619606419818,
+            "cylinder_tilt_rad": 0.04748816533885105,
+            "cylinder_linear_speed_m_s": 0.001993334373684763
+          },
+          "task_success": false,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f328-retreat_before_open/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": true,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": false,
+          "reason": "single_contact_release_did_not_settle",
+          "strict": null
+        },
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "open_then_retreat",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 1,
+            "frame": 328,
+            "time_s": 16.40000000000713,
+            "aperture_m": 0.04214889273047447,
+            "base_retreat_m": 0.008747828482967235,
+            "wrist_shaft_error_deg": 6.6287370072472145,
+            "max_right_joint_speed_rad_s": 0.10853306352019114,
+            "grasp_distance_m": 0.02446067347096778,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0017076619606419818,
+            "cylinder_tilt_rad": 0.04748816533885105,
+            "cylinder_linear_speed_m_s": 0.001993334373684763
+          },
+          "task_success": true,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f328-open_then_retreat/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": false,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": true,
+          "reason": null,
+          "strict": {
+            "success": true,
+            "reason": null,
+            "frames": 948,
+            "max_supported_lift_m": 0.11914722394979138,
+            "max_slip_m": 0.011737772738033793,
+            "max_tilt_rad": 0.04616906069210664,
+            "accepted_readings_ml": [
+              40.728429985855726,
+              40.720338983050844,
+              40.720338983050844
+            ],
+            "gates": {
+              "held": true,
+              "loaded_fingers": 2,
+              "lifted": true,
+              "retreated": true,
+              "close_to_head": true,
+              "upright": true,
+              "still": true,
+              "base_retreat_m": 0.24296779990200323,
+              "camera_distance_m": 0.4217723995274626,
+              "linear_speed_m_s": 0.0019254546864323735,
+              "angular_speed_rad_s": 0.009206881128803416
+            },
+            "projected_frames": 0,
+            "geometry_passed": true,
+            "custom_pads": 0,
+            "scored_from_actual_source_time_s": 16.40000000000713
+          }
+        },
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "retreat_before_open",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 2,
+            "frame": 334,
+            "time_s": 16.70000000000643,
+            "aperture_m": 0.038253054544329645,
+            "base_retreat_m": 0.011169582899934805,
+            "wrist_shaft_error_deg": 6.438459119319829,
+            "max_right_joint_speed_rad_s": 0.10181935592716808,
+            "grasp_distance_m": 0.03031331686644152,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0026407732972497655,
+            "cylinder_tilt_rad": 0.0659044516751606,
+            "cylinder_linear_speed_m_s": 0.02462904426809223
+          },
+          "task_success": false,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f334-retreat_before_open/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": true,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": false,
+          "reason": "single_contact_release_did_not_settle",
+          "strict": null
+        },
+        {
+          "case": {
+            "volume": 41,
+            "seed": 881973,
+            "jitter": 0.006,
+            "yaw_jitter": 0.08
+          },
+          "mode": "open_then_retreat",
+          "source": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/volume_41_seed_881973/episode_000",
+          "snapshot": {
+            "index": 2,
+            "frame": 334,
+            "time_s": 16.70000000000643,
+            "aperture_m": 0.038253054544329645,
+            "base_retreat_m": 0.011169582899934805,
+            "wrist_shaft_error_deg": 6.438459119319829,
+            "max_right_joint_speed_rad_s": 0.10181935592716808,
+            "grasp_distance_m": 0.03031331686644152,
+            "loaded_contacts": 1,
+            "forbidden_contact": false,
+            "cylinder_height_delta_m": 0.0026407732972497655,
+            "cylinder_tilt_rad": 0.0659044516751606,
+            "cylinder_linear_speed_m_s": 0.02462904426809223
+          },
+          "task_success": false,
+          "teacher_trajectory": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-contact-41ml/seed-881973-f334-open_then_retreat/teacher/trajectory.npz",
+          "options": {
+            "grip_opening": 0.003,
+            "release_single_contact": true,
+            "release_retreat_m": 0.04,
+            "release_retreat_before_open": false,
+            "read_lateral": 0.16,
+            "stable_read_samples": 8,
+            "read_lateral_retry_offsets_m": [
+              0.025,
+              0.01,
+              -0.025
+            ],
+            "teacher_grasp_height_m": 0.235,
+            "read_distance": 0.39
+          },
+          "raw_teacher_success": false,
+          "reason": "single_contact_release_did_not_settle",
+          "strict": null
+        }
+      ]
+    }
+  },
+  "three_scene_training_capture": {
+    "process": {
+      "pid": 2978536,
+      "live": true,
+      "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/capture-v84-preclosure-verified.py"
+    },
+    "report": null
+  },
+  "early_opening_41ml_capture": {
+    "process": {
+      "pid": 3043312,
+      "live": true,
+      "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/capture-v84-early-opening-41ml.py"
+    },
+    "report": null,
+    "fixed_normalizer_dry_audit": {
+      "source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-early-opening-41ml-rgb/step-384-seed-881973/qualified/dry_normalization_audit.json",
+        "sha256": "0f8c6ae5edda6289d9925d1cf4bbeb9b927580d032de5644c394f04bdc96a1aa"
+      },
+      "result": {
+        "observation.state": [],
+        "action": []
+      }
+    }
+  },
+  "v84_additional_training_resets": {
+    "process": {
+      "pid": 2934120,
+      "live": true,
+      "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/run_wall_cylinder.py --model /data/hlou/pigment-pour-study/runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/checkpoints/0_384 --config /data/hlou/pigment-pour-study/runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/train.yml --norm-key cylinder_joint_v1 --controller-config /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/configs/cylinder_official_teacher_dev_v1.json --cases /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-cases.json --execute-steps 8 --max-seconds 90 --output /data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/independent-training-reset-probe"
+    },
+    "result": null
+  },
+  "v91": {
+    "process": {
+      "pid": 3031380,
+      "live": true,
+      "command": "bash /data/hlou/pigment-pour-study/runs/cylinder-preclosure-data-v91/start-v91.sh"
+    },
+    "data_inputs": null,
+    "official_data_validation": null,
+    "release_condition": "Three qualifying recordings, official data validation, and finished GPU 3 probe",
+    "scope": "V89 parent, loss, hyperparameters and normalizer, with three added training recoveries",
+    "additional_41ml_capture_excluded_from_this_comparison": true,
+    "queue_script": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-preclosure-data-v91/start-v91.sh",
+      "sha256": "ed26d25bbc755bee3a9b8e89ec7efa3b3bf727f667d32902ccc1b057b36ab50b"
+    },
+    "preparation": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-preclosure-data-v91/prepare-v91.py",
+      "sha256": "ec008d113e9272e32bbb59bdb4e3b91bc497cc6466242b0e38c4d62ebf35635a"
+    }
+  },
+  "sources": [
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/qualify-v84-earlier-contact-41ml.py",
+      "sha256": "203cc630fec9bc4b583701415b3cfd22f4ea1aa39ae1a425aa8994f806c5d437"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/capture-v84-early-opening-41ml.py",
+      "sha256": "ecbae39f375ba250b2257992448fa52c8036fdda1a3c6aef7c7d731e49bc2ce3"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-prefix/summary.json",
+      "sha256": "af4146078178ec346165a04b727f232c925c1eaa200767b6d7bd19a45427068a"
+    },
+    {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v84-sustained-lift-v89/preclosure-training-cases.json",
+      "sha256": "fea66a523593e40ca621610f4beeb3f01395e06108c5dd03c7f991cba579ea5b"
+    }
+  ]
+}

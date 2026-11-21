@@ -166,6 +166,30 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
     return (calibration['weight'] * shortfall.square()).masked_fill(~frames, 0.)
 
 
+def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_loss_mask):
+    """Penalize reopening during a demonstrated narrow hold after approach."""
+    gap_min, gap_max = state.new_tensor(calibration['state_aperture_affine_m']).unbind()
+    error_min, error_max = state.new_tensor(calibration['tracking_error_affine_m']).unbind()
+    goal_min, goal_max = state.new_tensor(calibration['action_aperture_affine_m']).unbind()
+    gap = gap_min + (state[:, 6:7] + 1.) * (gap_max - gap_min) * .5
+    error = error_min + (state[:, 24:25] + 1.) * (error_max - error_min) * .5
+    target = goal_min + (reference[..., 6] + 1.) * (goal_max - goal_min) * .5
+    requested = goal_min + (forecast[..., 6] + 1.) * (goal_max - goal_min) * .5
+    min_gap, max_gap = calibration['measured_aperture_range_m']
+    anchor = ((state[:, 23:24] <= calibration['cue_validity_threshold'])
+              & (gap >= min_gap) & (gap <= max_gap)
+              & (error <= -calibration['minimum_closing_error_m'])
+              & (gap + error <= calibration['max_previous_target_m']))
+    retaining = target <= calibration['max_teacher_target_m']
+    if dof_mask is not None:
+        retaining &= dof_mask.reshape_as(reference)[..., 6].bool()
+    if flow_loss_mask is not None:
+        retaining &= flow_loss_mask.reshape_as(target).bool()
+    frames = anchor & retaining.cumprod(dim=1).bool()
+    excess = (requested - target).clamp_min(0.) / calibration['scale_m']
+    return (calibration['weight'] * excess.square()).masked_fill(~frames, 0.)
+
+
 def wrist_target_displacement(state, calibration):
     cue_low, cue_high = state.new_tensor(calibration['cue_affine']).unbind(0)
     cue = cue_low + (state[:, (18, 21, 22)] + 1.) * (cue_high - cue_low) * .5
@@ -421,6 +445,10 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     release = calibration.get('release_opening')
     if release is not None:
         gap_loss = release_opening_loss(forecast, reference, state, release, dof_mask, flow_loss_mask)
+        padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
+    retaining = calibration.get('held_aperture')
+    if retaining is not None:
+        gap_loss = held_aperture_loss(forecast, reference, state, retaining, dof_mask, flow_loss_mask)
         padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
     heading = calibration.get('near_heading_recovery')
     if heading is not None:
