@@ -2042,10 +2042,47 @@
     }
   },
   "v409": {
-    "status": {
-      "pid": 2605479,
-      "live": true
-    }
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v354-recovery-camera-v409/v409-recorded-qualification.json",
+      "sha256": "fc34e147cd34ee43b92da20bb627b4bd5a6603fd12be7c1b56cd3bfe47a2a2aa"
+    },
+    "fully_qualified": 2,
+    "frames": 1308,
+    "results": [
+      {
+        "seed": 883270,
+        "expected_ml": 21.0,
+        "frames": 554,
+        "slip_m": 0.009889656145421288,
+        "supported_lift_m": 0.11907137627816766,
+        "readings_ml": [
+          21.139240506329113,
+          21.139240506329113,
+          21.139240506329113
+        ],
+        "source": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v354-recovery-camera-v409/seed-883270/camera-certificate.json",
+          "sha256": "30d0a6945959f9182882fb633cb542ffb3b2a3a20521ef4f7a9b3e04f50c1d40"
+        }
+      },
+      {
+        "seed": 883271,
+        "expected_ml": 37.0,
+        "frames": 754,
+        "slip_m": 0.012008838661566535,
+        "supported_lift_m": 0.11898783746732566,
+        "readings_ml": [
+          36.89873417721519,
+          36.89873417721519,
+          36.89873417721519
+        ],
+        "source": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v354-recovery-camera-v409/seed-883271/camera-certificate.json",
+          "sha256": "3aea095a149156ed7ff1b348c512a5a0cfc6c20af06dadc8b03f1d8624a414a0"
+        }
+      }
+    ],
+    "training_merge_performed": false
   },
   "current_trainers": {
     "232": {
@@ -2155,6 +2192,90 @@
           "supported_lift_m": 0.00034213385735670787,
           "wrist_dz_mm": -0.058377950146404345
         }
+      }
+    ]
+  },
+  "v410": {
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v354-verified-recovery-support-v410/v410-v354-certified-recovery-support.json",
+      "sha256": "c5672e9521e5ec07497864625ac23d3db082c6dfa7b0be953c5d52610c097965"
+    },
+    "comparisons": [
+      {
+        "tick": 264,
+        "baseline_radius": 0.040738132735467315,
+        "teacher_windows": [
+          {
+            "seed": 883270,
+            "qualifying_starts": 24,
+            "within_baseline_128": 2,
+            "nearest_distance": 0.022721748520369064,
+            "qualifying_local_starts": [
+              0,
+              1
+            ]
+          },
+          {
+            "seed": 883271,
+            "qualifying_starts": 23,
+            "within_baseline_128": 1,
+            "nearest_distance": 0.037333651687517753,
+            "qualifying_local_starts": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "tick": 272,
+        "baseline_radius": 0.03334849354928262,
+        "teacher_windows": [
+          {
+            "seed": 883270,
+            "qualifying_starts": 24,
+            "within_baseline_128": 1,
+            "nearest_distance": 0.0237155056868755,
+            "qualifying_local_starts": [
+              0
+            ]
+          },
+          {
+            "seed": 883271,
+            "qualifying_starts": 23,
+            "within_baseline_128": 0,
+            "nearest_distance": 0.0340321523790575,
+            "qualifying_local_starts": []
+          }
+        ]
+      },
+      {
+        "tick": 280,
+        "baseline_radius": 0.0312979174613247,
+        "teacher_windows": [
+          {
+            "seed": 883270,
+            "qualifying_starts": 24,
+            "within_baseline_128": 4,
+            "nearest_distance": 0.004139628744333216,
+            "qualifying_local_starts": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "seed": 883271,
+            "qualifying_starts": 23,
+            "within_baseline_128": 3,
+            "nearest_distance": 0.01957049444929627,
+            "qualifying_local_starts": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
       }
     ]
   }
