@@ -19,6 +19,16 @@ from audit_wall_checkpoint import saved_checkpoint_position
 from cylinder_joint_actions import joint_action_representation, joint_state_width, require
 
 
+def publish_json(path, value):
+    """Publish complete state snapshots for concurrent queue and evaluation readers."""
+    pending = path.with_name(f'.{path.name}.{os.getpid()}.tmp')
+    try:
+        pending.write_text(json.dumps(value, indent=2)+'\n')
+        pending.replace(path)
+    finally:
+        pending.unlink(missing_ok=True)
+
+
 def checkpoint_position(checkpoint):
     for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'rng_state.pt'):
         require((checkpoint/name).is_file(), f'Missing checkpoint component: {checkpoint/name}')
@@ -125,7 +135,7 @@ def main():
     active_call = None
 
     def save():
-        (run/'execution-status.json').write_text(json.dumps(state, indent=2)+'\n')
+        publish_json(run/'execution-status.json', state)
 
     def call(argv, stage, *, env=None):
         nonlocal active_call
@@ -226,9 +236,9 @@ def main():
                         with (run/'checkpoint-retention.jsonl').open('a') as log:log.write(json.dumps(row)+'\n')
             state.update(stage='training', latest_evaluated_step=step, best_model=str(best));save()
             if report['successes']:
-                (run/'candidate-ready.json').write_text(json.dumps(dict(model=str(checkpoint), step=step, action_space=action_space,
-                    single_summary=str(output/'summary.json'), goal_complete=False,
-                    requires=['original8', 'development12', 'untouched_independent12']), indent=2)+'\n')
+                publish_json(run/'candidate-ready.json', dict(model=str(checkpoint), step=step,
+                    action_space=action_space, single_summary=str(output/'summary.json'), goal_complete=False,
+                    requires=['original8', 'development12', 'untouched_independent12']))
                 state['stage'] = 'candidate_requires_full_suites';save()
                 stop_trainer()
                 return
