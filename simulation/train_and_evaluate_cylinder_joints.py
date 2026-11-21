@@ -116,6 +116,9 @@ def main():
             'Evaluating the resume checkpoint requires a complete checkpoint in this run')
     require(not (run/'execution-status.json').exists(), 'Existing execution must be inspected, not restarted')
     scripts = Path(__file__).resolve().parent
+    # Run the evaluator from its actual source directory. It hashes the sibling
+    # files that execute the rollout, including when the driver uses an overlay.
+    evaluator = (scripts/'run_wall_cylinder.py').resolve(strict=True)
     root = Path.cwd()
     python = str(root/'.venv-wall/bin/python')
     os.environ.update(PYTHONPATH=str(root/'wall-x'), MUJOCO_GL='egl', OPENBLAS_NUM_THREADS='1',
@@ -167,6 +170,7 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):signal.signal(sig, interrupted)
     save()
     try:
+        call([python, str(evaluator), '--help'], 'evaluation_preflight')
         episodes=json.loads((dataset/'meta/info.json').read_text())['total_episodes']
         call([python, '-m', 'torch.distributed.run', '--nproc_per_node=1',
               f'--master_port={args.data_port}', str(scripts/validator),
@@ -202,7 +206,7 @@ def main():
                 audit.append('--allow-new-proprio-projection')
             call(audit,
                  f'audit_{step}')
-            call([python, str(scripts/'run_wall_cylinder.py'), '--model', str(checkpoint),
+            call([python, str(evaluator), '--model', str(checkpoint),
                   '--config', str(config), '--norm-key', norm_key,
                   '--controller-config', str(scripts/'configs/cylinder_official_teacher_dev_v1.json'),
                   '--volume', '25', '--seed', '100', '--execute-steps', '8', '--max-seconds', '90',
