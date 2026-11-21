@@ -1,0 +1,604 @@
+{
+  "verified": "2026-11-21T21:09:38+08:00",
+  "accepted_candidate_ready": false,
+  "formal_acceptance_suites_read_this_turn": false,
+  "models": {
+    "102": {
+      "stage": "neural_evaluation_896",
+      "driver": 1569255,
+      "step": 768,
+      "passed": false,
+      "terminal": "collision:[['right_right_official_collision_1_0', '']]",
+      "min_grasp_distance_mm": 78.97347764943567,
+      "max_finger_contacts": 0,
+      "max_supported_lift_m": 0.0,
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000-step768-single/summary.json"
+    },
+    "104": {
+      "stage": "neural_evaluation_640",
+      "driver": 1615160,
+      "step": 512,
+      "passed": false,
+      "terminal": "timeout",
+      "min_grasp_distance_mm": 118.77753705456615,
+      "max_finger_contacts": 0,
+      "max_supported_lift_m": 0.0,
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v103-clearance-prompt-bc-v104-a6000-step512-single/summary.json"
+    },
+    "108": {
+      "stage": "neural_evaluation_256",
+      "driver": 2001700,
+      "step": 128,
+      "passed": false,
+      "terminal": "timeout",
+      "min_grasp_distance_mm": 96.94699428166142,
+      "max_finger_contacts": 0,
+      "max_supported_lift_m": 0.0,
+      "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v102-plus-v98-wide-contact-bc-v108-a6000-step128-single/summary.json"
+    }
+  },
+  "v118": {
+    "training_normalizer": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-right-offset-early-recovery-v118/v118-right-offset-training-label-preflight.json",
+      "eligible_cases": [
+        882064,
+        882065,
+        882066,
+        882067
+      ],
+      "passes": 7,
+      "checked": 7
+    },
+    "camera": {
+      "pid": 3026682,
+      "live": true
+    },
+    "selection": {
+      "882064": "earlier_wrist_clearance",
+      "882065": "earlier_wrist_clearance",
+      "882066": "earlier_wrist_clearance",
+      "882067": "earlier_wrist_clearance"
+    }
+  },
+  "v119": {
+    "training_normalizer": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-near-close-v119/v102-512-near-close-label-preflight.json",
+      "eligible_cases": [
+        882068,
+        882069,
+        882070,
+        882071
+      ],
+      "passes": 8,
+      "checked": 8
+    }
+  },
+  "v120": {
+    "paired_development_source": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/v120-near-close-timing-paired.json",
+    "paired_development": [
+      {
+        "mode": "close_after_alignment_no_extra_open_dwell",
+        "close_tick": 40,
+        "dual_contact_tick": 57,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.024149654811332077,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.806942378812623,
+        "original_default_arrays_bit_exact": true,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/close_after_alignment_no_extra_open_dwell-296/teacher/trajectory.npz",
+        "raw_start_tick": 296
+      },
+      {
+        "mode": "settling_two_ticks",
+        "close_tick": 32,
+        "dual_contact_tick": 49,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.02414867005903637,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.729100973923241,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/settling_two_ticks-296/teacher/trajectory.npz",
+        "raw_start_tick": 296
+      },
+      {
+        "mode": "align_700ms_settle_four_ticks",
+        "close_tick": 23,
+        "dual_contact_tick": 40,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.02414372593863201,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.56030872520417,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/align_700ms_settle_four_ticks-296/teacher/trajectory.npz",
+        "raw_start_tick": 296
+      },
+      {
+        "mode": "align_400ms_settle_two_ticks",
+        "close_tick": 21,
+        "dual_contact_tick": 38,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.024144590839813795,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.704536120654858,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/align_400ms_settle_two_ticks-296/teacher/trajectory.npz",
+        "raw_start_tick": 296
+      },
+      {
+        "mode": "close_after_alignment_no_extra_open_dwell",
+        "close_tick": 40,
+        "dual_contact_tick": 57,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.024109756742526967,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.689907934412988,
+        "original_default_arrays_bit_exact": true,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/close_after_alignment_no_extra_open_dwell-320/teacher/trajectory.npz",
+        "raw_start_tick": 320
+      },
+      {
+        "mode": "settling_two_ticks",
+        "close_tick": 32,
+        "dual_contact_tick": 49,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.02410935860293506,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.840927289481673,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/settling_two_ticks-320/teacher/trajectory.npz",
+        "raw_start_tick": 320
+      },
+      {
+        "mode": "align_700ms_settle_four_ticks",
+        "close_tick": 24,
+        "dual_contact_tick": 41,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.02410443601129425,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.833455216146666,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/align_700ms_settle_four_ticks-320/teacher/trajectory.npz",
+        "raw_start_tick": 320
+      },
+      {
+        "mode": "align_400ms_settle_two_ticks",
+        "close_tick": 22,
+        "dual_contact_tick": 39,
+        "before_close_contact_count": 0,
+        "max_joint_increment_rad": 0.02410543887490796,
+        "strict_pass": true,
+        "physical_score_failure": null,
+        "teacher_failure": null,
+        "max_slip_mm": 8.708693215738448,
+        "original_default_arrays_bit_exact": null,
+        "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/near-close-teacher-tests/align_400ms_settle_two_ticks-320/teacher/trajectory.npz",
+        "raw_start_tick": 320
+      }
+    ],
+    "onsets_source": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/v120-development-trajectory-onsets.json",
+    "onsets": [
+      {
+        "source_tick": 296,
+        "mode": "close_after_alignment_no_extra_open_dwell",
+        "closing_after": 40,
+        "dual_contact_after": 57,
+        "initial_advance_mm": 1.9016443255986601,
+        "before_close_distance_mm": 0.22751296647875774,
+        "physical_10_30mm_clear_windows": 17,
+        "physical_near_advances_at_least_3mm": 15,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.024149654811332077,
+        "strict_success": true,
+        "slip_mm": 8.806942378812623
+      },
+      {
+        "source_tick": 296,
+        "mode": "settling_two_ticks",
+        "closing_after": 32,
+        "dual_contact_after": 49,
+        "initial_advance_mm": 1.9016443255986601,
+        "before_close_distance_mm": 0.06519305237317304,
+        "physical_10_30mm_clear_windows": 17,
+        "physical_near_advances_at_least_3mm": 15,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.02414867005903637,
+        "strict_success": true,
+        "slip_mm": 8.729100973923241
+      },
+      {
+        "source_tick": 296,
+        "mode": "align_700ms_settle_four_ticks",
+        "closing_after": 23,
+        "dual_contact_after": 40,
+        "initial_advance_mm": 5.691456791225912,
+        "before_close_distance_mm": 0.12304042546148092,
+        "physical_10_30mm_clear_windows": 11,
+        "physical_near_advances_at_least_3mm": 11,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.02414372593863201,
+        "strict_success": true,
+        "slip_mm": 8.56030872520417
+      },
+      {
+        "source_tick": 296,
+        "mode": "align_400ms_settle_two_ticks",
+        "closing_after": 21,
+        "dual_contact_after": 38,
+        "initial_advance_mm": 5.691456791225912,
+        "before_close_distance_mm": 0.1321235825561568,
+        "physical_10_30mm_clear_windows": 11,
+        "physical_near_advances_at_least_3mm": 11,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.024144590839813795,
+        "strict_success": true,
+        "slip_mm": 8.704536120654858
+      },
+      {
+        "source_tick": 320,
+        "mode": "close_after_alignment_no_extra_open_dwell",
+        "closing_after": 40,
+        "dual_contact_after": 57,
+        "initial_advance_mm": 1.7136771205996162,
+        "before_close_distance_mm": 0.32842762879751963,
+        "physical_10_30mm_clear_windows": 16,
+        "physical_near_advances_at_least_3mm": 13,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.024109756742526967,
+        "strict_success": true,
+        "slip_mm": 8.689907934412988
+      },
+      {
+        "source_tick": 320,
+        "mode": "settling_two_ticks",
+        "closing_after": 32,
+        "dual_contact_after": 49,
+        "initial_advance_mm": 1.7136771205996162,
+        "before_close_distance_mm": 0.1711803072668508,
+        "physical_10_30mm_clear_windows": 16,
+        "physical_near_advances_at_least_3mm": 13,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.02410935860293506,
+        "strict_success": true,
+        "slip_mm": 8.840927289481673
+      },
+      {
+        "source_tick": 320,
+        "mode": "align_700ms_settle_four_ticks",
+        "closing_after": 24,
+        "dual_contact_after": 41,
+        "initial_advance_mm": 4.6058259547923335,
+        "before_close_distance_mm": 0.18306220805822637,
+        "physical_10_30mm_clear_windows": 11,
+        "physical_near_advances_at_least_3mm": 11,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.02410443601129425,
+        "strict_success": true,
+        "slip_mm": 8.833455216146666
+      },
+      {
+        "source_tick": 320,
+        "mode": "align_400ms_settle_two_ticks",
+        "closing_after": 22,
+        "dual_contact_after": 39,
+        "initial_advance_mm": 4.6058259547923335,
+        "before_close_distance_mm": 0.274722880222495,
+        "physical_10_30mm_clear_windows": 11,
+        "physical_near_advances_at_least_3mm": 11,
+        "physical_near_closing_within_eight": 0,
+        "peak_joint_increment_rad": 0.02410543887490796,
+        "strict_success": true,
+        "slip_mm": 8.708693215738448
+      }
+    ],
+    "fresh_training_source": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/v120-matched-training-layout-timing.json",
+    "fresh_training": [
+      {
+        "seed": 882068,
+        "volume_ml": 16.0,
+        "raw_tick": 320,
+        "baseline": {
+          "mode": "old_timing",
+          "close_tick": 40,
+          "dual_contact_tick": 57,
+          "before_close_contact_count": 0,
+          "max_joint_increment_rad": 0.024397442191188945,
+          "strict_pass": true,
+          "physical_score_failure": null,
+          "teacher_failure": null,
+          "max_slip_mm": 9.282637456215483,
+          "original_default_arrays_bit_exact": null,
+          "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-near-close-v119/training-teacher-tests/seed-882068-close_after_alignment_no_extra_open_dwell/teacher/trajectory.npz"
+        },
+        "faster": [
+          {
+            "mode": "align_700ms_settle_four_ticks",
+            "close_tick": 24,
+            "dual_contact_tick": 41,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.024389440270600082,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 9.243948689362611,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882068-align_700ms_settle_four_ticks/teacher/trajectory.npz"
+          },
+          {
+            "mode": "align_400ms_settle_two_ticks",
+            "close_tick": 22,
+            "dual_contact_tick": 39,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.024389637022612876,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 9.131042452059024,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882068-align_400ms_settle_two_ticks/teacher/trajectory.npz"
+          }
+        ]
+      },
+      {
+        "seed": 882069,
+        "volume_ml": 26.0,
+        "raw_tick": 320,
+        "baseline": {
+          "mode": "old_timing",
+          "close_tick": 40,
+          "dual_contact_tick": 57,
+          "before_close_contact_count": 0,
+          "max_joint_increment_rad": 0.024274593796329458,
+          "strict_pass": true,
+          "physical_score_failure": null,
+          "teacher_failure": null,
+          "max_slip_mm": 8.658023039284682,
+          "original_default_arrays_bit_exact": null,
+          "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-near-close-v119/training-teacher-tests/seed-882069-close_after_alignment_no_extra_open_dwell/teacher/trajectory.npz"
+        },
+        "faster": [
+          {
+            "mode": "align_700ms_settle_four_ticks",
+            "close_tick": 24,
+            "dual_contact_tick": 41,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.024267559176556264,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 8.569086074009594,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882069-align_700ms_settle_four_ticks/teacher/trajectory.npz"
+          },
+          {
+            "mode": "align_400ms_settle_two_ticks",
+            "close_tick": 22,
+            "dual_contact_tick": 39,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.02426823615032414,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 8.68106383633383,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882069-align_400ms_settle_two_ticks/teacher/trajectory.npz"
+          }
+        ]
+      },
+      {
+        "seed": 882070,
+        "volume_ml": 37.0,
+        "raw_tick": 320,
+        "baseline": {
+          "mode": "old_timing",
+          "close_tick": 40,
+          "dual_contact_tick": 57,
+          "before_close_contact_count": 0,
+          "max_joint_increment_rad": 0.02425864083078566,
+          "strict_pass": true,
+          "physical_score_failure": null,
+          "teacher_failure": null,
+          "max_slip_mm": 10.471622535558687,
+          "original_default_arrays_bit_exact": null,
+          "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-near-close-v119/training-teacher-tests/seed-882070-close_after_alignment_no_extra_open_dwell/teacher/trajectory.npz"
+        },
+        "faster": [
+          {
+            "mode": "align_700ms_settle_four_ticks",
+            "close_tick": 24,
+            "dual_contact_tick": 41,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.024249979076113204,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 17.763439372359205,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882070-align_700ms_settle_four_ticks/teacher/trajectory.npz"
+          },
+          {
+            "mode": "align_400ms_settle_two_ticks",
+            "close_tick": 22,
+            "dual_contact_tick": 39,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.024250979870580225,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 10.438364224165248,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882070-align_400ms_settle_two_ticks/teacher/trajectory.npz"
+          }
+        ]
+      },
+      {
+        "seed": 882071,
+        "volume_ml": 45.0,
+        "raw_tick": 296,
+        "baseline": {
+          "mode": "old_timing",
+          "close_tick": 40,
+          "dual_contact_tick": 57,
+          "before_close_contact_count": 0,
+          "max_joint_increment_rad": 0.02267559280717496,
+          "strict_pass": true,
+          "physical_score_failure": null,
+          "teacher_failure": null,
+          "max_slip_mm": 8.096146569814612,
+          "original_default_arrays_bit_exact": null,
+          "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-near-close-v119/training-teacher-tests/seed-882071-close_after_alignment_no_extra_open_dwell/teacher/trajectory.npz"
+        },
+        "faster": [
+          {
+            "mode": "align_700ms_settle_four_ticks",
+            "close_tick": 24,
+            "dual_contact_tick": 41,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.022918281532991042,
+            "strict_pass": false,
+            "physical_score_failure": null,
+            "teacher_failure": "unstable_reading:ambiguous_liquid_boundary",
+            "max_slip_mm": null,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882071-align_700ms_settle_four_ticks/teacher/trajectory.npz"
+          },
+          {
+            "mode": "align_400ms_settle_two_ticks",
+            "close_tick": 22,
+            "dual_contact_tick": 39,
+            "before_close_contact_count": 0,
+            "max_joint_increment_rad": 0.022564089587814862,
+            "strict_pass": true,
+            "physical_score_failure": null,
+            "teacher_failure": null,
+            "max_slip_mm": 7.530795712555069,
+            "original_default_arrays_bit_exact": null,
+            "trace": "/data/hlou/pigment-pour-study/runs/cylinder-v102-near-close-timing-v120/training-teacher-tests/seed-882071-align_400ms_settle_two_ticks/teacher/trajectory.npz"
+          }
+        ]
+      }
+    ],
+    "fixed_normalizer_live": {
+      "pid": 2980985,
+      "live": true
+    },
+    "fast_labels_pending": true,
+    "fast_labels": null
+  },
+  "v121": {
+    "pinned_parent": {
+      "source_path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000/checkpoints/0_512",
+      "pinned_path": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step512-warm-start-v121/checkpoint-v102-step512",
+      "weight_bytes": 8978728776,
+      "checkpoint_sha256": "f358813ef639a16f94213001ed4b59e20a02b506ba1c5fa2f18f0c828b28915f",
+      "same_inode_as_source": true,
+      "copied_model_bytes": 0,
+      "base_normalizer_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+      "source_real_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000-step512-single/summary.json",
+      "source_success": false,
+      "warm_start_uses_model_weights": true,
+      "independent_cases_read": false
+    },
+    "camera": {
+      "pid": 2987654,
+      "live": true
+    },
+    "camera_selection": null,
+    "dataset_warm_start": {
+      "pid": 3004951,
+      "live": true
+    },
+    "gpu": 1,
+    "runs_after": "V110",
+    "training_started": false
+  },
+  "v122": {
+    "exact_replay_path": "/data/hlou/pigment-pour-study/runs/cylinder-v102-step768-collision-v122/v102-768-exact-collision-details.json",
+    "total_raw_controls": 1409,
+    "terminal_s": 70.45000000015436,
+    "contacts": [
+      {
+        "geoms": [
+          {
+            "id": 142,
+            "geom_name": "",
+            "body_name": "target_tray",
+            "geom_type": 6,
+            "local_geom_position": [
+              0.0,
+              -0.27,
+              0.028
+            ],
+            "geom_size": [
+              0.291,
+              0.006,
+              0.02
+            ],
+            "world_geom_position": [
+              0.88,
+              0.02999999999999997,
+              0.778
+            ]
+          },
+          {
+            "id": 94,
+            "geom_name": "right_right_official_collision_1_0",
+            "body_name": "right_arm_gripper_right_link",
+            "geom_type": 7,
+            "local_geom_position": [
+              0.03079475204451235,
+              -0.019191375563084107,
+              -0.01777168836623202
+            ],
+            "geom_size": [
+              0.019642275219722918,
+              0.033750365812373694,
+              0.05548981049334346
+            ],
+            "world_geom_position": [
+              1.0535670000021713,
+              0.05047599415043574,
+              0.8318351393051144
+            ]
+          }
+        ],
+        "distance_m": -0.00106483138565161,
+        "position": [
+          1.0649010408554334,
+          0.032133032573731124,
+          0.7974675843071742
+        ]
+      }
+    ]
+  },
+  "qualified_cameras": {
+    "v114": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-v100-final-contact-v114/record-and-certify-v100-final-training-cameras.log",
+      "frames_by_seed": {
+        "882057": 573,
+        "882056": 662,
+        "882058": 662
+      }
+    },
+    "v116": {
+      "source": "/data/hlou/pigment-pour-study/runs/cylinder-v102-early-lateral-v116/record-and-certify-v102-early-alignment.log",
+      "frames_by_seed": {
+        "882061": 518,
+        "882060": 608
+      }
+    }
+  }
+}

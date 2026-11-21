@@ -288,7 +288,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    align_near_grasp_forward=False,
                    wrist_clearance_align_at_grasp_height=False,release_retreat_before_open=False,
                    align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
-                   lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12):
+                   lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
+                   near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if approach_motion_scale is not None and (not np.isfinite(approach_motion_scale) or approach_motion_scale <= 0):
         raise ValueError("Approach motion scale must be finite and positive")
@@ -310,6 +311,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Current-depth alignment requires its own near grasp mode")
     if not isinstance(near_grasp_open_ticks, (int, np.integer)) or near_grasp_open_ticks < 0:
         raise ValueError("Near grasp opening ticks must be a nonnegative integer")
+    if not np.isfinite(near_grasp_align_seconds) or near_grasp_align_seconds < CONTROL_DT:
+        raise ValueError("Near grasp alignment must last at least one control tick")
+    if not isinstance(near_grasp_settle_ticks, (int, np.integer)) or near_grasp_settle_ticks < 0:
+        raise ValueError("Near grasp settling ticks must be a nonnegative integer")
     if lateral_alignment_min_depth_m is not None and (
             not align_near_grasp_at_current_depth or not np.isfinite(lateral_alignment_min_depth_m)
             or lateral_alignment_min_depth_m <= 0.):
@@ -451,7 +456,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # require the cylinder and image reading to be still at the end.
             if lost_seconds>.2 or metrics["bottle_slip_m"]>.025:raise InspectionFailure("lost_grasp")
             if metrics["bottle_tilt_rad"]>.12:raise InspectionFailure("cylinder_tilt")
-    def move(phase,point,seconds=2.0,opening=None,*,scale=None,straight=False):
+    def move(phase,point,seconds=2.0,opening=None,*,scale=None,straight=False,settle_ticks=10):
         if opening is None:opening=grip_opening
         q0=env.data.qpos[env.arm_addresses].copy()
         p0=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@env.grasp_offset
@@ -480,7 +485,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             else:q=q0+(q1-q0)*s
             tick(phase,q,opening)
         if held or straight:q1=q
-        for _ in range(10):tick(phase,q1,opening)
+        for _ in range(settle_ticks):tick(phase,q1,opening)
         return q1
 
     def align_wrist_at_clearance():
@@ -743,7 +748,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     alignment[1] = alignment_depth
                     # Align behind the cylinder before advancing toward it.
                     move("wrist_clearance_near_plane",alignment,1.5,opening=.034,straight=True)
-                q = move("wrist_clearance_near_align",target,1.5,opening=.034,straight=True)
+                q = move("wrist_clearance_near_align",target,near_grasp_align_seconds,opening=.034,straight=True,
+                         settle_ticks=near_grasp_settle_ticks)
             else:
                 aligned = align_wrist_at_clearance() if align_from_clearance else None
                 approach_distance = .10 if wrist_clearance_rear_distance_m is None else min(.10, wrist_clearance_rear_distance_m)
@@ -990,6 +996,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["align_near_grasp"]=True
         if near_grasp_open_ticks != 12:
             summary["controller_parameters"]["near_grasp_open_ticks"]=int(near_grasp_open_ticks)
+        if near_grasp_align_seconds != 1.5:
+            summary["controller_parameters"]["near_grasp_align_seconds"]=float(near_grasp_align_seconds)
+        if near_grasp_settle_ticks != 10:
+            summary["controller_parameters"]["near_grasp_settle_ticks"]=int(near_grasp_settle_ticks)
     if align_near_grasp_forward:
         summary["controller_parameters"]["align_near_grasp_forward"]=True
     if align_near_grasp_at_current_depth:
