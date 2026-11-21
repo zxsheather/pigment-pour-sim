@@ -1,5 +1,5 @@
 {
-  "snapshot": "2026-11-22T00:15:45.070208+08:00",
+  "snapshot": "2026-11-22T00:17:55.026827+08:00",
   "ready_candidates": [],
   "independent_cases_read": false,
   "independent_ledger": null,
@@ -481,8 +481,8 @@
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-aligned-open-stall-bc-v188-a6000/train.yml",
       "sha256": "f54fc560cf22a8848cd62f51cbf9fb672d19902e44750593e943de42781bf150"
     },
-    "learning_step": 153,
-    "latest_real_backward_log": "2026-11-22 00:15:44,132 - [rank0] - INFO -  epoch   0/1000 | iter    153/ 48774 | loss 0.016988 | flow_loss 0.016988 | lr 0.000010 | time_current_backward_step 2.671042s |",
+    "learning_step": 189,
+    "latest_real_backward_log": "2026-11-22 00:17:52,610 - [rank0] - INFO -  epoch   0/1000 | iter    189/ 48774 | loss 0.016530 | flow_loss 0.016530 | lr 0.000010 | time_current_backward_step 3.671522s |",
     "official_data_report": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-aligned-open-stall-bc-v188-a6000/data-validation.json",
       "sha256": "4aa9b2f8540d3427dd8c36db38141544facaa3904327d0870e7aeaada3707fd6"
@@ -696,16 +696,208 @@
   "v197": {
     "worker": {
       "pid": 1310388,
-      "live": true,
+      "live": false,
       "log": "/data/hlou/pigment-pour-study/runs/cylinder-early-left-and-reading-admission-v197/admit-and-validate-v197-early-left-and-reading.log"
     },
-    "proof": null,
+    "proof": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-left-and-reading-admission-v197/v197-verified-joint-training-inputs.json",
+      "sha256": "38a5e80a2f42b52ab21dfd87a6779566b611faa0f2210fafac7519bd481431f8"
+    },
     "retry_log": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-left-and-reading-admission-v197/initial-base-proof-path-mismatch.log",
       "sha256": "31a890efc9a5abc96334863183f5359da874e5eab90488c6b1b7dd0db0e5dec3"
     },
-    "official": null,
-    "decision_coverage": null
+    "official": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-left-and-reading-admission-v197/official-v197-data-validation.json",
+      "sha256": "6d356a230ce3cbe061c90faae72701e9bccdde50d927cdb41b6f8d66bd9ca2a4"
+    },
+    "decision_coverage": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-early-left-and-reading-admission-v197/v197-actual-early-left-and-reading-support.json",
+      "sha256": "7916f7367f54e93c26393e8687ad716144ee2009236985599276af2c09d1c66f"
+    },
+    "official_summary": {
+      "passed": true,
+      "episodes": 294,
+      "frames": 210283,
+      "flow_horizon": 8,
+      "sampling_weights_match_source_indices": true
+    },
+    "admitted_seeds": [
+      882102,
+      882104,
+      882105,
+      882106,
+      882107
+    ],
+    "actual_coverage": {
+      "projected_only": false,
+      "verified_loader_rows": true,
+      "added_episodes": 5,
+      "left_contact": [
+        {
+          "tick": 288,
+          "time_s": 14.4,
+          "groups": {
+            "previous_training": {
+              "nearest128_examples": 30,
+              "min_group_normalized_rms": 0.026130282240692186,
+              "neighbor_sampling_mass": 0.01899054297814724
+            },
+            "early_left": {
+              "nearest128_examples": 96,
+              "min_group_normalized_rms": 0.0005573214357843829,
+              "neighbor_sampling_mass": 0.9609888558581415
+            },
+            "reading_recovery": {
+              "nearest128_examples": 2,
+              "min_group_normalized_rms": 0.03082615803898897,
+              "neighbor_sampling_mass": 0.020020601163711287
+            }
+          }
+        },
+        {
+          "tick": 296,
+          "time_s": 14.8,
+          "groups": {
+            "previous_training": {
+              "nearest128_examples": 58,
+              "min_group_normalized_rms": 0.027243744234533223,
+              "neighbor_sampling_mass": 0.06558720050404836
+            },
+            "early_left": {
+              "nearest128_examples": 68,
+              "min_group_normalized_rms": 0.0013682914946293624,
+              "neighbor_sampling_mass": 0.9077152909389247
+            },
+            "reading_recovery": {
+              "nearest128_examples": 2,
+              "min_group_normalized_rms": 0.03541516358207316,
+              "neighbor_sampling_mass": 0.0266975085570272
+            }
+          }
+        },
+        {
+          "tick": 304,
+          "time_s": 15.200000000000001,
+          "groups": {
+            "previous_training": {
+              "nearest128_examples": 64,
+              "min_group_normalized_rms": 0.03283534843660908,
+              "neighbor_sampling_mass": 0.0840790435881129
+            },
+            "early_left": {
+              "nearest128_examples": 64,
+              "min_group_normalized_rms": 0.024036588655174603,
+              "neighbor_sampling_mass": 0.915920956411887
+            },
+            "reading_recovery": {
+              "nearest128_examples": 0,
+              "min_group_normalized_rms": 0.03755289020515752,
+              "neighbor_sampling_mass": 0.0
+            }
+          }
+        },
+        {
+          "tick": 312,
+          "time_s": 15.600000000000001,
+          "groups": {
+            "previous_training": {
+              "nearest128_examples": 58,
+              "min_group_normalized_rms": 0.025484345411432442,
+              "neighbor_sampling_mass": 0.03946725801073092
+            },
+            "early_left": {
+              "nearest128_examples": 70,
+              "min_group_normalized_rms": 0.020298894136492832,
+              "neighbor_sampling_mass": 0.9605327419892693
+            },
+            "reading_recovery": {
+              "nearest128_examples": 0,
+              "min_group_normalized_rms": 0.0342462362282663,
+              "neighbor_sampling_mass": 0.0
+            }
+          }
+        }
+      ],
+      "aligned_open_forward_before": {
+        "frames": 205367,
+        "training_frames": 195099,
+        "checks": [
+          {
+            "chunk": 39,
+            "matches": 24,
+            "corrective_added": 0,
+            "weighted_match_share": 0.8819302646194093,
+            "weighted_added_match_share": 0.0,
+            "total_added_anchors_in_neighborhood": 0
+          },
+          {
+            "chunk": 40,
+            "matches": 24,
+            "corrective_added": 0,
+            "weighted_match_share": 0.797874092162802,
+            "weighted_added_match_share": 0.0,
+            "total_added_anchors_in_neighborhood": 0
+          },
+          {
+            "chunk": 41,
+            "matches": 28,
+            "corrective_added": 0,
+            "weighted_match_share": 0.9121802650292464,
+            "weighted_added_match_share": 0.0,
+            "total_added_anchors_in_neighborhood": 0
+          },
+          {
+            "chunk": 42,
+            "matches": 15,
+            "corrective_added": 0,
+            "weighted_match_share": 0.7175615781190395,
+            "weighted_added_match_share": 0.0,
+            "total_added_anchors_in_neighborhood": 0
+          }
+        ]
+      },
+      "aligned_open_forward_after": {
+        "frames": 210283,
+        "training_frames": 199769,
+        "checks": [
+          {
+            "chunk": 39,
+            "matches": 29,
+            "corrective_added": 8,
+            "weighted_match_share": 0.8770912766690054,
+            "weighted_added_match_share": 0.06799157183480661,
+            "total_added_anchors_in_neighborhood": 8
+          },
+          {
+            "chunk": 40,
+            "matches": 29,
+            "corrective_added": 7,
+            "weighted_match_share": 0.7755770418656225,
+            "weighted_added_match_share": 0.05967500448516706,
+            "total_added_anchors_in_neighborhood": 7
+          },
+          {
+            "chunk": 41,
+            "matches": 32,
+            "corrective_added": 7,
+            "weighted_match_share": 0.9157990294722789,
+            "weighted_added_match_share": 0.07260282108578914,
+            "total_added_anchors_in_neighborhood": 7
+          },
+          {
+            "chunk": 42,
+            "matches": 18,
+            "corrective_added": 5,
+            "weighted_match_share": 0.7109539920983691,
+            "weighted_added_match_share": 0.05560119854783907,
+            "total_added_anchors_in_neighborhood": 5
+          }
+        ]
+      },
+      "model_success_measured": false,
+      "independent_cases_read": false
+    }
   },
   "v198": {
     "worker": {
@@ -1227,6 +1419,52 @@
         "proof": {
           "path": "/data/hlou/pigment-pour-study/runs/cylinder-v121-early-lateral-transfer-v202/seed-882108-result.json",
           "sha256": "d5abdf411acac79dcc3d0512341e741d792786ceb2fc121e4dd6cbae40b33d73"
+        }
+      },
+      {
+        "seed": 882109,
+        "eligible": true,
+        "first_chunk": {
+          "forward_mm": 0.02004766519655976,
+          "corrected_lateral_mm": 13.680648776953692,
+          "vertical_change_mm": 5.522455459869013,
+          "steps": 8,
+          "outcome": null,
+          "cylinder_max_shift_m": 0.0,
+          "minimum_aperture_target_mm": 63.34801563620568,
+          "end_rgb_target_mm": [
+            116.67722615531434,
+            17.659597293954583,
+            -0.740303185093393
+          ]
+        },
+        "failure": null,
+        "proof": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v121-early-lateral-transfer-v202/seed-882109-result.json",
+          "sha256": "9473f426b44e503ee50bf64c8ba7084b491ab1b2eb85aeb7ef4e5f174ffd5299"
+        }
+      },
+      {
+        "seed": 882110,
+        "eligible": true,
+        "first_chunk": {
+          "forward_mm": 0.020051968775414153,
+          "corrected_lateral_mm": 13.680650297762265,
+          "vertical_change_mm": 5.522455459869013,
+          "steps": 8,
+          "outcome": null,
+          "cylinder_max_shift_m": 0.0,
+          "minimum_aperture_target_mm": 63.34801563620568,
+          "end_rgb_target_mm": [
+            118.27447503567372,
+            14.294114585799502,
+            -0.740303185093393
+          ]
+        },
+        "failure": null,
+        "proof": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v121-early-lateral-transfer-v202/seed-882110-result.json",
+          "sha256": "68ac1fe161dcd21850413cf3d045d514760feb9bd769957fb000ee8792d9f964"
         }
       }
     ]
