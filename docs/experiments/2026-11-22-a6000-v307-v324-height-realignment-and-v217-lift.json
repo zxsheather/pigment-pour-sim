@@ -1,5 +1,5 @@
 {
-  "snapshot": "2026-11-22T04:21:34.157970+08:00",
+  "snapshot": "2026-11-22T04:26:17.391866+08:00",
   "v305_camera": {
     "worker": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-v247-height-realign-egl-v305/record-v305-v247-height-realign.py",
@@ -8114,9 +8114,102 @@
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/admit-and-validate-v320-v217-clearance.py",
       "sha256": "dc074b281edf03060814bc50d4b6ec22d61a4d3e7ad5bed4b389f6bc1c1e0117",
       "pid": 245590,
-      "process_state": "Rsl"
+      "process_state": "missing"
     },
-    "report": null
+    "report": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/v320-verified-joint-training-inputs.json",
+      "sha256": "53b9c73236e2cd2ae4c4a46a77ca025722cfd67b424ca755c12348ba2d2455ca",
+      "document": {
+        "dataset": {
+          "kind": "verified_wrist_target_correction_append",
+          "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v297-plus-height-realignment-v307",
+          "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v307-plus-v217-clearance-v320",
+          "qualifications": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/v320-rebased-v217-clearance-qualifications.json",
+          "new_episodes": 6,
+          "new_frames": 4315,
+          "episodes": 345,
+          "frames": 251148,
+          "base_frames_exact": true,
+          "normalization_exact": true,
+          "base_normalization_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+          "normalization_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+          "original_video_hardlinks": 868,
+          "appended_video_hardlinks": 18,
+          "new_sampling_fraction": 0.2,
+          "new_approach_fraction": 0.75,
+          "held_only": false,
+          "reader_reopen_passed": true,
+          "independent_cases_read": false
+        },
+        "admitted_seeds": [
+          882181,
+          882182,
+          882183,
+          882184,
+          882185,
+          882186
+        ],
+        "training_config": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/train-v320.yml",
+        "parent_model": {
+          "source_path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-supported-grasp-resume-bc-v217-a6000/checkpoints/1_768",
+          "pinned_path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/checkpoint-v217-step768",
+          "weight_bytes": 8978728816,
+          "checkpoint_sha256": "dd26e69ba5b6227082061c478f57145cea151e9b620e4194ac0489a0425c8d15",
+          "same_inode_as_source": true,
+          "copied_model_bytes": 0,
+          "base_normalizer_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+          "source_real_rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-supported-grasp-resume-bc-v217-a6000-step768-single/summary.json",
+          "source_real_rollout_sha256": "8105d58e03d975cac171683d56b0e214ba4079667a23b042639b4cfe9c3d0867",
+          "source_failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+          "source_success": false,
+          "warm_start_uses_model_weights": true,
+          "independent_cases_read": false
+        },
+        "training_weights_sha256": "fa63a28a05429eb117effe18621801120a7907e067bc661455fb779e1aa04bfc",
+        "preserved_v307_weights_sha256": "9e1023c81cf6d8f66b857f9ff018fd677d78392b8e07155d31796b5589f477a4",
+        "effective_new_sampling_fraction": 0.05,
+        "sampling_allocation": {
+          "contact_free_realignment": {
+            "approach_to_lift": {
+              "frames": 48,
+              "within_cohort_weight_fraction": 0.23
+            },
+            "close": {
+              "frames": 84,
+              "within_cohort_weight_fraction": 0.12
+            },
+            "wrist_clearance": {
+              "frames": 540,
+              "within_cohort_weight_fraction": 0.23
+            },
+            "other_approach": {
+              "frames": 300,
+              "within_cohort_weight_fraction": 0.1
+            },
+            "lift": {
+              "frames": 1169,
+              "within_cohort_weight_fraction": 0.16
+            },
+            "presentation": {
+              "frames": 2174,
+              "within_cohort_weight_fraction": 0.16
+            }
+          }
+        },
+        "cohort_by_seed": {
+          "882181": "contact_free_realignment",
+          "882182": "contact_free_realignment",
+          "882183": "contact_free_realignment",
+          "882184": "contact_free_realignment",
+          "882185": "contact_free_realignment",
+          "882186": "contact_free_realignment"
+        },
+        "data_validation_sha256": "9a633b009016a055740c60e3b8e2fc1b4417cbaba466b0b73450d58404fc76cb",
+        "certified_rows_and_sampling": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/v320-clearance-bounded-rows-and-sampling.json",
+        "training_only_data": true,
+        "independent_cases_read": false
+      }
+    }
   },
   "v320_weight_pin": {
     "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/v320-parent-v217-step768.json",
@@ -8501,13 +8594,13 @@
     "117": {
       "status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000/execution-status.json",
-        "sha256": "c2868adc2d9cbd5309b6029ec86107a9a02edb781ad7196bf9bf78ecb774fab2"
+        "sha256": "0a33f8e4534b77aa865fe4ad054b81638dac7b6434e00487fb86ee5d59cbd294"
       },
-      "stage": "neural_evaluation_640",
+      "stage": "neural_evaluation_768",
       "driver_pid": 1114488,
       "driver_state": "Ssl",
       "training_pid": 3868267,
-      "latest_evaluated_step": 512,
+      "latest_evaluated_step": 640,
       "results": [
         {
           "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000-step128-single/summary.json",
@@ -8668,10 +8761,50 @@
             },
             "maximum_recorded_loaded_contacts": 0
           }
+        },
+        {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000-step640-single/summary.json",
+          "sha256": "727969aa5a7e9435ad59d5cc2dd9e3ad3fdae7e2786849ce2bc0197b8b71477a",
+          "step": 640,
+          "case": {
+            "volume": 25.0,
+            "seed": 100,
+            "jitter": 0.004
+          },
+          "success": false,
+          "failure_reason": "timeout",
+          "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000/checkpoints/0_640",
+          "simulated_seconds": 90.00000000024771,
+          "official_geometry": "official",
+          "peak_supported_lift_m": 0.0,
+          "peak_slip_m": 0.0,
+          "held": false,
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "approach": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000-step640-single/grasp-approach-audit.json",
+            "sha256": "99615076829f876fd94c3021ed1d26897817c2cd4dcfcf590d319d2e0ce6d548",
+            "nearest": {
+              "time_s": 14.800000000006596,
+              "grasp_distance_m": 0.11539197365312684,
+              "grasp_point_error_components_m": [
+                0.11159774673713883,
+                0.004552160288123389,
+                0.028991866850352523
+              ],
+              "aperture_m": 0.059257746040821076,
+              "base_retreat_m": 0.039384635754328656
+            },
+            "maximum_recorded_loaded_contacts": 0
+          }
         }
       ],
       "training_state": "Sl",
-      "last_backward": "2026-11-22 04:21:33,027 - [rank0] - INFO -  epoch   0/1000 | iter    827/ 42063 | loss 0.012725 | flow_loss 0.012725 | lr 0.000010 | time_current_backward_step 3.742787s |"
+      "last_backward": "2026-11-22 04:26:14,829 - [rank0] - INFO -  epoch   0/1000 | iter    908/ 42063 | loss 0.007555 | flow_loss 0.007555 | lr 0.000010 | time_current_backward_step 3.648414s |"
     },
     "217": {
       "status": {
@@ -8985,21 +9118,62 @@
       "latest_evaluated_step": null,
       "results": [],
       "training_state": "Sl",
-      "last_backward": null
+      "last_backward": "2026-11-22 04:26:16,363 - [rank0] - INFO -  epoch   0/1000 | iter     74/ 56803 | loss 0.034708 | flow_loss 0.034708 | lr 0.000010 | time_current_backward_step 2.657053s |"
     },
     "304": {
       "status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000/execution-status.json",
-        "sha256": "4fe1bcefc595d1a311d346dd48b1586e5799a782c14e5121bfd4c18b3ef79f06"
+        "sha256": "6848cc94ffeae5f56828cd180a5a80edcb6c39692904e06e043dbeaac53ddea2"
       },
-      "stage": "neural_evaluation_128",
+      "stage": "neural_evaluation_256",
       "driver_pid": 94850,
-      "driver_state": "Ss",
+      "driver_state": "Ssl",
       "training_pid": 118320,
-      "latest_evaluated_step": null,
-      "results": [],
+      "latest_evaluated_step": 128,
+      "results": [
+        {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000-step128-single/summary.json",
+          "sha256": "dd5d38f32b168e980b6abb21574f0a182c295cdb22b8609af83a9e8b71f62026",
+          "step": 128,
+          "case": {
+            "volume": 25.0,
+            "seed": 100,
+            "jitter": 0.004
+          },
+          "success": false,
+          "failure_reason": "timeout",
+          "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000/checkpoints/0_128",
+          "simulated_seconds": 90.00000000024771,
+          "official_geometry": "official",
+          "peak_supported_lift_m": 0.0,
+          "peak_slip_m": 0.0,
+          "held": false,
+          "prompt_changes": [
+            {
+              "time_s": 0.0,
+              "task_index": 0
+            }
+          ],
+          "approach": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000-step128-single/grasp-approach-audit.json",
+            "sha256": "870f2a6ba88172e123c91e3207f7c071d57599f857534d02d3e82c1d0c7afcc8",
+            "nearest": {
+              "time_s": 16.00000000000806,
+              "grasp_distance_m": 0.045673068077430476,
+              "grasp_point_error_components_m": [
+                0.044619932739347765,
+                0.0032643508802734935,
+                0.009188839060084707
+              ],
+              "aperture_m": 0.04705025173723698,
+              "base_retreat_m": 0.00045299287855421477
+            },
+            "maximum_recorded_loaded_contacts": 1
+          }
+        }
+      ],
       "training_state": "Sl",
-      "last_backward": "2026-11-22 04:21:34,715 - [rank0] - INFO -  epoch   0/1000 | iter    247/ 57567 | loss 0.005504 | flow_loss 0.005504 | lr 0.000010 | time_current_backward_step 6.492040s |"
+      "last_backward": "2026-11-22 04:26:15,674 - [rank0] - INFO -  epoch   0/1000 | iter    326/ 57567 | loss 0.008134 | flow_loss 0.008134 | lr 0.000010 | time_current_backward_step 3.785177s |"
     }
   },
   "candidate_files": [],
@@ -11118,14 +11292,424 @@
     },
     "status": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-next-gpu3-clearance-v324/v324-next-gpu3-v217-clearance-status.json",
-      "sha256": "491f318aab99d29b3dbed249604f337dc917b16c1f9076714fd0878ab38dfd4a",
+      "sha256": "5e96aa4a0af37b0fdf6cacf8938a6ce1aef51217d674d5e5962f31b403d2217c",
       "document": {
-        "phase": "waiting_for_official_v320_validation",
+        "phase": "waiting_for_running_v117_to_finish",
         "gpu": 3,
-        "observed": 1795292400.8030963,
+        "observed": 1795292743.293667,
         "active_training_interrupted": false,
-        "independent_cases_read": false
+        "independent_cases_read": false,
+        "retained_scheduler_pid": 2122595
       }
+    }
+  },
+  "v320_official_loader": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/official-v320-data-validation.json",
+    "sha256": "9a633b009016a055740c60e3b8e2fc1b4417cbaba466b0b73450d58404fc76cb",
+    "document": {
+      "kind": "official_wall_joint_data_contract",
+      "passed": true,
+      "action_representation": "servo_increment",
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v307-plus-v217-clearance-v320",
+      "episodes": 345,
+      "frames": 251148,
+      "flow_horizon": 8,
+      "training_iterations_per_epoch": 59647,
+      "batch_shapes": {
+        "input_ids": [
+          4,
+          482
+        ],
+        "attention_mask": [
+          4,
+          482
+        ],
+        "pixel_values": [
+          6144,
+          1176
+        ],
+        "image_grid_thw": [
+          12,
+          3
+        ],
+        "action_chunk": [
+          4,
+          8,
+          26
+        ],
+        "dof_mask": [
+          4,
+          8,
+          26
+        ],
+        "proprioception": [
+          4,
+          1,
+          26
+        ],
+        "agent_pos_mask": [
+          4,
+          1,
+          26
+        ],
+        "frame_index": [
+          4
+        ],
+        "sample_time": [
+          4
+        ],
+        "moe_token_types": [
+          4,
+          482
+        ]
+      },
+      "checks": [
+        {
+          "episode": 0,
+          "frame": 655,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 0,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 0,
+          "frame": 324,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 337,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 337,
+          "frame": 650,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 337,
+          "frame": 327,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 338,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 338,
+          "frame": 426,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 338,
+          "frame": 858,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 339,
+          "frame": 602,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 339,
+          "frame": 298,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 339,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 340,
+          "frame": 309,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 340,
+          "frame": 620,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 340,
+          "frame": 1,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 341,
+          "frame": 536,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 341,
+          "frame": 267,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 341,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 342,
+          "frame": 560,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 342,
+          "frame": 284,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 342,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 343,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 343,
+          "frame": 489,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 343,
+          "frame": 973,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 344,
+          "frame": 504,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 344,
+          "frame": 0,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        },
+        {
+          "episode": 344,
+          "frame": 1018,
+          "action_labels_exact": true,
+          "robot_state_exact": true,
+          "gripper_and_base_absolute": true,
+          "normalization_matches_inference": true,
+          "masks_and_padding_correct": true,
+          "zero_arm_increments_at_padded_steps": true
+        }
+      ],
+      "episode_end_repeats_last": true,
+      "action_active_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "robot_state_active_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "sampling_weights_match_source_indices": true,
+      "processor_loaded": true,
+      "checkpoint_serving_normalizer_factory_matches_training": true,
+      "serving_normalizer_key": "cylinder_joint_v1",
+      "distributed_backend": "gloo",
+      "neural_weights_loaded": false,
+      "model_forward": false,
+      "backward": false,
+      "task_success_measured": false,
+      "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+    }
+  },
+  "v320_appended_rows": {
+    "path": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v307-plus-v217-clearance-v320/correction_append_audit.json",
+    "sha256": "d0d37522581c0e6665a1389bc0452591fc5eee1351d9dca7779ba893b13d6894",
+    "document": {
+      "kind": "verified_wrist_target_correction_append",
+      "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v297-plus-height-realignment-v307",
+      "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v307-plus-v217-clearance-v320",
+      "qualifications": "/data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/v320-rebased-v217-clearance-qualifications.json",
+      "new_episodes": 6,
+      "new_frames": 4315,
+      "episodes": 345,
+      "frames": 251148,
+      "base_frames_exact": true,
+      "normalization_exact": true,
+      "base_normalization_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+      "normalization_sha256": "7882c6bf6880ba99663f88a46df0e157fad280b3dfb08751a8d59afaaf342e23",
+      "original_video_hardlinks": 868,
+      "appended_video_hardlinks": 18,
+      "new_sampling_fraction": 0.2,
+      "new_approach_fraction": 0.75,
+      "held_only": false,
+      "reader_reopen_passed": true,
+      "independent_cases_read": false
     }
   },
   "v319_v320_attempt_logs": [
