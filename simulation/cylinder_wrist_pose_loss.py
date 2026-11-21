@@ -204,6 +204,25 @@ def wrist_target_displacement(state, calibration):
     return cue.sinh() * calibration['cue_near_scale_m']
 
 
+def aligned_grasp_closing_loss(forecast, reference, state, valid, dof_mask, settings):
+    """Supervise a demonstrated close from an aligned, open approach state."""
+    cue = wrist_target_displacement(state, settings)
+    tolerance = state.new_tensor(settings['max_position_error_m'])
+    state_min, state_max = state.new_tensor(settings['state_aperture_affine_m']).unbind()
+    measured = state_min + (state[:, 6] + 1.) * (state_max - state_min) * .5
+    aligned = ((state[:, 23] > 0.) & (cue.abs() <= tolerance).all(dim=-1)
+               & (measured >= settings['min_measured_aperture_m']))
+
+    action_min, action_max = state.new_tensor(settings['action_aperture_affine_m']).unbind()
+    target = action_min + (reference[..., 6] + 1.) * (action_max - action_min) * .5
+    requested = action_min + (forecast[..., 6] + 1.) * (action_max - action_min) * .5
+    if dof_mask is not None:
+        valid = valid & dof_mask.reshape_as(reference)[..., 6:9].bool().all(dim=-1)
+    active = aligned[:, None] & valid.cumprod(dim=1).bool() & (target <= settings['max_teacher_aperture_m'])
+    excess = (requested - target).clamp_min(0.) / settings['scale_m']
+    return (settings['weight'] * excess.square()).masked_fill(~active, 0.)
+
+
 def wrist_target_is_near(state, calibration):
     displacement = wrist_target_displacement(state, calibration)
     return (state[:, 23] > 0.) & (displacement.square().sum(-1) <= calibration['radius_m'] ** 2)
@@ -515,6 +534,10 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     retaining = calibration.get('held_aperture')
     if retaining is not None:
         gap_loss = held_aperture_loss(forecast, reference, state, retaining, dof_mask, flow_loss_mask)
+        padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
+    aligned_closing = calibration.get('aligned_grasp_closing')
+    if aligned_closing is not None:
+        gap_loss = aligned_grasp_closing_loss(forecast, reference, state, valid, dof_mask, aligned_closing)
         padded = padded + torch.nn.functional.pad(gap_loss.reshape(-1, 1), (6, 19))
     heading = calibration.get('near_heading_recovery')
     if heading is not None:
