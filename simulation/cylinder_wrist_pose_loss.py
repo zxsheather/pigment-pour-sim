@@ -187,7 +187,14 @@ def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_l
         retaining &= flow_loss_mask.reshape_as(target).bool()
     frames = anchor & retaining.cumprod(dim=1).bool()
     excess = (requested - target).clamp_min(0.) / calibration['scale_m']
-    return (calibration['weight'] * excess.square()).masked_fill(~frames, 0.)
+    loss = calibration['weight'] * excess.square()
+    measured_limit = calibration.get('measured_gap_limit')
+    if measured_limit is not None:
+        # Preserve the demonstrated target when the measured aperture is narrower.
+        limit = torch.maximum(target, gap - measured_limit['clearance_m'])
+        over_gap = (requested - limit).clamp_min(0.) / calibration['scale_m']
+        loss = loss + measured_limit['weight'] * over_gap.square()
+    return loss.masked_fill(~frames, 0.)
 
 
 def wrist_target_displacement(state, calibration):
