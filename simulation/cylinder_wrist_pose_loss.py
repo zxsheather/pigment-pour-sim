@@ -219,7 +219,8 @@ def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, val
     base_yaw = yaw_low + (reference[..., 8] + 1.) * (yaw_high - yaw_low) * .5
 
     low, high = settings['measured_aperture_range_m']
-    eligible_phase = state[:, 23:24] <= settings['cue_validity_threshold']
+    after_approach = state[:, 23:24] <= settings['cue_validity_threshold']
+    eligible_phase = after_approach
     handoff = settings.get('approach_handoff')
     if handoff is not None:
         target_error = torch.linalg.vector_norm(wrist_target_displacement(state, handoff), dim=-1, keepdim=True)
@@ -227,7 +228,15 @@ def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, val
                          & (gap + error <= handoff['max_commanded_aperture_m'])
                          & (target_error <= handoff['max_wrist_target_error_m']))
         eligible_phase = eligible_phase | aligned_close
-    held = eligible_phase & (gap >= low) & (gap <= high) & (error <= -settings['minimum_preload_m'])
+    sufficient_gap = gap >= low
+    tight_hold = settings.get('tight_hold')
+    if tight_hold is not None:
+        # A smaller aperture can carry the cylinder after approach when the existing target is loaded.
+        narrow_loaded = (after_approach & (gap >= tight_hold['minimum_measured_aperture_m'])
+                         & (error <= -tight_hold['minimum_preload_m'])
+                         & (gap + error <= tight_hold['max_previous_target_m']))
+        sufficient_gap = sufficient_gap | narrow_loaded
+    held = eligible_phase & sufficient_gap & (gap <= high) & (error <= -settings['minimum_preload_m'])
     retaining = ((opening <= settings['max_teacher_aperture_m'])
                  & (base_forward.abs() <= settings['max_base_speed_m_s'])
                  & (base_yaw.abs() <= settings['max_base_yaw_rad_s']))
