@@ -1,5 +1,5 @@
 {
-  "observed": "2026-11-22T16:09:00.958491+08:00",
+  "observed": "2026-11-22T16:10:47.516230+08:00",
   "independent_cases_read": false,
   "candidate_markers": [],
   "evaluation_scope": {
@@ -113,15 +113,15 @@
       "stage": "neural_evaluation_896",
       "pid": 652387,
       "confirmed_live": true,
-      "process": "Ssl     01:00:24",
+      "process": "Ssl     01:02:11",
       "execution_status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-held-high-fill-bc-v648-a6000/execution-status.json",
         "sha256": "71897d291979f820c503d2b8084199f4ae3a778c7ede26ad62e0f304c6c5e834"
       },
       "backprop": {
-        "step": 968,
-        "backward_seconds": 3.602766,
-        "line": "2026-11-22 16:08:57,331 - [rank0] - INFO -  epoch   0/1000 | iter    968/ 73897 | loss 0.005455 | flow_loss 0.005455 | lr 0.000010 | time_current_backward_step 3.602766s |"
+        "step": 997,
+        "backward_seconds": 3.752569,
+        "line": "2026-11-22 16:10:45,107 - [rank0] - INFO -  epoch   0/1000 | iter    997/ 73897 | loss 0.005267 | flow_loss 0.005267 | lr 0.000010 | time_current_backward_step 3.752569s |"
       },
       "raw_results": [
         {
@@ -193,18 +193,18 @@
       ]
     },
     "v665": {
-      "stage": "neural_evaluation_768",
+      "stage": "neural_evaluation_896",
       "pid": 671981,
       "confirmed_live": true,
-      "process": "Ssl        57:58",
+      "process": "Ssl        59:45",
       "execution_status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-late-held-and-pregrasp-bc-v665-a6000/execution-status.json",
-        "sha256": "757d016b9da27d9168009134143193b28fcfdad71aa08e065d3f071da50d58a7"
+        "sha256": "7075aa221645ef5349c49f6dd08e5849b834c86833f5ab417c7dde5d03408290"
       },
       "backprop": {
-        "step": 961,
-        "backward_seconds": 3.625975,
-        "line": "2026-11-22 16:08:58,113 - [rank0] - INFO -  epoch   0/1000 | iter    961/ 74768 | loss 0.023871 | flow_loss 0.023871 | lr 0.000010 | time_current_backward_step 3.625975s |"
+        "step": 998,
+        "backward_seconds": 2.944135,
+        "line": "2026-11-22 16:10:46,798 - [rank0] - INFO -  epoch   0/1000 | iter    998/ 74768 | loss 0.007418 | flow_loss 0.007418 | lr 0.000010 | time_current_backward_step 2.944135s |"
       },
       "raw_results": [
         {
@@ -260,6 +260,17 @@
           "receipt": {
             "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-late-held-and-pregrasp-bc-v665-a6000-step640-single/summary.json",
             "sha256": "230e309b69f539131671254ab00fdc1e01ab7eb3383158d4fc0eeb622e2c6106"
+          }
+        },
+        {
+          "step": 768,
+          "success": false,
+          "failure": "timeout",
+          "supported_lift_m": 0.0,
+          "grip_slip_m": 0.0,
+          "receipt": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-late-held-and-pregrasp-bc-v665-a6000-step768-single/summary.json",
+            "sha256": "8a16ed9de5a72fb457f4112fd2eb08b75b81dc4e039bd2e8a96e34ceb1be8768"
           }
         }
       ]
@@ -3769,11 +3780,11 @@
   "v789_native_queue": {
     "receipt": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-retain-aperture-next-gpu2-v789/v789-status.json",
-      "sha256": "c3ded88725c2a30ca82d2b596f107bcb718630d29532082cd5c4af289b93053f"
+      "sha256": "37b590f20d2b1c74de6150f194c395ec67d66ed3ae2b42e48429a8b283506158"
     },
     "phase": "waiting_for_verified_v782",
     "pid": 1178512,
-    "process": "S          19:13",
+    "process": "S          20:59",
     "confirmed_live": true,
     "gpu": 2,
     "predecessor": null,
@@ -9831,7 +9842,7 @@
     "process": {
       "pid": 1386752,
       "confirmed_live": true,
-      "process": "Sl         01:23",
+      "process": "Sl         03:09",
       "log": "/data/hlou/pigment-pour-study/runs/cylinder-base-first-camera-certification-v792/capture.log"
     },
     "result": null,
@@ -9843,6 +9854,14 @@
       {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-base-first-camera-certification-v792/seed-904791/camera-certificate.json",
         "sha256": "a71e47ee34c521d03e22811b171d457458bd3685e3a769aec96ed11dedecd59e"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-base-first-camera-certification-v792/seed-904792/camera-certificate.json",
+        "sha256": "579f09a33c6ef69cfb7fa7dd0a2aa12f112e589a4ab21bfd4ea1b7ce8b997f0d"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-base-first-camera-certification-v792/seed-904793/camera-certificate.json",
+        "sha256": "25e91b5b53bc9be7245ef943d1280782916e078d9f797cb6cb79da2ba8db321c"
       }
     ]
   },
@@ -12171,7 +12190,7 @@
     "process": {
       "pid": 1386792,
       "confirmed_live": true,
-      "process": "Sl         01:23",
+      "process": "Sl         03:09",
       "log": "/data/hlou/pigment-pour-study/runs/cylinder-base-first-admission-v795/admission.log"
     },
     "outputs": []
@@ -12181,10 +12200,19 @@
     "process": {
       "pid": 1398844,
       "confirmed_live": true,
-      "process": "Sl         00:26",
+      "process": "Sl         02:12",
       "log": "/data/hlou/pigment-pour-study/runs/cylinder-v791-high-fill-readout-v796/teacher.log"
     },
-    "partial": []
+    "partial": [
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v791-high-fill-readout-v796/lateral-0.18-depth-0.33/result.json",
+        "sha256": "5cea5c263e0cb57934a3f4bdd2d2e9fd5b6d0a76801443f15582720716f9ddc0"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v791-high-fill-readout-v796/lateral-0.16-depth-0.33/result.json",
+        "sha256": "f0de74ac8a556a75d19ca879b83391578f6d0270f0f0ab64ecdcfdc886f83054"
+      }
+    ]
   },
   "programs": {
     "v786": [
