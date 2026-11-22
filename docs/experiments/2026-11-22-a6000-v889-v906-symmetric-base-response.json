@@ -1,5 +1,5 @@
 {
-  "observed": "2026-11-22T18:42:33.879866+08:00",
+  "observed": "2026-11-22T18:44:27.908664+08:00",
   "candidate_markers": [],
   "independent_cases_read": false,
   "v884_camera_index": {
@@ -5707,11 +5707,11 @@
   "v891_baseline_queue": {
     "receipt": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-low-wrist-next-gpu2-v891/v891-status.json",
-      "sha256": "6ec8b9fdfb2afd4454478345e51ec8f6cbbb7ef41ea4f1d0b1434493e42537c3"
+      "sha256": "cc44db462b3993d76856f57188f91c889b5afee25f8ad3f69706eea9669d4252"
     },
     "phase": "waiting_for_verified_v881",
     "pid": 3079106,
-    "process": "Sl         12:42",
+    "process": "Sl         14:36",
     "confirmed_live": true,
     "gpu": 2,
     "predecessor": null,
@@ -16521,11 +16521,11 @@
   "v898_matched_training_queue": {
     "receipt": {
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-symmetric-base-next-gpu2-v898/v898-status.json",
-      "sha256": "1407d348f1846c8cc777f0278dcd017227960ef537067f97b85354e782e5a152"
+      "sha256": "ddee9c6c341513679a2a872f757866352c8ac3e685dacbab1bf397228f578bcc"
     },
     "phase": "waiting_for_verified_v891",
     "pid": 3150470,
-    "process": "Sl         06:47",
+    "process": "Sl         08:41",
     "confirmed_live": true,
     "gpu": 2,
     "predecessor": null,
@@ -22069,11 +22069,111 @@
   "v901_contact_camera_certification": {
     "worker": {
       "pid": 3167300,
-      "confirmed_live": true,
-      "process": "Sl         05:19",
+      "confirmed_live": false,
+      "process": "",
       "log": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/capture.log"
     },
-    "terminal": null,
+    "terminal": {
+      "receipt": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/v901-single-contact-cameras.json",
+        "sha256": "4192695b45e7d73d317a8eb1db2af5ea4df5ed93c76bab4970e73c520d7eafc2"
+      },
+      "source": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-releases-v894/v894-fresh-single-contact-release.json",
+        "sha256": "1ce0d6eccfcd422bf5dddf1001849a5b209e58f8f5643099253e2c5991beaca8"
+      },
+      "results": [
+        {
+          "case": {
+            "volume": 12.0,
+            "seed": 918894,
+            "jitter": 0.003,
+            "yaw_jitter": 0.03
+          },
+          "frames": 728,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918894/camera-certificate.json",
+            "sha256": "7ed6ec17523f2a5e3fe7a1b54909eb01fda6b2fd6f832cd4c8b5c97b3e9db7ae"
+          }
+        },
+        {
+          "case": {
+            "volume": 19.0,
+            "seed": 918895,
+            "jitter": 0.004,
+            "yaw_jitter": 0.04
+          },
+          "frames": 678,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918895/camera-certificate.json",
+            "sha256": "fa9b4bff9c8050cbb8cd74a8e24a2ba791c02fe11781b5386d70af78da3df451"
+          }
+        },
+        {
+          "case": {
+            "volume": 24.0,
+            "seed": 918896,
+            "jitter": 0.006,
+            "yaw_jitter": 0.06
+          },
+          "frames": 748,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918896/camera-certificate.json",
+            "sha256": "00b663b803319a5524e4779737f8809a74b6924d3a7aa8a5ac28f10b12db1c80"
+          }
+        },
+        {
+          "case": {
+            "volume": 31.0,
+            "seed": 918897,
+            "jitter": 0.006,
+            "yaw_jitter": 0.06
+          },
+          "frames": 838,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918897/camera-certificate.json",
+            "sha256": "359c3130f673eb128622967294f42fad9cd57a9a41f7bf19769a0291ff66787e"
+          }
+        },
+        {
+          "case": {
+            "volume": 39.0,
+            "seed": 918898,
+            "jitter": 0.004,
+            "yaw_jitter": 0.04
+          },
+          "frames": 835,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918898/camera-certificate.json",
+            "sha256": "de2d2ba3ff0c66a0603bd1934ecd29eed7d416a4fd53a4e2096c71d4e99c674c"
+          }
+        },
+        {
+          "case": {
+            "volume": 45.0,
+            "seed": 918899,
+            "jitter": 0.006,
+            "yaw_jitter": 0.06
+          },
+          "frames": 1025,
+          "qualified": true,
+          "certificate": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918899/camera-certificate.json",
+            "sha256": "a53ca0fa4ccee8c7ac99b7d2c06eb90c0cc25f8d4cb00bafb3b253445d187997"
+          }
+        }
+      ],
+      "qualified_count": 6,
+      "teacher_only": true,
+      "training_admission_performed": false,
+      "model_success_measured": false,
+      "independent_cases_read": false
+    },
     "partial": [
       {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918894/camera-certificate.json",
@@ -22090,6 +22190,14 @@
       {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918897/camera-certificate.json",
         "sha256": "359c3130f673eb128622967294f42fad9cd57a9a41f7bf19769a0291ff66787e"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918898/camera-certificate.json",
+        "sha256": "de2d2ba3ff0c66a0603bd1934ecd29eed7d416a4fd53a4e2096c71d4e99c674c"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-fresh-single-contact-cameras-v901/seed-918899/camera-certificate.json",
+        "sha256": "a53ca0fa4ccee8c7ac99b7d2c06eb90c0cc25f8d4cb00bafb3b253445d187997"
       }
     ],
     "rejected": []
@@ -23014,7 +23122,7 @@
       "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-v903/teacher.log",
       "sha256": "0863afc6015cd91313c91dbbc63d33c3388568e65388bfde7c48119403825ca8"
     },
-    "precontact_success": {
+    "excluded_result": {
       "receipt": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-v903/retract-0.000/q256-depth-first/result.json",
         "sha256": "8d66e6ef00002102dedbf7b7417cf24886be130afa63174f67f5a65d64a13777"
@@ -23672,7 +23780,8 @@
             "sha256": "291319e49184ebfa709a62fe2117f7c8b546cee35602fe3bfe039ab7f949d224"
           }
         }
-      }
+      },
+      "reason": "The wrapper imported V683 step 128 instead of V718 step 128."
     }
   },
   "v904_low_wrist_coverage": {
@@ -27813,15 +27922,34 @@
       }
     }
   },
+  "v906_v718_contact_recovery": {
+    "terminal": null,
+    "worker": {
+      "pid": 3209961,
+      "confirmed_live": true,
+      "process": "Sl         01:24",
+      "log": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-corrected-v906/teacher.log"
+    },
+    "partial": [
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-corrected-v906/retract-0.000/q256-depth-first/result.json",
+        "sha256": "e05f38c16d0d70355cf867cec7af0d2c1f644408c6055d5f9087769c3c7318a4"
+      },
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-corrected-v906/retract-0.000/q267-depth-first/result.json",
+        "sha256": "e09fe929f12b47552e4ca9ea283c6414c9808144687381f02119092bf9c66ae1"
+      }
+    ]
+  },
   "wall_closed_loop": {
     "v716": {
-      "stage": "neural_evaluation_1024",
+      "stage": "curve_complete_no_full_single_success",
       "pid": 2315237,
-      "confirmed_live": true,
-      "process": "Ssl     01:14:26",
+      "confirmed_live": false,
+      "process": "",
       "execution_status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-extended-heading-bc-v716-a6000/execution-status.json",
-        "sha256": "9fe431e08b1e57abb7e2a3b8a276aaa1ea2e46489d02246dc692462de9bc2309"
+        "sha256": "4b265df986afef134060487655c91f548a36ed4cdd96bad35ed0d7dce9678aed"
       },
       "backprop": null,
       "raw_results": [
@@ -27901,6 +28029,17 @@
             "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-extended-heading-bc-v716-a6000-step896-single/summary.json",
             "sha256": "723c1bf6fd5c04ecaec5f70df59ff58c75fcdb4588bae1dc1d90410b357c71f5"
           }
+        },
+        {
+          "step": 1024,
+          "success": false,
+          "failure": "timeout",
+          "supported_lift_m": 0.0,
+          "grip_slip_m": 0.0,
+          "receipt": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-extended-heading-bc-v716-a6000-step1024-single/summary.json",
+            "sha256": "4598f0289a114dbebb9049d73ee6445114ca9fb2b5aea37056b00ca5d3611d90"
+          }
         }
       ]
     },
@@ -27908,15 +28047,15 @@
       "stage": "neural_evaluation_384",
       "pid": 2894274,
       "confirmed_live": true,
-      "process": "Ssl        26:40",
+      "process": "Ssl        28:34",
       "execution_status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-heading-return-bc-v718-a6000/execution-status.json",
         "sha256": "bb8530be004aa2978f8db7dc27899e931a0807c89f1fa691a013d3d69238d1aa"
       },
       "backprop": {
-        "step": 416,
-        "backward_seconds": 3.817358,
-        "line": "2026-11-22 18:42:31,479 - [rank0] - INFO -  epoch   0/1000 | iter    416/ 76749 | loss 0.012818 | flow_loss 0.012818 | lr 0.000010 | time_current_backward_step 3.817358s |"
+        "step": 446,
+        "backward_seconds": 3.607909,
+        "line": "2026-11-22 18:44:24,781 - [rank0] - INFO -  epoch   0/1000 | iter    446/ 76749 | loss 0.011705 | flow_loss 0.011705 | lr 0.000010 | time_current_backward_step 3.607909s |"
       },
       "raw_results": [
         {
@@ -27944,13 +28083,13 @@
       ]
     },
     "v683": {
-      "stage": "audit_1024",
+      "stage": "neural_evaluation_1024",
       "pid": 2355112,
       "confirmed_live": true,
-      "process": "Ssl     01:09:16",
+      "process": "Ssl     01:11:10",
       "execution_status": {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-reachable-lifts-bc-v683-a6000/execution-status.json",
-        "sha256": "ec7ebfe78ab67a5e97566eed7b85062d9e82643a0b989c3fc40542921da78725"
+        "sha256": "a147755776d2c31a9aaac1841e32045a56392077310de6eafeec9dfd32497365"
       },
       "backprop": null,
       "raw_results": [
@@ -28135,6 +28274,12 @@
       {
         "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-parity-v905/audit-v905-v718-parity.py",
         "sha256": "303c77333aa06ad61acfe90e2af7342fdc67e2609a54c0a5d5e7283b202d98c9"
+      }
+    ],
+    "v906": [
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-contact-recovery-corrected-v906/try-v906-v718-contact.py",
+        "sha256": "618b1f23968c17ec847cadb77d4e2c4bf79a43e7334d15bcc29589e18c9a3418"
       }
     ]
   }
