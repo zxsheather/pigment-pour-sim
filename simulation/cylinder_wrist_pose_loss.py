@@ -205,7 +205,8 @@ def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_l
     return loss.masked_fill(~frames, 0.)
 
 
-def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask, settings):
+def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask, settings,
+                            *, marker_offset=None):
     """Supervise vertical progress during a demonstrated held lift with a still base."""
     gap_low, gap_high = state.new_tensor(settings['state_aperture_affine_m']).unbind()
     error_low, error_high = state.new_tensor(settings['tracking_error_affine_m']).unbind()
@@ -248,7 +249,15 @@ def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, val
     upward_label = (expected_z - anchor_tip[:, 2:3] >= settings['minimum_teacher_rise_m']) & prefix
     frames = held & upward_label.any(dim=1, keepdim=True) & prefix
     shortfall = (expected_z - planned_z).clamp_min(0.) / settings['scale_m']
-    return (settings['weight'] * shortfall.square()).masked_fill(~frames, 0.)
+    loss = (settings['weight'] * shortfall.square()).masked_fill(~frames, 0.)
+    upright = settings.get('upright_reference')
+    if upright is not None:
+        # Project the wrist axes onto up to measure tilt independently of yaw.
+        planned_up = (planned[..., 1:, 2] - planned[..., :1, 2]) / marker_offset
+        expected_up = (expected[..., 1:, 2] - expected[..., :1, 2]) / marker_offset
+        tilt_error = (planned_up - expected_up).square().sum(-1) / upright['scale_rad'] ** 2
+        loss = loss + (upright['weight'] * tilt_error).masked_fill(~(held & prefix & after_approach), 0.)
+    return loss
 
 
 def wrist_target_displacement(state, calibration):
@@ -625,7 +634,8 @@ def servo_increment_wrist_pose_loss(predicted, labels, proprioception, calibrati
     lift = calibration.get('held_vertical_lift')
     if lift is not None:
         anchor_tip = wrist_markers(anchor, calibration)[..., 0, :]
-        loss = loss + held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask, lift)
+        loss = loss + held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, valid_prefix, dof_mask,
+                                              lift, marker_offset=calibration.get('orientation_marker_offset_m'))
     loss = loss.masked_fill(~valid_prefix, 0.)
     padded = torch.nn.functional.pad(loss.reshape(-1, 1), (0, 25))
     release = calibration.get('release_opening')
