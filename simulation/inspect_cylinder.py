@@ -293,7 +293,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
                    grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False,
                    confirm_readable_view=False, read_height_offset_m=0., pre_retract_lift_m=.04,
-                   read_yaw_offset_rad=0.):
+                   read_yaw_offset_rad=0., near_grasp_max_depth_m=.075):
     if not np.isfinite(read_yaw_offset_rad):
         raise ValueError("Invalid presentation yaw offset")
     if not np.isfinite(read_height_offset_m):
@@ -323,6 +323,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Near grasp alignment requires a saved unheld approach with the fingers clear")
     if align_near_grasp_forward and not align_near_grasp:
         raise ValueError("Forward alignment requires near grasp alignment")
+    if not np.isfinite(near_grasp_max_depth_m) or not .075 <= near_grasp_max_depth_m <= .12:
+        raise ValueError("Current-depth alignment limit must be in [0.075,0.12] m")
+    if near_grasp_max_depth_m != .075 and not align_near_grasp_at_current_depth:
+        raise ValueError("A non-default depth limit requires current-depth alignment")
     if align_near_grasp_at_current_depth and (not align_near_grasp or align_near_grasp_forward):
         raise ValueError("Current-depth alignment requires its own near grasp mode")
     if not isinstance(near_grasp_open_ticks, (int, np.integer)) or near_grasp_open_ticks < 0:
@@ -741,7 +745,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                     delta = env.data.xpos[env.cylinder_body] + approach_height * axis - measured_tip
                     gap = (env.data.qpos[env.model.joint("right_arm_gripper_left_joint").qposadr[0]]
                            - env.data.qpos[env.model.joint("right_arm_gripper_right_joint").qposadr[0]])
-                    near = .025 <= delta[1] <= .075 and np.linalg.norm(delta[[0, 2]]) <= .065
+                    near = .025 <= delta[1] <= near_grasp_max_depth_m and np.linalg.norm(delta[[0, 2]]) <= .065
                     # A higher start needs more clearance before the wrist can lower.
                     high = .040 <= delta[1] <= .075 and abs(delta[0]) <= .025 and .065 < -delta[2] <= .170
                     if (not (near or high) or gap < .035
@@ -1120,6 +1124,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["align_near_grasp_forward"]=True
     if align_near_grasp_at_current_depth:
         summary["controller_parameters"]["align_near_grasp_at_current_depth"]=True
+    if near_grasp_max_depth_m != .075:
+        summary["controller_parameters"]["near_grasp_max_depth_m"] = near_grasp_max_depth_m
     if lateral_alignment_min_depth_m is not None:
         summary["controller_parameters"]["lateral_alignment_min_depth_m"]=lateral_alignment_min_depth_m
     if wrist_clearance_open_after_retreat:
