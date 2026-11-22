@@ -291,7 +291,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
                    lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
                    near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
-                   grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False):
+                   grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False,
+                   confirm_readable_view=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if type(grasp_close_ticks) is not int or grasp_close_ticks < 1:
         raise ValueError("Grasp closing must last a positive number of control ticks")
@@ -875,6 +876,40 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             # to support the boundary, rather than a few unoccluded pixels.
             return (abs(reading["eye_alignment_error_px"])<=2
                     and reading["boundary_support_fraction"]<.5)
+
+        cylinder_dof=env.model.joint("cylinder_free").dofadr[0]
+
+        def cylinder_is_still():
+            velocity=env.data.qvel[cylinder_dof:cylinder_dof+6]
+            return np.linalg.norm(velocity[:3])<=.005 and np.linalg.norm(velocity[3:])<=.03
+
+        def held_readout_is_still():
+            metrics=env.metrics()
+            return (metrics["grip_contacts"]==2 and metrics["bottle_tilt_rad"]<=np.deg2rad(3)
+                    and cylinder_is_still())
+
+        def sample_held_reading(q):
+            for _ in range(5):tick("read_stable",q,grip_opening)
+            reading=read_volume(env.render("face_view"))
+            readings.append(dict(time=float(env.data.time),**reading))
+            return reading
+
+        def confirm_current_reading(q):
+            volumes=[]
+            consecutive=0
+            for _ in range(stable_read_samples+4):
+                reading=sample_held_reading(q)
+                if not held_readout_is_still():return False
+                if needs_view(reading) or abs(reading["eye_alignment_error_px"])>2:
+                    consecutive=0
+                    continue
+                volumes.append(reading["volume_ml"])
+                consecutive+=1
+                if (len(volumes)>=stable_read_samples and consecutive>=3
+                        and np.ptp(volumes[-stable_read_samples:])<=.4):
+                    return True
+            return False
+
         def align_camera_reading(q, attempt):
             nonlocal rotation, point
             for iteration in range(11 if use_current_view else 6):
@@ -903,7 +938,12 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 print(json.dumps(readings[-1]),flush=True)
                 if not reading["valid"]:raise ReadingFailure(f"unreadable:{reading['reason']}")
                 if needs_view(reading):raise ReadingFailure("liquid_boundary_occluded")
-                if abs(reading["eye_alignment_error_px"])<=eye_alignment_target_px:return q
+                eye_error=abs(reading["eye_alignment_error_px"])
+                if eye_error<=eye_alignment_target_px:return q,False
+                if confirm_readable_view and eye_error<=2 and held_readout_is_still():
+                    if confirm_current_reading(q):return q,True
+                    # Re-observe before commanding another move after the wait.
+                    continue
                 focal=env.image_size/(2*np.tan(np.deg2rad(env.model.cam_fovy[camera_id])/2))
                 limit=.012 if use_current_view else .025
                 dz=np.clip(reading["eye_alignment_error_px"]*read_distance/focal,-limit,limit)
@@ -918,9 +958,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         def hold_for_stable_reading(q, sample_count=stable_read_samples):
             # Only consecutive observations after the latest alignment count.
             for _ in range(sample_count):
-                for _ in range(5):tick("read_stable",q,grip_opening)
-                reading=read_volume(env.render("face_view"))
-                readings.append(dict(time=float(env.data.time),**reading))
+                reading=sample_held_reading(q)
                 if not reading["valid"]:return f"unstable_reading:{reading['reason']}"
                 if needs_view(reading):return "unstable_boundary_visibility"
                 if abs(reading["eye_alignment_error_px"])>2:return "eye_alignment_drift"
@@ -929,7 +967,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         def acquire_reading(q, first_attempt):
             nonlocal use_current_view, reading_retry_reason
             for attempt in range(3 if use_current_view or retry_reading_from_current_view else 1):
-                q=align_camera_reading(q,first_attempt+attempt)
+                q,confirmed=align_camera_reading(q,first_attempt+attempt)
+                if confirmed:return
                 read_failure=hold_for_stable_reading(q)
                 if read_failure is None:
                     stable=[r["volume_ml"] for r in readings[-3:]]
@@ -963,11 +1002,6 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                 lateral_read_attempts.append(dict(lateral_m=lateral,start_seconds=attempt_start,failure=None))
                 break
         if env.metrics()["bottle_tilt_rad"]>np.deg2rad(3):raise InspectionFailure("not_upright_for_reading")
-        dof=env.model.joint("cylinder_free").dofadr[0]
-
-        def cylinder_is_still():
-            velocity = env.data.qvel[dof:dof+6]
-            return np.linalg.norm(velocity[:3]) <= .005 and np.linalg.norm(velocity[3:]) <= .03
 
         if not cylinder_is_still():
             # Keep the command used for the last successful camera alignment.
@@ -1088,6 +1122,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["teacher_grasp_height_m"]=approach_height
     if stable_read_samples != 3:
         summary["controller_parameters"]["stable_read_samples"]=stable_read_samples
+    if confirm_readable_view:
+        summary["controller_parameters"]["confirm_readable_view"]=True
     if read_lateral_retry_offsets_m:
         summary["controller_parameters"]["read_lateral_retry_offsets_m"]=list(read_lateral_retry_offsets_m)
         summary["lateral_read_attempts"]=lateral_read_attempts
@@ -1163,6 +1199,9 @@ def main():
     parser.add_argument("--physics-dt",type=float,default=PHYSICS_DT)
     parser.add_argument("--read-lateral",type=float,default=.14)
     parser.add_argument("--read-distance",type=float,default=READ_DISTANCE)
+    parser.add_argument("--eye-alignment-target-px",type=float,default=2.)
+    parser.add_argument("--confirm-readable-view",action="store_true",
+                        help="Confirm a stable reading within the grading tolerance before finer eye alignment")
     parser.add_argument("--grasp-roll-deg",type=float,default=0.)
     parser.add_argument("--upright-gain",type=float,default=0.,help="Program-teacher object-pose feedback, never used by Wall execution")
     parser.add_argument("--record-training",action="store_true",help="Record three raw 224px training cameras aligned with Cartesian actions")
@@ -1178,6 +1217,8 @@ def main():
             result=run_inspection(env,args.output,record=args.record,seed=args.seed,jitter=args.jitter,
                                   yaw_jitter=args.yaw_jitter,grip_opening=args.grip_opening,motion_scale=args.motion_scale,
                                   read_lateral=args.read_lateral,read_distance=args.read_distance,
+                                  eye_alignment_target_px=args.eye_alignment_target_px,
+                                  confirm_readable_view=args.confirm_readable_view,
                                   grasp_roll=np.deg2rad(args.grasp_roll_deg),upright_gain=args.upright_gain,
                                   record_training=args.record_training,training_image_size=args.training_image_size)
             if not result["success"]:raise SystemExit(1)
