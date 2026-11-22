@@ -496,11 +496,13 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     planned_motion = low + (forecast[..., 7:9] + 1.) * (high - low) * .5
     teacher_motion = low + (reference[..., 7:9] + 1.) * (high - low) * .5
     servo = calibration.get('base_command_response')
+    expected_motion = teacher_motion
     if servo is not None:
         planned_motion = base_commands_from_observation(planned_motion, state, low, high, servo)
+        expected_motion = base_commands_from_observation(teacher_motion, state, low, high, servo)
     step = calibration['base_control_dt_s']
     planned_world = apply_base_motion(planned, planned_motion, step)
-    expected_world = apply_base_motion(expected, teacher_motion, step)
+    expected_world = apply_base_motion(expected, expected_motion, step)
     error = planned_world - expected_world
     tip = error[..., 0, :]
     orientation = error[..., 1:, :] - tip[..., None, :]
@@ -513,9 +515,13 @@ def near_approach_world_wrist_loss(planned, expected, forecast, reference, state
     aligned_advance = calibration.get('aligned_open_advance')
     lateral_advance = calibration.get('open_lateral_advance')
     if servo is None and progress is not None:
-        bounded = base_commands_from_observation(planned_motion, state, low, high,
-                                                 progress['base_command_response'])
-        planned_world = apply_base_motion(planned, bounded, step)
+        # Both paths start with the same actuator state, even when the
+        # demonstration requests an abrupt stop at the start of the chunk.
+        response = progress['base_command_response']
+        planned_world = apply_base_motion(
+            planned, base_commands_from_observation(planned_motion, state, low, high, response), step)
+        expected_world = apply_base_motion(
+            expected, base_commands_from_observation(teacher_motion, state, low, high, response), step)
     far_loss = None
     if progress is not None:
         displacement = wrist_target_displacement(state, calibration)
