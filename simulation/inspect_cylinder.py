@@ -292,7 +292,10 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
                    near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
                    grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False,
-                   confirm_readable_view=False, read_height_offset_m=0., pre_retract_lift_m=.04):
+                   confirm_readable_view=False, read_height_offset_m=0., pre_retract_lift_m=.04,
+                   read_yaw_offset_rad=0.):
+    if not np.isfinite(read_yaw_offset_rad):
+        raise ValueError("Invalid presentation yaw offset")
     if not np.isfinite(read_height_offset_m):
         raise ValueError("Invalid presentation height offset")
     if not np.isfinite(pre_retract_lift_m) or pre_retract_lift_m <= 0.:
@@ -853,6 +856,11 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             if read_height_offset_m:
                 point = point + np.array([0., 0., read_height_offset_m])
                 q = move("present_view_height", point, 1.5, straight=True)
+            if read_yaw_offset_rad:
+                c, s = np.cos(read_yaw_offset_rad), np.sin(read_yaw_offset_rad)
+                before_yaw = env.data.xmat[env.gripper_body].reshape(3, 3).copy()
+                rotation = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]) @ before_yaw
+                q = move("present_view_yaw", point, 2.)
             for _ in range(20):tick("hold_for_reading",q,grip_opening)
 
         def move_camera_offset(phase, offset):
@@ -1135,6 +1143,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["read_lateral_retry_offsets_m"]=list(read_lateral_retry_offsets_m)
     if read_height_offset_m:
         summary["controller_parameters"]["read_height_offset_m"] = float(read_height_offset_m)
+    if read_yaw_offset_rad:
+        summary["controller_parameters"]["read_yaw_offset_rad"] = float(read_yaw_offset_rad)
     if pre_retract_lift_m != .04:
         summary["controller_parameters"]["pre_retract_lift_m"] = float(pre_retract_lift_m)
         summary["lateral_read_attempts"]=lateral_read_attempts
@@ -1212,6 +1222,8 @@ def main():
     parser.add_argument("--read-distance",type=float,default=READ_DISTANCE)
     parser.add_argument("--read-height-offset", type=float, default=0.,
                         help="Vertical wrist offset in meters after presenting and before RGB alignment.")
+    parser.add_argument("--read-yaw-offset", type=float, default=0.,
+                        help="Wrist yaw in radians after presenting and before RGB alignment.")
     parser.add_argument("--pre-retract-lift", type=float, default=.04,
                         help="Vertical lift in meters before the arm starts retracting.")
     parser.add_argument("--eye-alignment-target-px",type=float,default=2.)
@@ -1233,6 +1245,7 @@ def main():
                                   yaw_jitter=args.yaw_jitter,grip_opening=args.grip_opening,motion_scale=args.motion_scale,
                                   read_lateral=args.read_lateral,read_distance=args.read_distance,
                                   read_height_offset_m=args.read_height_offset,
+                                  read_yaw_offset_rad=args.read_yaw_offset,
                                   pre_retract_lift_m=args.pre_retract_lift,
                                   eye_alignment_target_px=args.eye_alignment_target_px,
                                   confirm_readable_view=args.confirm_readable_view,
