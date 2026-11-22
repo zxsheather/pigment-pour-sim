@@ -339,8 +339,9 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Delayed opening requires wrist clearance alignment")
     if wrist_clearance_align_before_lift and not align_from_clearance:
         raise ValueError("Early wrist rotation requires wrist clearance alignment")
-    if wrist_clearance_retreat_from_reset and not (align_from_clearance or align_near_grasp_at_current_depth):
-        raise ValueError("Reset-relative retreat requires wrist clearance alignment")
+    if wrist_clearance_retreat_from_reset and not (
+            align_from_clearance or align_near_grasp_at_current_depth or (start_holding and not skip_retreat)):
+        raise ValueError("Reset-relative retreat requires wrist clearance alignment or held transport recovery")
     if not np.isfinite(release_retreat_m) or not 0. <= release_retreat_m <= .10:
         raise ValueError("Release retreat must be within [0,0.10] m")
     if not np.isfinite(release_retreat_seconds) or release_retreat_seconds <= 0.:
