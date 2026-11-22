@@ -167,7 +167,7 @@ def release_opening_loss(forecast, reference, state, calibration, dof_mask, flow
 
 
 def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_loss_mask):
-    """Penalize reopening during a demonstrated narrow hold after approach."""
+    """Penalize reopening during a demonstrated narrow hold."""
     gap_min, gap_max = state.new_tensor(calibration['state_aperture_affine_m']).unbind()
     error_min, error_max = state.new_tensor(calibration['tracking_error_affine_m']).unbind()
     goal_min, goal_max = state.new_tensor(calibration['action_aperture_affine_m']).unbind()
@@ -176,11 +176,19 @@ def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_l
     target = goal_min + (reference[..., 6] + 1.) * (goal_max - goal_min) * .5
     requested = goal_min + (forecast[..., 6] + 1.) * (goal_max - goal_min) * .5
     min_gap, max_gap = calibration['measured_aperture_range_m']
-    anchor = ((state[:, 23:24] <= calibration['cue_validity_threshold'])
-              & (gap >= min_gap) & (gap <= max_gap)
+    phase_matches = state[:, 23:24] <= calibration['cue_validity_threshold']
+    retaining = target <= calibration['max_teacher_target_m']
+    pre_lift = calibration.get('pre_lift')
+    if pre_lift is not None:
+        # Use the active tray cue and the previous target to recognize a demonstrated hold
+        # while the policy is still receiving its approach prompt.
+        cue_distance = torch.linalg.vector_norm(wrist_target_displacement(state, pre_lift), dim=-1, keepdim=True)
+        phase_matches = ((state[:, 23:24] > calibration['cue_validity_threshold'])
+                         & (cue_distance <= pre_lift['max_wrist_target_error_m']))
+        retaining &= target <= gap + error + pre_lift['max_teacher_target_increase_m']
+    anchor = (phase_matches & (gap >= min_gap) & (gap <= max_gap)
               & (error <= -calibration['minimum_closing_error_m'])
               & (gap + error <= calibration['max_previous_target_m']))
-    retaining = target <= calibration['max_teacher_target_m']
     if dof_mask is not None:
         retaining &= dof_mask.reshape_as(reference)[..., 6].bool()
     if flow_loss_mask is not None:
