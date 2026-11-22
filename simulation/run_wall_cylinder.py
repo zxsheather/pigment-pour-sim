@@ -66,9 +66,14 @@ class CylinderWallPolicy(CarryWallPolicy):
         layout=self._train_config['agent_pos_config']
         self.joint_wrist_cue=self.joint_servo_state and layout in (
             JOINT_WRIST_CUE_STATE_LAYOUT,JOINT_WRIST_TARGET_STATE_LAYOUT)
-        self.progress_protocol=getattr(self._model.config,'joint_progress_protocol',None)
-        if self.progress_protocol is not None and (self.progress_protocol!=PROGRESS_PROTOCOL or not self.joint_servo_state):
+        joint_progress=getattr(self._model.config,'joint_progress_protocol',None)
+        cartesian_progress=getattr(self._model.config,'cartesian_progress_protocol',None)
+        if joint_progress is not None and (joint_progress!=PROGRESS_PROTOCOL or not self.joint_servo_state):
             raise ValueError('Unsupported progress protocol or robot state layout')
+        if cartesian_progress is not None and (
+                cartesian_progress!=PROGRESS_PROTOCOL or self.action_space!='cartesian' or joint_progress is not None):
+            raise ValueError('Unsupported Cartesian progress protocol')
+        self.progress_protocol=joint_progress or cartesian_progress
         if self.joint_action_representation==JOINT_SERVO_INCREMENT and (
                 not self.progress_protocol or joint_action_representation(
                     getattr(self._model.config,'dof_config',{}) or {})!=JOINT_SERVO_INCREMENT):
@@ -168,7 +173,8 @@ class CylinderTrial:
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
-        if progress_protocol is not None and (progress_protocol!=PROGRESS_PROTOCOL or not joint_servo_state):
+        if progress_protocol is not None and (progress_protocol!=PROGRESS_PROTOCOL
+                or (action_space=='joint' and not joint_servo_state)):
             raise ValueError('Unsupported progress protocol or robot state layout')
         if servo_increments and (action_space!='joint' or not progress_protocol):
             raise ValueError('Servo increments require joint targets and recorded servo progress')

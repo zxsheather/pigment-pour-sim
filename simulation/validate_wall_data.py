@@ -28,8 +28,7 @@ def main():
                         help="Also check first/middle/last usable training anchors from this episode.")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
-    torch.cuda.set_device(0)
-    dist.init_process_group("nccl", device_id=torch.device("cuda:0"))
+    dist.init_process_group("gloo")
     try:
         cfg = load_config(args.config)
         adapter = Qwen2_5Adapter(cfg=cfg, logger=logging.getLogger("carry_data"))
@@ -143,6 +142,8 @@ def main():
                   "explicit_episode_checks":explicit_episode_checks,
                   "explicit_episode_training_coverage":explicit_episode_training_coverage,
                   "selected_training_episodes": inner.hf_dataset.episodes,
+                  "distributed_backend": "gloo",
+                  "cartesian_progress_protocol": getattr(model_config, "cartesian_progress_protocol", None),
                   "virtual_action_and_state_tail":("Only action tail is padded; all 26 robot-state dimensions observed" if with_odometry else "zero after normalization"),
                   "note": "Data-path validation only; no model forward/backward."}
         args.output.write_text(json.dumps(report, indent=2) + "\n")

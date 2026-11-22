@@ -166,7 +166,11 @@ def main():
     model = Path(candidate['model']).resolve()
     config = run / 'train.yml'
     scripts = Path(__file__).resolve().parent
-    root = scripts.parents[1]
+    # Evaluation code can live in an isolated runtime. Keep the acceptance
+    # lock, suite ledger and Wall-X checkout in the training workspace.
+    root = run.parent.parent
+    require(run.parent.name == 'runs' and (root / 'wall-x/wall_x').is_dir(),
+            'Expected a candidate in the training workspace runs directory')
     controller_path = scripts / 'configs/cylinder_official_teacher_dev_v1.json'
     controller = json.loads(controller_path.read_text())
     single = json.loads(Path(candidate['single_summary']).read_text())

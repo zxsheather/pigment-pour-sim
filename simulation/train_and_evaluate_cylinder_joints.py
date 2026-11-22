@@ -83,6 +83,11 @@ def main():
     prompt_view = dataset / 'far_approach_prompt_view.json'
     far_approach_prompt = json.loads(prompt_view.read_text())['protocol'] if prompt_view.is_file() else None
     action_space = args.action_space
+    cartesian_progress = None
+    if action_space == 'cartesian':
+        architecture = cfg['model'].get('config_path')
+        if architecture and Path(architecture).is_file():
+            cartesian_progress = json.loads(Path(architecture).read_text()).get('cartesian_progress_protocol')
     if action_space == 'joint':
         require(joint_action_representation(cfg['task']['dof_config']),
                 'Expected the joint action schema')
@@ -195,10 +200,14 @@ def main():
                         raise RuntimeError(f'Training ended before expected checkpoint{step}; exit={trainer.returncode}')
                     time.sleep(10)
                 checkpoint = locate_saved_checkpoint(checkpoint_dir, step)
-            if far_approach_prompt is not None:
+            if far_approach_prompt is not None or cartesian_progress is not None:
                 saved_config = json.loads((checkpoint/'config.json').read_text())
+            if far_approach_prompt is not None:
                 require(saved_config.get('joint_far_approach_prompt') == far_approach_prompt,
                         'Checkpoint did not retain the training language protocol')
+            if cartesian_progress is not None:
+                require(saved_config.get('cartesian_progress_protocol') == cartesian_progress,
+                        'Checkpoint did not retain the Cartesian progress prompts')
             output = root/f'runs/{run.name}-step{step}-single'
             audit = [python, str(scripts/'audit_wall_checkpoint.py'), '--base', str(parent),
                      '--checkpoint', str(checkpoint), '--output', str(run/f'checkpoint-{step}-weight-audit.json')]
@@ -217,6 +226,9 @@ def main():
                     'Incomplete or unexpected policy evaluation')
             require(report.get('far_approach_prompt_protocol') == far_approach_prompt,
                     'Policy evaluation used an unexpected range-conditioned prompt protocol')
+            if cartesian_progress is not None:
+                require(report.get('progress_protocol') == cartesian_progress,
+                        'Policy evaluation used unexpected Cartesian progress prompts')
             approach = measure_rollout(output)
             (output/'grasp-approach-audit.json').write_text(json.dumps(approach, indent=2)+'\n')
             score = development_score(report['successes'], report['episodes'][0], approach)
