@@ -3,6 +3,7 @@
 import argparse
 from contextlib import ExitStack
 import json
+import os
 from pathlib import Path
 import shutil
 from tempfile import TemporaryDirectory
@@ -57,7 +58,10 @@ def append(base, qualifications, base_weights, output, *, held_only=False, mixed
     episode_count = len(manifest)
     with TemporaryDirectory(prefix=f'.{output.name}-', dir=output.parent) as temporary:
         path = Path(temporary)/'dataset'
-        shutil.copytree(base, path)
+        shutil.copytree(base, path, ignore=shutil.ignore_patterns('videos'))
+        # Only metadata and frame tables are rewritten. Each added episode
+        # gets its own video container, so the inherited streams can be shared.
+        shutil.copytree(base/'videos', path/'videos', copy_function=os.link)
         if normalization != base_normalization:
             shutil.copyfile(normalization, path/'joint_norm_stats.json')
         dataset = SourceVideoDataset(str(output), root=path, video_backend='pyav', vcodec='h264')
@@ -126,7 +130,9 @@ def append(base, qualifications, base_weights, output, *, held_only=False, mixed
                 and file_digest(base_normalization) == original_norm_digest,
                 'Normalization files changed during dataset construction')
         for relative, digest in video_hashes.items():
-            share_immutable_video(base/relative,path/relative,digest)
+            require(os.path.samefile(base/relative, path/relative)
+                    and file_digest(base/relative) == digest,
+                    f'Inherited video changed during append: {relative}')
         reopened = LeRobotDataset(str(output),root=path,video_backend='pyav')
         seen = set(video_hashes)
         for i,(assets,shas) in enumerate(new_sources,start=episode_count):
