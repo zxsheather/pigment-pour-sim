@@ -211,8 +211,15 @@ def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, val
     base_yaw = yaw_low + (reference[..., 8] + 1.) * (yaw_high - yaw_low) * .5
 
     low, high = settings['measured_aperture_range_m']
-    held = ((state[:, 23:24] <= settings['cue_validity_threshold']) & (gap >= low) & (gap <= high)
-            & (error <= -settings['minimum_preload_m']))
+    eligible_phase = state[:, 23:24] <= settings['cue_validity_threshold']
+    handoff = settings.get('approach_handoff')
+    if handoff is not None:
+        target_error = torch.linalg.vector_norm(wrist_target_displacement(state, handoff), dim=-1, keepdim=True)
+        aligned_close = ((gap <= handoff['max_measured_aperture_m'])
+                         & (gap + error <= handoff['max_commanded_aperture_m'])
+                         & (target_error <= handoff['max_wrist_target_error_m']))
+        eligible_phase = eligible_phase | aligned_close
+    held = eligible_phase & (gap >= low) & (gap <= high) & (error <= -settings['minimum_preload_m'])
     retaining = ((opening <= settings['max_teacher_aperture_m'])
                  & (base_forward.abs() <= settings['max_base_speed_m_s'])
                  & (base_yaw.abs() <= settings['max_base_yaw_rad_s']))
