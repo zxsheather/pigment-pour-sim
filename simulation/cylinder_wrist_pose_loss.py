@@ -257,6 +257,17 @@ def held_vertical_lift_loss(planned, expected, anchor_tip, reference, state, val
         expected_up = (expected[..., 1:, 2] - expected[..., :1, 2]) / marker_offset
         tilt_error = (planned_up - expected_up).square().sum(-1) / upright['scale_rad'] ** 2
         loss = loss + (upright['weight'] * tilt_error).masked_fill(~(held & prefix & after_approach), 0.)
+    planar = settings.get('planar_reference')
+    if planar is not None:
+        # Only supervise drift on prefixes where the reference rises without a sideways move.
+        expected_xy = expected[..., 0, :2]
+        expected_displacement = expected_xy - anchor_tip[:, None, :2]
+        straight = expected_displacement.square().sum(-1) <= planar['max_teacher_displacement_m'] ** 2
+        straight_prefix = straight.cumprod(dim=1).bool()
+        vertical = (upward_label & straight_prefix).any(dim=1, keepdim=True)
+        lateral_error = ((planned[..., 0, :2] - expected_xy) / planar['scale_m']).square().sum(-1)
+        lateral_frames = held & after_approach & prefix & straight_prefix & vertical
+        loss = loss + (planar['weight'] * lateral_error).masked_fill(~lateral_frames, 0.)
     return loss
 
 
