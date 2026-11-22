@@ -391,7 +391,13 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
         tray_region = ((depth >= tray_depth_min) & (depth <= tray_depth_max)
                        & (side.abs() >= tray_side_min) & (side.abs() <= tray_side_max)
                        & (height >= tray_height_min) & (height <= tray_height_max))
-        active |= tray_region[:, None] & retreat
+        tray_movement = near_tray.get('min_teacher_movement_m', movement)
+        tray_drift = near_tray.get('max_teacher_drift_m', drift)
+        tray_retreat = (
+            tray_region[:, None] & (teacher_depth <= -tray_movement)
+            & (teacher_side.abs() <= tray_drift) & (teacher_shift[..., 2].abs() <= tray_drift))
+        active |= tray_retreat
+        retreat |= tray_retreat
 
     error = planned[..., 0, :] - expected[..., 0, :]
     forward_excess = (error[..., :2] * forward[:, None, :]).sum(dim=-1).clamp_min(0.)

@@ -3,7 +3,43 @@ import unittest
 
 import torch
 
-from simulation.cylinder_wrist_pose_loss import near_approach_world_wrist_loss, near_heading_recovery_loss
+from simulation.cylinder_wrist_pose_loss import (
+    lateral_approach_alignment_loss, near_approach_world_wrist_loss, near_heading_recovery_loss,
+)
+
+
+class TrayRetreatLossTest(unittest.TestCase):
+    def test_short_diagonal_retreat_has_its_own_region(self):
+        world = {'cue_affine': [[-3., -3., -3.], [3., 3., 3.]], 'cue_near_scale_m': .04}
+        near_tray = dict(depth_range_m=[.025, .075], sideways_range_m=[.01, .03],
+                         height_range_m=[-.022, .028])
+        settings = dict(state_yaw_affine=[-1., 1.], state_aperture_affine_m=[0., .0975],
+                        depth_range_m=[.025, .120], sideways_range_m=[.03, .07],
+                        height_range_m=[.015, .075], min_aperture_m=.035,
+                        min_teacher_movement_m=.004, max_teacher_drift_m=.003,
+                        weight=.4, scale_m=.012, near_tray_retreat=near_tray)
+        state = torch.zeros((2, 26), dtype=torch.float64)
+        state[:, 18] = torch.tensor([math.asinh(x / .04) / 3. for x in (.015, .05)])
+        state[:, 21] = math.asinh(.045 / .04) / 3.
+        state[:, 22] = -math.asinh(.02 / .04) / 3.
+        state[:, 23] = 1.
+        measured = torch.zeros((2, 3), dtype=torch.float64)
+        teacher = torch.tensor([-.004, -.003, 0.], dtype=torch.float64).expand(2, 8, 1, 3)
+        stationary = torch.zeros_like(teacher, requires_grad=True)
+        valid = torch.ones((2, 8), dtype=torch.bool)
+
+        previous = lateral_approach_alignment_loss(stationary, teacher, measured, state, valid, world, settings)
+        self.assertEqual(torch.count_nonzero(previous).item(), 0)
+
+        near_tray.update(min_teacher_movement_m=.0025, max_teacher_drift_m=.006)
+        matched = lateral_approach_alignment_loss(teacher, teacher, measured, state, valid, world, settings)
+        self.assertEqual(torch.count_nonzero(matched).item(), 0)
+
+        result = lateral_approach_alignment_loss(stationary, teacher, measured, state, valid, world, settings)
+        gradient, = torch.autograd.grad(result.sum(), stationary)
+        self.assertTrue(bool((result[0] > 0.).all()))
+        self.assertEqual(torch.count_nonzero(result[1]).item(), 0)
+        self.assertEqual(torch.count_nonzero(gradient[1]).item(), 0)
 
 
 class BaseCommandResponseTest(unittest.TestCase):
