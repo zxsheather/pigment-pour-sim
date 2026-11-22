@@ -15,7 +15,7 @@ from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS,
 from cylinder_far_approach_prompt import (
     RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
 )
-from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
+from cylinder_tray_vision import (ConfirmedTrayTarget, TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
                                   WRIST_TARGET_CUE_PROTOCOL, estimate_from_robot_views, observed_tray_cue_state)
 from cylinder_wrist_cue import cue_from_wrist_rgb
 from inspect_cylinder import CylinderEnv
@@ -135,6 +135,10 @@ def measure_rollout(folder, *, pose_breakdown=False):
         tray_protocol = episode.get('tray_cue_protocol')
         tray_cue = episode.get('initial_tray_cue')
         require(tray_protocol == summary.get('tray_cue_protocol'), 'Tray protocol differs between episode and rollout')
+        refresh_target = episode.get('refresh_tray_target', False)
+        require(refresh_target == summary.get('refresh_tray_target', False), 'RGB target refresh differs between episode and rollout')
+        require(not refresh_target or tray_protocol == WRIST_TARGET_CUE_PROTOCOL, 'Target refresh requires a wrist-target cue')
+        target_tracker = ConfirmedTrayTarget(tray_cue) if refresh_target else None
         if tray_protocol:
             require(tray_protocol in TRAY_CUE_PROTOCOLS and progress == PROGRESS_PROTOCOL and wrist_cue is None,
                     'Unexpected tray cue configuration')
@@ -163,6 +167,9 @@ def measure_rollout(folder, *, pose_breakdown=False):
                 verify_servo_increments(directory, bounded_joint_command(env), observations, trajectory)
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
                     'Snapshot and observation counts differ')
+            if target_tracker is not None:
+                rgb_estimates = [json.loads(row) for row in observations['tray_rgb_estimate']]
+                require(len(rgb_estimates) == len(observations['timestamp']), 'RGB target estimate count differs from observations')
             spec = int(physics['state_spec'])
             for i, (state, timestamp, observed) in enumerate(zip(
                     physics['full_state'], observations['timestamp'], observations['state'])):
@@ -177,7 +184,27 @@ def measure_rollout(folder, *, pose_breakdown=False):
                     reproduced = robot_joint_observation(env, servo_state=servo_state)
                     if tray_protocol:
                         approach = sampled_phases[i] == 0
-                        reproduced = observed_tray_cue_state(env, reproduced, tray_cue if approach else None, tray_protocol)
+                        estimate = tray_cue if approach else None
+                        if target_tracker is not None:
+                            current = rgb_estimates[i]
+                            if approach:
+                                if episode['exact_input_images_recorded']:
+                                    rgb_dir = directory / 'model_observations' / f'chunk_{i:04d}'
+                                    names = list(TRAY_VISION_CAMERAS)
+                                    if (rgb_dir / f'tray_{TRAY_FALLBACK_VIEW}.png').is_file():
+                                        names.append(TRAY_FALLBACK_VIEW)
+                                    images = {name: imageio.imread(rgb_dir / f'tray_{name}.png') for name in names}
+                                    recovered = estimate_from_robot_views(env, images)
+                                    require((recovered is None) == (current is None),
+                                            'Archived RGB target presence differs')
+                                    if recovered is not None:
+                                        require(recovered['method'] == current['method'], 'Archived RGB target method differs')
+                                        np.testing.assert_allclose(recovered['world_xy_m'], current['world_xy_m'],
+                                                                   rtol=0., atol=1e-9)
+                                estimate = target_tracker.observe(current)
+                            else:
+                                require(current is None, 'Target estimate was recorded outside approach')
+                        reproduced = observed_tray_cue_state(env, reproduced, estimate, tray_protocol)
                     elif wrist_cue is not None:
                         if i == 0 and wrist_rgb.is_file():
                             require(cue_from_wrist_rgb(env, imageio.imread(wrist_rgb)) == wrist_cue,

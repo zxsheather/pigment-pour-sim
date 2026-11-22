@@ -79,6 +79,7 @@ def verify_report(report, cases, model, config, controller, source_hashes, *, ac
     expected_ik_limit = None if action_space == 'joint' else .002
     require(report['ik_max_residual'] == expected_ik_limit, 'Unexpected inverse kinematics setting')
     require(not report.get('cartesian_ik_backoff',False), 'Cartesian diagnostic backoff is outside formal acceptance')
+    require(not report.get('refresh_tray_target',False), 'RGB target refresh comparison is outside formal acceptance')
     require(report['robot_servo_envelope'] == dict(cartesian_speed_limit_m_s=0., angular_speed_limit_rad_s=0.),
             'Unexpected extra servo envelope')
     require(report['total'] == len(cases) == len(report['episodes']), 'Case count mismatch')

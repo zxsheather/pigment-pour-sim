@@ -36,6 +36,33 @@ TRAY_CYLINDER_BASE_HEIGHT_M = .016
 TRAY_FALLBACK_VIEW = 'right_wrist_view_1024'
 
 
+class ConfirmedTrayTarget:
+    """Refresh the RGB target after three consecutive, consistent estimates."""
+
+    def __init__(self, initial):
+        self.target = initial
+        self.pending = []
+        self.refreshed = False
+
+    def observe(self, estimate):
+        if estimate is None:
+            self.pending.clear()
+            return self.target
+        position = np.asarray(estimate['world_xy_m'])
+        threshold_m = .004 if self.refreshed else .020
+        if self.target is not None and np.linalg.norm(position - self.target['world_xy_m']) < threshold_m:
+            self.pending.clear()
+            return self.target
+        if not all(np.linalg.norm(position - queued) <= .006 for queued in self.pending):
+            self.pending.clear()
+        self.pending.append(position)
+        if len(self.pending) == 3:
+            self.target = estimate
+            self.refreshed = True
+            self.pending.clear()
+        return self.target
+
+
 def with_tray_cue_state(servo_state, estimate, tray_center_xy, protocol):
     require(protocol in TRAY_POSITION_CUE_PROTOCOLS, 'Unknown tray position cue protocol')
     origin = tray_center_xy if protocol == TRAY_CENTER_CUE_PROTOCOL else None

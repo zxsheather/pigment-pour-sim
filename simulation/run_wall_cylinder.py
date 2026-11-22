@@ -25,7 +25,7 @@ from cylinder_progress_prompts import CylinderProgressPrompts,PROGRESS_PROTOCOL
 from cylinder_far_approach_prompt import (
     RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
 )
-from cylinder_tray_vision import (TRAY_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL,
+from cylinder_tray_vision import (ConfirmedTrayTarget, TRAY_CUE_PROTOCOLS, WRIST_TARGET_CUE_PROTOCOL,
                                   capture_initial_tray_cue, observed_tray_cue_state)
 from cylinder_reader import read_volume
 from cylinder_wrist_cue import capture_initial_wrist_cue
@@ -169,7 +169,7 @@ class CylinderTrial:
                  state_embedding_precision="training",gripper_open_confirmations=0,unclipped_robot_state=False,
                  gripper_open_confirmation_mode="prefix-median",action_space="cartesian",joint_servo_state=False,
                  joint_wrist_cue=False,progress_protocol=None,tray_cue_protocol=None,servo_increments=False,
-                 cartesian_ik_backoff=False,far_approach_prompt_protocol=None):
+                 cartesian_ik_backoff=False,far_approach_prompt_protocol=None,refresh_tray_target=False):
         if action_space not in ('cartesian','joint'):raise ValueError('Invalid action space')
         if joint_servo_state and action_space!='joint':raise ValueError('Servo state requires joint actions')
         if joint_wrist_cue and not joint_servo_state:raise ValueError('Wrist cue requires joint servo observations')
@@ -181,6 +181,8 @@ class CylinderTrial:
         if tray_cue_protocol is not None and (
                 tray_cue_protocol not in TRAY_CUE_PROTOCOLS or not joint_wrist_cue or not progress_protocol):
             raise ValueError('Tray cue requires the cue state layout and progress prompts')
+        if refresh_tray_target and tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL:
+            raise ValueError('Target refresh requires the RGB wrist-target cue')
         if far_approach_prompt_protocol is not None and (
                 far_approach_prompt_protocol not in RANGE_CONDITIONED_PROMPT_PROTOCOLS
                 or tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL):
@@ -214,6 +216,7 @@ class CylinderTrial:
         elif joint_wrist_cue:
             rgb,self.initial_wrist_cue=capture_initial_wrist_cue(self.env)
             if record:imageio.imwrite(output/"initial_right_wrist_1024.png",rgb)
+        self.tray_target_tracker = ConfirmedTrayTarget(self.initial_tray_cue) if refresh_tray_target else None
         self.initial_cylinder=self.env.data.xpos[self.env.cylinder_body].copy()
         self.initial_base=self.env.base_pose().copy()
         self.progress_router=CylinderProgressPrompts(self.initial_base) if progress_protocol else None
@@ -260,10 +263,16 @@ class CylinderTrial:
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
                          images={name:self.env.render(name,width=self.image_size) for name in CAMERAS})
+        tray_images = {}
+        tray_estimate = None
         if self.action_space=='joint':
             observation['state']=robot_joint_observation(self.env,servo_state=self.joint_servo_state)
             if self.tray_cue_protocol:
-                estimate=self.initial_tray_cue if self.progress_router.index==0 else None
+                approach = self.progress_router.index == 0
+                estimate = self.initial_tray_cue if approach else None
+                if self.tray_target_tracker is not None and approach:
+                    tray_images, tray_estimate = capture_initial_tray_cue(self.env)
+                    estimate = self.tray_target_tracker.observe(tray_estimate)
                 observation['state']=observed_tray_cue_state(
                     self.env,observation['state'],estimate,self.tray_cue_protocol)
             elif self.initial_wrist_cue is not None:
@@ -271,6 +280,8 @@ class CylinderTrial:
         elif self.with_odometry:
             observation["state"]=np.r_[observation["state"],self.env.base_pose()].astype(np.float32)
         record=dict(time=float(self.env.data.time),state=observation["state"].copy())
+        if self.tray_target_tracker is not None:
+            record['tray_rgb_estimate'] = json.dumps(tray_estimate, allow_nan=False)
         if self.progress_router is not None:
             instruction = self.progress_router.instruction
             if self.far_approach_prompt_protocol is not None:
@@ -288,6 +299,8 @@ class CylinderTrial:
             folder=self.output/"model_observations"/f"chunk_{len(self.chunks):04d}"
             folder.mkdir(parents=True,exist_ok=False)
             for name,rgb in observation["images"].items():imageio.imwrite(folder/f"{name}.png",rgb)
+            for name, rgb in tray_images.items():
+                imageio.imwrite(folder/f"tray_{name}.png", rgb)
         return observation
 
     def fail(self,reason):
@@ -427,10 +440,12 @@ class CylinderTrial:
         if self.servo_increments:
             summary['joint_action_representation']=JOINT_SERVO_INCREMENT
         if self.tray_cue_protocol:
+            source = "confirmed current RGB tray target" if self.tray_target_tracker is not None else "reset RGB tray cue"
             summary.update(tray_cue_protocol=self.tray_cue_protocol,initial_tray_cue=self.initial_tray_cue,
                            initial_tray_images=self.initial_tray_images,
                            observation_inputs="Three RGB cameras, measured robot progress and joint/servo state "
-                           "with the reset RGB tray cue projected along the current base axes during approach")
+                           f"with the {source} projected along the current base axes during approach",
+                           refresh_tray_target=self.tray_target_tracker is not None)
         if self.cartesian_ik_backoff:
             summary['ik_backoff']=dict(
                 shorter_steps=sum(r['pose_fraction']<1. for r in self.rows),
@@ -445,6 +460,8 @@ class CylinderTrial:
                      state=np.array([r["state"] for r in self.observations]))
         if self.progress_router is not None:
             archive['instruction']=np.asarray([r['instruction'] for r in self.observations],dtype=str)
+        if self.tray_target_tracker is not None:
+            archive['tray_rgb_estimate'] = np.asarray([r['tray_rgb_estimate'] for r in self.observations], dtype=str)
         np.savez_compressed(self.output/"model_observations.npz",**archive)
         # Privileged simulator snapshots are separate from policy inputs. They
         # allow later expert-recovery demonstrations from policy-visited states.
@@ -505,6 +522,8 @@ def main():
                    help="Optional gripper ablation: confirm each future tick using overlapping forecasts instead of prefix medians.")
     p.add_argument("--unclipped-robot-state",action="store_true",
                    help="Optional state-input ablation: preserve the existing affine scale without clipping robot states.")
+    p.add_argument("--refresh-tray-target", action="store_true",
+                   help="Compare the policy with a target refreshed from successive calibrated robot RGB views.")
     args=p.parse_args()
     if not np.isfinite(args.action_filter_seconds) or args.action_filter_seconds<0:
         p.error("Action filter time constant must be finite and nonnegative")
@@ -523,6 +542,8 @@ def main():
     if not 1<=args.execute_steps<=policy._action_horizon:p.error("Execution prefix exceeds model horizon")
     if args.policy_batch_size<1:p.error("Policy batch size must be positive")
     if not cases or not np.isfinite(args.max_seconds) or args.max_seconds<=0:p.error("Cases and positive duration required")
+    if args.refresh_tray_target and policy.tray_cue_protocol != WRIST_TARGET_CUE_PROTOCOL:
+        p.error("Target refresh requires a checkpoint with the RGB wrist-target cue")
     (args.output/"model_load.json").write_text(json.dumps(policy.load_report,indent=2)+"\n")
     trials=[CylinderTrial(case,controller,args.output/f"episode_{index:03d}",record=args.record,
                          max_seconds=args.max_seconds,image_size=args.image_size,
@@ -539,6 +560,7 @@ def main():
                          joint_wrist_cue=policy.joint_wrist_cue,
                          progress_protocol=policy.progress_protocol,tray_cue_protocol=policy.tray_cue_protocol,
                          far_approach_prompt_protocol=policy.far_approach_prompt_protocol,
+                         refresh_tray_target=args.refresh_tray_target,
                          unclipped_robot_state=args.unclipped_robot_state) for index,case in enumerate(cases)]
     try:
         while True:
@@ -602,6 +624,7 @@ def main():
                     action_space=policy.action_space,progress_protocol=policy.progress_protocol,
                     joint_action_representation=policy.joint_action_representation,
                     tray_cue_protocol=policy.tray_cue_protocol,
+                    refresh_tray_target=args.refresh_tray_target,
                     controller=controller,probe_only=args.probe_only,episodes=results,
                     execution_prefix=args.execute_steps,policy_batch_size=args.policy_batch_size,
                     flow_steps=args.flow_steps,
