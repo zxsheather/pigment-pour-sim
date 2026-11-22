@@ -3301,5 +3301,120 @@
       "active_training_interrupted": false,
       "independent_cases_read": false
     }
+  },
+  "v491": {
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/v491-v438-final-held-continuations.json",
+      "sha256": "12af0b5e2b8a2d30f41d29b76bf53a23de8f0e5f3ff54d431373e5144d1ec033"
+    },
+    "source": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-checkpoint-replay-v488/v488-v438-1024-exact-replay.json",
+      "sha256": "271266efd78c1c950422f32f2e9765909781c2e9e401207477e33c95d5b6325e"
+    },
+    "teacher_only": true,
+    "development_excluded": true,
+    "independent_cases_read": false,
+    "results": [
+      {
+        "mode": "as_recorded",
+        "input_query": 344,
+        "grip_target_mm": 9.449954107403755,
+        "teacher_success": true,
+        "strict_success": true,
+        "strict_failure": null,
+        "supported_lift_m": 0.06391182575713361,
+        "slip_m": 0.011616074706421772,
+        "readings_ml": [
+          24.9390243902439,
+          24.9390243902439,
+          24.9390243902439
+        ],
+        "terminal_gates": {
+          "held": true,
+          "loaded_fingers": 2,
+          "lifted": true,
+          "retreated": true,
+          "close_to_head": true,
+          "upright": true,
+          "still": true,
+          "base_retreat_m": 0.23368825142384886,
+          "camera_distance_m": 0.3686168286834122,
+          "linear_speed_m_s": 0.0008551965204899028,
+          "angular_speed_rad_s": 0.0034865590322756043
+        },
+        "teacher_report": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-as_recorded/teacher/summary.json",
+          "sha256": "4a63bdfe56c90213f020c3e7d4e47cbabd213fd02f19b928c20c6eed94b3d669"
+        },
+        "trajectory": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-as_recorded/teacher/trajectory.npz",
+          "sha256": "552da842cd0794428007f8cc609c140d9d8a00263db9816008dd27c49a571832"
+        }
+      },
+      {
+        "mode": "target_16_5mm",
+        "input_query": 344,
+        "grip_target_mm": 16.5,
+        "teacher_success": false,
+        "strict_success": false,
+        "strict_failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "supported_lift_m": 0.010876915240629392,
+        "slip_m": 0.0008748249092746134,
+        "readings_ml": [],
+        "terminal_gates": {
+          "held": true,
+          "loaded_fingers": 2,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.0006651922743963756,
+          "camera_distance_m": 0.6396826586034675,
+          "linear_speed_m_s": 0.053213084852304984,
+          "angular_speed_rad_s": 0.4339462095143583
+        },
+        "teacher_report": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-target_16_5mm/teacher/summary.json",
+          "sha256": "b5ea233aceb1860817ef1daf74873b5811283b22403c05bf41b69ef3afdd3469"
+        },
+        "trajectory": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-target_16_5mm/teacher/trajectory.npz",
+          "sha256": "ec0b7d668e9c045a6a1eb79c2c6f7e67ce9f4c708028e444a13e46565551721c"
+        }
+      },
+      {
+        "mode": "target_19mm",
+        "input_query": 344,
+        "grip_target_mm": 19.0,
+        "teacher_success": false,
+        "strict_success": false,
+        "strict_failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "supported_lift_m": 0.010876915240629392,
+        "slip_m": 0.0008748249092746134,
+        "readings_ml": [],
+        "terminal_gates": {
+          "held": true,
+          "loaded_fingers": 2,
+          "lifted": false,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.0006651922743963756,
+          "camera_distance_m": 0.6396826586034675,
+          "linear_speed_m_s": 0.053213084852304984,
+          "angular_speed_rad_s": 0.4339462095143583
+        },
+        "teacher_report": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-target_19mm/teacher/summary.json",
+          "sha256": "49148af61b86d8ef1e6eaecd9fc620955c4f18e801aa12e1f91ac0999270b9b2"
+        },
+        "trajectory": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v438-final-held-recovery-v491/344-target_19mm/teacher/trajectory.npz",
+          "sha256": "e4464876977f3cdff8a6410518972ce20c9eda489ef70380d4cb263589f4b328"
+        }
+      }
+    ]
   }
 }
