@@ -291,7 +291,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    align_heading_before_base_advance=False,align_near_grasp_at_current_depth=False,
                    lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
                    near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
-                   grasp_close_ticks=35,initial_lift_seconds=2.):
+                   grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False):
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if type(grasp_close_ticks) is not int or grasp_close_ticks < 1:
         raise ValueError("Grasp closing must last a positive number of control ticks")
@@ -305,6 +305,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         raise ValueError("Initial lift requires a held transport recovery")
     if read_from_current_view and (reset_scene or not start_holding or not skip_retreat):
         raise ValueError("Reading from the current view requires a saved held reading state")
+    if held_presentation_waypoints and (not start_holding or read_from_current_view):
+        raise ValueError("Held presentation waypoints require a preserved grasp and a move to the camera")
     if release_single_contact and (reset_scene or start_holding):
         raise ValueError("Single-contact release requires a saved pre-grasp recovery state")
     if align_from_clearance and (reset_scene or start_holding):
@@ -820,7 +822,28 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         else:
             eye=env.data.cam_xpos[camera_id].copy()
             point=eye+[read_lateral,read_distance,approach_height-(SCALE_ZERO+SCALE_SPAN/2)]
-            q=move("present",point,3)
+            if held_presentation_waypoints:
+                # Correct the preserved grasp before translating it toward the camera.
+                measured_rotation=env.data.xmat[env.gripper_body].reshape(3,3).copy()
+                wrist_point=env.data.xpos[env.gripper_body]+measured_rotation@env.grasp_offset
+                cylinder_axis=env.data.xmat[env.cylinder_body].reshape(3,3)[:,2]
+                tilt=float(np.arccos(np.clip(cylinder_axis[2],-1.,1.)))
+                rotation=measured_rotation
+                if tilt>.003:
+                    correction_axis=np.cross(cylinder_axis,[0.,0.,1.])
+                    correction_axis/=np.linalg.norm(correction_axis)
+                    quat=np.empty(4)
+                    mujoco.mju_axisAngle2Quat(quat,correction_axis,min(.07,.8*tilt))
+                    correction=np.empty(9)
+                    mujoco.mju_quat2Mat(correction,quat)
+                    rotation=correction.reshape(3,3)@measured_rotation
+                    move("upright_before_present",wrist_point,1.5)
+                wrist_point=env.data.xpos[env.gripper_body]+env.data.xmat[env.gripper_body].reshape(3,3)@env.grasp_offset
+                move("present_sideways",np.array([point[0],wrist_point[1],wrist_point[2]]),1.6)
+                move("present_depth",np.array([point[0],point[1],wrist_point[2]]),2.)
+                q=move("present_height",point,1.6)
+            else:
+                q=move("present",point,3)
             for _ in range(20):tick("hold_for_reading",q,grip_opening)
 
         def move_camera_offset(phase, offset):
@@ -1027,6 +1050,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["grasp_close_ticks"] = grasp_close_ticks
     if not start_holding and initial_lift_seconds != 2.:
         summary["controller_parameters"]["initial_lift_seconds"] = float(initial_lift_seconds)
+    if held_presentation_waypoints:
+        summary["controller_parameters"]["held_presentation_waypoints"] = True
     if wrist_clearance_rear_distance_m is not None:
         summary["controller_parameters"]["wrist_clearance_rear_distance_m"]=wrist_clearance_rear_distance_m
     if wrist_clearance_extra_lift_m is not None:

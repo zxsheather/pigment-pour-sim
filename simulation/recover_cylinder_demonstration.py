@@ -34,6 +34,8 @@ def main():
                    help="Optional longitudinal wrist clearance for a saved contact-free approach.")
     p.add_argument("--held-initial-lift-m",type=float,default=0.,
                    help="Optional vertical lift before retracting a partially lifted held cylinder; teacher data only.")
+    p.add_argument("--held-presentation-waypoints",action="store_true",
+                   help="Straighten a preserved grasp and separate lateral, depth and height moves for presentation.")
     p.add_argument("--lift-off-recovery",action="store_true",
                    help="Teach a vertical lift from a loaded, near-upright grasp at tray height.")
     p.add_argument("--eye-alignment-target-px",type=float,default=2.,
@@ -53,6 +55,8 @@ def main():
         p.error("Held recovery lift must be within [0,0.10] m")
     if a.held_initial_lift_m and (not a.start_holding or a.reading_only):
         p.error("Initial lift requires --start-holding without --reading-only")
+    if a.held_presentation_waypoints and (not a.start_holding or a.reading_only):
+        p.error("Held presentation waypoints require --start-holding without --reading-only")
     if a.lift_off_recovery and (not a.start_holding or a.reading_only or a.held_initial_lift_m < .04):
         p.error("Lift-off recovery requires --start-holding and an initial vertical lift of at least 0.04 m")
     if not np.isfinite(a.eye_alignment_target_px) or not .5<=a.eye_alignment_target_px<=2.:
@@ -153,6 +157,8 @@ def collect(a, controller, output):
         provenance["starts_holding"]=a.start_holding
         provenance["initial_vertical_lift_m"]=a.held_initial_lift_m
         provenance["recovery_stage"]="presentation_stopping_readout" if a.reading_only else "transport_or_grasp"
+        if a.held_presentation_waypoints:
+            provenance["held_presentation_waypoints"]=True
         teacher = controller.get("teacher",{})
         if teacher.get("release_lift_m") or teacher.get("wrist_clearance_retreat_from_reset"):
             provenance["reset_base_y_m"]=float(initial_base[1])
@@ -191,6 +197,8 @@ def collect(a, controller, output):
                     reset_scene=False,initial_state_provenance=provenance,start_holding=a.start_holding,
                     skip_retreat=a.reading_only,held_initial_lift_m=a.held_initial_lift_m,
                     eye_alignment_target_px=a.eye_alignment_target_px)
+        if a.held_presentation_waypoints:
+            teacher["held_presentation_waypoints"]=True
         if a.restore_approach_base:
             teacher["approach_base_reference"] = initial_base
         if a.align_from_clearance:
