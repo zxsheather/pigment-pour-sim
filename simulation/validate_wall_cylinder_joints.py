@@ -91,6 +91,12 @@ def main():
         adapter.normalizer_action, adapter.normalizer_propri = action_norm, state_norm
         processors = adapter.load_processor(None)
         model_config = adapter.build_model_config()
+        wrist_loss = getattr(model_config, 'joint_servo_wrist_pose_loss', None)
+        if increments and wrist_loss and 'tracking_affine_rad' in wrist_loss:
+            state_bounds = json.loads(stats.read_text())['norm_stats']['observation.state']
+            expected_tracking_affine = [state_bounds[key][19:21] for key in ('q01', 'q99')]
+            require(np.array_equal(wrist_loss['tracking_affine_rad'], expected_tracking_affine),
+                    'Wrist loss tracking-error bounds differ from the dataset normalizer')
         dataset, loader, iterations = adapter.load_dataset(
             load_trainer_data_config(cfg), processors['processor'], rank=0, world_size=1,
             normalizer_action=action_norm, normalizer_propri=state_norm,
@@ -215,6 +221,8 @@ def main():
         if far_protocol is not None:
             report['far_approach_prompt_protocol'] = far_protocol
             report['far_approach_prompt_checks'] = prompt_checks
+        if increments and wrist_loss and 'tracking_affine_rad' in wrist_loss:
+            report['wrist_loss_tracking_affine_matches_normalizer'] = True
         if cfg.data.lerobot_config.get('frame_sampling_groups_path') is not None:
             report['stratified_sampling'] = check_stratified_sampling(
                 loader.sampler, cfg.data.lerobot_config, train_indices)
