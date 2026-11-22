@@ -591,15 +591,17 @@ def near_heading_recovery_loss(forecast, reference, state, valid, calibration):
 
     lower, upper = state.new_tensor(calibration['action_yaw_affine']).unbind()
     requested = lower + (forecast[..., 8:9] + 1.) * (upper - lower) * .5
-    demonstrated = lower + (reference[..., 8] + 1.) * (upper - lower) * .5
+    demonstrated = lower + (reference[..., 8:9] + 1.) * (upper - lower) * .5
     measured_lo, measured_hi = state.new_tensor(calibration['state_yaw_rate_affine']).unbind()
     previous = measured_lo + (state[:, 8:9] + 1.) * (measured_hi - measured_lo) * .5
     applied = slew_base_commands(requested, previous, lower, upper, calibration['command_step_limit'])[..., 0]
+    applied_reference = slew_base_commands(
+        demonstrated, previous, lower, upper, calibration['command_step_limit'])[..., 0]
 
-    returning = (side * demonstrated <= -calibration['minimum_return_rate_rad_s']) & valid
+    returning = (side * demonstrated[..., 0] <= -calibration['minimum_return_rate_rad_s']) & valid
     nearby = wrist_target_is_near(state, calibration) & (error.abs() >= calibration['min_heading_error_rad'])
     active = nearby[:, None] & valid.cumprod(dim=1).bool() & returning.cumsum(dim=1).bool()
-    excess = side * (applied - demonstrated).cumsum(dim=1) * calibration['control_dt_s']
+    excess = side * (applied - applied_reference).cumsum(dim=1) * calibration['control_dt_s']
     loss = calibration['weight'] * (excess.clamp_min(0.) / calibration['scale_rad']).square()
     return loss.masked_fill(~active, 0.)
 
