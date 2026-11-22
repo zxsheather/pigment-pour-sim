@@ -218,6 +218,7 @@ class CylinderTrial:
         self.initial_base=self.env.base_pose().copy()
         self.progress_router=CylinderProgressPrompts(self.initial_base) if progress_protocol else None
         self.progress_changes=[]
+        self.cartesian_progress_samples=[]
         if self.progress_router is not None:
             self.progress_initial_joint_command=bounded_joint_command(self.env).tolist()
             self.update_progress()
@@ -248,9 +249,13 @@ class CylinderTrial:
                 self.writers[cam]=imageio.get_writer(output/f"{cam}.mp4",fps=20,codec="libx264",quality=8,macro_block_size=1)
 
     def update_progress(self):
-        current=self.progress_router.observe(robot_joint_observation(self.env,servo_state=True))
+        state = robot_joint_observation(self.env, servo_state=True)
+        time_s = float(self.env.data.time)
+        current = self.progress_router.observe(state)
+        if self.action_space == 'cartesian':
+            self.cartesian_progress_samples.append((time_s, state))
         if not self.progress_changes or self.progress_changes[-1]['task_index']!=current:
-            self.progress_changes.append(dict(time_s=float(self.env.data.time),task_index=current))
+            self.progress_changes.append(dict(time_s=time_s,task_index=current))
 
     def observation(self):
         observation=dict(state=self.env.state_vector().copy(),
@@ -455,6 +460,10 @@ class CylinderTrial:
         if self.cartesian_ik_backoff:
             extra.update({key:np.array([r[key] for r in self.rows])
                           for key in ('joint_command','requested_ik_residual','pose_fraction')})
+        if self.cartesian_progress_samples:
+            progress_times, progress_states = zip(*self.cartesian_progress_samples)
+            extra.update(progress_timestamp=np.asarray(progress_times),
+                         progress_robot_state=np.asarray(progress_states))
         np.savez_compressed(self.output/"trajectory.npz",timestamp=np.array([r["time"] for r in self.rows]),
             state=np.array([r["state"] for r in self.rows]),action=np.array([r["action"] for r in self.rows]),
             unfiltered_model_action=np.array([r["raw_action"] for r in self.rows]),

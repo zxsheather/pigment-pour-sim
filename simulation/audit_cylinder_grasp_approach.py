@@ -25,9 +25,22 @@ def verify_progress_prompts(initial_base, initial_command, episode, observations
     require(episode['progress_protocol'] == PROGRESS_PROTOCOL, 'Unknown recorded progress protocol')
     np.testing.assert_array_equal(initial_command, episode['progress_initial_joint_command'])
     times = trajectory['timestamp']
-    require(len(times) > 0, 'Progress audit requires an executed controller trace')
-    previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
-    states = with_joint_servo_state(trajectory['robot_joint_state'], previous)
+    cartesian = episode['action_space'] == 'cartesian'
+    if cartesian:
+        ticks = len(times)
+        progress_times = trajectory['progress_timestamp']
+        states = trajectory['progress_robot_state']
+        require(len(progress_times) > 0 and len(states) == len(progress_times)
+                and ticks <= len(progress_times) <= ticks + 1, 'Invalid Cartesian progress trace')
+        np.testing.assert_array_equal(progress_times[:ticks], times)
+        if len(progress_times) > ticks:
+            np.testing.assert_allclose(progress_times[-1], times[-1] + CONTROL_DT if ticks else 0.,
+                                       rtol=0., atol=1e-9)
+        times = progress_times
+    else:
+        require(len(times) > 0, 'Progress audit requires an executed controller trace')
+        previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
+        states = with_joint_servo_state(trajectory['robot_joint_state'], previous)
     router = CylinderProgressPrompts(initial_base)
     phase = np.array([router.observe(state) for state in states])
     sample_times = observations['timestamp']
@@ -47,7 +60,8 @@ def verify_progress_prompts(initial_base, initial_command, episode, observations
     np.testing.assert_array_equal(expected, observations['instruction'])
     changes = [dict(time_s=float(times[i]), task_index=int(phase[i]))
                for i in np.flatnonzero(np.diff(phase, prepend=-1))]
-    reported = [row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
+    reported = episode['prompt_changes'] if cartesian else [
+        row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
     require(reported == changes, 'Recorded prompt changes do not match robot progress')
     return sampled_phases
 
@@ -141,6 +155,10 @@ def measure_rollout(folder, *, pose_breakdown=False):
             if progress:
                 sampled_phases = verify_progress_prompts(
                     initial_base, bounded_joint_command(env), episode, observations, trajectory)
+            cartesian_progress = None
+            if progress and action_space == 'cartesian':
+                query_ticks = np.searchsorted(trajectory['progress_timestamp'], observations['timestamp'])
+                cartesian_progress = trajectory['progress_robot_state'][query_ticks]
             if increment:
                 verify_servo_increments(directory, bounded_joint_command(env), observations, trajectory)
             require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
@@ -170,6 +188,13 @@ def measure_rollout(folder, *, pose_breakdown=False):
                     reproduced = env.state_vector()
                     if len(observed) == 26:
                         reproduced = np.r_[reproduced, env.base_pose()].astype(np.float32)
+                    if cartesian_progress is not None:
+                        env.hold_targets = dict(zip(physics['hold_actuator_ids'].tolist(),
+                                                    physics['hold_targets'][i].tolist()))
+                        env.applied_action[:] = physics['applied_base_action'][i]
+                        np.testing.assert_allclose(robot_joint_observation(env, servo_state=True),
+                                                   cartesian_progress[i], rtol=np.finfo(np.float32).eps,
+                                                   atol=1e-12)
                     # Restoring a snapshot may round a rotation component differently.
                     np.testing.assert_allclose(reproduced, observed, rtol=np.finfo(np.float32).eps,
                                                atol=1e-12)
