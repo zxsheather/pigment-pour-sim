@@ -368,10 +368,10 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
     depth_min, depth_max = settings['depth_range_m']
     side_min, side_max = settings['sideways_range_m']
     height_min, height_max = settings['height_range_m']
-    eligible = ((state[:, 23] > 0.) & (aperture >= settings['min_aperture_m'])
-                & (depth >= depth_min) & (depth <= depth_max)
-                & (side.abs() >= side_min) & (side.abs() <= side_max)
-                & (height >= height_min) & (height <= height_max))
+    eligible = (state[:, 23] > 0.) & (aperture >= settings['min_aperture_m'])
+    region = ((depth >= depth_min) & (depth <= depth_max)
+              & (side.abs() >= side_min) & (side.abs() <= side_max)
+              & (height >= height_min) & (height <= height_max))
 
     teacher_shift = expected[..., 0, :] - measured_tip[:, None, :]
     teacher_depth = (teacher_shift[..., :2] * forward[:, None, :]).sum(dim=-1)
@@ -382,6 +382,16 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
     retreat = ((teacher_depth <= -movement) & (teacher_side.abs() <= drift)
                & (teacher_shift[..., 2].abs() <= drift))
     align = ((direction * teacher_side >= movement) & (teacher_depth.abs() <= drift))
+    active = region[:, None] & (retreat | align)
+    near_tray = settings.get('near_tray_retreat')
+    if near_tray is not None:
+        tray_depth_min, tray_depth_max = near_tray['depth_range_m']
+        tray_side_min, tray_side_max = near_tray['sideways_range_m']
+        tray_height_min, tray_height_max = near_tray['height_range_m']
+        tray_region = ((depth >= tray_depth_min) & (depth <= tray_depth_max)
+                       & (side.abs() >= tray_side_min) & (side.abs() <= tray_side_max)
+                       & (height >= tray_height_min) & (height <= tray_height_max))
+        active |= tray_region[:, None] & retreat
 
     error = planned[..., 0, :] - expected[..., 0, :]
     forward_excess = (error[..., :2] * forward[:, None, :]).sum(dim=-1).clamp_min(0.)
@@ -389,7 +399,7 @@ def lateral_approach_alignment_loss(planned, expected, measured_tip, state, vali
     lateral_shortfall = (-direction * lateral_error).clamp_min(0.)
     lateral_penalty = torch.where(retreat, lateral_error.square(), lateral_shortfall.square())
     loss = (forward_excess.square() + lateral_penalty) * (settings['weight'] / settings['scale_m'] ** 2)
-    return loss.masked_fill(~(eligible[:, None] & (retreat | align) & valid_prefix), 0.)
+    return loss.masked_fill(~(eligible[:, None] & active & valid_prefix), 0.)
 
 
 def open_depth_alignment_loss(planned, expected, measured_tip, forecast, reference, state,
