@@ -183,9 +183,16 @@ def held_aperture_loss(forecast, reference, state, calibration, dof_mask, flow_l
         # Use the active tray cue and the previous target to recognize a demonstrated hold
         # while the policy is still receiving its approach prompt.
         cue_distance = torch.linalg.vector_norm(wrist_target_displacement(state, pre_lift), dim=-1, keepdim=True)
-        phase_matches = ((state[:, 23:24] > calibration['cue_validity_threshold'])
-                         & (cue_distance <= pre_lift['max_wrist_target_error_m']))
-        retaining &= target <= gap + error + pre_lift['max_teacher_target_increase_m']
+        approach_matches = ((state[:, 23:24] > calibration['cue_validity_threshold'])
+                            & (cue_distance <= pre_lift['max_wrist_target_error_m']))
+        approach_retains = target <= gap + error + pre_lift['max_teacher_target_increase_m']
+        if calibration.get('include_held_phase', False):
+            # Only approach windows need to retain the previous opening target.
+            retaining &= phase_matches | approach_retains
+            phase_matches = phase_matches | approach_matches
+        else:
+            retaining &= approach_retains
+            phase_matches = approach_matches
     anchor = (phase_matches & (gap >= min_gap) & (gap <= max_gap)
               & (error <= -calibration['minimum_closing_error_m'])
               & (gap + error <= calibration['max_previous_target_m']))
