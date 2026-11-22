@@ -292,9 +292,11 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
                    lateral_alignment_min_depth_m=None,read_lateral_retry_offsets_m=(),near_grasp_open_ticks=12,
                    near_grasp_align_seconds=1.5,near_grasp_settle_ticks=10,
                    grasp_close_ticks=35,initial_lift_seconds=2.,held_presentation_waypoints=False,
-                   confirm_readable_view=False, read_height_offset_m=0.):
+                   confirm_readable_view=False, read_height_offset_m=0., pre_retract_lift_m=.04):
     if not np.isfinite(read_height_offset_m):
         raise ValueError("Invalid presentation height offset")
+    if not np.isfinite(pre_retract_lift_m) or pre_retract_lift_m <= 0.:
+        raise ValueError("Initial lift before retraction must be positive and finite")
     if not 0<=grip_opening<.02 or motion_scale<=0:raise ValueError("Invalid controller parameters")
     if type(grasp_close_ticks) is not int or grasp_close_ticks < 1:
         raise ValueError("Grasp closing must last a positive number of control ticks")
@@ -788,7 +790,7 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
             if env.metrics()["grip_contacts"]!=2:raise InspectionFailure("grasp_not_established")
             env.grasp_reference=env._bottle_relative_position();held=True
             env.grasp_point_reference=env.grip_point_relative()
-            move("lift",cylinder+[0,0,approach_height+.04],initial_lift_seconds)
+            move("lift",cylinder+[0,0,approach_height+pre_retract_lift_m],initial_lift_seconds)
             q=move("retract",cylinder+[0,-.15,approach_height+.12],3)
         if not skip_retreat:
             target_y=env.base_pose()[1]-.24
@@ -1133,6 +1135,8 @@ def run_inspection(env: CylinderEnv, output: Path, *, record=False, seed=0, jitt
         summary["controller_parameters"]["read_lateral_retry_offsets_m"]=list(read_lateral_retry_offsets_m)
     if read_height_offset_m:
         summary["controller_parameters"]["read_height_offset_m"] = float(read_height_offset_m)
+    if pre_retract_lift_m != .04:
+        summary["controller_parameters"]["pre_retract_lift_m"] = float(pre_retract_lift_m)
         summary["lateral_read_attempts"]=lateral_read_attempts
     if release_single_contact:
         summary["controller_parameters"]["release_single_contact"]=True
@@ -1208,6 +1212,8 @@ def main():
     parser.add_argument("--read-distance",type=float,default=READ_DISTANCE)
     parser.add_argument("--read-height-offset", type=float, default=0.,
                         help="Vertical wrist offset in meters after presenting and before RGB alignment.")
+    parser.add_argument("--pre-retract-lift", type=float, default=.04,
+                        help="Vertical lift in meters before the arm starts retracting.")
     parser.add_argument("--eye-alignment-target-px",type=float,default=2.)
     parser.add_argument("--confirm-readable-view",action="store_true",
                         help="Confirm a stable reading within the grading tolerance before finer eye alignment")
@@ -1227,6 +1233,7 @@ def main():
                                   yaw_jitter=args.yaw_jitter,grip_opening=args.grip_opening,motion_scale=args.motion_scale,
                                   read_lateral=args.read_lateral,read_distance=args.read_distance,
                                   read_height_offset_m=args.read_height_offset,
+                                  pre_retract_lift_m=args.pre_retract_lift,
                                   eye_alignment_target_px=args.eye_alignment_target_px,
                                   confirm_readable_view=args.confirm_readable_view,
                                   grasp_roll=np.deg2rad(args.grasp_roll_deg),upright_gain=args.upright_gain,
