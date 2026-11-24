@@ -2,6 +2,8 @@
 
 根据场地照片重建量子一号 Pro、两张拼接桌、四色颜料瓶、两个托盘和量筒，提供可离线打开的 3D 查看页与 MuJoCo 场景生成脚本。
 
+本 `deploy/walloss-grasp` 分支另含 [Wall-OSS 模型迁移与真机调试说明](deploy/README.md)、[微调权重 Release](https://github.com/zxsheather/pigment-pour-sim/releases/tag/walloss-grasp-deploy-v1-20261124) 及历史仿真实验源码。部署入口支持离线推理、官方 SDK 观测和标定后的右臂单步试动；尚未完成真机验证。
+
 直接打开 [场景重建.html](场景重建.html)，即可旋转、缩放、切换视角、选择高亮瓶子和调整布局。页面自带机器人模型、参考照片与脚本，打开时无需联网。
 
 ## 布局

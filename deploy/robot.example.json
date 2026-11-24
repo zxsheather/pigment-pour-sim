@@ -1,0 +1,47 @@
+{
+  "endpoint": "x2://ROBOT_IP:50051",
+  "sdk_api_reference_revision": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+  "calibration_reviewed": false,
+  "calibration_note": "Fill measured transforms, gripper scales, lift mapping, stationary posture, and free workspace before enabling preview/step.",
+  "camera_array_order": "RGB",
+  "left": {
+    "T_model_reference_from_sdk_reference": null,
+    "T_sdk_tool_from_model_tcp": null,
+    "gripper_model_per_sdk": null,
+    "gripper_model_offset": null
+  },
+  "right": {
+    "T_model_reference_from_sdk_reference": null,
+    "T_sdk_tool_from_model_tcp": null,
+    "gripper_model_per_sdk": null,
+    "gripper_model_offset": null,
+    "sdk_gripper_limits": null,
+    "workspace_model_xyz_min": null,
+    "workspace_model_xyz_max": null
+  },
+  "lift_model_per_sdk": null,
+  "lift_model_offset": null,
+  "head_model_per_sdk": null,
+  "head_model_offset": null,
+  "stationary_model_posture": {
+    "lift_m": null,
+    "head_pitch_yaw_rad": null,
+    "lift_tolerance_m": 0.005,
+    "head_tolerance_rad": 0.02
+  },
+  "limits": {
+    "max_read_seconds": 2.0,
+    "max_inference_age_seconds": 30.0,
+    "max_dispatch_age_seconds": 0.2,
+    "max_translation_step_m": 0.002,
+    "max_rotation_step_rad": 0.01745329252,
+    "max_gripper_step_model": 0.05,
+    "max_gripper_drift_model": 0.05,
+    "max_arm_drift_m": 0.002,
+    "max_arm_drift_rad": 0.01,
+    "max_chassis_speed_m_s": 0.005,
+    "max_chassis_yaw_speed_rad_s": 0.01,
+    "max_chassis_drift_m": 0.002,
+    "max_chassis_drift_rad": 0.01
+  }
+}

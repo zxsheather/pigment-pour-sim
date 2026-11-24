@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "repository": "zxsheather/pigment-pour-sim",
+  "release_tag": "walloss-grasp-deploy-v1-20261124",
+  "base": {
+    "repository": "X-Square-Robot/wall-oss-0.5",
+    "revision": "b7dc23a82dbf70a65859c9fdd596703234597028"
+  },
+  "wallx_revision": "ce2a1ae31d9ee1028b97ca40e3f66034cf8c0e5f",
+  "adaptation": {
+    "method": "action expert fine-tuning (not LoRA)",
+    "tensors": 257,
+    "trainable_parameters": 399754240,
+    "additional_updates_with_fresh_optimizer": 3000,
+    "logical_total_weight_updates": 6000,
+    "optimizer_resume_supported": false,
+    "norm_key": "local/pigment_grasp_reactive_v4"
+  },
+  "files": {
+    "model.safetensors": {
+      "bytes": 8331486672,
+      "sha256": "37f8f327d3f9c27f056ed078db43c0e39b8caf3df0dc0163cdb8cf92c167968a"
+    },
+    "normalizer_action.pth": {
+      "bytes": 2229,
+      "sha256": "cac624765cdb8d7a2b3543a7b1903a6ac2834efada5efac11bc52d11e3467edf"
+    },
+    "normalizer_propri.pth": {
+      "bytes": 2229,
+      "sha256": "38532216c712c0d3f75c5d5f70763fb1ae70eabe580304ccb21cf1dbc24b687a"
+    },
+    "config.yml": {
+      "bytes": 1196,
+      "sha256": "7fad004ec46340f99a5d55b9fa5edc326dcb694fae118674d550c4b1ede63b9a"
+    },
+    "config.json": {
+      "bytes": 2132,
+      "sha256": "44fbe8f05d9f58472b69ac0577fdf9d75a8a3b6f029fffd5b274659f867c10ac"
+    },
+    "tokenizer.json": {
+      "bytes": 7031645,
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    "tokenizer_config.json": {
+      "bytes": 7255,
+      "sha256": "4827803832328bf1e43f274f6ccdeffecb3a4c406f51a19a96db404902512fe9"
+    },
+    "vocab.json": {
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "preprocessor_config.json": {
+      "bytes": 350,
+      "sha256": "f2058c716eef96ccaed1cc1e2d0c08306b62586d535b28d9d08e691b2fab7ca0"
+    },
+    "adaptation.json": {
+      "bytes": 680,
+      "sha256": "c95300c7089998a62b4fd340ea8eeab66afc39dd071474d199169a5c7df7508e"
+    },
+    "action_expert.safetensors": {
+      "bytes": 806140288,
+      "sha256": "54e0fbfd2a268f2ac5735b972fccb97196abcc4b34a838bfc647ec622fef45f8"
+    }
+  },
+  "release_asset": {
+    "name": "walloss-grasp-v6-overlay.tar.gz",
+    "bytes": 646494627,
+    "sha256": "d6ce2696c86ce23e3f23c428ecc05836820cecd6f0f65bfe0e57f6840cd59da4"
+  }
+}

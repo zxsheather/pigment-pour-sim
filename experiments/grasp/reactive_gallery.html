@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>32 条纠正示范 · 仿真训练材料</title>
+<style>
+  :root{color-scheme:light;--ink:#203831;--muted:#617269;--line:#dce3da;--green:#246d58}
+  *{box-sizing:border-box}body{margin:0;background:#f4f6ef;color:var(--ink);font:16px/1.7 system-ui,sans-serif}
+  main{max-width:1280px;margin:auto;padding:48px 24px 64px}h1{font-size:clamp(26px,4vw,40px);line-height:1.25;margin:8px 0 20px}
+  .eyebrow{color:var(--green);font-size:13px;letter-spacing:.12em}.intro{max-width:900px;color:var(--muted);margin:0 0 22px}
+  .notice{background:#fff9e8;border:1px solid #eadfc0;padding:16px 20px;border-radius:12px;max-width:950px}
+  .stats{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.stat{background:white;border:1px solid var(--line);padding:12px 20px;border-radius:12px}.stat strong{font-size:24px;margin-right:8px}
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 16px}button{font:inherit;font-size:14px;border:1px solid #a6b7a8;background:#fff;color:var(--ink);padding:8px 14px;border-radius:24px;cursor:pointer}
+  button[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#fff}button:focus-visible{outline:3px solid #c7973e;outline-offset:3px}
+  #scope{min-height:54px;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+  article{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}article[hidden]{display:none}
+  video{width:100%;display:block;background:#172821;aspect-ratio:3/1}.card-body{padding:16px 20px}h2{font-size:17px;margin:0 0 6px}.metrics{font-size:13px;color:var(--muted)}
+  .tag{color:var(--green);font-size:12px;margin-bottom:6px}footer{border-top:1px solid var(--line);margin-top:36px;padding-top:20px;color:var(--muted);font-size:13px}
+  @media(max-width:740px){main{padding:28px 16px}.grid{grid-template-columns:1fr}.stat{padding:10px 14px}video{aspect-ratio:3/1}}
+</style>
+<main>
+  <div class="eyebrow">WALL-OSS-0.5 · 训练材料 · 仅仿真</div>
+  <h1>32 条纠正示范</h1>
+  <p class="intro">靠近、闭合和抬升由实际状态触发；抓偏或丢失抓持后重新对齐。每段录像依次展示外部视角、头部相机和右腕相机。</p>
+  <div class="notice"><strong>这里展示的是脚本教师，不是模型执行。</strong><br>物体位置与接触身份仅供教师使用。模型学习的输入仍是 RGB、自身状态和任务指令。扰动准备发生在录像起点之前，不作为动作标签。</div>
+  <div class="stats" id="stats"></div>
+  <nav aria-label="按起始情况筛选" id="filters"></nav>
+  <p id="scope" aria-live="polite"></p>
+  <section class="grid" id="episodes" aria-label="示范录像"></section>
+  <footer>成功要求瓶底离开托盘至少 5 cm，且双指接触连续保持至少 1 s。录像按 25 Hz 仿真速度播放，首末预览帧额外占用约 0.08 s。只展示成功接纳的训练示范；未接纳尝试保留在原始记录中。这里不含验证或最终留出数据。</footer>
+</main>
+<script>
+const data=__REACTIVE_DATA__;
+const kinds={
+  clean:['正常抓取','从通用准备位开始，完整靠近、夹取并抬升。'],
+  hand_offset:['手臂偏移','起始手位、朝向和夹爪开度有扰动，再完成抓取。'],
+  grasp_miss:['抓偏后纠正','起点已经靠近瓶体并部分闭合；教师重新张开、对齐和夹取。'],
+  slip:['滑落后恢复','准备阶段先由脚本夹住并抬升，再制造真实滑落。这组属于恢复任务，不能计作从桌面完整抓起。']
+};
+const allNote='四类起点各 8 条。滑落组的脚本初始抓取不在录像中，恢复结果单独统计。';
+document.querySelector('#stats').innerHTML=`<div class="stat"><strong>${data.attempted}</strong>次尝试</div><div class="stat"><strong>${data.accepted}</strong>条接纳</div><div class="stat"><strong>${data.frames}</strong>帧标签</div><div class="stat"><strong>4 × 8</strong>类 × 条</div>`;
+const nav=document.querySelector('#filters');
+for(const [key,title] of [['all','全部 32 条'],...Object.entries(kinds).map(([k,v])=>[k,v[0]+' · 8'])]){
+  const b=document.createElement('button');b.type='button';b.textContent=title;b.dataset.kind=key;b.setAttribute('aria-pressed',key==='all');nav.append(b);
+}
+const grid=document.querySelector('#episodes');
+for(const e of data.episodes){
+  const article=document.createElement('article');article.dataset.kind=e.kind;
+  article.innerHTML=`<video controls playsinline preload="none" poster="${e.poster}" aria-label="第 ${e.episode} 条 ${kinds[e.kind][0]} 示范"><source src="${e.video}" type="video/mp4"></video><div class="card-body"><div class="tag">脚本教师 · ${kinds[e.kind][0]}</div><h2>示范 ${String(e.episode).padStart(2,'0')}</h2><div class="metrics">${e.seconds.toFixed(2)} s · ${e.frames} 帧 · 最长稳定保持 ${e.holdSeconds.toFixed(3)} s<br>最高瓶底抬升 ${e.liftCm.toFixed(2)} cm · 瓶位偏移 [${e.offsetMm.join(', ')}] mm</div></div>`;
+  grid.append(article);
+}
+nav.addEventListener('click',event=>{
+  const button=event.target.closest('button');if(!button)return;
+  const kind=button.dataset.kind;
+  for(const b of nav.children)b.setAttribute('aria-pressed',b===button);
+  for(const card of grid.children){card.hidden=kind!=='all'&&card.dataset.kind!==kind;if(card.hidden)card.querySelector('video').pause()}
+  document.querySelector('#scope').textContent=kind==='all'?allNote:kinds[kind][1];
+});
+grid.addEventListener('play',event=>{for(const v of grid.querySelectorAll('video'))if(v!==event.target)v.pause()},true);
+document.querySelector('#scope').textContent=allNote;
+</script>
+</html>

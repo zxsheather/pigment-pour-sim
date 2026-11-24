@@ -1,0 +1,28 @@
+<!doctype html><html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>真实状态接管 · 9 条纠正示范</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6ef;color:#203831;font:16px/1.7 system-ui,sans-serif}main{max-width:1280px;margin:auto;padding:40px 24px}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.3;margin:8px 0 18px}.eyebrow{font-size:13px;color:#246d58;letter-spacing:.1em}.intro{max-width:940px;color:#617269}
+.notice{max-width:980px;background:#fff9e8;border:1px solid #eadfc0;border-radius:12px;padding:16px 20px}.stats{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}.stat{background:white;border:1px solid #dce3da;border-radius:12px;padding:10px 20px}.stat strong{font-size:25px;margin-right:8px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}button{font:inherit;font-size:14px;padding:8px 16px;border:1px solid #a6b7a8;border-radius:24px;background:white;color:#203831;cursor:pointer}button[aria-pressed=true]{background:#246d58;color:white;border-color:#246d58}button:focus-visible{outline:3px solid #c7973e;outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}article{background:white;border:1px solid #dce3da;border-radius:14px;overflow:hidden}article[hidden]{display:none}header{padding:16px 20px}h2{font-size:18px;margin:0 0 4px}.metrics{font-size:13px;color:#617269}.label{padding:8px 20px;font-size:13px;font-weight:600;background:#edf2ec}.teacher-label{background:#fff5dd}video{display:block;width:100%;aspect-ratio:3/1;background:#172821}footer{margin-top:30px;border-top:1px solid #dce3da;padding-top:20px;font-size:13px;color:#617269}a{color:#246d58}@media(max-width:740px){main{padding:24px 16px}.grid{grid-template-columns:1fr}}
+</style>
+<main>
+<div class="eyebrow">WALL-OSS-0.5 · 实际模型状态 · 教师纠正材料</div>
+<h1>从模型动作接管的 9 条示范</h1>
+<p class="intro">先重放上一轮 3000 步模型在训练位置上的实际动作，再由教师从同一个物理状态接手。每组 A/B 展示接管之前和之后，包含外部、头部和右腕三个视角。</p>
+<div class="notice"><strong>B 段是读取物体真值的脚本教师，不能计为模型成功。</strong><br>这批是在倒伏前的早期状态接管，倒伏后的恢复试验尚未成功。纠正示范未加入本轮动作边界对照的训练或统计；这里只展示成功接纳的 9 条，全部 18 次尝试保留在实验记录中。</div>
+<div class="stats" id="stats"></div><nav id="filters" aria-label="按来源训练位置筛选"></nav>
+<section class="grid" id="episodes" aria-label="接管前后录像"></section>
+<footer>只有 B 段的 RGB、自身状态和教师命令可作为监督。A 段不进入标签。示范仅来自两个原始训练场景，后续验证需按来源场景分组。预览按 25 Hz 仿真速度播放，画面底部显示仿真时间。<br><a href="../reactive-v4/">查看上一轮 32 条脚本示范</a></footer>
+</main>
+<script>
+const data=__TAKEOVER_DATA__;
+document.querySelector('#stats').innerHTML=`<div class="stat"><strong>${data.attempts}</strong>次试采</div><div class="stat"><strong>${data.accepted}</strong>条接纳</div><div class="stat"><strong>${data.frames}</strong>帧纠正</div><div class="stat"><strong>2</strong>个来源场景</div>`;
+const nav=document.querySelector('#filters'),grid=document.querySelector('#episodes');
+for(const scene of ['all',...new Set(data.episodes.map(e=>String(e.scene)))]){const b=document.createElement('button');b.type='button';b.dataset.scene=scene;b.textContent=scene==='all'?'全部示范':'来源训练位置 '+scene;b.setAttribute('aria-pressed',scene==='all');nav.append(b)}
+for(const e of data.episodes){const card=document.createElement('article');card.dataset.scene=String(e.scene);card.innerHTML=`<header><h2>接管示范 ${String(e.id).padStart(2,'0')}</h2><div class="metrics">来源位置 ${e.scene} · 在模型第 ${e.prefix} 步后接管（${(e.prefix/25).toFixed(2)} s）<br>接管时瓶体倾角 ${e.initialTilt.toFixed(2)}° · 教师纠正 ${e.seconds.toFixed(2)} s / ${e.frames} 帧 · 最长稳定保持 ${e.held.toFixed(3)} s</div></header><div class="label">A · 录制的模型动作前缀 · 不作监督</div><video controls playsinline preload="none" aria-label="示范 ${e.id} 的模型动作前缀"><source src="${e.model}" type="video/mp4"></video><div class="label teacher-label">B · 教师接管纠正 · 非模型成绩</div><video controls playsinline preload="none" poster="${e.poster}" aria-label="示范 ${e.id} 的教师纠正"><source src="${e.teacher}" type="video/mp4"></video>`;grid.append(card)}
+nav.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;for(const b of nav.children)b.setAttribute('aria-pressed',b===button);for(const card of grid.children){card.hidden=button.dataset.scene!=='all'&&card.dataset.scene!==button.dataset.scene;if(card.hidden)for(const v of card.querySelectorAll('video'))v.pause()}});
+grid.addEventListener('play',event=>{for(const v of grid.querySelectorAll('video'))if(v!==event.target)v.pause()},true);
+</script></html>

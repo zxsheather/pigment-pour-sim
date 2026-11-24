@@ -1,0 +1,16 @@
+# Pigment grasp v6 deployment checkpoint
+
+- Base: [X-Square-Robot/wall-oss-0.5](https://huggingface.co/X-Square-Robot/wall-oss-0.5/tree/b7dc23a82dbf70a65859c9fdd596703234597028), revision `b7dc23a82dbf70a65859c9fdd596703234597028`.
+- Runtime source: [Wall-X](https://github.com/X-Square-Robot/wall-x/tree/ce2a1ae31d9ee1028b97ca40e3f66034cf8c0e5f), revision `ce2a1ae31d9ee1028b97ca40e3f66034cf8c0e5f`.
+- Adaptation: 257 action-expert tensors, 399,754,240 trainable parameters, **not LoRA**. v6 contains 3,000 additional optimizer updates from the previous 3,000-update weights; optimizer was restarted, so logical weight-update total is 6,000. No optimizer/scheduler/RNG checkpoint is supplied.
+- Training domain: this repository's reconstructed MuJoCo bottle scene and scripted expert/correction demonstrations. No real robot demonstrations in this adaptation. Training history and limitations: [experiments/grasp/RESULTS.md](../experiments/grasp/RESULTS.md).
+- Observation: head RGB, right-wrist RGB; both arms' Cartesian TCP poses/grippers; fixed lift/head posture; measured chassis velocity. Right-arm action chunk: 32 absolute Cartesian xyz/Euler-xyz/gripper targets. Norm key `local/pigment_grasp_reactive_v4` belongs to these demonstration statistics.
+- Model name **0.5** is a release version. The upstream model card describes a 4B VLA with a 3B VLM backbone.
+
+The Release asset contains the action-expert overlay, tokenizer/configuration files, two normalizers and adaptation metadata. The original machine-dependent processor path was replaced by `.`; inference resolves the current checkpoint directory. Frozen base tensor weights are downloaded separately from the pinned upstream revision. See `model_manifest.json` for every file's size and SHA256.
+
+This is an experimental sim-trained checkpoint, not a validated real-robot controller. Autonomous model grasp was not consistently reliable. Program-assisted simulation uses privileged bottle/contact observations; v9 achieved the original end-contact/lift criterion in 3/3 normal and 3/8 varied cases, with shared model samples for paired comparisons. That criterion does not establish stable retention: a later diagnostic measured about 35 mm of bottle slip in one normal case. Later controller experiments did not update v6 weights. Do not interpret the simulation success counts as standalone model or real-hardware success rates.
+
+Wall-X and SDK source code are Apache-2.0 (license copies in `licenses/`). The pinned Hugging Face weight repository did not declare a separate weight license in its model-card metadata or include a LICENSE file at inspection time; do not infer a new weight license from the runtime source license. Upstream attribution and any applicable upstream rights/terms remain with X Square Robot and its licensors. This repository does not grant additional rights to the upstream model. The Release does not redistribute the 8.33 GB frozen base weights.
+
+Primary references: [upstream model card](https://huggingface.co/X-Square-Robot/wall-oss-0.5/blob/b7dc23a82dbf70a65859c9fdd596703234597028/README.md), [official SDK source/API samples](https://github.com/X-Square-Robot/sdk_robot/tree/63610199bbd70eafd1fc087a015ec5c74a0c906c/samples/quanta_x1).
