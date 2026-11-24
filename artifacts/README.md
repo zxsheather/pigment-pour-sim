@@ -32,3 +32,5 @@ python3 "$bundle/restore_weights.py" --base "$base" --output "$out/model.safeten
 | 恢复出的 V924 完整模型 | `d9a787b0a7eca40d5d253e31455d1e881ba493db1881eddd3decf07264e39eea` |
 
 模型文件和推理配置可用于评测。在 4A6000 上原样续训时，V924 对应的 AdamW 优化器和随机数状态保存在 `/data/hlou/pigment-pour-study/runs/cylinder-joint-early-v718-retreat-bc-v924-a6000/checkpoints/0_1024/`。训练数据位于 `/data/hlou/pigment-pour-study/datasets/`，具体子目录见各自 YAML 的 `data.lerobot_config.root`。[V924 权重审计](cylinder-v924-step1024/checkpoint-1024-weight-audit.json)
+
+4A6000 本次清理释放 1.21 TiB。清单记录了删除的旧权重、优化器状态及保留项。[逐文件清理记录](../docs/experiments/2026-11-24-a6000-checkpoint-cleanup.json)
