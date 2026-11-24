@@ -1,0 +1,25 @@
+{
+  "parent": "/data/hlou/pigment-pour-study/runs/cylinder-hold-correction-bc-v1/checkpoints/0_768",
+  "source": "runs/cylinder-hold-correction-bc-v1",
+  "selection": {
+    "model": "runs/cylinder-hold-correction-bc-v1/checkpoints/0_768",
+    "summary": "runs/cylinder-hold-correction-step768-single-v1/summary.json",
+    "score": [
+      0,
+      3,
+      0.2,
+      0.15,
+      -0.004722878819683107
+    ],
+    "scope": "Provisional single development case, all full-suite gates still required"
+  },
+  "all_previous_curve_full_single_cases_failed": true,
+  "scope": "Provisional single-case parent choice, not multi-case ranking",
+  "initialization": "Parent model tensors unchanged; training config reassigns action/state slots to verified joint schema. No custom pads, no privileged policy inputs.",
+  "next_goal_requires": [
+    "full_neural_single_case",
+    "original8",
+    "development12",
+    "untouched_independent12"
+  ]
+}

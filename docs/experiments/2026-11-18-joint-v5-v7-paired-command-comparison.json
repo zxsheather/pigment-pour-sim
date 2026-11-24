@@ -1,0 +1,925 @@
+{
+  "kind": "matched_pregrasp_inference_v5_256_v7_128",
+  "sample_group_means": {
+    "nominal": {
+      "rows": 3,
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03193937785485154,
+        "max_arm_error_first8_rad": 0.10254039335995913,
+        "gripper_width_error_first8_mm": 15.52254630252719,
+        "gripper_width_mean_signed_error_first8_mm": -15.52254630252719,
+        "base_vx_error_first8_m_s": 0.006588052647809188,
+        "base_vx_mean_signed_error_first8_m_s": -0.004305175505578518,
+        "base_yaw_error_first8_rad_s": 0.00948754201332728,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.0030430679519971213
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.03080146171649874,
+        "max_arm_error_first8_rad": 0.10178691148757935,
+        "gripper_width_error_first8_mm": 15.717770317569377,
+        "gripper_width_mean_signed_error_first8_mm": -15.717770317569377,
+        "base_vx_error_first8_m_s": 0.0072819699222842855,
+        "base_vx_mean_signed_error_first8_m_s": -0.006137656358381112,
+        "base_yaw_error_first8_rad_s": 0.008967585861682892,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.0009916573762893677
+      }
+    },
+    "v7_teacher_added": {
+      "rows": 6,
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03195690884327753,
+        "max_arm_error_first8_rad": 0.1117376826950931,
+        "gripper_width_error_first8_mm": 17.66328782774508,
+        "gripper_width_mean_signed_error_first8_mm": -17.594183357432485,
+        "base_vx_error_first8_m_s": 0.008646134908000628,
+        "base_vx_mean_signed_error_first8_m_s": -0.005504989065229893,
+        "base_yaw_error_first8_rad_s": 0.014271799145111194,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.0043927819351665676
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.030364843403978315,
+        "max_arm_error_first8_rad": 0.10822461951950875,
+        "gripper_width_error_first8_mm": 17.327622366137803,
+        "gripper_width_mean_signed_error_first8_mm": -17.226825137622654,
+        "base_vx_error_first8_m_s": 0.009144056588411331,
+        "base_vx_mean_signed_error_first8_m_s": -0.0071417757620414095,
+        "base_yaw_error_first8_rad_s": 0.015443302361139407,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.007257278096706917
+      }
+    },
+    "v8_teacher_reserved": {
+      "rows": 4,
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03245849900342061,
+        "max_arm_error_first8_rad": 0.11123343589133583,
+        "gripper_width_error_first8_mm": 17.532198764383793,
+        "gripper_width_mean_signed_error_first8_mm": -17.532198764383793,
+        "base_vx_error_first8_m_s": 0.0077900910036987625,
+        "base_vx_mean_signed_error_first8_m_s": -0.005023617741244379,
+        "base_yaw_error_first8_rad_s": 0.013085147365927696,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.008009973913431168
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.031445487115964475,
+        "max_arm_error_first8_rad": 0.10151354581466876,
+        "gripper_width_error_first8_mm": 15.794522054493427,
+        "gripper_width_mean_signed_error_first8_mm": -15.794522054493427,
+        "base_vx_error_first8_m_s": 0.007512240692449268,
+        "base_vx_mean_signed_error_first8_m_s": -0.005727556512283627,
+        "base_yaw_error_first8_rad_s": 0.014558310620486736,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.010090130381286144
+      }
+    }
+  },
+  "all_sample_means": {
+    "rows": 13,
+    "earlier": {
+      "mean_arm_error_first8_rad": 0.03210719866445402,
+      "max_arm_error_first8_rad": 0.10946007844736763,
+      "gripper_width_error_first8_mm": 17.12893545627594,
+      "gripper_width_mean_signed_error_first8_mm": -17.097041085362434,
+      "base_vx_error_first8_m_s": 0.007907794723555876,
+      "base_vx_mean_signed_error_first8_m_s": -0.0050799947594686486,
+      "base_yaw_error_first8_rad_s": 0.01280261618264306,
+      "base_yaw_mean_signed_error_first8_rad_s": -0.00378979872374867
+    },
+    "later": {
+      "mean_arm_error_first8_rad": 0.030798107233632615,
+      "max_arm_error_first8_rad": 0.10467404883372812,
+      "gripper_width_error_first8_mm": 16.484394874423742,
+      "gripper_width_mean_signed_error_first8_mm": -16.43787307664752,
+      "base_vx_error_first8_m_s": 0.008212247082085993,
+      "base_vx_mean_signed_error_first8_m_s": -0.006474911515117408,
+      "base_yaw_error_first8_rad_s": 0.013676601094910158,
+      "base_yaw_mean_signed_error_first8_rad_s": -0.006225324459732152
+    }
+  },
+  "source_checkpoints": [
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-sampling-bc-v5/checkpoints/0_256",
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7/checkpoints/0_128"
+  ],
+  "matched_teacher_inputs": true,
+  "closed_loop_task_success_measured": false,
+  "independent_cases_read": false,
+  "rows": [
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "group": "nominal",
+      "matched": {
+        "frame": 0,
+        "phase": "approach",
+        "robot_state_sha256": "88455717ebeb463fae49bdf971b9890247f420cf601c6daa6c3d6ebde0ce8cc7",
+        "image_sha256": {
+          "face_view": "55b84bf3625da5503ab1945b852b75d55e03f19e6f47fb1d66aa5041c8ae4092",
+          "left_wrist_view": "0992f0bb20d9a7fc618729463d21d0f8285355355fd55a8d1597a2ad11bf21c1",
+          "right_wrist_view": "c9add2f7b492f3386e4ac6ffa6c5cd4b2110e704791a824aee433eabf7ff554e"
+        },
+        "first_teacher_right_action": [
+          -2.733643498231686e-07,
+          1.0000017881393433,
+          -2.199989080429077,
+          1.1999871730804443,
+          2.733643498231686e-07,
+          -2.2021295970406493e-15,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.034321982169090375,
+        "max_arm_error_first8_rad": 0.10765361785888672,
+        "arm_mean_signed_error_first8_rad": [
+          -0.003411971217953891,
+          -0.018267862498760223,
+          0.0469207838177681,
+          -0.0690758004784584,
+          0.023567177540623874,
+          -0.000715109984996547
+        ],
+        "gripper_width_error_first8_mm": 14.033759348094465,
+        "gripper_width_mean_signed_error_first8_mm": -14.033759348094465,
+        "base_vx_error_first8_m_s": 0.004500540904700756,
+        "base_vx_mean_signed_error_first8_m_s": -0.001680663786828518,
+        "base_yaw_error_first8_rad_s": 0.011340674012899399,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.004215452820062637
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.031308292031327956,
+        "max_arm_error_first8_rad": 0.09554773569107056,
+        "arm_mean_signed_error_first8_rad": [
+          0.009481563978827268,
+          -0.011960204690694809,
+          0.026566997170448303,
+          -0.05443824827671051,
+          0.032897368258797854,
+          -0.002680424134853114
+        ],
+        "gripper_width_error_first8_mm": 14.914598353207113,
+        "gripper_width_mean_signed_error_first8_mm": -14.914598353207113,
+        "base_vx_error_first8_m_s": 0.0046570152044296265,
+        "base_vx_mean_signed_error_first8_m_s": -0.0034354906529188156,
+        "base_yaw_error_first8_rad_s": 0.011893510818481445,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.005155421793460846
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "group": "nominal",
+      "matched": {
+        "frame": 53,
+        "phase": "approach",
+        "robot_state_sha256": "eafdc280e5ab7cba9ca4f1f757f26103739a362e1858f4abf7e5debf9d83f83a",
+        "image_sha256": {
+          "face_view": "0267f43cb8f64a91adcf264acf93d1408afa73f00b2eef07d910f46e2494c81d",
+          "left_wrist_view": "7bff3fec99efc0ffcdb407ff61365ccf4520bad7b8f8554e54e4bad208e8f31d",
+          "right_wrist_view": "0704f3545dc590fe09aaa84a67e61060fea47ad1e4a8a7e57a5100b024f99693"
+        },
+        "first_teacher_right_action": [
+          -0.015133089385926723,
+          1.0972201824188232,
+          -1.589479684829712,
+          0.4922594726085663,
+          0.015133089385926723,
+          -1.2191825327079187e-10,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.033114099996762826,
+        "max_arm_error_first8_rad": 0.1068830480799079,
+        "arm_mean_signed_error_first8_rad": [
+          -0.050173741998150945,
+          0.004749946296215057,
+          -0.019379176199436188,
+          0.041815340518951416,
+          -0.01499049155972898,
+          -0.003145971689704272
+        ],
+        "gripper_width_error_first8_mm": 12.221762146800756,
+        "gripper_width_mean_signed_error_first8_mm": -12.221762146800756,
+        "base_vx_error_first8_m_s": 0.0081696892157197,
+        "base_vx_mean_signed_error_first8_m_s": -0.0051522208377718925,
+        "base_yaw_error_first8_rad_s": 0.006897184997797012,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.004107963293790817
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.03559553348208701,
+        "max_arm_error_first8_rad": 0.10996955633163452,
+        "arm_mean_signed_error_first8_rad": [
+          -0.03327239048667252,
+          0.005155459046363831,
+          -0.03618532419204712,
+          0.0637742206454277,
+          -0.0023041346576064825,
+          -0.004804045781824204
+        ],
+        "gripper_width_error_first8_mm": 13.272626101970673,
+        "gripper_width_mean_signed_error_first8_mm": -13.272626101970673,
+        "base_vx_error_first8_m_s": 0.009199208579957485,
+        "base_vx_mean_signed_error_first8_m_s": -0.007193141616880894,
+        "base_yaw_error_first8_rad_s": 0.006122734397649765,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.0007629655301570892
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "group": "nominal",
+      "matched": {
+        "frame": 152,
+        "phase": "advance",
+        "robot_state_sha256": "6f4e56d143c442ee3a2200d61e661b4ccac2ee599a298803824fdbfa1c6ffba1",
+        "image_sha256": {
+          "face_view": "ea8bf7c291d058b89713c08cef42f95646fd53c0aa68601afe1cdacc53b71c10",
+          "left_wrist_view": "0bf6a2a4d7836c7d3b81148b731fceba7178cc696993a7e42f5abcefcdee5c04",
+          "right_wrist_view": "96607c70994de98039f5d4c15e5a191c64484a191f8c0aba92104523674ddb9d"
+        },
+        "first_teacher_right_action": [
+          -0.017135391011834145,
+          1.5267143249511719,
+          -1.4841099977493286,
+          -0.04260440915822983,
+          0.017135361209511757,
+          9.469779561205316e-13,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.028382051398701424,
+        "max_arm_error_first8_rad": 0.09308451414108276,
+        "arm_mean_signed_error_first8_rad": [
+          -0.022911522537469864,
+          -0.010416552424430847,
+          -0.017941102385520935,
+          -0.042638927698135376,
+          -0.02172238379716873,
+          0.0015921828382481217
+        ],
+        "gripper_width_error_first8_mm": 20.312117412686348,
+        "gripper_width_mean_signed_error_first8_mm": -20.312117412686348,
+        "base_vx_error_first8_m_s": 0.007093927823007107,
+        "base_vx_mean_signed_error_first8_m_s": -0.006082641892135143,
+        "base_yaw_error_first8_rad_s": 0.010224767029285431,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.009236693382263184
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.02550055963608126,
+        "max_arm_error_first8_rad": 0.09984344244003296,
+        "arm_mean_signed_error_first8_rad": [
+          -0.010826777666807175,
+          -0.005784370005130768,
+          -0.02615153044462204,
+          -0.031734175980091095,
+          -0.015760153532028198,
+          -0.00047332066587914214
+        ],
+        "gripper_width_error_first8_mm": 18.966086497530345,
+        "gripper_width_mean_signed_error_first8_mm": -18.966086497530345,
+        "base_vx_error_first8_m_s": 0.007989685982465744,
+        "base_vx_mean_signed_error_first8_m_s": -0.007784336805343628,
+        "base_yaw_error_first8_rad_s": 0.008886512368917465,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.00736742839217186
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_18_seed_9031_snapshot_00",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 0,
+        "phase": "approach",
+        "robot_state_sha256": "cf6269bf6c4906e5dc7f0b8f7dafc748e9515fd932538b7b1b821b136b609cc3",
+        "image_sha256": {
+          "face_view": "59a8471b0285bf01e2672e6512e933a88fbb51abd7525d06884f43cf4fda29cf",
+          "left_wrist_view": "2888ca656d367242af0132a8f88e53f1231d32b6aec44e321c9f1c00f1b70f23",
+          "right_wrist_view": "f7cbfd3ef63c15598e1c991ad599f6f247246ef3ebba99ab1185c847e8cfbef5"
+        },
+        "first_teacher_right_action": [
+          0.06210966780781746,
+          1.2944109439849854,
+          -1.3432164192199707,
+          0.2069585770368576,
+          -0.24275478720664978,
+          0.0047780051827430725,
+          0.5143036842346191,
+          0,
+          -0.009395434521138668
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": -0.0011744293151423335
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03948264078159506,
+        "max_arm_error_first8_rad": 0.11968867480754852,
+        "arm_mean_signed_error_first8_rad": [
+          -0.038334252778440714,
+          0.012051448225975037,
+          0.02445431798696518,
+          -0.06338789127767086,
+          -0.030927326530218124,
+          -0.0005718835163861513
+        ],
+        "gripper_width_error_first8_mm": 10.679645910859108,
+        "gripper_width_mean_signed_error_first8_mm": -10.265019088983536,
+        "base_vx_error_first8_m_s": 0.008958432823419571,
+        "base_vx_mean_signed_error_first8_m_s": -0.0031857918947935104,
+        "base_yaw_error_first8_rad_s": 0.019210142898373306,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.006556650507263839
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.03496655245544389,
+        "max_arm_error_first8_rad": 0.11688278615474701,
+        "arm_mean_signed_error_first8_rad": [
+          -0.027791800443083048,
+          0.0167413130402565,
+          0.010180562734603882,
+          -0.05372674576938152,
+          -0.013442207127809525,
+          -0.002451410284265876
+        ],
+        "gripper_width_error_first8_mm": 10.390192698687315,
+        "gripper_width_mean_signed_error_first8_mm": -9.785409327596426,
+        "base_vx_error_first8_m_s": 0.009521755389869213,
+        "base_vx_mean_signed_error_first8_m_s": -0.005405929870903492,
+        "base_yaw_error_first8_rad_s": 0.019665321218781173,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.004149092244915664
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_18_seed_9031_snapshot_00",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 25,
+        "phase": "approach",
+        "robot_state_sha256": "7cc046345170cd51fa37b6cec6424a898109a50fc35c462999b2bc1f336964ff",
+        "image_sha256": {
+          "face_view": "ac18d28cb645596e3b2868d5d2a2c8584553bf6683875da392cbd158487ea92d",
+          "left_wrist_view": "6021f21daf6b9d1ae94cd0e1446b6ddaefe6530d3c323b7457d408442c06379f",
+          "right_wrist_view": "04ccfa39bd05381ac5e8313919048a6da5494fa7806b5d8cb0b5cc7ee7db3d0d"
+        },
+        "first_teacher_right_action": [
+          0.013607009314000607,
+          1.3160849809646606,
+          -1.316702127456665,
+          0.03781551495194435,
+          -0.05619483068585396,
+          0.0011238094884902239,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.035105449045355876,
+        "max_arm_error_first8_rad": 0.1132423635572195,
+        "arm_mean_signed_error_first8_rad": [
+          0.05289665641612373,
+          0.03040166199207306,
+          -0.01620553433895111,
+          -0.02847699649282731,
+          -0.031781365745700896,
+          -0.00016542448611289728
+        ],
+        "gripper_width_error_first8_mm": 23.564436715096235,
+        "gripper_width_mean_signed_error_first8_mm": -23.564436715096235,
+        "base_vx_error_first8_m_s": 0.003203342668712139,
+        "base_vx_mean_signed_error_first8_m_s": 0.0018391674384474754,
+        "base_yaw_error_first8_rad_s": 0.02205738052725792,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.01697109267115593
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.03531157586894551,
+        "max_arm_error_first8_rad": 0.10483266413211823,
+        "arm_mean_signed_error_first8_rad": [
+          0.05600451710051857,
+          0.027384288609027863,
+          -0.026165947318077087,
+          -0.013738086592638865,
+          -0.017814976745285094,
+          -0.002303167422724073
+        ],
+        "gripper_width_error_first8_mm": 23.117010416463017,
+        "gripper_width_mean_signed_error_first8_mm": -23.117010416463017,
+        "base_vx_error_first8_m_s": 0.0028823325410485268,
+        "base_vx_mean_signed_error_first8_m_s": 0.0005450481548905373,
+        "base_yaw_error_first8_rad_s": 0.023344848304986954,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.018767591565847397
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_18_seed_9031_snapshot_00",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 96,
+        "phase": "advance",
+        "robot_state_sha256": "cef8d8db32aca14792c07916e3eaefc2152f29fe4556af3eeef3eb15cf435027",
+        "image_sha256": {
+          "face_view": "8d5025534c047ae9c1102e0928b18eea929390bf95a2fd28b09eda0378001bf7",
+          "left_wrist_view": "e4e73874f01eda1fe51bbe7a839a98f09718a9c14553d4a6aaa7ec49824a5070",
+          "right_wrist_view": "65b7ee831b94f96b6abc37e603195509024bffe90d87eb2b2a7e7dd56b0ab6ce"
+        },
+        "first_teacher_right_action": [
+          0.00019763867021538317,
+          1.7077198028564453,
+          -1.6746923923492432,
+          -0.033027324825525284,
+          0.00044859107583761215,
+          -1.0821329726393158e-13,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.024719495794105446,
+        "max_arm_error_first8_rad": 0.08471713874314446,
+        "arm_mean_signed_error_first8_rad": [
+          -0.011859483158332296,
+          -0.023441161960363388,
+          -0.009627051651477814,
+          -0.01210331916809082,
+          0.004482839169213548,
+          -0.003140835710259338
+        ],
+        "gripper_width_error_first8_mm": 17.840916942805052,
+        "gripper_width_mean_signed_error_first8_mm": -17.840916942805052,
+        "base_vx_error_first8_m_s": 0.0075576333329081535,
+        "base_vx_mean_signed_error_first8_m_s": -0.002043013460934162,
+        "base_yaw_error_first8_rad_s": 0.010516110807657242,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.0031188465654850006
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.025437849414670866,
+        "max_arm_error_first8_rad": 0.08374736076802947,
+        "arm_mean_signed_error_first8_rad": [
+          0.000889652335899882,
+          -0.020194124430418015,
+          -0.022366061806678772,
+          0.0008058696985244751,
+          0.014443281950661913,
+          -0.005404340256395002
+        ],
+        "gripper_width_error_first8_mm": 17.455263119190935,
+        "gripper_width_mean_signed_error_first8_mm": -17.455263119190935,
+        "base_vx_error_first8_m_s": 0.00827001128345728,
+        "base_vx_mean_signed_error_first8_m_s": -0.004356355406343937,
+        "base_yaw_error_first8_rad_s": 0.011981144547462463,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.006473429501056671
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_32_seed_9032_snapshot_03",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 0,
+        "phase": "approach",
+        "robot_state_sha256": "ae9af2a6aca8a4077e099b73675f70fa0f3cad367816bdea7427883edf86bd25",
+        "image_sha256": {
+          "face_view": "e76a73167edb3667d887f98ea145413b7ab0395ab86786e0f2812f912fe99487",
+          "left_wrist_view": "9335a47a5e0e98beb0ec2604392de2f9d5d1a4c6a4c97ab802a22b7d3ba75495",
+          "right_wrist_view": "0601ed98b4ef7bf890658cac44373c5dc976a9d9fe36503b76668cdd0065afdc"
+        },
+        "first_teacher_right_action": [
+          0.1250910460948944,
+          1.4217208623886108,
+          -1.0327311754226685,
+          -0.0886826291680336,
+          -0.2151772826910019,
+          0.009544122032821178,
+          0.28088462352752686,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.026173210450603317,
+        "max_arm_error_first8_rad": 0.09149158000946045,
+        "arm_mean_signed_error_first8_rad": [
+          0.009097716771066189,
+          -0.004080392420291901,
+          0.03924328833818436,
+          -0.04247846268117428,
+          -0.0036986861377954483,
+          -0.0007783150067552924
+        ],
+        "gripper_width_error_first8_mm": 13.852805234491827,
+        "gripper_width_mean_signed_error_first8_mm": -13.852805234491827,
+        "base_vx_error_first8_m_s": 0.0168994702398777,
+        "base_vx_mean_signed_error_first8_m_s": -0.0168994702398777,
+        "base_yaw_error_first8_rad_s": 0.01168198511004448,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.010669689625501633
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.024538896958498906,
+        "max_arm_error_first8_rad": 0.07921522855758667,
+        "arm_mean_signed_error_first8_rad": [
+          0.007982089184224606,
+          -0.001203007996082306,
+          0.021012775599956512,
+          -0.024631185457110405,
+          0.009865207597613335,
+          -0.002628144691698253
+        ],
+        "gripper_width_error_first8_mm": 12.518939869478345,
+        "gripper_width_mean_signed_error_first8_mm": -12.518939869478345,
+        "base_vx_error_first8_m_s": 0.015790625475347042,
+        "base_vx_mean_signed_error_first8_m_s": -0.015790625475347042,
+        "base_yaw_error_first8_rad_s": 0.014541376382112503,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.01427900418639183
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_32_seed_9032_snapshot_03",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 25,
+        "phase": "approach",
+        "robot_state_sha256": "afb74f1d21ae8d6d0570e9478a2aa5bc580cb448155cfef81a39842ed8aad538",
+        "image_sha256": {
+          "face_view": "911f3b91234e39772e4d1354d87618ca16d5a328dffada6563a6796f34b58c50",
+          "left_wrist_view": "6c8363d261e3745118179f2072de8989270f0ef26f21f4713b5b8b9f7f10acd5",
+          "right_wrist_view": "0dd942828430a59ab9c49f278c680cb05e70844df6b1e8c30e78fd7e0b6d3e0d"
+        },
+        "first_teacher_right_action": [
+          0.04193945601582527,
+          1.4951297044754028,
+          -1.3699162006378174,
+          -0.054579783231019974,
+          -0.05099755525588989,
+          0.0022448229137808084,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03665929699491244,
+        "max_arm_error_first8_rad": 0.1502187605947256,
+        "arm_mean_signed_error_first8_rad": [
+          0.08155440492555499,
+          0.0118035227060318,
+          0.004149332642555237,
+          0.003703497815877199,
+          -0.02981945197097957,
+          0.002420567790977657
+        ],
+        "gripper_width_error_first8_mm": 22.591625656932592,
+        "gripper_width_mean_signed_error_first8_mm": -22.591625656932592,
+        "base_vx_error_first8_m_s": 0.004823162220418453,
+        "base_vx_mean_signed_error_first8_m_s": -0.00353990588337183,
+        "base_yaw_error_first8_rad_s": 0.003878813236951828,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.0005897469818592072
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.03401469750194034,
+        "max_arm_error_first8_rad": 0.1479234453290701,
+        "arm_mean_signed_error_first8_rad": [
+          0.07716157240793109,
+          0.0141153484582901,
+          -0.020525053143501282,
+          0.010003768373280764,
+          -0.005737409694120288,
+          -0.00030386599246412516
+        ],
+        "gripper_width_error_first8_mm": 19.993392275646332,
+        "gripper_width_mean_signed_error_first8_mm": -19.993392275646332,
+        "base_vx_error_first8_m_s": 0.006303046829998493,
+        "base_vx_mean_signed_error_first8_m_s": -0.00603839848190546,
+        "base_yaw_error_first8_rad_s": 0.004308953881263733,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.002555832266807556
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-near-tray-recovery-v1/volume_32_seed_9032_snapshot_03",
+      "group": "v7_teacher_added",
+      "matched": {
+        "frame": 97,
+        "phase": "advance",
+        "robot_state_sha256": "c2f6b29085f0fecca8163a5f59c978ffbbbb575976b9a831f6318036abe99bc9",
+        "image_sha256": {
+          "face_view": "d129a8723dad38b26c398ab7821ced87078705336bcf64eaf08c67d71e146d2e",
+          "left_wrist_view": "4394c704c8cfb09b1d3012e460f731c0129b22c0962a90c857aaac1db372fe14",
+          "right_wrist_view": "a37fa90b5f75dbc59fdccfb55f7791814ec3802fb9bf64e2f5d7dacc442a77a6"
+        },
+        "first_teacher_right_action": [
+          0.01522783748805523,
+          1.9321671724319458,
+          -1.9616588354110718,
+          0.0294916033744812,
+          0.00017559296975377947,
+          5.871748857397057e-16,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.029601359993093063,
+        "max_arm_error_first8_rad": 0.11106757845846005,
+        "arm_mean_signed_error_first8_rad": [
+          -0.008222239091992378,
+          0.005086459219455719,
+          -0.005051188170909882,
+          -0.02718614600598812,
+          -0.008995547628728673,
+          -0.0019965740327001808
+        ],
+        "gripper_width_error_first8_mm": 17.450296506285667,
+        "gripper_width_mean_signed_error_first8_mm": -17.450296506285667,
+        "base_vx_error_first8_m_s": 0.010434768162667751,
+        "base_vx_mean_signed_error_first8_m_s": -0.009200920350849628,
+        "base_yaw_error_first8_rad_s": 0.018286362290382385,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.002743460237979889
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.027919488224370386,
+        "max_arm_error_first8_rad": 0.11674623217550106,
+        "arm_mean_signed_error_first8_rad": [
+          0.007573379203677177,
+          0.007811650633811951,
+          -0.019886061549186707,
+          -0.015752417966723442,
+          -0.002655103540746495,
+          -0.004181723151004435
+        ],
+        "gripper_width_error_first8_mm": 20.490935817360878,
+        "gripper_width_mean_signed_error_first8_mm": -20.490935817360878,
+        "base_vx_error_first8_m_s": 0.012096568010747433,
+        "base_vx_mean_signed_error_first8_m_s": -0.011804393492639065,
+        "base_yaw_error_first8_rad_s": 0.018818169832229614,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.005616903305053711
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-wrist-recovery-v1/volume_20_seed_9041_snapshot_00",
+      "group": "v8_teacher_reserved",
+      "matched": {
+        "frame": 0,
+        "phase": "approach",
+        "robot_state_sha256": "3f13ad280cb9259ef6cf1e4b2f890c0d83f5525d66726b6f74123da7a3eb3a52",
+        "image_sha256": {
+          "face_view": "e256ef4baf1ced7b404849b9aa863a8975c636087a8f0ff8ca562f7b06a13d4d",
+          "left_wrist_view": "c9ce8b3cf370d5e39ac0afd9f9da977e2332658248aa2abbb86d0e5a6bc9734a",
+          "right_wrist_view": "8928a02fdf245946c108b81f6af40b558f4479b259fe33d1ed99253177de82df"
+        },
+        "first_teacher_right_action": [
+          -0.1348235309123993,
+          1.4721896648406982,
+          -1.5349547863006592,
+          0.29381996393203735,
+          -0.34259891510009766,
+          -0.03759297356009483,
+          0.3198772072792053,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.02940808927329878,
+        "max_arm_error_first8_rad": 0.09843635559082031,
+        "arm_mean_signed_error_first8_rad": [
+          -0.023982305079698563,
+          0.002140156924724579,
+          0.048359423875808716,
+          -0.01237194612622261,
+          0.020410366356372833,
+          -0.0024722483940422535
+        ],
+        "gripper_width_error_first8_mm": 15.137569271028042,
+        "gripper_width_mean_signed_error_first8_mm": -15.137569271028042,
+        "base_vx_error_first8_m_s": 0.00593746080994606,
+        "base_vx_mean_signed_error_first8_m_s": -0.0047006867825984955,
+        "base_yaw_error_first8_rad_s": 0.006850894540548325,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.003176044672727585
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.026131760484228533,
+        "max_arm_error_first8_rad": 0.07954448461532593,
+        "arm_mean_signed_error_first8_rad": [
+          -0.013320866972208023,
+          0.016759216785430908,
+          0.023185059428215027,
+          -0.00534418597817421,
+          0.024620264768600464,
+          -0.004754059948027134
+        ],
+        "gripper_width_error_first8_mm": 10.899671511724591,
+        "gripper_width_mean_signed_error_first8_mm": -10.899671511724591,
+        "base_vx_error_first8_m_s": 0.006255000829696655,
+        "base_vx_mean_signed_error_first8_m_s": -0.004874264821410179,
+        "base_yaw_error_first8_rad_s": 0.006647173315286636,
+        "base_yaw_mean_signed_error_first8_rad_s": 0.002698812633752823
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-wrist-recovery-v1/volume_20_seed_9041_snapshot_00",
+      "group": "v8_teacher_reserved",
+      "matched": {
+        "frame": 25,
+        "phase": "approach",
+        "robot_state_sha256": "9441475566c52e9e79d703fc0bebc679616b3542d4d0c331727a8627b97a854f",
+        "image_sha256": {
+          "face_view": "fc25130fa17e2752aee589cf5c595ae9071675c545439ba79d28f0e2703bd5c8",
+          "left_wrist_view": "c49fa96cc39d9d0ff74df98fdc3aa01c79ac890eac0f533b82555dbd7fc0d8eb",
+          "right_wrist_view": "d62c77b48c99cb7e780529b6002c725fa5d16f09886beddd32800aae0b75267d"
+        },
+        "first_teacher_right_action": [
+          -0.036849383264780045,
+          1.3196924924850464,
+          -1.3396492004394531,
+          0.07430192083120346,
+          -0.07009836286306381,
+          -0.00884204637259245,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.03884930292891416,
+        "max_arm_error_first8_rad": 0.13972529338207096,
+        "arm_mean_signed_error_first8_rad": [
+          -0.007326489198021591,
+          0.0387708842754364,
+          0.028487369418144226,
+          0.02371910703368485,
+          -0.07668158451269846,
+          -0.002988423191709444
+        ],
+        "gripper_width_error_first8_mm": 18.176549775525928,
+        "gripper_width_mean_signed_error_first8_mm": -18.176549775525928,
+        "base_vx_error_first8_m_s": 0.008002418093383312,
+        "base_vx_mean_signed_error_first8_m_s": -0.006406580097973347,
+        "base_yaw_error_first8_rad_s": 0.014125578105449677,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.008911170065402985
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.038785516325636614,
+        "max_arm_error_first8_rad": 0.13461532758083194,
+        "arm_mean_signed_error_first8_rad": [
+          0.005454072845168412,
+          0.039754718542099,
+          0.01918322592973709,
+          0.039159265579655766,
+          -0.07095054576348048,
+          -0.005044264224125072
+        ],
+        "gripper_width_error_first8_mm": 18.40119075961411,
+        "gripper_width_mean_signed_error_first8_mm": -18.40119075961411,
+        "base_vx_error_first8_m_s": 0.008427068591117859,
+        "base_vx_mean_signed_error_first8_m_s": -0.007559530436992645,
+        "base_yaw_error_first8_rad_s": 0.01679319515824318,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.012043047696352005
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-wrist-recovery-v1/volume_37_seed_9042_snapshot_01_fine_alignment",
+      "group": "v8_teacher_reserved",
+      "matched": {
+        "frame": 0,
+        "phase": "approach",
+        "robot_state_sha256": "8573316b789c793fc263bbdff9c8090fc21d5c5125e88bbc938e9d1ebc8f3c2e",
+        "image_sha256": {
+          "face_view": "1c414c4dfb733e3cadef1482a8dfa9b7e75af9689e5aa7bb4b9cefc49bf20415",
+          "left_wrist_view": "a63bcd70fcb729be30b54ddfc0bc083ad1d484438824ecc9f1efffd902eed01d",
+          "right_wrist_view": "d3406f46d31fd84cb7c6b60f87ad2848db0fef03982779e36a5d2706f1db1274"
+        },
+        "first_teacher_right_action": [
+          -0.2716647684574127,
+          1.5045572519302368,
+          -1.4344303607940674,
+          0.12731924653053284,
+          -0.21512295305728912,
+          -0.04373341053724289,
+          0.3238794505596161,
+          -0.0028934262227267027,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": -0.00036167827784083784,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.023095962048197787,
+        "max_arm_error_first8_rad": 0.09848517179489136,
+        "arm_mean_signed_error_first8_rad": [
+          -0.00562165305018425,
+          0.02391079068183899,
+          0.02990172803401947,
+          -0.013451384380459785,
+          0.026567939668893814,
+          -0.0018306323327124119
+        ],
+        "gripper_width_error_first8_mm": 17.217588135972623,
+        "gripper_width_mean_signed_error_first8_mm": -17.217588135972623,
+        "base_vx_error_first8_m_s": 0.011759425600757822,
+        "base_vx_mean_signed_error_first8_m_s": -0.010821427131304517,
+        "base_yaw_error_first8_rad_s": 0.012463461607694626,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.007876288145780563
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.024489629392822582,
+        "max_arm_error_first8_rad": 0.08218652009963989,
+        "arm_mean_signed_error_first8_rad": [
+          -0.0032956041395664215,
+          0.03683565557003021,
+          0.0016678646206855774,
+          -0.0002368185669183731,
+          0.03764216974377632,
+          -0.004345353692770004
+        ],
+        "gripper_width_error_first8_mm": 15.273561626672745,
+        "gripper_width_mean_signed_error_first8_mm": -15.273561626672745,
+        "base_vx_error_first8_m_s": 0.010686259804060683,
+        "base_vx_mean_signed_error_first8_m_s": -0.010119780810782686,
+        "base_yaw_error_first8_rad_s": 0.014919109642505646,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.011295706033706665
+      }
+    },
+    {
+      "source": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-wrist-recovery-v1/volume_37_seed_9042_snapshot_01_fine_alignment",
+      "group": "v8_teacher_reserved",
+      "matched": {
+        "frame": 25,
+        "phase": "approach",
+        "robot_state_sha256": "65609f5649f29482d1fc636335ddc2f96ff74149b8ff562697538ea7e2ed0184",
+        "image_sha256": {
+          "face_view": "f47bffd3f9f9f9cc1afa7c1adcf20d2b79105bc76ae55793709f331d9e25ec51",
+          "left_wrist_view": "0dd12ac20cce9951f3e783ba89c2f8462bc0e446311b2102e8a0e409ae988718",
+          "right_wrist_view": "5169e6329f8d6cbd0f1e326d4f4472f0d9662f43b4c4f353dc067d64b1bdbd9e"
+        },
+        "first_teacher_right_action": [
+          -0.05504557862877846,
+          1.4161604642868042,
+          -1.3804819583892822,
+          0.010761748999357224,
+          -0.05093105137348175,
+          -0.010286306962370872,
+          0.6974359154701233,
+          0,
+          0
+        ],
+        "base_vx_teacher_mean_first8_m_s": 0,
+        "base_yaw_teacher_mean_first8_rad_s": 0
+      },
+      "earlier": {
+        "mean_arm_error_first8_rad": 0.038480641763271706,
+        "max_arm_error_first8_rad": 0.10828692279756069,
+        "arm_mean_signed_error_first8_rad": [
+          -0.013439032381938887,
+          0.04408285766839981,
+          0.023554034531116486,
+          -0.042312057565141004,
+          -0.023209262173622847,
+          -0.006002972921123728
+        ],
+        "gripper_width_error_first8_mm": 19.597087875008583,
+        "gripper_width_mean_signed_error_first8_mm": -19.597087875008583,
+        "base_vx_error_first8_m_s": 0.005461059510707855,
+        "base_vx_mean_signed_error_first8_m_s": 0.0018342230468988419,
+        "base_yaw_error_first8_rad_s": 0.018900655210018158,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.018428482115268707
+      },
+      "later": {
+        "mean_arm_error_first8_rad": 0.036375042261170165,
+        "max_arm_error_first8_rad": 0.10970785096287727,
+        "arm_mean_signed_error_first8_rad": [
+          -0.005452702886032057,
+          0.04590975493192673,
+          0.010084651410579681,
+          -0.027867728720593732,
+          -0.01111031649634242,
+          -0.008266209246357903
+        ],
+        "gripper_width_error_first8_mm": 18.603664319962263,
+        "gripper_width_mean_signed_error_first8_mm": -18.603664319962263,
+        "base_vx_error_first8_m_s": 0.004680633544921875,
+        "base_vx_mean_signed_error_first8_m_s": -0.0003566499799489975,
+        "base_yaw_error_first8_rad_s": 0.019873764365911484,
+        "base_yaw_mean_signed_error_first8_rad_s": -0.01972058042883873
+      }
+    }
+  ]
+}

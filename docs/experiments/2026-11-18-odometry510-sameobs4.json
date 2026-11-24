@@ -1,0 +1,112 @@
+{
+  "source": "runs/cylinder-odometry-step510-sameobs4-v2/summary.json",
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/checkpoints/0_510",
+  "evaluation_complete": true,
+  "result": {
+    "success": false,
+    "failure_reason": "Unreachable model action:0.00241",
+    "evaluation_interrupted": false,
+    "source_sha256": {
+      "run_wall_cylinder.py": "92b49bf06c48dd422657d7c8929dbd25ec912673227ca124e4d6f0f742cc48d7",
+      "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+      "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+      "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+      "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+      "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+      "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+      "robot_action_filter.py": "eab90be7d117ac497c4eec88f37504d6ad4004e7e9e298e0f41afe14e9e1ee8b"
+    },
+    "final_task_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.0874483913595473,
+      "camera_distance_m": 0.7373091018205812,
+      "linear_speed_m_s": 8.506653149517724e-14,
+      "angular_speed_rad_s": 3.5699036071501706e-16
+    },
+    "prediction_samples_per_observation": 4,
+    "action_filter_seconds": 0.0,
+    "temporal_ensemble_predictions": 0,
+    "robot_servo_envelope": {
+      "cartesian_speed_limit_m_s": 0.0,
+      "angular_speed_limit_rad_s": 0.0
+    },
+    "ik_projection": {
+      "max_allowed_weighted_residual": 0.002,
+      "max_attempted_residual": 0.0024084954001137833,
+      "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+    },
+    "case": {
+      "volume": 25.0,
+      "seed": 100,
+      "jitter": 0.004
+    },
+    "simulated_seconds": 29.94999999997555,
+    "max_slip_m": 0.0,
+    "max_held_tilt_rad": 0.0,
+    "max_lifted_m": 0.0,
+    "geometry_audit": {
+      "passed": true,
+      "default_profile": "official",
+      "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+      "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+      "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+      "custom_pads": 0,
+      "geometry_import": "Unchanged union of the source convex solids",
+      "fingers": [
+        {
+          "link": "left_arm_gripper_left_link",
+          "source_file": "mesh/collision/gripper_left_link.STL",
+          "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+          "convex_solids": 3,
+          "compiled_contact_geoms": 3,
+          "urdf_effort_limit_n": 20.0,
+          "maximum_vertex_error_m": 1.876749017343577e-09
+        },
+        {
+          "link": "left_arm_gripper_right_link",
+          "source_file": "mesh/collision/gripper_right_link.STL",
+          "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+          "convex_solids": 2,
+          "compiled_contact_geoms": 2,
+          "urdf_effort_limit_n": 20.0,
+          "maximum_vertex_error_m": 1.8804677144956813e-09
+        },
+        {
+          "link": "right_arm_gripper_left_link",
+          "source_file": "mesh/collision/gripper_left_link.STL",
+          "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+          "convex_solids": 3,
+          "compiled_contact_geoms": 3,
+          "urdf_effort_limit_n": 20.0,
+          "maximum_vertex_error_m": 1.876749017343577e-09
+        },
+        {
+          "link": "right_arm_gripper_right_link",
+          "source_file": "mesh/collision/gripper_right_link.STL",
+          "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+          "convex_solids": 2,
+          "compiled_contact_geoms": 2,
+          "urdf_effort_limit_n": 20.0,
+          "maximum_vertex_error_m": 1.8804677144956813e-09
+        }
+      ],
+      "contact_model": {
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ],
+        "condim": 3,
+        "noslip_iterations": 0,
+        "calibration": "Nominal simulator defaults; not measured hardware properties"
+      }
+    }
+  },
+  "decision": "No grasp; same-observation4 not selected; baseline remains1",
+  "old_launch_failure_not_policy_score": true
+}

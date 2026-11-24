@@ -1,0 +1,1494 @@
+{
+  "kind": "closed_loop_command_replays_and_matched_heading_loss_training_input",
+  "recorded_at": "2026-11-20T22:57:30.303061+08:00",
+  "official_parallel_geometry_preserved": true,
+  "source_command_replays": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/latest-model-action-replay-report.json",
+    "actual_source_checkpoints": [
+      {
+        "name": "v63-128",
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step128-single"
+      },
+      {
+        "name": "v60-1024",
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-approach-coverage-bc-v60-a6000-step1024-single"
+      },
+      {
+        "name": "v61-1024",
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-read-support-bc-v61-a6000-step1024-single"
+      }
+    ],
+    "results": [
+      {
+        "name": "v63-128",
+        "variant": "recorded",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 14.000000000005619,
+          "distance_m": 0.10057103579985804,
+          "fingers": 0,
+          "width_m": 0.06134802684187889,
+          "local_error_m": [
+            0.018274794101587125,
+            0.09879420515268095,
+            -0.0045022406256124345
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            -0.09250580342935676,
+            0.022708915688475037,
+            -0.03227250721588372
+          ],
+          "base_xy_delta_m": [
+            0.00026140494802451286,
+            0.02799085001397017
+          ],
+          "base_yaw_delta_deg": -6.229772323925432,
+          "wrist_shaft_error_deg": 6.590264990892243,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.02174011691415756,
+            0.015254497464316563,
+            -0.032272507215883706
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.08373824634239324,
+            0.021949027888309658,
+            -0.04213793712522029
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v63-128",
+        "variant": "zero_yaw",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "frames": 263,
+        "nearest": {
+          "time_s": 13.15000000000458,
+          "distance_m": 0.05327853132359202,
+          "fingers": 1,
+          "width_m": 0.05621550840139389,
+          "local_error_m": [
+            0.019099701090553048,
+            0.02715782904375509,
+            -0.04166840097580749
+          ],
+          "cylinder_tilt_rad": 0.039646654692146,
+          "error_world_m": [
+            -0.016820005414016785,
+            0.015358076549480995,
+            -0.04816449732501841
+          ],
+          "base_xy_delta_m": [
+            -0.00010561199477376881,
+            0.028286227685959398
+          ],
+          "base_yaw_delta_deg": -0.0009923359475552127,
+          "wrist_shaft_error_deg": 4.259473763496854,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.016914433320842748,
+            0.04363931031691165,
+            -0.048164497325018374
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.02005285365021836,
+            0.01504043709065761,
+            -0.056070499664082174
+          ]
+        },
+        "first_loaded": {
+          "time_s": 12.900000000004274,
+          "distance_m": 0.05430718388349581,
+          "fingers": 1,
+          "width_m": 0.05997064822912215,
+          "local_error_m": [
+            0.01996152314038381,
+            0.028759812797168084,
+            -0.04151723718100225
+          ],
+          "cylinder_tilt_rad": 0.001832563428017643,
+          "error_world_m": [
+            -0.018742949043844215,
+            0.01637536770338744,
+            -0.04826820294018147
+          ],
+          "base_xy_delta_m": [
+            -5.518649463964742e-06,
+            0.027271836584712605
+          ],
+          "base_yaw_delta_deg": -0.007455964392905232,
+          "wrist_shaft_error_deg": 4.02815454686038,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.018665503555907348,
+            0.04360979170805829,
+            -0.048268202940181526
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.022236478842253993,
+            0.01609127770889085,
+            -0.05555210581960468
+          ]
+        },
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          257,
+          6,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.00016099979574202283,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v63-128",
+        "variant": "correct_after_5deg",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "frames": 263,
+        "nearest": {
+          "time_s": 13.15000000000458,
+          "distance_m": 0.05593170694136441,
+          "fingers": 1,
+          "width_m": 0.05621550840139389,
+          "local_error_m": [
+            0.021583446151170818,
+            0.03036449676090492,
+            -0.04171939632917973
+          ],
+          "cylinder_tilt_rad": 0.04418322089719731,
+          "error_world_m": [
+            -0.019893491629774534,
+            0.01781407356312697,
+            -0.049145331571149906
+          ],
+          "base_xy_delta_m": [
+            0.00048633205022596826,
+            0.02823955907787945
+          ],
+          "base_yaw_delta_deg": -0.3129806786821983,
+          "wrist_shaft_error_deg": 4.13529024800747,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.015884365037540427,
+            0.04446925415994096,
+            -0.049145331571149864
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.022516281471239852,
+            0.017514677530697187,
+            -0.05701250532810498
+          ]
+        },
+        "first_loaded": {
+          "time_s": 12.850000000004213,
+          "distance_m": 0.05833779880375041,
+          "fingers": 1,
+          "width_m": 0.06297064822912216,
+          "local_error_m": [
+            0.022707186471224036,
+            0.033636807373691124,
+            -0.04190760839672339
+          ],
+          "cylinder_tilt_rad": 0.0004574715511807989,
+          "error_world_m": [
+            -0.023301264670871125,
+            0.019233839495964678,
+            -0.04990400036318074
+          ],
+          "base_xy_delta_m": [
+            0.0006224347278140918,
+            0.027241023562885047
+          ],
+          "base_yaw_delta_deg": -0.324705616963841,
+          "wrist_shaft_error_deg": 3.663110016896323,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.01907894489151385,
+            0.04483365865988492,
+            -0.04990400036318077
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.02601097250027895,
+            0.018998889972216215,
+            -0.05673339804252886
+          ]
+        },
+        "rotation_correction_started_s": 10.300000000001097,
+        "finger_counts": [
+          256,
+          7,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.00030160705904258567,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v63-128",
+        "variant": "zero_yaw_and_forward",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": false,
+        "final": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "frames": 276,
+        "nearest": {
+          "time_s": 13.65000000000519,
+          "distance_m": 0.058841306772556744,
+          "fingers": 1,
+          "width_m": 0.0520432339310646,
+          "local_error_m": [
+            0.03911879920068005,
+            0.026116091602359597,
+            -0.03535489628348765
+          ],
+          "cylinder_tilt_rad": 0.05424156212196643,
+          "error_world_m": [
+            -0.017101251344514776,
+            0.035767500439885774,
+            -0.043480254109614355
+          ],
+          "base_xy_delta_m": [
+            -0.00021441765000862478,
+            -0.00046634047072002804
+          ],
+          "base_yaw_delta_deg": 0.012969441119038198,
+          "wrist_shaft_error_deg": 4.236840843822349,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.017464530823724456,
+            0.035367042051036135,
+            -0.043480254109614314
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.019891092183203063,
+            0.035453226063885734,
+            -0.05150528533643073
+          ]
+        },
+        "first_loaded": {
+          "time_s": 13.050000000004458,
+          "distance_m": 0.06048952182073986,
+          "fingers": 1,
+          "width_m": 0.057692872881889345,
+          "local_error_m": [
+            0.04092422473175829,
+            0.027865378776419064,
+            -0.03475213296839492
+          ],
+          "cylinder_tilt_rad": 0.00013516861727740068,
+          "error_world_m": [
+            -0.019952549887095213,
+            0.03743425971759078,
+            -0.043122548654975126
+          ],
+          "base_xy_delta_m": [
+            -1.9975288901297183e-05,
+            -0.0001252786427812791
+          ],
+          "base_yaw_delta_deg": -0.007214024521479616,
+          "wrist_shaft_error_deg": 4.351170052621245,
+          "error_with_reset_base_rigid_pose_m": [
+            -0.01989150172864429,
+            0.03727264119903112,
+            -0.04312254865497511
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.02311400208429426,
+            0.03710280365996255,
+            -0.051254599450510474
+          ]
+        },
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          260,
+          16,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0016517848475687824,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v60-1024",
+        "variant": "recorded",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 16.25000000000748,
+          "distance_m": 0.07922930421855393,
+          "fingers": 0,
+          "width_m": 0.05149566158652306,
+          "local_error_m": [
+            0.07891868902878922,
+            -0.002751382416803568,
+            0.0064461665918540325
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            -0.00021978548642560735,
+            0.07745615410283901,
+            -0.01666668932011954
+          ],
+          "base_xy_delta_m": [
+            -6.735002371394128e-05,
+            0.012304617149595298
+          ],
+          "base_yaw_delta_deg": -5.317851991589003,
+          "wrist_shaft_error_deg": 17.218059455881193,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05564598298801915,
+            0.06737647972219679,
+            -0.0166666893201195
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.00036432476049996776,
+            0.07230244156775609,
+            -0.05070743312182091
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v60-1024",
+        "variant": "zero_yaw",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 16.300000000007362,
+          "distance_m": 0.0798900397514411,
+          "fingers": 0,
+          "width_m": 0.048495661586523055,
+          "local_error_m": [
+            0.05232548059003807,
+            -0.055082379589315604,
+            -0.024706152903415286
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            0.05546689106015276,
+            0.0552862233204056,
+            -0.015788475498737218
+          ],
+          "base_xy_delta_m": [
+            4.541824871751032e-06,
+            0.012153930924935552
+          ],
+          "base_yaw_delta_deg": -0.0009565518219640967,
+          "wrist_shaft_error_deg": 18.152502771354353,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05548167248409008,
+            0.06743659482077013,
+            -0.015788475498737187
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.04525768090628446,
+            0.04956274754418982,
+            -0.050131062495101464
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v60-1024",
+        "variant": "correct_after_5deg",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 16.300000000007362,
+          "distance_m": 0.07841895915900232,
+          "fingers": 0,
+          "width_m": 0.048495661586523055,
+          "local_error_m": [
+            0.05394038162590324,
+            -0.05213677127270868,
+            -0.02284131053355857
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            0.0521625157949802,
+            0.056385658569397486,
+            -0.015788052736643906
+          ],
+          "base_xy_delta_m": [
+            0.00019180259115381126,
+            0.012146965432683954
+          ],
+          "base_yaw_delta_deg": -0.2924076398609205,
+          "wrist_shaft_error_deg": 18.0715420593437,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05548167317903496,
+            0.06743658962313953,
+            -0.015788052736643854
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.042509301229065266,
+            0.050712699671398964,
+            -0.05013064338478346
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": 13.100000000004519,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v60-1024",
+        "variant": "zero_yaw_and_forward",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": false,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 16.40000000000713,
+          "distance_m": 0.08862132410357279,
+          "fingers": 0,
+          "width_m": 0.05449566158652306,
+          "local_error_m": [
+            0.06324441965418533,
+            -0.05886155090860597,
+            -0.019728159901759124
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            0.055915639251059725,
+            0.06730927203379891,
+            -0.014022919499729619
+          ],
+          "base_xy_delta_m": [
+            1.0699666122881979e-05,
+            -1.3563013607886809e-05
+          ],
+          "base_yaw_delta_deg": -0.0017702309900496619,
+          "wrist_shaft_error_deg": 18.37004434803221,
+          "error_with_reset_base_rigid_pose_m": [
+            0.055945293215985514,
+            0.06728913600398567,
+            -0.014022919499729669
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.04587648286554591,
+            0.061448976808256006,
+            -0.048847338817380015
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v61-1024",
+        "variant": "recorded",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 14.800000000006596,
+          "distance_m": 0.06990209821380063,
+          "fingers": 0,
+          "width_m": 0.058071611255407336,
+          "local_error_m": [
+            0.05354505128496191,
+            0.026050010897596045,
+            0.03661458384056487
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            -0.031059252662052783,
+            0.0617861149693744,
+            0.010203046395946647
+          ],
+          "base_xy_delta_m": [
+            -0.0006617541766261725,
+            0.017444823509370988
+          ],
+          "base_yaw_delta_deg": -9.308781481275792,
+          "wrist_shaft_error_deg": 17.393669567217106,
+          "error_with_reset_base_rigid_pose_m": [
+            0.06953737783202385,
+            0.03856131437983851,
+            0.010203046395946602
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            -0.021890823664953207,
+            0.05652755168913082,
+            -0.022929369398993926
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v61-1024",
+        "variant": "zero_yaw",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 13.500000000005008,
+          "distance_m": 0.06813538030450694,
+          "fingers": 0,
+          "width_m": 0.05446642380952835,
+          "local_error_m": [
+            0.037247890433211125,
+            -0.05702195873491945,
+            -0.0018764140130671943
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            0.053694345312822286,
+            0.04184989338941069,
+            0.002816692024725737
+          ],
+          "base_xy_delta_m": [
+            8.95261196731667e-06,
+            0.020849363201499882
+          ],
+          "base_yaw_delta_deg": -0.007633073585367804,
+          "wrist_shaft_error_deg": 15.61287888600066,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05378564094134608,
+            0.06267062241199606,
+            0.0028166920247257865
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.04874797004711784,
+            0.03760663430833028,
+            -0.027736175479817216
+          ]
+        },
+        "first_loaded": {
+          "time_s": 15.250000000007146,
+          "distance_m": 0.07175650398000974,
+          "fingers": 1,
+          "width_m": 0.05691878154873848,
+          "local_error_m": [
+            0.011802060989125437,
+            -0.07049367532779095,
+            -0.006352083014422484
+          ],
+          "cylinder_tilt_rad": 0.002333887726663497,
+          "error_world_m": [
+            0.06757514026553228,
+            0.02071007901036789,
+            0.012397133092417394
+          ],
+          "base_xy_delta_m": [
+            -1.2073715964566745e-05,
+            0.017312748179950044
+          ],
+          "base_yaw_delta_deg": 0.004116259981863122,
+          "wrist_shaft_error_deg": 17.976730564632092,
+          "error_with_reset_base_rigid_pose_m": [
+            0.06751687077305135,
+            0.03803730988495685,
+            0.012397133092417412
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.060517281328269834,
+            0.015096001925554381,
+            -0.022386577106676908
+          ]
+        },
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1781,
+          19,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0014746976364911069,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v61-1024",
+        "variant": "correct_after_5deg",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": true,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 13.60000000000513,
+          "distance_m": 0.06631750858226516,
+          "fingers": 0,
+          "width_m": 0.05317117899656296,
+          "local_error_m": [
+            0.037331744455553414,
+            -0.05477573718904402,
+            -0.001992841152939692
+          ],
+          "cylinder_tilt_rad": 0.0003571554384961651,
+          "error_world_m": [
+            0.051707110478584055,
+            0.041458252759544054,
+            0.0023664210614503657
+          ],
+          "base_xy_delta_m": [
+            0.00017628541099001804,
+            0.02027854734684431
+          ],
+          "base_yaw_delta_deg": -0.30517874645847226,
+          "wrist_shaft_error_deg": 15.488374035695424,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05518397967342037,
+            0.06059046305054128,
+            0.0023664210614503522
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.0472686836606796,
+            0.03728198855278786,
+            -0.028021075581271204
+          ]
+        },
+        "first_loaded": {
+          "time_s": 13.400000000004885,
+          "distance_m": 0.06866671047843262,
+          "fingers": 1,
+          "width_m": 0.06046642380952835,
+          "local_error_m": [
+            0.04086023303157767,
+            -0.05518657870969792,
+            -3.8538778423097815e-06
+          ],
+          "cylinder_tilt_rad": 0.006314978928260465,
+          "error_world_m": [
+            0.05152708097276968,
+            0.045293825682306825,
+            0.0029234242619448573
+          ],
+          "base_xy_delta_m": [
+            0.0001711627521673309,
+            0.021359701363064643
+          ],
+          "base_yaw_delta_deg": -0.2996140353946064,
+          "wrist_shaft_error_deg": 15.618368292037188,
+          "error_with_reset_base_rigid_pose_m": [
+            0.05491619492391808,
+            0.06552074595665242,
+            0.002923424261944807
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.04710317163620448,
+            0.04104760076406233,
+            -0.027720177538786084
+          ]
+        },
+        "rotation_correction_started_s": 8.749999999999202,
+        "finger_counts": [
+          1768,
+          32,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0019472141199032844,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      },
+      {
+        "name": "v61-1024",
+        "variant": "zero_yaw_and_forward",
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_forward_preserved": false,
+        "final": "timeout",
+        "frames": 1800,
+        "nearest": {
+          "time_s": 16.050000000007945,
+          "distance_m": 0.07157027159391724,
+          "fingers": 0,
+          "width_m": 0.05144086539745331,
+          "local_error_m": [
+            0.023107097080376157,
+            -0.06760720270061416,
+            0.0041990455514581025
+          ],
+          "cylinder_tilt_rad": 0.0,
+          "error_world_m": [
+            0.06116464236886233,
+            0.032943731550790695,
+            0.01720176884583925
+          ],
+          "base_xy_delta_m": [
+            -6.421416846036365e-07,
+            -6.306497468655525e-05
+          ],
+          "base_yaw_delta_deg": -0.0043951194080217,
+          "wrist_shaft_error_deg": 18.697331698139905,
+          "error_with_reset_base_rigid_pose_m": [
+            0.061213700164528984,
+            0.03286475008553891,
+            0.017201768845839238
+          ],
+          "error_with_teacher_shaft_same_wrist_origin_m": [
+            0.056212921372716496,
+            0.026874630456433513,
+            -0.019329583754152835
+          ]
+        },
+        "first_loaded": null,
+        "rotation_correction_started_s": null,
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "longest_bilateral_frames": 0,
+        "scored_held": false,
+        "peak_lift_m": 0.0,
+        "teacher_ran": false,
+        "neural_forward_ran": false
+      }
+    ],
+    "independent_cases_read": false,
+    "eligible_as_model_acceptance": false
+  },
+  "v70_matched_training": {
+    "kind": "matched_heading_recovery_loss_to_v69",
+    "data_exact": true,
+    "configuration": "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/train-v70.yml",
+    "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024/model.safetensors",
+    "changes_only_heading_loss": {
+      "cue_affine": [
+        [
+          -3.4964537620544434,
+          -3.1154847906446985,
+          -2.4900999069213867
+        ],
+        [
+          3.4964537620544434,
+          3.1154847906446985,
+          2.4900999069213867
+        ]
+      ],
+      "cue_near_scale_m": 0.04,
+      "radius_m": 0.18,
+      "state_yaw_affine": [
+        1.325182557106018,
+        1.825182557106018
+      ],
+      "state_yaw_rate_affine": [
+        -0.3,
+        0.3
+      ],
+      "action_yaw_affine": [
+        -0.3,
+        0.3
+      ],
+      "reset_yaw_rad": 1.5707963267948966,
+      "min_heading_error_rad": 0.05235987755982989,
+      "minimum_return_rate_rad_s": 0.015,
+      "command_step_limit": 0.015,
+      "control_dt_s": 0.05,
+      "scale_rad": 0.04,
+      "weight": 1.0
+    },
+    "coverage": {
+      "corpus_anchors": 88,
+      "nominal_fraction": 0.022899659863945578,
+      "anchors_in_v69_new_episodes": 88,
+      "nominal_fraction_from_v69_new_episodes": 0.022899659863945578
+    },
+    "independent_cases_read": false
+  },
+  "v70_native_loss_proof": {
+    "kind": "native_wall_heading_under_correction_loss",
+    "real_teacher_anchor_source": "/data/hlou/pigment-pour-study/runs/cylinder-held-wrist-heading-v69/held-heading-captures/volume_17_seed_879420/qualified/model_training_frames.npz",
+    "source_frame": 42,
+    "source_seed": 879420,
+    "max_value_error_against_independent_actuator_replay": 4.440892098500626e-16,
+    "valid_ticks": {
+      "return": 8,
+      "missing_cue": 0,
+      "too_far": 0,
+      "small_error": 0,
+      "still_labels": 0,
+      "yaw_mask_after_three": 3,
+      "pad_after_five": 5,
+      "arm_masked": 8,
+      "away_labels": 0,
+      "matched_applied": 8
+    },
+    "old_objective_exact_when_disabled": true,
+    "prior_yaw_actuator_estimated_by_measured_rate": true,
+    "teacher_labels_are_the_logged_applied_yaw": true,
+    "only_yaw_action_gradient": true,
+    "bf16_test_still_float32_loss": true,
+    "no_penalty_when_correction_matches_applied_demo": true,
+    "independent_cases_read": false
+  },
+  "v70_official_loader": {
+    "kind": "official_wall_joint_data_contract",
+    "passed": true,
+    "action_representation": "servo_increment",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-held-wrist-heading-v69",
+    "episodes": 180,
+    "frames": 117082,
+    "flow_horizon": 8,
+    "training_iterations_per_epoch": 27807,
+    "batch_shapes": {
+      "input_ids": [
+        4,
+        482
+      ],
+      "attention_mask": [
+        4,
+        482
+      ],
+      "pixel_values": [
+        6144,
+        1176
+      ],
+      "image_grid_thw": [
+        12,
+        3
+      ],
+      "action_chunk": [
+        4,
+        8,
+        26
+      ],
+      "dof_mask": [
+        4,
+        8,
+        26
+      ],
+      "proprioception": [
+        4,
+        1,
+        26
+      ],
+      "agent_pos_mask": [
+        4,
+        1,
+        26
+      ],
+      "frame_index": [
+        4
+      ],
+      "sample_time": [
+        4
+      ],
+      "moe_token_types": [
+        4,
+        482
+      ]
+    },
+    "checks": [
+      {
+        "episode": 0,
+        "frame": 655,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 0,
+        "frame": 322,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 0,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 176,
+        "frame": 723,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 176,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 176,
+        "frame": 355,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 177,
+        "frame": 678,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 177,
+        "frame": 342,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 177,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 178,
+        "frame": 393,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 178,
+        "frame": 772,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 178,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 179,
+        "frame": 0,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 179,
+        "frame": 815,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      },
+      {
+        "episode": 179,
+        "frame": 407,
+        "action_labels_exact": true,
+        "robot_state_exact": true,
+        "gripper_and_base_absolute": true,
+        "normalization_matches_inference": true,
+        "masks_and_padding_correct": true,
+        "zero_arm_increments_at_padded_steps": true
+      }
+    ],
+    "episode_end_repeats_last": true,
+    "action_active_dimensions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "robot_state_active_dimensions": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25
+    ],
+    "sampling_weights_match_source_indices": true,
+    "processor_loaded": true,
+    "checkpoint_serving_normalizer_factory_matches_training": true,
+    "serving_normalizer_key": "cylinder_joint_v1",
+    "distributed_backend": "gloo",
+    "neural_weights_loaded": false,
+    "model_forward": false,
+    "backward": false,
+    "task_success_measured": false,
+    "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+  },
+  "v70_queue": {
+    "pid": 3479684,
+    "live": true,
+    "command": "bash runs/cylinder-approach-components-v70/start-v70.sh",
+    "script": "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/start-v70.sh",
+    "state": "waiting_for_v69_gpu_reservation",
+    "first_checkpoint_observer": {
+      "pid": 3479685,
+      "live": true,
+      "command": "bash runs/cylinder-approach-components-v70/first-v70-evidence.sh"
+    },
+    "actual_neural_update_at_capture": false
+  },
+  "actual_official_wall_runs": [
+    {
+      "version": 63,
+      "driver": {
+        "pid": 2374918,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000/driver.log --data-port 30182 --train-port 30183 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-v59-base-response-audit/wall-x"
+      },
+      "gpu": 1,
+      "run_stage": "neural_evaluation_384",
+      "checkpoint_step": 256,
+      "checkpoint_sha256": "f6334c22e4d43ff9a2bebd13365c29b2f0442754677a7a8d165c1fce56f3886f",
+      "weight_audit": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000/checkpoint-256-weight-audit.json",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single",
+      "model_loaded": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single/model_load.json",
+      "result": {
+        "evaluation_complete": true,
+        "total": 1,
+        "successes": 0,
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "failure_reason": "timeout",
+        "physical_geometry": {
+          "passed": true,
+          "default_profile": "official",
+          "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+          "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+          "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+          "custom_pads": 0,
+          "geometry_import": "Unchanged union of the source convex solids",
+          "fingers": [
+            {
+              "link": "left_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8767490163088206e-09
+            },
+            {
+              "link": "left_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.880467725507178e-09
+            },
+            {
+              "link": "right_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8767490163088206e-09
+            },
+            {
+              "link": "right_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.880467725507178e-09
+            }
+          ],
+          "contact_model": {
+            "friction": [
+              1.0,
+              0.005,
+              0.0001
+            ],
+            "condim": 3,
+            "noslip_iterations": 0,
+            "calibration": "Nominal simulator defaults; not measured hardware properties"
+          }
+        }
+      },
+      "physical_lift_audit": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single/physical-lift-audit/held-lift-audit.json",
+        "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single",
+        "terminal_reason": "timeout",
+        "raw_peak": {
+          "height_m": 0.0,
+          "time_s": 0.0,
+          "loaded_fingers": 0,
+          "established_hold": false
+        },
+        "max_supported_lift_m": 0.0,
+        "established_hold": false,
+        "loaded_finger_counts_after_command": [
+          1800,
+          0,
+          0
+        ],
+        "longest_consecutive_double_load_frames": 0,
+        "longest_consecutive_double_load_seconds": 0.0,
+        "first_sustained_hold_s": null,
+        "first_supported_lift_40mm_s": null,
+        "observations_and_bounded_commands_exact": true,
+        "checkpoint_inference_rerun": false
+      },
+      "nearest_saved_observation": {
+        "time_s": 14.800000000006596,
+        "grasp_distance_m": 0.11238065347486194,
+        "grasp_point_error_components_m": [
+          0.10323250967576215,
+          0.03058153859711452,
+          -0.03220605096117602
+        ],
+        "aperture_m": 0.061916764676570896,
+        "base_retreat_m": 0.03874542109753726
+      }
+    },
+    {
+      "version": 65,
+      "driver": {
+        "pid": 2666346,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000/driver.log --data-port 30185 --train-port 30186 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-v56-approach-replay-v59/wall-x"
+      },
+      "gpu": 2,
+      "run_stage": "neural_evaluation_128",
+      "checkpoint_step": 128,
+      "checkpoint_sha256": "8058012291a5e804a85d76e91ba3c7e5a61a4625b9f7e445e0dcb62ff0e20d9f",
+      "weight_audit": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000/checkpoint-128-weight-audit.json",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step128-single",
+      "model_loaded": "/data/hlou/pigment-pour-study/runs/cylinder-joint-full-reset-read-bc-v65-a6000-step128-single/model_load.json"
+    },
+    {
+      "version": 66,
+      "driver": {
+        "pid": 2850288,
+        "live": true,
+        "command": ".venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v38-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/checkpoints/0_1024 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000/driver.log --data-port 30188 --train-port 30189 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-v56-approach-replay-v59/wall-x"
+      },
+      "gpu": 3,
+      "run_stage": "neural_evaluation_128",
+      "checkpoint_step": 128,
+      "checkpoint_sha256": "53f8008f0b09e925e1a1ce7250635c6254b0e9a63201f1e68df76b3117ffbaad",
+      "weight_audit": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000/checkpoint-128-weight-audit.json",
+      "changed_action_tensors": 258,
+      "changed_frozen_tensors": 0,
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step128-single",
+      "model_loaded": "/data/hlou/pigment-pour-study/runs/cylinder-joint-short-clearance-bc-v66-a6000-step128-single/model_load.json"
+    }
+  ],
+  "independent_cases_read": false,
+  "v63_step256_base_command_factorial": {
+    "source_model_summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-base-response-bc-v63-a6000-step256-single/summary.json",
+    "full_replay_sources": [
+      "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/following-checkpoints-replay-report.json",
+      "/data/hlou/pigment-pour-study/runs/cylinder-approach-components-v70/v63-step256-isolated-forward-replay-report.json"
+    ],
+    "results": [
+      {
+        "variant": "recorded",
+        "nearest_distance_m": 0.11183161089038907,
+        "nearest_time_s": 14.95000000000678,
+        "base_xy_delta_m": [
+          -0.0037437814471047437,
+          -0.04103607632126566
+        ],
+        "base_yaw_delta_deg": -6.102842108044453,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": true,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_yaw",
+        "nearest_distance_m": 0.09499184349501999,
+        "nearest_time_s": 16.200000000007595,
+        "base_xy_delta_m": [
+          9.857075097263746e-07,
+          -0.04810393721448186
+        ],
+        "base_yaw_delta_deg": -0.004195413114128071,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "correct_after_5deg",
+        "nearest_distance_m": 0.09531372000238891,
+        "nearest_time_s": 16.200000000007595,
+        "base_xy_delta_m": [
+          -0.0020526628979798955,
+          -0.04803400733890073
+        ],
+        "base_yaw_delta_deg": -0.3046473028725789,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": true,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_forward",
+        "nearest_distance_m": 0.06801916477465961,
+        "nearest_time_s": 16.25000000000748,
+        "base_xy_delta_m": [
+          -1.4153427092544746e-06,
+          -1.32223471283055e-05
+        ],
+        "base_yaw_delta_deg": -6.253464787529728,
+        "result": "timeout",
+        "finger_counts": [
+          1800,
+          0,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": true,
+        "original_forward_preserved": false,
+        "established_hold": false
+      },
+      {
+        "variant": "zero_yaw_and_forward",
+        "nearest_distance_m": 0.060543934506471504,
+        "nearest_time_s": 16.050000000007945,
+        "base_xy_delta_m": [
+          4.718645520651599e-06,
+          -4.159418799321024e-05
+        ],
+        "base_yaw_delta_deg": -0.003258407078831994,
+        "result": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "finger_counts": [
+          320,
+          15,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": false,
+        "established_hold": false
+      },
+      {
+        "variant": "correct_yaw_zero_forward",
+        "nearest_distance_m": 0.058929718018522405,
+        "nearest_time_s": 16.050000000007945,
+        "base_xy_delta_m": [
+          4.47658004154583e-06,
+          -3.928996321972411e-05
+        ],
+        "base_yaw_delta_deg": -0.30524525639085687,
+        "result": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "finger_counts": [
+          320,
+          14,
+          0
+        ],
+        "geometry_audit": true,
+        "no_custom_pads": true,
+        "recorded_all_arm_finger_commands_exact": true,
+        "original_yaw_preserved": false,
+        "original_forward_preserved": false,
+        "established_hold": false
+      }
+    ],
+    "neural_forward_ran": false,
+    "independent_cases_read": false,
+    "eligible_as_model_acceptance": false
+  }
+}

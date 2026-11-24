@@ -1,0 +1,177 @@
+{
+  "kind": "pregrasp_observation_and_command_support",
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-near-tray-recovery-v7",
+  "demonstration_phases": [
+    "approach",
+    "advance",
+    "close"
+  ],
+  "demonstration_frames": 10944,
+  "demonstration_episodes": 60,
+  "demonstration_base_forward_range_m_s": [
+    -0.007946000434458256,
+    0
+  ],
+  "demonstration_reverse_fraction_below_0_01_m_s": 0,
+  "observed_state_ranges": {
+    "right_joint_position_1": [
+      -0.13084997236728668,
+      1.0173168182373047
+    ],
+    "right_joint_position_2": [
+      0.48885825276374817,
+      1.9966015815734863
+    ],
+    "right_joint_position_3": [
+      -2.200000047683716,
+      -0.9226084351539612
+    ],
+    "right_joint_position_4": [
+      -0.11774693429470062,
+      1.394213318824768
+    ],
+    "right_joint_position_5": [
+      -0.2800026834011078,
+      0.6906635761260986
+    ],
+    "right_joint_position_6": [
+      -0.046605173498392105,
+      0.08190373331308365
+    ],
+    "right_gripper_opening_fraction": [
+      0.05037889629602432,
+      0.7395241856575012
+    ],
+    "base_vx": [
+      -0.01665515825152397,
+      0.003593820845708251
+    ],
+    "base_yaw_rate": [
+      -0.018466243520379066,
+      0.01171042025089264
+    ],
+    "right_joint_velocity_1": [
+      -0.3406929075717926,
+      0.2848678231239319
+    ],
+    "right_joint_velocity_2": [
+      -0.27218106389045715,
+      0.3624069094657898
+    ],
+    "right_joint_velocity_3": [
+      -0.3071580231189728,
+      0.35630345344543457
+    ],
+    "right_joint_velocity_4": [
+      -0.3200453221797943,
+      0.2682775855064392
+    ],
+    "right_joint_velocity_5": [
+      -0.2791716456413269,
+      0.3032064139842987
+    ],
+    "right_joint_velocity_6": [
+      -0.03896893933415413,
+      0.030403386801481247
+    ],
+    "base_odometry_x": [
+      0.6106676459312439,
+      0.6149494051933289
+    ],
+    "base_odometry_y": [
+      -0.48796600103378296,
+      -0.37122395634651184
+    ],
+    "base_odometry_yaw": [
+      1.5094727277755737,
+      1.6016725301742554
+    ]
+  },
+  "trials": [
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-sampling-bc-v5-step256-single",
+      "failure_reason": "collision:[['', '']]",
+      "first_recorded_loaded_contact_s": null,
+      "first_outside_observed_demonstration_range_s": {
+        "right_joint_position_1": 1.5999999999998793,
+        "right_joint_position_3": 10.400000000001219,
+        "right_joint_position_4": 7.5999999999985075,
+        "base_yaw_rate": 0.7999999999999673,
+        "right_joint_velocity_3": 1.1999999999999234,
+        "right_joint_velocity_4": 0.7999999999999673,
+        "right_joint_velocity_5": 0.4000000000000003,
+        "right_joint_velocity_6": 1.1999999999999234
+      },
+      "windows": [
+        {
+          "seconds": 5,
+          "before_contact_frames": 101,
+          "reverse_fraction": 0.19801980198019803,
+          "observed_aperture_min_mm": 42.719687819480896,
+          "states_outside_normalizer": 0
+        },
+        {
+          "seconds": 10,
+          "before_contact_frames": 200,
+          "reverse_fraction": 0.245,
+          "observed_aperture_min_mm": 38.27744521200657,
+          "states_outside_normalizer": 0
+        },
+        {
+          "seconds": 15,
+          "before_contact_frames": 216,
+          "reverse_fraction": 0.2361111111111111,
+          "observed_aperture_min_mm": 36.63229264318943,
+          "states_outside_normalizer": 0
+        }
+      ],
+      "comparisons_are_coordinatewise": true
+    },
+    {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-near-tray-recovery-bc-v7-step128-single",
+      "failure_reason": "collision:[['', '']]",
+      "first_recorded_loaded_contact_s": null,
+      "first_outside_observed_demonstration_range_s": {
+        "right_joint_position_1": 1.9999999999998352,
+        "right_joint_position_4": 9.199999999999752,
+        "right_joint_position_6": 10.800000000001708,
+        "base_vx": 1.5999999999998793,
+        "base_yaw_rate": 5.199999999999838,
+        "right_joint_velocity_1": 6.399999999999173,
+        "right_joint_velocity_2": 10.800000000001708,
+        "right_joint_velocity_3": 1.1999999999999234,
+        "right_joint_velocity_4": 0.7999999999999673,
+        "right_joint_velocity_5": 0.4000000000000003,
+        "right_joint_velocity_6": 1.1999999999999234,
+        "base_odometry_x": 13.200000000004641,
+        "base_odometry_yaw": 8.399999999998775
+      },
+      "windows": [
+        {
+          "seconds": 5,
+          "before_contact_frames": 101,
+          "reverse_fraction": 0.2871287128712871,
+          "observed_aperture_min_mm": 42.52762511372566,
+          "states_outside_normalizer": 0
+        },
+        {
+          "seconds": 10,
+          "before_contact_frames": 200,
+          "reverse_fraction": 0.325,
+          "observed_aperture_min_mm": 42.52762511372566,
+          "states_outside_normalizer": 0
+        },
+        {
+          "seconds": 15,
+          "before_contact_frames": 294,
+          "reverse_fraction": 0.336734693877551,
+          "observed_aperture_min_mm": 42.52762511372566,
+          "states_outside_normalizer": 0
+        }
+      ],
+      "comparisons_are_coordinatewise": true
+    }
+  ],
+  "no_new_policy_inference": true,
+  "independent_cases_read": false
+}

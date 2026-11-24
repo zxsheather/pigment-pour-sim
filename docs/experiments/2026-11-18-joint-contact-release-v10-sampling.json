@@ -1,0 +1,99 @@
+{
+  "kind": "grasp_event_training_sampling",
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-contact-release-recovery-v10",
+  "base_weights_sha256": "4aaf3f7d17df0a6fab4af22d052b6cea99101d5f1dcba5f752cf19ae6c625ea0",
+  "weights_sha256": "5be141e8b846ba0bcebc7ed58dc671b2e5471d41a8c25f616033b9f27ee2734b",
+  "frames": 45284,
+  "eligible_anchors": 43020,
+  "training_split_seed": 48,
+  "groups": {
+    "reopen": {
+      "total_anchors": 160,
+      "eligible_anchors": 151,
+      "base_share": 0.041638459667132866,
+      "multiplier": 1.9213006590430541,
+      "source_count": 21,
+      "new_share": 0.07999999999999999
+    },
+    "start_close": {
+      "total_anchors": 483,
+      "eligible_anchors": 461,
+      "base_share": 0.012884539762539279,
+      "multiplier": 4.656743749159359,
+      "source_count": 69,
+      "new_share": 0.060000000000000026
+    },
+    "other": {
+      "total_anchors": 44641,
+      "eligible_anchors": 42408,
+      "base_share": 0.945477000570328,
+      "multiplier": 0.9095937812143852,
+      "source_count": 74,
+      "new_share": 0.8599999999999999
+    }
+  },
+  "anchor_phase_shares": {
+    "advance": {
+      "base": 0.09552092760888187,
+      "new": 0.13516554448705326
+    },
+    "align_eye_level": {
+      "base": 0.0845097567558438,
+      "new": 0.0768695491970559
+    },
+    "approach": {
+      "base": 0.3978098322211583,
+      "new": 0.4014604493346681
+    },
+    "back_away": {
+      "base": 0.07393333867965095,
+      "new": 0.06724930508742746
+    },
+    "close": {
+      "base": 0.0371484916567087,
+      "new": 0.03379003699243671
+    },
+    "find_scale": {
+      "base": 0.021967205860006795,
+      "new": 0.01998123384091838
+    },
+    "hold_for_reading": {
+      "base": 0.018052295324216407,
+      "new": 0.01642025556355277
+    },
+    "lift": {
+      "base": 0.040983772144549124,
+      "new": 0.03727858427338923
+    },
+    "present": {
+      "base": 0.09999729730219634,
+      "new": 0.0909569197643238
+    },
+    "read_stable": {
+      "base": 0.012940704164299646,
+      "new": 0.011770784032382055
+    },
+    "release_contact": {
+      "base": 0.006238875165356828,
+      "new": 0.008185658239246801
+    },
+    "retract": {
+      "base": 0.09287025609237096,
+      "new": 0.08447420740140799
+    },
+    "straighten": {
+      "base": 0.0031366720444611675,
+      "new": 0.00285309738535089
+    },
+    "withdraw_from_contact": {
+      "base": 0.014890574980299174,
+      "new": 0.013544374400786643
+    }
+  },
+  "executed_prefix": 8,
+  "reopen_min_full_width_difference_mm": 10,
+  "phase_labels_used_only_to_construct_offline_sampling_weights": true,
+  "original_dataset_modified": false,
+  "independent_cases_read": false,
+  "learned_policy_trained": false
+}

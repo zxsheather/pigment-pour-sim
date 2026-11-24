@@ -1,0 +1,98 @@
+{
+  "late40": {
+    "success": true,
+    "failure_reason": null,
+    "simulated_seconds": 9.950000000000669,
+    "max_slip_m": 0.003539084133766177,
+    "absolute_reading_error_ml": 0.06498781478472893,
+    "final_tilt_rad": 0.012388788512217681,
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-continuous-v1-step1020-single-v1/episode_000",
+      "snapshot_index": 100,
+      "source_simulated_seconds": 40.00000000000897,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": true,
+      "recovery_stage": "presentation_stopping_readout"
+    },
+    "source": "cylinder-reading-recovery-v1/snapshot_100",
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.14,
+      "read_distance_m": 0.35,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "geometry_audit_passed": true,
+    "gripper_actuator_force_limit_n": 20.0
+  },
+  "late60_failed_view": {
+    "success": false,
+    "failure_reason": "unstable_reading:calibration_anchors_not_visible",
+    "simulated_seconds": 11.950000000003113,
+    "max_slip_m": 0.002549497023806424,
+    "absolute_reading_error_ml": null,
+    "final_tilt_rad": 0.012789443939006929,
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-continuous-v1-step1020-single-v1/episode_000",
+      "snapshot_index": 150,
+      "source_simulated_seconds": 60.000000000104464,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": true,
+      "recovery_stage": "presentation_stopping_readout"
+    },
+    "source": "cylinder-reading-recovery-v2/snapshot_150",
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.14,
+      "read_distance_m": 0.35,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "geometry_audit_passed": true,
+    "gripper_actuator_force_limit_n": 20.0
+  },
+  "late60_lateral018": {
+    "success": true,
+    "failure_reason": null,
+    "simulated_seconds": 12.450000000003724,
+    "max_slip_m": 0.002426634533419449,
+    "absolute_reading_error_ml": 0.12048192771084132,
+    "final_tilt_rad": 0.01177915649189301,
+    "initial_state_provenance": {
+      "policy_episode": "/data/hlou/pigment-pour-study/runs/cylinder-continuous-v1-step1020-single-v1/episode_000",
+      "snapshot_index": 150,
+      "source_simulated_seconds": 60.000000000104464,
+      "kind": "expert_recovery_training_only",
+      "physical_state": "Recorded policy-visited integration state and controller cache; no pose reset",
+      "clock": "Restarted at zero for the new demonstration sampling timestamps",
+      "teacher_inputs": "Simulator object pose and robot state; learned policy inputs unchanged",
+      "starts_holding": true,
+      "recovery_stage": "presentation_stopping_readout"
+    },
+    "source": "cylinder-reading-recovery-v3/snapshot_150",
+    "controller_parameters": {
+      "grip_opening_m": 0.003,
+      "motion_scale": 1.0,
+      "grasp_height_m": 0.225,
+      "grasp_x_m": 0.115,
+      "read_lateral_m": 0.18,
+      "read_distance_m": 0.35,
+      "grasp_roll_rad": 0.0,
+      "upright_feedback_gain": 0.0
+    },
+    "geometry_audit_passed": true,
+    "gripper_actuator_force_limit_n": 20.0
+  }
+}

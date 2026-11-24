@@ -1,0 +1,274 @@
+{
+  "date": "2026-11-15",
+  "stage": "cylinder pickup and image-based reading prototype",
+  "carry_snapshot_tag": "carry-v1-20261115",
+  "demo": {
+    "success": true,
+    "simulated_seconds": 33.74999999999528,
+    "expected_volume_ml": 25.0,
+    "reading": {
+      "valid": true,
+      "volume_ml": 24.929775280898877,
+      "liquid_y": 384.0,
+      "liquid_x": 550,
+      "y20": 410.0,
+      "y35": 330.8888888888889,
+      "anchor_x": 541.8888888888889,
+      "liquid_bbox": [
+        539,
+        384,
+        21,
+        131
+      ],
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    "absolute_reading_error_ml": 0.07022471910112316,
+    "final_tilt_rad": 0.01953303716634332,
+    "max_slip_m": 0.010572599862139733,
+    "max_lifted_m": 0.11570258374612008,
+    "initial_camera_distance_m": 0.654670327556517,
+    "final_camera_distance_m": 0.37991416257364874,
+    "source_sha256": {
+      "inspect_cylinder.py": "aac0e7ed755195d4d75bdf465d1a2f425460dc2a228a75b2637ef07b48ab389e",
+      "cylinder_reader.py": "be7cfe379f4996bbf87f7d5fc9b3b0293653b66eef1fcd3024e98afd8dab876c",
+      "carry_env.py": "37bdef628beb1c3d78cef18e6d5060c0708fbb22e045b91473897c0048d3f0b4",
+      "scene_config.json": "cbebc6bb5c88431a38d2990d8961b36e0698e128c7c602d2f8ddb2415c7adeef"
+    }
+  },
+  "validation_v1": {
+    "successes": 1,
+    "total": 8
+  },
+  "validation_v2": {
+    "episodes": [
+      {
+        "volume_ml": 8,
+        "seed": 100,
+        "success": false,
+        "reason": "lost_grasp",
+        "reading": {
+          "valid": true,
+          "volume_ml": 9.633507853403135,
+          "liquid_y": 495.0,
+          "liquid_x": 549,
+          "y20": 440.6470588235294,
+          "y35": 362.0,
+          "anchor_x": 539.8529411764706,
+          "liquid_bbox": [
+            539,
+            495,
+            20,
+            32
+          ],
+          "eye_alignment_error_px": 111.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 1.6335078534031346,
+        "final_tilt_rad": 0.07127812250621858,
+        "max_slip_m": 0.02543055419388499
+      },
+      {
+        "volume_ml": 8,
+        "seed": 101,
+        "success": false,
+        "reason": "lost_grasp",
+        "reading": {
+          "valid": true,
+          "volume_ml": 9.46159638554217,
+          "liquid_y": 496.0,
+          "liquid_x": 549,
+          "y20": 441.11764705882354,
+          "y35": 363.0,
+          "anchor_x": 540.1323529411765,
+          "liquid_bbox": [
+            539,
+            496,
+            20,
+            31
+          ],
+          "eye_alignment_error_px": 112.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 1.4615963855421708,
+        "final_tilt_rad": 0.0721576343305699,
+        "max_slip_m": 0.025801813226337265
+      },
+      {
+        "volume_ml": 15,
+        "seed": 100,
+        "success": false,
+        "reason": "lost_grasp",
+        "reading": {
+          "valid": true,
+          "volume_ml": 15.927449513836944,
+          "liquid_y": 462.0,
+          "liquid_x": 547,
+          "y20": 440.6470588235294,
+          "y35": 362.0,
+          "anchor_x": 538.1029411764706,
+          "liquid_bbox": [
+            537,
+            462,
+            20,
+            68
+          ],
+          "eye_alignment_error_px": 78.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 0.9274495138369439,
+        "final_tilt_rad": 0.04579269926436257,
+        "max_slip_m": 0.02534235467495967
+      },
+      {
+        "volume_ml": 15,
+        "seed": 101,
+        "success": false,
+        "reason": "not_upright_for_reading",
+        "reading": {
+          "valid": true,
+          "volume_ml": 15.133039816232769,
+          "liquid_y": 383.0,
+          "liquid_x": 545,
+          "y20": 357.3181818181818,
+          "y35": 278.1666666666667,
+          "anchor_x": 539.6136363636364,
+          "liquid_bbox": [
+            534,
+            383,
+            22,
+            73
+          ],
+          "eye_alignment_error_px": -0.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 0.13303981623276862,
+        "final_tilt_rad": 0.05523501458114166,
+        "max_slip_m": 0.015738738854181103
+      },
+      {
+        "volume_ml": 25,
+        "seed": 100,
+        "success": true,
+        "reason": null,
+        "reading": {
+          "valid": true,
+          "volume_ml": 25.07255909558068,
+          "liquid_y": 384.0,
+          "liquid_x": 549,
+          "y20": 410.88235294117646,
+          "y35": 331.3888888888889,
+          "anchor_x": 540.8921568627451,
+          "liquid_bbox": [
+            538,
+            384,
+            22,
+            131
+          ],
+          "eye_alignment_error_px": 0.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 0.07255909558067941,
+        "final_tilt_rad": 0.02799663140960702,
+        "max_slip_m": 0.016877515862134464
+      },
+      {
+        "volume_ml": 25,
+        "seed": 101,
+        "success": false,
+        "reason": "lost_grasp",
+        "reading": {
+          "valid": true,
+          "volume_ml": 25.196386488609583,
+          "liquid_y": 408.0,
+          "liquid_x": 549,
+          "y20": 435.5625,
+          "y35": 356.0,
+          "anchor_x": 539.46875,
+          "liquid_bbox": [
+            538,
+            408,
+            22,
+            133
+          ],
+          "eye_alignment_error_px": 24.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 0.1963864886095834,
+        "final_tilt_rad": 0.027864276624996083,
+        "max_slip_m": 0.025027256302626154
+      },
+      {
+        "volume_ml": 35,
+        "seed": 100,
+        "success": false,
+        "reason": "unreadable:calibration_anchors_not_visible",
+        "reading": {
+          "valid": false,
+          "reason": "calibration_anchors_not_visible"
+        },
+        "error_ml": null,
+        "final_tilt_rad": 0.007742573213766819,
+        "max_slip_m": 0.008031817800873703
+      },
+      {
+        "volume_ml": 35,
+        "seed": 101,
+        "success": true,
+        "reason": null,
+        "reading": {
+          "valid": true,
+          "volume_ml": 34.81231953801733,
+          "liquid_y": 384.0,
+          "liquid_x": 550,
+          "y20": 462.9230769230769,
+          "y35": 383.0,
+          "anchor_x": 541.75,
+          "liquid_bbox": [
+            540,
+            384,
+            21,
+            186
+          ],
+          "eye_alignment_error_px": 0.5,
+          "method": "two_color_graduation_anchors_and_liquid_boundary"
+        },
+        "error_ml": 0.18768046198267285,
+        "final_tilt_rad": 0.008015135543172595,
+        "max_slip_m": 0.009313241347497114
+      }
+    ],
+    "successes": 2,
+    "total": 8,
+    "negative_checks": {
+      "release": {
+        "drop_m": 0.7433167129388477,
+        "contacts": 0,
+        "passed": true
+      },
+      "blank_image": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "missing_anchor": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "rotated_image": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "carry_regression": {
+        "success": true,
+        "seconds": 26.099999999996413
+      }
+    },
+    "maximum_reading_error_ml": 0.18768046198267285
+  },
+  "limitations": [
+    "Privileged simulator pose teacher, not Wall inference",
+    "RGB reader requires known 20/35 mL colored calibration anchors",
+    "Preset fill and flat rendered surface, no fluid/meniscus dynamics",
+    "Standalone reset with empty right hand, not chained from bottle transport"
+  ]
+}

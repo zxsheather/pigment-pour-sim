@@ -1,0 +1,133 @@
+{
+  "shapes": {
+    "input_ids": [
+      4,
+      510
+    ],
+    "attention_mask": [
+      4,
+      510
+    ],
+    "pixel_values": [
+      6144,
+      1176
+    ],
+    "image_grid_thw": [
+      12,
+      3
+    ],
+    "action_chunk": [
+      4,
+      32,
+      26
+    ],
+    "dof_mask": [
+      4,
+      32,
+      26
+    ],
+    "proprioception": [
+      4,
+      1,
+      26
+    ],
+    "agent_pos_mask": [
+      4,
+      1,
+      26
+    ],
+    "frame_index": [
+      4
+    ],
+    "sample_time": [
+      4
+    ],
+    "moe_token_types": [
+      4,
+      510
+    ]
+  },
+  "training_iterations_per_epoch": 7478,
+  "sampling": {
+    "sampler": "RecoveryDistributedSampler",
+    "weights_sha256": "6a2f47d3d001f72720ed9d9f65685342d68c3cf08c24a7a3a09708d6fc25c35e",
+    "validation_frames_excluded": true,
+    "expected_recovery_fraction": 0.4807226849116655
+  },
+  "base_odometry_observed": true,
+  "active_base_dimensions": [
+    20,
+    21,
+    22
+  ],
+  "padding_dimensions": [
+    23,
+    24,
+    25
+  ],
+  "finite": true,
+  "dataset_names": [
+    "/data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1"
+  ],
+  "state_unchanged_and_base_labels_preserved": true,
+  "relative_rotations_match_loader": true,
+  "episode_end_actions_repeat_last": true,
+  "selected_training_episodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+  ],
+  "virtual_action_and_state_tail": "Only action tail is padded; all 26 robot-state dimensions observed",
+  "note": "Data-path validation only; no model forward/backward."
+}

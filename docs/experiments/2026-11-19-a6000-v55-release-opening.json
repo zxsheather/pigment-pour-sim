@@ -1,0 +1,960 @@
+{
+  "kind": "actual_contact_opening_response_and_verified_v55_training",
+  "observed_at": "2026-11-19T14:28:00.265799+08:00",
+  "independent_cases_read": false,
+  "formal_cases_used_for_training": false,
+  "original_parallel_finger_geometry": true,
+  "complete_v54_step128_formal_evidence": {
+    "summary": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-bc-v54-a6000-step128-single/summary.json",
+    "episodes": 1,
+    "successes": 0,
+    "genuine_model_prediction_shape": [
+      225,
+      8,
+      26
+    ],
+    "checkpoint_sha256": "2bb2797fa7853a473a0d37204d595bc4044974dce68240804914e1df7fe58d31",
+    "changed_action_tensors": 258,
+    "changed_frozen_tensors": 0,
+    "physical": {
+      "rollout": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-bc-v54-a6000-step128-single",
+      "terminal_reason": "timeout",
+      "raw_peak": {
+        "height_m": 0.0,
+        "time_s": 0.0,
+        "loaded_fingers": 0,
+        "established_hold": false
+      },
+      "max_supported_lift_m": 0.0,
+      "established_hold": false,
+      "loaded_finger_counts_after_command": [
+        1800,
+        0,
+        0
+      ],
+      "longest_consecutive_double_load_frames": 0,
+      "longest_consecutive_double_load_seconds": 0.0,
+      "first_sustained_hold_s": null,
+      "first_supported_lift_40mm_s": null,
+      "observations_and_bounded_commands_exact": true,
+      "checkpoint_inference_rerun": false
+    }
+  },
+  "matched_partial_rollouts": {
+    "source": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/release-probe/matched-single-contact-rollouts.json",
+      "sha256": "06abdd778e49620b6484bfe09fc71ef60904494e1ae6aa88a7a3c2f61b94e463"
+    },
+    "scope": "one reserved scene from actual single-finger snapshot, 8s diagnostic",
+    "identical_initial_state_and_camera_hashes": {
+      "state_hash": "86a376934dee1f56df3b219d8e56fd6e4640c85e05ceb69b3b4da13f4b02d84b",
+      "prompt": "Approach the measuring cylinder on the tray and grip it securely between the parallel fingers. Keep it upright.",
+      "images": {
+        "face_view": "34dea233d7989ba9fb79a7dcb0df5f75705d7a75ba39b89ebd2bbfd992c0ceb6",
+        "left_wrist_view": "459832e9b22ca5e9b8992da1cb5eff2cc46044db5f3e249039cf2585804d87da",
+        "right_wrist_view": "b1716039ebb8603e9a4c6376b5e0dfd9d0620e3e9103ceae65d0a6f66865d396"
+      }
+    },
+    "models_and_teacher": [
+      {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/release-probe/teacher/summary.json",
+        "contact_counts": [
+          135,
+          0,
+          26
+        ],
+        "reason": "timeout",
+        "simulated_seconds": 8.049999999998347,
+        "first_stable_clearance_s": 0.1500000000000001,
+        "scored_hold": true,
+        "nearest_grasp_point_m": 5.010995861468023e-06,
+        "reached_supported_lift": false,
+        "mode": "teacher",
+        "first8_applied_aperture_m": [
+          0.04714262187480927,
+          0.05014262169599533,
+          0.053142621517181396,
+          0.05614262133836746,
+          0.05914262115955353,
+          0.062142620980739596,
+          0.06514262080192566,
+          0.06800000175833702
+        ]
+      },
+      {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/release-probe/v52_step384/summary.json",
+        "contact_counts": [
+          0,
+          17,
+          0
+        ],
+        "reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": null,
+        "scored_hold": false,
+        "nearest_grasp_point_m": 0.06304481752243077,
+        "reached_supported_lift": false,
+        "mode": "v52_step384",
+        "first8_applied_aperture_m": [
+          0.047142622053623205,
+          0.05014262205362321,
+          0.05314262205362321,
+          0.05014262205362321,
+          0.047142622053623205,
+          0.05014262205362321,
+          0.047142622053623205,
+          0.04583559706807137
+        ]
+      },
+      {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/release-probe/v54_step128/summary.json",
+        "contact_counts": [
+          0,
+          17,
+          0
+        ],
+        "reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": null,
+        "scored_hold": false,
+        "nearest_grasp_point_m": 0.06305251407160864,
+        "reached_supported_lift": false,
+        "mode": "v54_step128",
+        "first8_applied_aperture_m": [
+          0.047142622053623205,
+          0.05014262205362321,
+          0.05314262205362321,
+          0.05035415276885033,
+          0.04735415276885033,
+          0.05035415276885033,
+          0.04735415276885033,
+          0.04778923898935318
+        ]
+      }
+    ]
+  },
+  "action_replacement_replay": {
+    "source": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/contact-factor/contact-factorization.json",
+      "sha256": "33d766cafb3c0f919032dbc5af378e1d1e8de46dd5f83d623e28e01ff50e5313"
+    },
+    "same17ticks": {
+      "all_model": {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/contact-factor/all_model/summary.json",
+        "contact_counts": [
+          0,
+          17,
+          0
+        ],
+        "reason": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": null
+      },
+      "all_teacher": {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/contact-factor/all_teacher/summary.json",
+        "contact_counts": [
+          17,
+          0,
+          0
+        ],
+        "reason": null,
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": 0.1500000000000001
+      },
+      "teacher_gripper_with_model_arm_and_base": {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/contact-factor/teacher_gripper_with_model_arm_and_base/summary.json",
+        "contact_counts": [
+          7,
+          10,
+          0
+        ],
+        "reason": null,
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": 0.3000000000000002
+      },
+      "model_gripper_with_teacher_arm_and_base": {
+        "summary": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/contact-factor/model_gripper_with_teacher_arm_and_base/summary.json",
+        "contact_counts": [
+          17,
+          0,
+          0
+        ],
+        "reason": null,
+        "simulated_seconds": 0.8499999999999618,
+        "first_stable_clearance_s": 0.1500000000000001
+      }
+    }
+  },
+  "scoped_v52_step896_rollouts": {
+    "snapshot_selection": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/v52-contact-selection.json",
+      "sha256": "96ae99e72d6abd21fc75a49ce04366116b89bda770e7e1e0bd8f83c996d15250"
+    },
+    "cases": [
+      {
+        "seed": 862301,
+        "case": {
+          "seed": 862301,
+          "volume": 9.0,
+          "jitter": 0.008,
+          "yaw_jitter": 0.04,
+          "mass_scale": 1.0,
+          "friction_scale": 1.0
+        },
+        "raw_model_failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "total_contact_frames": [
+          519,
+          13,
+          0
+        ],
+        "eligible_observed_single": 2
+      },
+      {
+        "seed": 862302,
+        "case": {
+          "seed": 862302,
+          "volume": 18.0,
+          "jitter": 0.01,
+          "yaw_jitter": 0.05,
+          "mass_scale": 1.0,
+          "friction_scale": 1.0
+        },
+        "raw_model_failure": "timeout",
+        "total_contact_frames": [
+          840,
+          0,
+          0
+        ],
+        "eligible_observed_single": 0
+      },
+      {
+        "seed": 862303,
+        "case": {
+          "seed": 862303,
+          "volume": 32.0,
+          "jitter": 0.011,
+          "yaw_jitter": 0.055,
+          "mass_scale": 1.0,
+          "friction_scale": 1.0
+        },
+        "raw_model_failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+        "total_contact_frames": [
+          602,
+          0,
+          0
+        ],
+        "eligible_observed_single": 0
+      },
+      {
+        "seed": 862304,
+        "case": {
+          "seed": 862304,
+          "volume": 41.0,
+          "jitter": 0.012,
+          "yaw_jitter": 0.06,
+          "mass_scale": 1.0,
+          "friction_scale": 1.0
+        },
+        "raw_model_failure": "timeout",
+        "total_contact_frames": [
+          840,
+          0,
+          0
+        ],
+        "eligible_observed_single": 0
+      }
+    ]
+  },
+  "old_release_experiments": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/teacher-qualification.json",
+    "sha256": "38fb9ef528aa812a7c633122bc0700af797faff352973c726da447e5084719fe"
+  },
+  "loaded_contact_normals": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/single-contact-normal-audit.json",
+    "sha256": "cc81fbc29fa6df504af8945f5e6be0d9c8c062d4adbfe76c55bf1ea250f7c54f",
+    "cases": [
+      {
+        "snapshot": 58,
+        "time_s": 23.19999999999128,
+        "contacts": [
+          {
+            "geom": [
+              "cylinder_wall_19",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              -0.07999495195574922,
+              -0.2086668717645666,
+              0.9747096717944207
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.009450569057768421,
+              -0.005604744562922648,
+              0.24497228061663434
+            ],
+            "outward_dot_xy": 0.0019255223327152072,
+            "compression_n": 0.5024031126453106
+          },
+          {
+            "geom": [
+              "cylinder_wall_20",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              -0.0302399593697688,
+              0.036208080124266344,
+              0.9988866401103929
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.009209444014427026,
+              -0.005871786412219693,
+              0.24495254871611882
+            ],
+            "outward_dot_xy": 6.588709992820467e-05,
+            "compression_n": 0.5879807094394092
+          },
+          {
+            "geom": [
+              "cylinder_wall_21",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              -0.0319299013168211,
+              0.02807889892655563,
+              0.9990956194664106
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.00679321875720329,
+              -0.006373481729526065,
+              0.24500176101164883
+            ],
+            "outward_dot_xy": 3.7946455247467794e-05,
+            "compression_n": 0.4072753445744846
+          },
+          {
+            "geom": [
+              "cylinder_wall_21",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.05548795984250159,
+              -0.07829989875614116,
+              0.9953844544533008
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.006857980907172823,
+              -0.007856115502312966,
+              0.244990088116271
+            ],
+            "outward_dot_xy": 0.0009956684176255044,
+            "compression_n": 0.5104951569584809
+          },
+          {
+            "geom": [
+              "cylinder_wall_22",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              -0.033387230084460706,
+              0.021058582846957392,
+              0.9992206107540844
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0047444655189869955,
+              -0.00679832032481531,
+              0.2450434819914622
+            ],
+            "outward_dot_xy": 1.5241570129931603e-05,
+            "compression_n": 0.2661844869558062
+          },
+          {
+            "geom": [
+              "cylinder_wall_22",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.033704651090573676,
+              0.021178506597073963,
+              0.999207419584733
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.005335147442338983,
+              -0.008364160230715345,
+              0.2450220966103689
+            ],
+            "outward_dot_xy": 2.678860435613349e-06,
+            "compression_n": 0.4001386804512103
+          },
+          {
+            "geom": [
+              "cylinder_wall_23",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.034939132409424756,
+              0.014496677456181517,
+              0.9992842955681873
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.003121281916664609,
+              -0.008772914587008185,
+              0.24506680358540933
+            ],
+            "outward_dot_xy": -1.8123230944999685e-05,
+            "compression_n": 0.24788870721021863
+          }
+        ],
+        "source_tip_error": [
+          -0.04110552439318892,
+          -0.0007707246612779951,
+          -0.055230235303767784
+        ]
+      },
+      {
+        "snapshot": 66,
+        "time_s": 26.399999999983823,
+        "contacts": [
+          {
+            "geom": [
+              "cylinder_wall_3",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.037650201716947905,
+              0.06021621706830695,
+              0.99747504706266
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0056414259592203475,
+              0.00978608580731416,
+              0.24483925229942638
+            ],
+            "outward_dot_xy": 0.00037688024188643494,
+            "compression_n": 0.3892313013336234
+          },
+          {
+            "geom": [
+              "cylinder_wall_4",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.044571451683353164,
+              0.051761468703091514,
+              0.997664340373323
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.004234376177749577,
+              0.010934875723218551,
+              0.2447659802838712
+            ],
+            "outward_dot_xy": 0.0003772729343038653,
+            "compression_n": 0.6078862301080274
+          },
+          {
+            "geom": [
+              "cylinder_wall_5",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.05130102731662648,
+              0.04352868735688137,
+              0.9977341619756467
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0028351610985912767,
+              0.012075947961638522,
+              0.24469315834243222
+            ],
+            "outward_dot_xy": 0.00038020348639426424,
+            "compression_n": 0.8694544322913829
+          },
+          {
+            "geom": [
+              "cylinder_wall_6",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              -0.0051752440682583025,
+              0.014775108120537082,
+              0.999877449005057
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0026602793502632505,
+              0.013747726973838581,
+              0.244732582447876
+            ],
+            "outward_dot_xy": 0.00018935655752272916,
+            "compression_n": 0.5526203521921157
+          },
+          {
+            "geom": [
+              "cylinder_wall_6",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              -0.005175244068186398,
+              0.014775108120319673,
+              0.9998774490050607
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0027517429181308506,
+              0.012145649832326078,
+              0.24468850665762687
+            ],
+            "outward_dot_xy": 0.00016521234824992968,
+            "compression_n": 0.8877186466966712
+          },
+          {
+            "geom": [
+              "cylinder_wall_7",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              0.03174611328181524,
+              0.008617276294393725,
+              0.9994588169808521
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0014699346037068128,
+              0.01394281243515677,
+              0.24474618724721775
+            ],
+            "outward_dot_xy": 0.00016681377752079114,
+            "compression_n": 0.46183532022132373
+          },
+          {
+            "geom": [
+              "cylinder_wall_7",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              0.028491638248092286,
+              -0.00651394446223271,
+              0.9995728062915092
+            ],
+            "contact_position_cylinder_relative_m": [
+              0.0011184133365940152,
+              0.011844580237439561,
+              0.24470892774964115
+            ],
+            "outward_dot_xy": -4.528950964706187e-05,
+            "compression_n": 0.7575169697390363
+          },
+          {
+            "geom": [
+              "cylinder_wall_8",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              0.032947412609516835,
+              0.015958961475300543,
+              0.9993296651010457
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0005958206888587725,
+              0.014281735811975393,
+              0.24476966163174863
+            ],
+            "outward_dot_xy": 0.00020829092154661888,
+            "compression_n": 0.3167523533277623
+          },
+          {
+            "geom": [
+              "cylinder_wall_8",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              0.028491638247961595,
+              -0.006513944462038147,
+              0.9995728062915142
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0005311182216114485,
+              0.012152593219949714,
+              0.244726878653322
+            ],
+            "outward_dot_xy": -9.429374554154786e-05,
+            "compression_n": 0.6127705729712397
+          },
+          {
+            "geom": [
+              "cylinder_wall_9",
+              "right_left_official_collision_1_0"
+            ],
+            "normal_from_cylinder": [
+              0.03424397376937766,
+              0.02389437928519895,
+              0.9991278241041319
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0027878233400348007,
+              0.014640726703705587,
+              0.24479457822629136
+            ],
+            "outward_dot_xy": 0.00025436492753947137,
+            "compression_n": 0.17315119336326557
+          },
+          {
+            "geom": [
+              "cylinder_wall_9",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              0.03411882462537698,
+              0.02386546861073577,
+              0.9991327965862061
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0022137122102441342,
+              0.01214725932528582,
+              0.24474648970116142
+            ],
+            "outward_dot_xy": 0.0002143707774617008,
+            "compression_n": 0.4943696835172718
+          },
+          {
+            "geom": [
+              "cylinder_wall_10",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              0.035856504778166425,
+              0.033277736536307966,
+              0.9988027349362404
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.0041800444008066595,
+              0.01251175440543445,
+              0.2447679037347833
+            ],
+            "outward_dot_xy": 0.0002664810846805663,
+            "compression_n": 0.354744889998768
+          },
+          {
+            "geom": [
+              "cylinder_wall_11",
+              "right_left_official_collision_1_2"
+            ],
+            "normal_from_cylinder": [
+              0.038144940756262784,
+              0.04569581132328489,
+              0.9982268561415327
+            ],
+            "contact_position_cylinder_relative_m": [
+              -0.006720078542307606,
+              0.012981530587946322,
+              0.24479557772904526
+            ],
+            "outward_dot_xy": 0.00033686457456049026,
+            "compression_n": 0.18837923763159525
+          }
+        ],
+        "source_tip_error": [
+          -0.04831948371952897,
+          -0.02074385018419205,
+          -0.052637126166834775
+        ]
+      }
+    ]
+  },
+  "alternative_upward_release": {
+    "upward": {
+      "qualification": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/upward-release-qualification.json",
+        "sha256": "24648889e096ee2a4067282fbd4b6ccf29e276e45092fac8f983ad6c04dd1dcf"
+      },
+      "count": 0,
+      "trials": [
+        {
+          "snapshot": 58,
+          "source_time_s": 23.19999999999128,
+          "lift_target_m": 0.025,
+          "retreat_from_original_reset": false,
+          "qualified": false,
+          "reason": "scored replay or fixed input contract failed",
+          "views": {
+            "attempts": [
+              {
+                "output": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-25mm/view_00",
+                "read_lateral_m": 0.14,
+                "exit_code": 0,
+                "failure_reason": null
+              }
+            ],
+            "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-25mm/view_00"
+          },
+          "qualification_failure_message": "ValueError: Correction misses a task phase",
+          "qualification_failure_log": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-25mm/preparation.log",
+            "sha256": "43ec27bb27e4f25bc293c1482699f1188d4297f3b0c1a54aefc897c43b8cceda"
+          }
+        },
+        {
+          "snapshot": 58,
+          "source_time_s": 23.19999999999128,
+          "lift_target_m": 0.04,
+          "retreat_from_original_reset": false,
+          "qualified": false,
+          "reason": "scored replay or fixed input contract failed",
+          "views": {
+            "attempts": [
+              {
+                "output": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-40mm/view_00",
+                "read_lateral_m": 0.14,
+                "exit_code": 0,
+                "failure_reason": null
+              }
+            ],
+            "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-40mm/view_00"
+          },
+          "qualification_failure_message": "ValueError: Correction misses a task phase",
+          "qualification_failure_log": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-58-lift-40mm/preparation.log",
+            "sha256": "43ec27bb27e4f25bc293c1482699f1188d4297f3b0c1a54aefc897c43b8cceda"
+          }
+        },
+        {
+          "snapshot": 66,
+          "source_time_s": 26.399999999983823,
+          "lift_target_m": 0.025,
+          "retreat_from_original_reset": false,
+          "qualified": false,
+          "reason": "scored replay or fixed input contract failed",
+          "views": {
+            "attempts": [
+              {
+                "output": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-66-lift-25mm/view_00",
+                "read_lateral_m": 0.14,
+                "exit_code": 0,
+                "failure_reason": null
+              }
+            ],
+            "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-66-lift-25mm/view_00"
+          },
+          "qualification_failure_message": "ValueError: Correction misses a task phase",
+          "qualification_failure_log": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/seed-862301-snapshot-66-lift-25mm/preparation.log",
+            "sha256": "43ec27bb27e4f25bc293c1482699f1188d4297f3b0c1a54aefc897c43b8cceda"
+          }
+        }
+      ]
+    },
+    "upward-reset": {
+      "qualification": {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/upward-release-qualification.json",
+        "sha256": "b548dc2ab8a611294ac5572b2440d3a4e623c8a151b125e2d75cc37930dc9907"
+      },
+      "count": 1,
+      "trials": [
+        {
+          "snapshot": 58,
+          "source_time_s": 23.19999999999128,
+          "lift_target_m": 0.025,
+          "retreat_from_original_reset": true,
+          "qualified": true,
+          "reason": null,
+          "views": {
+            "attempts": [
+              {
+                "output": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-58-lift-25mm/view_00",
+                "read_lateral_m": 0.14,
+                "exit_code": 0,
+                "failure_reason": null
+              }
+            ],
+            "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-58-lift-25mm/view_00"
+          },
+          "proof": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-58-lift-25mm/prepared/certification.json",
+            "sha256": "4b0c12ea2178a483a4e0fad30700667934d64cc46627e65ece4fbbee58a8b804"
+          },
+          "frames": 784,
+          "modified_robot_wrist_height_m": 0.023675918579101562,
+          "max_slip_m": 0.009265529679727982,
+          "read_error_ml": 0.17721518987341867,
+          "supported_lift_m": 0.11957019982521788,
+          "single_contact_recovery": {
+            "release_frames": 48,
+            "release_seconds": 2.399999999999969,
+            "withdrawal_frames": 34,
+            "initial_aperture_m": 0.050962350368499755,
+            "released_cylinder_shift_m": 0.00029951713682075764,
+            "released_cylinder_tilt_rad": 4.2146848510894035e-08
+          },
+          "wrist_alignment": {
+            "alignment_frames": 50,
+            "closure_frame": 243,
+            "start_grasp_error_m": 0.06885228423118665,
+            "closure_grasp_error_m": 3.969471466058843e-05
+          }
+        },
+        {
+          "snapshot": 66,
+          "source_time_s": 26.399999999983823,
+          "lift_target_m": 0.025,
+          "retreat_from_original_reset": true,
+          "qualified": true,
+          "reason": null,
+          "views": {
+            "attempts": [
+              {
+                "output": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-66-lift-25mm/view_00",
+                "read_lateral_m": 0.14,
+                "exit_code": 0,
+                "failure_reason": null
+              }
+            ],
+            "selected_demonstration": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-66-lift-25mm/view_00"
+          },
+          "proof": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward-reset/seed-862301-snapshot-66-lift-25mm/prepared/certification.json",
+            "sha256": "8c0f2b0038037d722640f31e6e06481466021619c37dfcdf62f7f6f7705e0e43"
+          },
+          "frames": 787,
+          "modified_robot_wrist_height_m": 0.021643638610839844,
+          "max_slip_m": 0.00934274162069921,
+          "read_error_ml": 0.021447721179628232,
+          "supported_lift_m": 0.11954059027972064,
+          "single_contact_recovery": {
+            "release_frames": 48,
+            "release_seconds": 2.399999999999969,
+            "withdrawal_frames": 34,
+            "initial_aperture_m": 0.05196391358971596,
+            "released_cylinder_shift_m": 0.0006976987040056104,
+            "released_cylinder_tilt_rad": 4.4703483581542975e-08
+          },
+          "wrist_alignment": {
+            "alignment_frames": 50,
+            "closure_frame": 246,
+            "start_grasp_error_m": 0.07440259994441935,
+            "closure_grasp_error_m": 3.9418507397179876e-05
+          }
+        }
+      ]
+    }
+  },
+  "regression": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/original-release-regression-proof.json",
+    "sha256": "8e4815da20d25de1e1f23c6b769a81efd7cf671f0f0869df9c1e63daeb4424a7",
+    "kind": "original_planar_release_regression",
+    "passed": true,
+    "source": "/data/hlou/pigment-pour-study/runs/cylinder-v52-contact-recovery-v54/seed-862201-snapshot-27-withdraw-4cm/view_00",
+    "replayed": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/step896/upward/original-release-parent",
+    "frames_verified": 652,
+    "exact": [
+      "timestamp",
+      "joint_command",
+      "base_pose",
+      "phase",
+      "contacts"
+    ],
+    "independent_cases_read": false
+  },
+  "config_and_sampler": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/v55-release-config-proof.json",
+    "sha256": "d78a19154e27e2a2a08c613deb6e0b8ac8039c749d4166f7b1ac1692f3af2bce",
+    "kind": "v54_matched_aperture_release_opening_objective",
+    "release": {
+      "state_aperture_affine_m": [
+        0.0,
+        0.0975
+      ],
+      "tracking_error_affine_m": [
+        -0.020394156239926815,
+        0.020394156239926815
+      ],
+      "action_aperture_affine_m": [
+        0.0,
+        0.0975
+      ],
+      "cue_validity_threshold": 0.0,
+      "allowed_target_drop_m": 0.001,
+      "minimum_opening_gain_m": 0.008,
+      "scale_m": 0.01,
+      "weight": 0.25
+    },
+    "parent": "/data/hlou/pigment-pour-study/runs/cylinder-heading-recovery-v53/v52-step384-single-contact-checkpoint/model.safetensors",
+    "original_config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-single-contact-bc-v54-a6000/train.yml",
+    "config": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/train-v55.yml",
+    "original_rows_reused": true,
+    "prior_auxiliary_terms_preserved": true,
+    "serving_updates": false,
+    "release_sampler_original_mass": 0.0044035161003915324,
+    "release_sampler_target_mass": 0.02,
+    "release_sampler_sha256": "98b4a3a74031c2fc790ee0fb972cf83251f4b343fac1f4d3ef8bfd5106c13cdc",
+    "weighted_affected_draw_mass": 0.020983422652222066,
+    "full_affected_anchors": 57,
+    "affected_training_anchors": 53,
+    "affected_training_frame_targets": 360,
+    "exact_training_draw_mass": 0.005402589707268588,
+    "affected_release_phase_anchors": 15,
+    "affected_episode_count": 19,
+    "anchor_phases": {
+      "approach": 26,
+      "release_contact": 15,
+      "tuck_for_base_return": 5,
+      "wrist_clearance_up": 7
+    },
+    "independent_cases_read": false
+  },
+  "native_loss_and_gradient": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-release-opening-v55/native-release-loss-audit.json",
+    "sha256": "219a98bf217346919b270e40f704085d99c9eb045d08aeb6160370ab760f069c",
+    "kind": "release_opening_native_action_processor_comparison",
+    "measured_previous_aperture_m": 0.0441426220536232,
+    "reserved_scene_used_for_loss_only_as_audit_input": true,
+    "scene_seed_not_added_to_training": 862204,
+    "actual_v54_first_chunk_requested_m": [
+      0.05473744109272957,
+      0.05778765767812729,
+      0.05710517808794976,
+      0.05035415276885033,
+      0.04481399595737458,
+      0.05720240950584412,
+      0.04633182540535927,
+      0.04778923898935318
+    ],
+    "teacher_servo_targets_m": [
+      0.047142622053623205,
+      0.05014262205362321,
+      0.05314262205362321,
+      0.05614262205362321,
+      0.059142622053623216,
+      0.06214262205362322,
+      0.06514262205362321,
+      0.068
+    ],
+    "expected_added_terms": [
+      0.0,
+      0.0,
+      0.0,
+      0.08376594165189774,
+      0.5132738145152437,
+      0.061014250043085146,
+      0.8846151763558454,
+      1.0211871515737045
+    ],
+    "last_tick_normalized_gradient": -3.9410983970761317,
+    "disabled_matches_parent_exactly": true,
+    "native_delta_matches_independent_formula": true,
+    "invalid_masks_narrowing_cue_and_insufficient_gain_disable_expected_rows": true,
+    "gradient_only_on_aperture_requests_with_shortfall": true,
+    "max_delta_error": 1.6653345369377348e-16,
+    "independent_cases_read": false
+  },
+  "v55_native_loader": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/data-validation.json",
+    "sha256": "59e973eff5b4a0fff8e6704cbdf556f43a4042b7103ded95587ffbdb733d679c",
+    "passed": true,
+    "episodes": 156,
+    "frames": 100407
+  },
+  "v55_execution": {
+    "driver_pid": 3653923,
+    "stage": "training",
+    "status": "/data/hlou/pigment-pour-study/runs/cylinder-joint-release-opening-bc-v55-a6000/execution-status.json",
+    "first_gradient": "2026-11-19 14:22:36,975 - [rank0] - INFO - [FSDP Train] Step 0: {'lr_group/state_projection': 5e-05, 'train_loss': 0.011717572808265686, 'grad_norm': 0.9136037230491638, 'lr_group/action': 1e-05, 'visual_param_norm': 0.0, 'total_param_norm': 526.845703125, 'flow_loss': 0.011717572808265686, 'lr': 1e-05, 'channel_loss_/data/hlou/pigment-pour-study/datasets/cylinder-joint-v52-single-contact-v54_flow': 0.011717572808265686, 'action_expert_param_norm': 61.9946403503418, 'org_vlm_param_norm': 523.1854858398438}",
+    "process_live": true
+  },
+  "candidate_ready": []
+}

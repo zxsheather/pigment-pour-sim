@@ -1,0 +1,28 @@
+{
+  "missing_keys": [],
+  "unexpected_keys": [
+    "action_preprocessor.normalizer_action.delta./data/hlou/pigment-pour-study/datasets/cylinder-joint-grasp-recovery-v2",
+    "action_preprocessor.normalizer_action.min./data/hlou/pigment-pour-study/datasets/cylinder-joint-grasp-recovery-v2",
+    "action_preprocessor.normalizer_propri.delta./data/hlou/pigment-pour-study/datasets/cylinder-joint-grasp-recovery-v2",
+    "action_preprocessor.normalizer_propri.min./data/hlou/pigment-pour-study/datasets/cylinder-joint-grasp-recovery-v2"
+  ],
+  "norm_key": "cylinder_joint_v1",
+  "cameras": [
+    "face_view",
+    "left_wrist_view",
+    "right_wrist_view"
+  ],
+  "attention": "sdpa",
+  "torch": "2.9.0+cu130",
+  "flow_steps": 10,
+  "virtual_tail_after_normalization": 0,
+  "action_space": "joint",
+  "active_action_dimensions": 9,
+  "robot_state_dimensions": 18,
+  "base_odometry": true,
+  "flow_noise": "random",
+  "state_embedding_precision": "training",
+  "unclipped_robot_state": false,
+  "state_precision_alignment_applies": true,
+  "token_embedding_dtype": "torch.bfloat16"
+}

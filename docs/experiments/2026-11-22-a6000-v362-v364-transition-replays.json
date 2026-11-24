@@ -1,0 +1,4815 @@
+{
+  "snapshot": "2026-11-22T05:42:36.868428+08:00",
+  "v362": {
+    "pid": 1245626,
+    "process": "",
+    "script": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-physical-realignment-v362/audit-v362-physical-realignment.py",
+      "sha256": "2ee332d642d454ec65dd58c05a8c1e5d7d964ec06270788677b612c78c9f9356"
+    },
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-physical-realignment-v362/v362-exact-approach-physical-label-replay.json",
+      "sha256": "e8c1ce4852719f1240e62f059964bfee0d5520d752e329a8ab0b48bc1774ae4a",
+      "document": {
+        "v357": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-realign-admission-v357/v357-verified-v320-realignment-training-inputs.json",
+          "sha256": "39090bc3130cd3438274ba9c1871697c14665ae1592a278be3a6029a58882c24"
+        },
+        "support": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-realignment-support-v360/v360-v320-actual-approach-realignment-support.json",
+          "sha256": "e37e4baeed0744d35421c419385e0d204e50f446b8bacbc88b310c89f56b1b3c"
+        },
+        "original_policy": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step128-single/summary.json",
+          "sha256": "1ce6c5f0bbca86aa8a8fab5a993107d0e8ad0837cddb46c05e734450a4cfa0e0"
+        },
+        "original_raw_eight_tick_controls_exact": true,
+        "nearest_distinct_episodes": 5,
+        "holdout_for_diagnostic_only": true,
+        "teacher_label_replay_only": true,
+        "model_success_measured": false,
+        "independent_cases_read": false,
+        "cases": [
+          {
+            "tick": 320,
+            "cohort": "wall",
+            "label": null,
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.5570320672661326,
+                "gap_mm": -3.0879518017172813,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.18275639594060936,
+                "gap_mm": -1.3616844266653056,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.04616020798958731,
+                "gap_mm": 0.9895306080579744,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.05688908003977089,
+                "gap_mm": 0.6759242713451387,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.057422768247425426,
+                "gap_mm": 0.2582202851772325,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.062187305905021806,
+                "gap_mm": -2.7805680781602846,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.44402061268917004,
+                "gap_mm": 0.3117931634187693,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.6768967464247551,
+                "gap_mm": 3.3101483434438697,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": false
+          },
+          {
+            "tick": 320,
+            "cohort": "v344",
+            "label": {
+              "episode": 354,
+              "frame": 1,
+              "seed": 882224,
+              "dataset_index": 253321,
+              "rms": 0.03704597770124281,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": -1.0195541381835938,
+              "label_requested_opening_mm": 23.90399742126465
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.3026301242566969,
+                "gap_mm": 3.0019960552453986,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.44753809492693863,
+                "gap_mm": 6.002298071980476,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5075551330064355,
+                "gap_mm": 9.002460613846779,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5332010737938153,
+                "gap_mm": 12.002544701099394,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5446905115096163,
+                "gap_mm": 15.002588108181957,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5499197606987326,
+                "gap_mm": 18.00261117517948,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5521249360930582,
+                "gap_mm": 21.002622619271282,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5527364471802563,
+                "gap_mm": 24.00262825191021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v344",
+            "label": {
+              "episode": 351,
+              "frame": 1,
+              "seed": 882221,
+              "dataset_index": 251557,
+              "rms": 0.03786649855882254,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": -1.0398173332214355,
+              "label_requested_opening_mm": 23.8538818359375
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.3026301242566969,
+                "gap_mm": 3.0019960552453986,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.44753809492693863,
+                "gap_mm": 6.002298071980476,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5075551330064355,
+                "gap_mm": 9.002460613846779,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5332010737938153,
+                "gap_mm": 12.002544701099394,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5446905115096163,
+                "gap_mm": 15.002588108181957,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5499197606987326,
+                "gap_mm": 18.00261117517948,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5521249360930582,
+                "gap_mm": 21.002622619271282,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": -0.5527364471802563,
+                "gap_mm": 24.00262825191021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v344",
+            "label": {
+              "episode": 352,
+              "frame": 0,
+              "seed": 882222,
+              "dataset_index": 252174,
+              "rms": 0.03797654582330518,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": 3.7248849868774414,
+              "label_requested_opening_mm": 23.424707412719727
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.15010204850772826,
+                "gap_mm": 3.001702576875688,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.504306911305933,
+                "gap_mm": 6.002132445573804,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.8594688159915056,
+                "gap_mm": 9.002379253506662,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.2428815813281395,
+                "gap_mm": 12.002506926655773,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.6822737193067336,
+                "gap_mm": 15.002570673823355,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.1929730052909697,
+                "gap_mm": 18.00260536372662,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.7810130566922053,
+                "gap_mm": 21.002622619271282,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.4461060967755017,
+                "gap_mm": 24.00262825191021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v344",
+            "label": {
+              "episode": 353,
+              "frame": 0,
+              "seed": 882223,
+              "dataset_index": 252742,
+              "rms": 0.038250538609642566,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": 3.7230277061462402,
+              "label_requested_opening_mm": 23.262718200683594
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.16287891729212245,
+                "gap_mm": 3.001702576875688,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5173116544254299,
+                "gap_mm": 6.002129539847374,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.8534653712977576,
+                "gap_mm": 9.002376347780231,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.2040528483606114,
+                "gap_mm": 12.002504020929335,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.6034139298923868,
+                "gap_mm": 15.002570673823355,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.0716683452889804,
+                "gap_mm": 18.002602458000183,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.6161267531061467,
+                "gap_mm": 21.002619713544846,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.2370887387457095,
+                "gap_mm": 24.00262825191021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v344",
+            "label": {
+              "episode": 323,
+              "frame": 0,
+              "seed": 882152,
+              "dataset_index": 234991,
+              "rms": 0.03855622028106964,
+              "sampler_weight": 0.0009059976747479846,
+              "label_radial_retreat_mm": 1.307213306427002,
+              "label_requested_opening_mm": 25.508073806762695
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.06260865887479719,
+                "gap_mm": 3.0021064728498468,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.10925018437413919,
+                "gap_mm": 6.002312600612642,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.19443911312511802,
+                "gap_mm": 9.002466425299646,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.2365501748836686,
+                "gap_mm": 12.002547606825832,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.27551455731934793,
+                "gap_mm": 15.002588108181957,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.327378282107417,
+                "gap_mm": 18.00261117517948,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.3957829941761831,
+                "gap_mm": 21.002619713544846,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.4789961080205636,
+                "gap_mm": 24.00262825191021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 357,
+              "frame": 3,
+              "seed": 882233,
+              "dataset_index": 255450,
+              "rms": 0.017122925727708706,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 9.621437072753906,
+              "label_requested_opening_mm": 0.0
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.13009135317281623,
+                "gap_mm": 3.0019989609718323,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.1198930022442389,
+                "gap_mm": 3.2677799463272095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.7158073704739039,
+                "gap_mm": 3.263938575983047,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.6486254531489706,
+                "gap_mm": 3.264083862304687,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.9354693800660927,
+                "gap_mm": 3.2641274482011795,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.595407571301138,
+                "gap_mm": 3.264150694012643,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.636674426117709,
+                "gap_mm": 3.264165222644805,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 9.050839765974047,
+                "gap_mm": 3.2641710340976724,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 358,
+              "frame": 3,
+              "seed": 882234,
+              "dataset_index": 255999,
+              "rms": 0.017139105604697846,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 9.855745315551758,
+              "label_requested_opening_mm": 3.814697265625e-06
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.13499838791952712,
+                "gap_mm": 3.0019989609718323,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.10416106916272955,
+                "gap_mm": 3.2677799463272095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.682233421417322,
+                "gap_mm": 3.263938575983047,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5887016554078057,
+                "gap_mm": 3.264083862304687,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.8392774994076655,
+                "gap_mm": 3.2641274482011795,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.452090908405745,
+                "gap_mm": 3.264150694012643,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.435149216804686,
+                "gap_mm": 3.264165222644805,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 8.780546160434943,
+                "gap_mm": 3.2641710340976724,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 355,
+              "frame": 3,
+              "seed": 882231,
+              "dataset_index": 254286,
+              "rms": 0.01717991901287309,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 9.376213073730469,
+              "label_requested_opening_mm": 3.814697265625e-06
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.13798297698256953,
+                "gap_mm": 3.0019989609718323,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.09459694153075154,
+                "gap_mm": 3.2677799463272095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.6618350987343709,
+                "gap_mm": 3.263938575983047,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5523174011952066,
+                "gap_mm": 3.264083862304687,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.780902566875902,
+                "gap_mm": 3.2641274482011795,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.365146567610234,
+                "gap_mm": 3.264150694012643,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.312907615199641,
+                "gap_mm": 3.264165222644805,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 8.616584109775317,
+                "gap_mm": 3.2641710340976724,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 359,
+              "frame": 3,
+              "seed": 882236,
+              "dataset_index": 256542,
+              "rms": 0.017194279515663425,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 10.448732376098633,
+              "label_requested_opening_mm": 0.0
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.13214672789006732,
+                "gap_mm": 3.0019989609718323,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.1133023706056599,
+                "gap_mm": 3.2677799463272095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.7017389362297434,
+                "gap_mm": 3.263938575983047,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.6235099168020324,
+                "gap_mm": 3.264083862304687,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.8951454733677253,
+                "gap_mm": 3.2641274482011795,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.53532190663801,
+                "gap_mm": 3.264150694012643,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.552181199661933,
+                "gap_mm": 3.264165222644805,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 8.937516044051714,
+                "gap_mm": 3.2641710340976724,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 320,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 356,
+              "frame": 3,
+              "seed": 882232,
+              "dataset_index": 254889,
+              "rms": 0.017260751991881467,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 9.254074096679688,
+              "label_requested_opening_mm": 0.0
+            },
+            "original_start": {
+              "time_s": 16.00000000000806,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.027195245772600175,
+              "grasp_error_local_m": [
+                0.01757537104484745,
+                0.0020663989722127744,
+                -0.04526039772893746
+              ],
+              "grasp_error_m": 0.04859698832909331,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135974182338978,
+                -0.38488222092439095,
+                1.5369557670229843
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": -0.1227715553875422,
+                "gap_mm": 3.0019989609718323,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.14337720238949067,
+                "gap_mm": 3.2677799463272095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.7659740345279387,
+                "gap_mm": 3.263938575983047,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.7382517003781857,
+                "gap_mm": 3.264083862304687,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.079453391750687,
+                "gap_mm": 3.2641274482011795,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.810032876887634,
+                "gap_mm": 3.2641535997390765,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.938521187580763,
+                "gap_mm": 3.264165222644805,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 9.455654258083763,
+                "gap_mm": 3.2641710340976724,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "wall",
+            "label": null,
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.5084234038976732,
+                "gap_mm": -1.6480728238821019,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5849275463352166,
+                "gap_mm": -4.668488278985021,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.5999485257055324,
+                "gap_mm": -7.668429985642433,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.685440088626618,
+                "gap_mm": -4.578393325209616,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.454799522112703,
+                "gap_mm": -6.620181910693645,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 5.513993690425944,
+                "gap_mm": -9.634046405553816,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.012176882431178,
+                "gap_mm": -12.634437046945095,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 6.428601632574512,
+                "gap_mm": -12.746708504855633,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": false
+          },
+          {
+            "tick": 328,
+            "cohort": "v344",
+            "label": {
+              "episode": 352,
+              "frame": 2,
+              "seed": 882222,
+              "dataset_index": 252176,
+              "rms": 0.0368686426213008,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": 5.79465389251709,
+              "label_requested_opening_mm": 23.956680297851562
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.37671628530157664,
+                "gap_mm": 2.9993198812007895,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.8090002633147526,
+                "gap_mm": 5.998939052224161,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.2597389577937053,
+                "gap_mm": 8.998755812644958,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.7511531745622866,
+                "gap_mm": 11.99866555631161,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.29897478700496,
+                "gap_mm": 14.99861888587475,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.9107367512122386,
+                "gap_mm": 17.998595461249355,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.587361592126654,
+                "gap_mm": 20.998580753803257,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 4.324845048196125,
+                "gap_mm": 23.998574763536453,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v344",
+            "label": {
+              "episode": 353,
+              "frame": 2,
+              "seed": 882223,
+              "dataset_index": 252744,
+              "rms": 0.037086336895321516,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": 5.802924633026123,
+              "label_requested_opening_mm": 23.822471618652344
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.3585802557786802,
+                "gap_mm": 2.9993198812007895,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.7558021642232043,
+                "gap_mm": 5.998939052224161,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.1622246598246808,
+                "gap_mm": 8.998755812644958,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.605955906223807,
+                "gap_mm": 11.99866555631161,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.104395477642903,
+                "gap_mm": 14.99861598014832,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.6657741362974345,
+                "gap_mm": 17.998592555522922,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.291718111292013,
+                "gap_mm": 20.998580753803257,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.979008095095552,
+                "gap_mm": 23.998574763536453,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v344",
+            "label": {
+              "episode": 205,
+              "frame": 0,
+              "seed": 881902,
+              "dataset_index": 135017,
+              "rms": 0.03714567353421139,
+              "sampler_weight": 3.588541792764381e-05,
+              "label_radial_retreat_mm": 1.491539478302002,
+              "label_requested_opening_mm": 22.741424560546875
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.060721877615882436,
+                "gap_mm": 2.9992792010307308,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.054272830997598165,
+                "gap_mm": 5.998959392309193,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.0878463446957918,
+                "gap_mm": 8.998767435550693,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.12322792310735103,
+                "gap_mm": 11.99866265058518,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.14583698088140376,
+                "gap_mm": 14.998613074421883,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.1595336017454034,
+                "gap_mm": 17.998589649796486,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.16747478529711285,
+                "gap_mm": 20.998574942350388,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.171933268676535,
+                "gap_mm": 23.998568952083588,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v344",
+            "label": {
+              "episode": 354,
+              "frame": 2,
+              "seed": 882224,
+              "dataset_index": 253322,
+              "rms": 0.03804123157120718,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": -0.49110889434814453,
+              "label_requested_opening_mm": 23.956157684326172
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.23419215605197455,
+                "gap_mm": 2.9993169754743594,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.4036832956050389,
+                "gap_mm": 5.998936146497731,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.4977079294415966,
+                "gap_mm": 8.99875290691853,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5482831970234497,
+                "gap_mm": 11.998659744858742,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5750167550433345,
+                "gap_mm": 14.998613074421883,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5889909558324351,
+                "gap_mm": 17.998589649796486,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5962944284480381,
+                "gap_mm": 20.998574942350388,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.600154641135376,
+                "gap_mm": 23.998568952083588,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v344",
+            "label": {
+              "episode": 351,
+              "frame": 2,
+              "seed": 882221,
+              "dataset_index": 251558,
+              "rms": 0.03894084674223408,
+              "sampler_weight": 0.004693080604326719,
+              "label_radial_retreat_mm": -0.5097508430480957,
+              "label_requested_opening_mm": 23.893951416015625
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.23419215605197455,
+                "gap_mm": 2.9993169754743594,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.4036832956050389,
+                "gap_mm": 5.998936146497731,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.4977079294415966,
+                "gap_mm": 8.99875290691853,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5482831970234497,
+                "gap_mm": 11.998659744858742,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5750167550433345,
+                "gap_mm": 14.998613074421883,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5889909558324351,
+                "gap_mm": 17.998589649796486,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5962944284480381,
+                "gap_mm": 20.998574942350388,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.600154641135376,
+                "gap_mm": 23.998568952083588,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 357,
+              "frame": 0,
+              "seed": 882233,
+              "dataset_index": 255447,
+              "rms": 0.0008943126785242092,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 3.861672878265381,
+              "label_requested_opening_mm": -0.045986175537109375
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.07953424998701983,
+                "gap_mm": -0.04666015505790447,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.16078805471758661,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.28169030726217514,
+                "gap_mm": -0.04598893225192871,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5168912324121748,
+                "gap_mm": -0.04598602652549494,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.9290573633828313,
+                "gap_mm": -0.045983120799064636,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5727024877320064,
+                "gap_mm": -0.045980215072630864,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.4969400786247418,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.7440489490405438,
+                "gap_mm": -0.04597440361976332,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 356,
+              "frame": 0,
+              "seed": 882232,
+              "dataset_index": 254886,
+              "rms": 0.001624341888004748,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 3.5398948192596436,
+              "label_requested_opening_mm": -0.045986175537109375
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.07975673017696777,
+                "gap_mm": -0.04666015505790447,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.16262346126001692,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.2882593280737547,
+                "gap_mm": -0.04598893225192871,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5332421879943385,
+                "gap_mm": -0.04598602652549494,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.9623919099878177,
+                "gap_mm": -0.045983120799064636,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.632658128944059,
+                "gap_mm": -0.045980215072630864,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.5957231212536263,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.896183206456558,
+                "gap_mm": -0.04597440361976332,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 355,
+              "frame": 0,
+              "seed": 882231,
+              "dataset_index": 254283,
+              "rms": 0.0017219484014676864,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 3.831765651702881,
+              "label_requested_opening_mm": -0.045986175537109375
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.07929428363115387,
+                "gap_mm": -0.04666015505790447,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.15880875523478083,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.27460878181834875,
+                "gap_mm": -0.04598893225192871,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.499276719705944,
+                "gap_mm": -0.04598602652549494,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.8931840526750847,
+                "gap_mm": -0.045983120799064636,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5082611035465605,
+                "gap_mm": -0.045980215072630864,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.3908970089441572,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.5808956185322436,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 358,
+              "frame": 0,
+              "seed": 882234,
+              "dataset_index": 255996,
+              "rms": 0.002048553007998278,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 4.055578708648682,
+              "label_requested_opening_mm": -0.045986175537109375
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.07938504857434373,
+                "gap_mm": -0.04666015505790447,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.1595573753758739,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.27728690439795745,
+                "gap_mm": -0.04598893225192871,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5059367839485123,
+                "gap_mm": -0.04598602652549494,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.9067432399175457,
+                "gap_mm": -0.045983120799064636,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5326084242899238,
+                "gap_mm": -0.045980215072630864,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.4309461408123996,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.642493216087662,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          },
+          {
+            "tick": 328,
+            "cohort": "v357_appended",
+            "label": {
+              "episode": 359,
+              "frame": 0,
+              "seed": 882236,
+              "dataset_index": 256539,
+              "rms": 0.003179413705301023,
+              "sampler_weight": 0.0008068701291529735,
+              "label_radial_retreat_mm": 4.329191207885742,
+              "label_requested_opening_mm": -0.045986175537109375
+            },
+            "original_start": {
+              "time_s": 16.40000000000713,
+              "loaded_fingers": 0,
+              "finger_force_n": [
+                0.0,
+                0.0
+              ],
+              "aperture_m": 0.030501323372125626,
+              "grasp_error_local_m": [
+                0.015622978027627396,
+                -0.0029703268106734395,
+                -0.03991877795772292
+              ],
+              "grasp_error_m": 0.042969862897755666,
+              "tilt_rad": 0.0,
+              "height_m": 0.7657844891595746,
+              "base_pose": [
+                0.6135752128059413,
+                -0.3852271207184125,
+                1.5348795703627038
+              ],
+              "held": false,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "radial_mm": 0.07947176079055665,
+                "gap_mm": -0.04666015505790447,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.16027260125682855,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.279845867531707,
+                "gap_mm": -0.04598893225192871,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.5123021654235976,
+                "gap_mm": -0.04598602652549494,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 0.9197076330188896,
+                "gap_mm": -0.045983120799064636,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 1.5558989006656219,
+                "gap_mm": -0.045980215072630864,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 2.4692752884402718,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              },
+              {
+                "radial_mm": 3.701468512492298,
+                "gap_mm": -0.04597730934619709,
+                "cylinder_shift_mm": 0.0,
+                "loaded_fingers": 0,
+                "terminal": null
+              }
+            ],
+            "realized_clearance": true
+          }
+        ]
+      }
+    },
+    "earlier_logs": [
+      {
+        "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-physical-realignment-v362/attempt-1-missing-wall-import/audit-v362-physical-realignment.log",
+        "sha256": "60b82f28eccb5a292a0fcf1b62b741e00de37dd97d894f1addf286b5a8788410"
+      }
+    ]
+  },
+  "v363": {
+    "pid": 1304868,
+    "process": "",
+    "script": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-lift-prompt-boundary-v363/audit-v363-held-lift-prompt-boundary.py",
+      "sha256": "5f4e7d527ef18f84324d3114ddeedf3c84a11f81f0ed2e3040950f4c40c874f4"
+    },
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-lift-prompt-boundary-v363/v363-held-lift-prompt-boundary-support.json",
+      "sha256": "cd7c7c300b57521e8607f7bf4510b03fcd2c5550323e9fb1dc9fdbe26bdc9426",
+      "document": {
+        "replay": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-first-held-floor-v350/v350-v320-exact-first-held-floor-replay.json",
+          "sha256": "08e6f8d7d1bef41ed6275f3e2b433c230d54ff1ca6cf0c8fb26d9c923712f057"
+        },
+        "rollout": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step256-single/summary.json",
+          "sha256": "e85bed3bfcd9fd38a31c563f5a7b777149906f193050869a8b462816127305eb"
+        },
+        "passed_exact_8_frame_replay": true,
+        "layout_used_for_diagnostics_only": true,
+        "independent_cases_read": false,
+        "model_success_measured": false,
+        "uses_fixed_forward_kinematics_for_targets": true,
+        "cohorts": [
+          {
+            "version": 334,
+            "receipt": {
+              "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-verified-lift-segments-v334/v334-verified-partial-lift-training-inputs.json",
+              "sha256": "de7853e9841092cab7e0c29b44db3a986784a6f1179e89222d7672fd39e526b0"
+            },
+            "queries": [
+              {
+                "tick": 304,
+                "starts_with_tray_cue": true,
+                "matching_rms": 0.039846773200585175,
+                "samples_end_in_lift_phase": 53,
+                "lift_label_count": 15,
+                "local_lift_weight_fraction": 1.8597201346111308e-05,
+                "source_seed_ids": [
+                  9202,
+                  9203,
+                  9205,
+                  9207,
+                  9210,
+                  9212,
+                  9401,
+                  9402,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  9410,
+                  9411
+                ],
+                "weighted_planned_end_rise_mm": 0.008912203925944905,
+                "maximum_planned_end_rise_mm": 11.00104683067238,
+                "raw_wall_planned_end_rise_mm": -0.6522228825773801,
+                "v354_aux_eligible_by_cue": false
+              },
+              {
+                "tick": 312,
+                "starts_with_tray_cue": false,
+                "matching_rms": 0.036783265397236836,
+                "samples_end_in_lift_phase": 128,
+                "lift_label_count": 112,
+                "local_lift_weight_fraction": 0.9902821050387848,
+                "source_seed_ids": [
+                  43,
+                  46,
+                  101,
+                  9203,
+                  9210,
+                  9401,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  881713,
+                  881903,
+                  882004,
+                  882005,
+                  882018,
+                  882019,
+                  882119,
+                  882184,
+                  882185,
+                  882186,
+                  882204,
+                  882205,
+                  882206,
+                  882207,
+                  882211,
+                  882212
+                ],
+                "weighted_planned_end_rise_mm": 9.443631013089034,
+                "maximum_planned_end_rise_mm": 15.8608597395955,
+                "raw_wall_planned_end_rise_mm": -5.85982664227036,
+                "v354_aux_eligible_by_cue": true
+              }
+            ]
+          },
+          {
+            "version": 344,
+            "receipt": {
+              "path": "/data/hlou/pigment-pour-study/runs/cylinder-v217-early-unload-admission-v344/v344-verified-early-unload-training-inputs.json",
+              "sha256": "0dd6392500ba86192819af263c61f0398662a855b652a60e67193af75f2a23a1"
+            },
+            "queries": [
+              {
+                "tick": 304,
+                "starts_with_tray_cue": true,
+                "matching_rms": 0.03953047493805479,
+                "samples_end_in_lift_phase": 45,
+                "lift_label_count": 13,
+                "local_lift_weight_fraction": 8.799752061082247e-06,
+                "source_seed_ids": [
+                  9202,
+                  9203,
+                  9205,
+                  9207,
+                  9210,
+                  9212,
+                  9401,
+                  9402,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  9411
+                ],
+                "weighted_planned_end_rise_mm": 0.06775699362562862,
+                "maximum_planned_end_rise_mm": 11.00104683067238,
+                "raw_wall_planned_end_rise_mm": -0.6522228825773801,
+                "v354_aux_eligible_by_cue": false
+              },
+              {
+                "tick": 312,
+                "starts_with_tray_cue": false,
+                "matching_rms": 0.03680652555571864,
+                "samples_end_in_lift_phase": 128,
+                "lift_label_count": 113,
+                "local_lift_weight_fraction": 0.9910238669175425,
+                "source_seed_ids": [
+                  42,
+                  43,
+                  46,
+                  101,
+                  9203,
+                  9205,
+                  9210,
+                  9401,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  881713,
+                  881714,
+                  881903,
+                  882004,
+                  882018,
+                  882019,
+                  882119,
+                  882184,
+                  882185,
+                  882186,
+                  882204,
+                  882205,
+                  882206,
+                  882207,
+                  882211,
+                  882212
+                ],
+                "weighted_planned_end_rise_mm": 9.47111011039109,
+                "maximum_planned_end_rise_mm": 15.848749696093623,
+                "raw_wall_planned_end_rise_mm": -5.85982664227036,
+                "v354_aux_eligible_by_cue": true
+              }
+            ]
+          },
+          {
+            "version": 357,
+            "receipt": {
+              "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-realign-admission-v357/v357-verified-v320-realignment-training-inputs.json",
+              "sha256": "39090bc3130cd3438274ba9c1871697c14665ae1592a278be3a6029a58882c24"
+            },
+            "queries": [
+              {
+                "tick": 304,
+                "starts_with_tray_cue": true,
+                "matching_rms": 0.03917080286424088,
+                "samples_end_in_lift_phase": 32,
+                "lift_label_count": 9,
+                "local_lift_weight_fraction": 6.006938419705063e-06,
+                "source_seed_ids": [
+                  9202,
+                  9203,
+                  9207,
+                  9401,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  9411
+                ],
+                "weighted_planned_end_rise_mm": 0.0038576892923727368,
+                "maximum_planned_end_rise_mm": 11.001046290901705,
+                "raw_wall_planned_end_rise_mm": -0.6522228825773801,
+                "v354_aux_eligible_by_cue": false
+              },
+              {
+                "tick": 312,
+                "starts_with_tray_cue": false,
+                "matching_rms": 0.036796976858558796,
+                "samples_end_in_lift_phase": 128,
+                "lift_label_count": 113,
+                "local_lift_weight_fraction": 0.9910278435624552,
+                "source_seed_ids": [
+                  42,
+                  43,
+                  46,
+                  101,
+                  9203,
+                  9205,
+                  9210,
+                  9401,
+                  9403,
+                  9404,
+                  9407,
+                  9408,
+                  881713,
+                  881714,
+                  881903,
+                  882004,
+                  882005,
+                  882017,
+                  882018,
+                  882019,
+                  882119,
+                  882184,
+                  882185,
+                  882186,
+                  882204,
+                  882205,
+                  882206,
+                  882207,
+                  882211,
+                  882212
+                ],
+                "weighted_planned_end_rise_mm": 9.492290503857935,
+                "maximum_planned_end_rise_mm": 15.8608597395955,
+                "raw_wall_planned_end_rise_mm": -5.85982664227036,
+                "v354_aux_eligible_by_cue": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "earlier_logs": []
+  },
+  "v364": {
+    "pid": 1325295,
+    "process": "",
+    "script": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-held-transition-replay-v364/audit-v364-held-transition-replay.py",
+      "sha256": "f8652d499a20c2b9fbb29dc22756aa82213df0ef129acdc0331b036d7ae8a399"
+    },
+    "receipt": {
+      "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-held-transition-replay-v364/v364-exact-held-transition-controls.json",
+      "sha256": "f36cc8ea57f8ae28e71f5b391a5f58f1f0b1a02bc8448f37082b8862beb0861c",
+      "document": {
+        "boundary": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-v320-lift-prompt-boundary-v363/v363-held-lift-prompt-boundary-support.json",
+          "sha256": "cd7c7c300b57521e8607f7bf4510b03fcd2c5550323e9fb1dc9fdbe26bdc9426"
+        },
+        "source_model": {
+          "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step256-single/summary.json",
+          "sha256": "e85bed3bfcd9fd38a31c563f5a7b777149906f193050869a8b462816127305eb"
+        },
+        "source_tick": 304,
+        "fixed_geometry": true,
+        "teacher_commands_in_development_only": true,
+        "exact_raw_wall_control": true,
+        "model_success_measured": false,
+        "independent_cases_read": false,
+        "trials": [
+          {
+            "label": null,
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.2013375266345374,
+                "loaded": 2,
+                "tilt_rad": 0.03585728369593711,
+                "prompt": 0,
+                "supported_lift_mm": 0.9874093326982525,
+                "max_slip_mm": 0.14692238168087568,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 0.5548573162634796,
+                "loaded": 2,
+                "tilt_rad": 0.0393273529258997,
+                "prompt": 0,
+                "supported_lift_mm": 1.3432555975236848,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 0.6300148634392766,
+                "loaded": 2,
+                "tilt_rad": 0.04470183822248828,
+                "prompt": 0,
+                "supported_lift_mm": 1.5559149921294813,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 0.7495513325654901,
+                "loaded": 2,
+                "tilt_rad": 0.04969994884597644,
+                "prompt": 0,
+                "supported_lift_mm": 1.637323431543325,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 0.7851779866303588,
+                "loaded": 2,
+                "tilt_rad": 0.051424595508546354,
+                "prompt": 1,
+                "supported_lift_mm": 1.6559820404986603,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 0.889182497596952,
+                "loaded": 2,
+                "tilt_rad": 0.05280077908409494,
+                "prompt": 1,
+                "supported_lift_mm": 1.683121048213665,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 0.8573504118505326,
+                "loaded": 2,
+                "tilt_rad": 0.05325519780153341,
+                "prompt": 1,
+                "supported_lift_mm": 1.6838579459622638,
+                "max_slip_mm": 0.2715105190626485,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 0.8018730619532288,
+                "loaded": 2,
+                "tilt_rad": 0.051903499489313165,
+                "prompt": 1,
+                "supported_lift_mm": 1.6838579459622638,
+                "max_slip_mm": 0.2923816448431895,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 1.1139545390479455,
+                "loaded": 2,
+                "tilt_rad": 0.0509980856253196,
+                "prompt": 1,
+                "supported_lift_mm": 1.754470918588158,
+                "max_slip_mm": 0.4799226817250446,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 1.2760059835701387,
+                "loaded": 2,
+                "tilt_rad": 0.04934819357794003,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.5966028951086932,
+                "terminal": null
+              },
+              {
+                "offset": 11,
+                "relative_tip_mm": 1.137177790248467,
+                "loaded": 2,
+                "tilt_rad": 0.048073651597511015,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.5966028951086932,
+                "terminal": null
+              },
+              {
+                "offset": 12,
+                "relative_tip_mm": 0.9716094131932973,
+                "loaded": 2,
+                "tilt_rad": 0.04686498745263307,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.5966028951086932,
+                "terminal": null
+              },
+              {
+                "offset": 13,
+                "relative_tip_mm": 0.8148656177378033,
+                "loaded": 2,
+                "tilt_rad": 0.04633415081849869,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.5966028951086932,
+                "terminal": null
+              },
+              {
+                "offset": 14,
+                "relative_tip_mm": 0.5529869208220628,
+                "loaded": 2,
+                "tilt_rad": 0.04343465841922819,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.6017420739513413,
+                "terminal": null
+              },
+              {
+                "offset": 15,
+                "relative_tip_mm": 0.5680709348392377,
+                "loaded": 2,
+                "tilt_rad": 0.04214427241081696,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.6892079204665427,
+                "terminal": null
+              },
+              {
+                "offset": 16,
+                "relative_tip_mm": 0.42859494590952174,
+                "loaded": 2,
+                "tilt_rad": 0.04044294228951666,
+                "prompt": 1,
+                "supported_lift_mm": 1.8295762368194524,
+                "max_slip_mm": 0.6892079204665427,
+                "terminal": "collision:[['target_tray_floor', 'cylinder_base']]"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 59927,
+              "seed": 9401,
+              "episode": 95,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 62344,
+              "seed": 9404,
+              "episode": 98,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 65388,
+              "seed": 9408,
+              "episode": 102,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 52316,
+              "seed": 9210,
+              "episode": 84,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 67717,
+              "seed": 9411,
+              "episode": 105,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 61597,
+              "seed": 9403,
+              "episode": 97,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 58333,
+              "seed": 9203,
+              "episode": 93,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 64553,
+              "seed": 9407,
+              "episode": 101,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 51569,
+              "seed": 9202,
+              "episode": 83,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 59062,
+              "seed": 9207,
+              "episode": 94,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 53063,
+              "seed": 9205,
+              "episode": 85,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046193189424
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 60762,
+              "seed": 9402,
+              "episode": 96,
+              "frame": 200,
+              "matching_label_rise_mm": 11.00104683067238
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 53766,
+              "seed": 9212,
+              "episode": 86,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 66970,
+              "seed": 9410,
+              "episode": 104,
+              "frame": 200,
+              "matching_label_rise_mm": 11.001046290901705
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": 0.7506935661727443,
+                "loaded": 2,
+                "tilt_rad": 0.03198922245164136,
+                "prompt": 0,
+                "supported_lift_mm": 1.2348289916428445,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 1.0545002196253872,
+                "loaded": 2,
+                "tilt_rad": 0.03265420171591364,
+                "prompt": 0,
+                "supported_lift_mm": 1.654120671470749,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 1.4386478754406795,
+                "loaded": 2,
+                "tilt_rad": 0.033748869142562934,
+                "prompt": 0,
+                "supported_lift_mm": 2.1315864681803465,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.4446431735499754,
+                "loaded": 2,
+                "tilt_rad": 0.04276507927875798,
+                "prompt": 0,
+                "supported_lift_mm": 2.1916807901483093,
+                "max_slip_mm": 0.4994587032739435,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.4458778171800866,
+                "loaded": 2,
+                "tilt_rad": 0.05394474003421242,
+                "prompt": 1,
+                "supported_lift_mm": 2.854739337142309,
+                "max_slip_mm": 0.5753787432178561,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.980106725431808,
+                "loaded": 2,
+                "tilt_rad": 0.0710406508988911,
+                "prompt": 1,
+                "supported_lift_mm": 3.627313390983211,
+                "max_slip_mm": 0.581086929915427,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.501334926001576,
+                "loaded": 2,
+                "tilt_rad": 0.07671117318237733,
+                "prompt": 1,
+                "supported_lift_mm": 4.091437522968366,
+                "max_slip_mm": 0.7242186037449917,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.3376767812417505,
+                "loaded": 2,
+                "tilt_rad": 0.091653489872639,
+                "prompt": 1,
+                "supported_lift_mm": 4.996759882142432,
+                "max_slip_mm": 0.9416787900925576,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 5.575875107705075,
+                "loaded": 2,
+                "tilt_rad": 0.11391284866332202,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.1586448729400518,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 6.38940814622746,
+                "loaded": 2,
+                "tilt_rad": 0.15835391749706085,
+                "prompt": 1,
+                "supported_lift_mm": 6.590429746657911,
+                "max_slip_mm": 1.9051846424611036,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          },
+          {
+            "label": {
+              "index": 59930,
+              "seed": 9401,
+              "episode": 95,
+              "frame": 203,
+              "matching_label_rise_mm": 9.42927526339532
+            },
+            "start": {
+              "time_s": 15.200000000007085,
+              "loaded_fingers": 2,
+              "finger_force_n": [
+                0.9100887292991084,
+                2.0114726742503324
+              ],
+              "aperture_m": 0.026756155639886856,
+              "grasp_error_local_m": [
+                0.012504877593906713,
+                0.002051054693815522,
+                -0.01529188437398672
+              ],
+              "grasp_error_m": 0.019860023079115295,
+              "tilt_rad": 0.03263802220494102,
+              "height_m": 0.76664016033056,
+              "base_pose": [
+                0.6139059423807516,
+                -0.3671574349745462,
+                1.554470263275419
+              ],
+              "held": true,
+              "progress_prompt": 0,
+              "forbidden_contacts": []
+            },
+            "rows": [
+              {
+                "offset": 1,
+                "relative_tip_mm": -0.11847090786210046,
+                "loaded": 2,
+                "tilt_rad": 0.032635584452342915,
+                "prompt": 0,
+                "supported_lift_mm": 0.7887593990032471,
+                "max_slip_mm": 0.1830985900235119,
+                "terminal": null
+              },
+              {
+                "offset": 2,
+                "relative_tip_mm": 0.6714403137553226,
+                "loaded": 2,
+                "tilt_rad": 0.03473886389372215,
+                "prompt": 0,
+                "supported_lift_mm": 1.1860476911981221,
+                "max_slip_mm": 0.40440366039093273,
+                "terminal": null
+              },
+              {
+                "offset": 3,
+                "relative_tip_mm": 0.9085700398034913,
+                "loaded": 2,
+                "tilt_rad": 0.03617510399996175,
+                "prompt": 0,
+                "supported_lift_mm": 1.5738885517815326,
+                "max_slip_mm": 0.4899305242353473,
+                "terminal": null
+              },
+              {
+                "offset": 4,
+                "relative_tip_mm": 1.272758992885148,
+                "loaded": 2,
+                "tilt_rad": 0.037122154756007386,
+                "prompt": 0,
+                "supported_lift_mm": 1.8404875759252537,
+                "max_slip_mm": 0.5235744381208962,
+                "terminal": null
+              },
+              {
+                "offset": 5,
+                "relative_tip_mm": 2.017525597459713,
+                "loaded": 2,
+                "tilt_rad": 0.04208070660409391,
+                "prompt": 1,
+                "supported_lift_mm": 2.526344598526409,
+                "max_slip_mm": 0.5235744381208962,
+                "terminal": null
+              },
+              {
+                "offset": 6,
+                "relative_tip_mm": 2.952574015490539,
+                "loaded": 2,
+                "tilt_rad": 0.06042493364837551,
+                "prompt": 1,
+                "supported_lift_mm": 3.538720920724159,
+                "max_slip_mm": 0.5235744381208962,
+                "terminal": null
+              },
+              {
+                "offset": 7,
+                "relative_tip_mm": 3.4359068784868274,
+                "loaded": 2,
+                "tilt_rad": 0.07705023154183273,
+                "prompt": 1,
+                "supported_lift_mm": 4.074134085590542,
+                "max_slip_mm": 0.6903995701127545,
+                "terminal": null
+              },
+              {
+                "offset": 8,
+                "relative_tip_mm": 4.183260378634923,
+                "loaded": 2,
+                "tilt_rad": 0.08462582585169119,
+                "prompt": 1,
+                "supported_lift_mm": 4.923508108465757,
+                "max_slip_mm": 0.7454500620265838,
+                "terminal": null
+              },
+              {
+                "offset": 9,
+                "relative_tip_mm": 4.119244874314143,
+                "loaded": 2,
+                "tilt_rad": 0.09870298757078208,
+                "prompt": 1,
+                "supported_lift_mm": 5.329468410205429,
+                "max_slip_mm": 0.7454500620265838,
+                "terminal": null
+              },
+              {
+                "offset": 10,
+                "relative_tip_mm": 4.8529209038021826,
+                "loaded": 2,
+                "tilt_rad": 0.10199301274861385,
+                "prompt": 1,
+                "supported_lift_mm": 5.912466464740085,
+                "max_slip_mm": 0.8732209085521743,
+                "terminal": null
+              },
+              {
+                "offset": 11,
+                "relative_tip_mm": 5.734481645892187,
+                "loaded": 2,
+                "tilt_rad": 0.11007636350907077,
+                "prompt": 1,
+                "supported_lift_mm": 6.714203452657719,
+                "max_slip_mm": 1.1012277736137188,
+                "terminal": null
+              },
+              {
+                "offset": 12,
+                "relative_tip_mm": 5.964265099035249,
+                "loaded": 2,
+                "tilt_rad": 0.13112832095361282,
+                "prompt": 1,
+                "supported_lift_mm": 6.714203452657719,
+                "max_slip_mm": 1.2373719334667577,
+                "terminal": "cylinder_tilt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "earlier_logs": []
+  },
+  "candidates": [],
+  "live": {
+    "286": {
+      "stage": "neural_evaluation_256",
+      "driver_pid": 1049293,
+      "driver": "Ssl        23:49 /data/hlou/pigment-pour-study/.venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-fresh-recovery-bc-v286-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-v102-step512-warm-start-v121/checkpoint-v102-step512 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-fresh-recovery-bc-v286-a6000/driver.log --data-port 30518 --train-port 30519 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-start-recovery-data-v97/same-normalizer-wall-x",
+      "last_backward": "2026-11-22 05:42:33,877 - [rank0] - INFO -  epoch   0/1000 | iter    369/ 56803 | loss 0.009852 | flow_loss 0.009852 | lr 0.000010 | time_current_backward_step 3.614618s |",
+      "checkpoints": [
+        {
+          "step": 128,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-fresh-recovery-bc-v286-a6000-step128-single/summary.json",
+            "sha256": "a1cdd065d51b256b56fdd3405a459e6d8fa33d65cae796313eb7f1d664783590"
+          },
+          "success": false,
+          "failure": "timeout",
+          "held": false,
+          "supported_lift_m": 0.0
+        }
+      ]
+    },
+    "320": {
+      "stage": "neural_evaluation_768",
+      "driver_pid": 584442,
+      "driver": "Ssl        59:03 /data/hlou/pigment-pour-study/.venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/checkpoint-v217-step768 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000/driver.log --data-port 30528 --train-port 30529 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-start-recovery-data-v97/same-normalizer-wall-x",
+      "last_backward": "2026-11-22 05:42:35,754 - [rank0] - INFO -  epoch   0/1000 | iter    970/ 59647 | loss 0.011586 | flow_loss 0.011586 | lr 0.000010 | time_current_backward_step 3.623233s |",
+      "checkpoints": [
+        {
+          "step": 128,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step128-single/summary.json",
+            "sha256": "1ce6c5f0bbca86aa8a8fab5a993107d0e8ad0837cddb46c05e734450a4cfa0e0"
+          },
+          "success": false,
+          "failure": "timeout",
+          "held": false,
+          "supported_lift_m": 0.0
+        },
+        {
+          "step": 256,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step256-single/summary.json",
+            "sha256": "e85bed3bfcd9fd38a31c563f5a7b777149906f193050869a8b462816127305eb"
+          },
+          "success": false,
+          "failure": "collision:[['target_tray_floor', 'cylinder_base']]",
+          "held": true,
+          "supported_lift_m": 0.0018295762368194524
+        },
+        {
+          "step": 384,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step384-single/summary.json",
+            "sha256": "9d4d655a40d36c1e4fe3b1c1a07b590cccc2eb88a1cdc3a0a6fa550b96926669"
+          },
+          "success": false,
+          "failure": "timeout",
+          "held": false,
+          "supported_lift_m": 0.0
+        },
+        {
+          "step": 512,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step512-single/summary.json",
+            "sha256": "382e3b720c2151dfc68535b615b27ec2203a8fbd0b1f3aa3d19ed1f6cc005936"
+          },
+          "success": false,
+          "failure": "timeout",
+          "held": false,
+          "supported_lift_m": 0.0
+        },
+        {
+          "step": 640,
+          "file": {
+            "path": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v217-clearance-bc-v320-a6000-step640-single/summary.json",
+            "sha256": "6eaa53353b4ebeca3bd82566df2c6089fa256d7b6f6428beb392bd51cd297675"
+          },
+          "success": false,
+          "failure": "timeout",
+          "held": false,
+          "supported_lift_m": 0.0
+        }
+      ]
+    },
+    "334": {
+      "stage": "neural_evaluation_128",
+      "driver_pid": 1180830,
+      "driver": "Ss         13:01 /data/hlou/pigment-pour-study/.venv-wall/bin/python /data/hlou/pigment-pour-study/pigment-pour-sim-v74-runtime/simulation/train_and_evaluate_cylinder_joints.py --run /data/hlou/pigment-pour-study/runs/cylinder-joint-v217-held-lift-bc-v334-a6000 --parent /data/hlou/pigment-pour-study/runs/cylinder-v217-clearance-admission-v320/checkpoint-v217-step768 --log /data/hlou/pigment-pour-study/runs/cylinder-joint-v217-held-lift-bc-v334-a6000/driver.log --data-port 30532 --train-port 30533 --training-wall-root /data/hlou/pigment-pour-study/runs/cylinder-v217-verified-lift-segments-v334/same-normalizer-wall-x",
+      "last_backward": "2026-11-22 05:42:34,368 - [rank0] - INFO -  epoch   0/1000 | iter    190/ 59744 | loss 0.005860 | flow_loss 0.005860 | lr 0.000010 | time_current_backward_step 3.624536s |",
+      "checkpoints": []
+    }
+  }
+}

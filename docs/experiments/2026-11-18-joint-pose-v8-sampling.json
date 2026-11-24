@@ -1,0 +1,91 @@
+{
+  "kind": "grasp_event_training_sampling",
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-pose-recovery-v8",
+  "base_weights_sha256": "e69a2b2209fd395a65193358a560f549c6655593ed540e16353a8f56b097f30a",
+  "weights_sha256": "9dc9e8114d9317b5544688906c7ffc54cb6c78fb5c135b1ddd8d5bb09f57e648",
+  "frames": 42011,
+  "eligible_anchors": 39911,
+  "training_split_seed": 48,
+  "groups": {
+    "reopen": {
+      "total_anchors": 140,
+      "eligible_anchors": 138,
+      "base_share": 0.04613932475082693,
+      "multiplier": 1.733878864331802,
+      "source_count": 16,
+      "new_share": 0.08000000000000002
+    },
+    "start_close": {
+      "total_anchors": 448,
+      "eligible_anchors": 422,
+      "base_share": 0.01261218549884698,
+      "multiplier": 4.757303958579206,
+      "source_count": 64,
+      "new_share": 0.060000000000000026
+    },
+    "other": {
+      "total_anchors": 41423,
+      "eligible_anchors": 39351,
+      "base_share": 0.9412484897503262,
+      "multiplier": 0.9136800848712353,
+      "source_count": 69,
+      "new_share": 0.8600000000000001
+    }
+  },
+  "anchor_phase_shares": {
+    "advance": {
+      "base": 0.09668219696472526,
+      "new": 0.13681309521126944
+    },
+    "align_eye_level": {
+      "base": 0.08402039831084392,
+      "new": 0.07676776465956689
+    },
+    "approach": {
+      "base": 0.40860910275672174,
+      "new": 0.41118141753168386
+    },
+    "back_away": {
+      "base": 0.07441848105960558,
+      "new": 0.06799468409052886
+    },
+    "close": {
+      "base": 0.03713453711209014,
+      "new": 0.03392908702022856
+    },
+    "find_scale": {
+      "base": 0.020455023296921837,
+      "new": 0.018689347421974648
+    },
+    "hold_for_reading": {
+      "base": 0.018479167415308737,
+      "new": 0.016884047252369052
+    },
+    "lift": {
+      "base": 0.040741998468517976,
+      "new": 0.037225152618539245
+    },
+    "present": {
+      "base": 0.10458487492151242,
+      "new": 0.09555711739453498
+    },
+    "read_stable": {
+      "base": 0.012945545263034602,
+      "new": 0.011828086894633875
+    },
+    "retract": {
+      "base": 0.09825090216797076,
+      "new": 0.08976989263150696
+    },
+    "straighten": {
+      "base": 0.0036777722627470743,
+      "new": 0.003360307273163822
+    }
+  },
+  "executed_prefix": 8,
+  "reopen_min_full_width_difference_mm": 10,
+  "phase_labels_used_only_to_construct_offline_sampling_weights": true,
+  "original_dataset_modified": false,
+  "independent_cases_read": false,
+  "learned_policy_trained": false
+}

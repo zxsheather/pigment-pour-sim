@@ -1,0 +1,313 @@
+{
+  "success": true,
+  "failure_reason": null,
+  "simulated_seconds": 28.350000000044353,
+  "lifted_m": 0.02110813332068262,
+  "final_tilt_rad": 0.016710376541174105,
+  "max_slip_m": 0.008749729895707976,
+  "final_contacts": 2,
+  "phases": [
+    {
+      "phase": "approach",
+      "start_seconds": 0.0,
+      "target": [
+        0.8826798530440161,
+        0.20077243221574306,
+        0.9909164536377718
+      ],
+      "ik_error": 5.83464715727137e-16
+    },
+    {
+      "phase": "advance",
+      "start_seconds": 5.350000000000793,
+      "target": [
+        0.8826798530440161,
+        0.30077243221574307,
+        0.9909164536377718
+      ],
+      "ik_error": 3.344209063375082e-11
+    },
+    {
+      "phase": "lift",
+      "start_seconds": 9.600000000000302,
+      "target": [
+        0.8826798530440161,
+        0.30077243221574307,
+        1.0309164536377717
+      ],
+      "ik_error": 1.8208328234926136e-13
+    },
+    {
+      "phase": "retract",
+      "start_seconds": 12.099999999994475,
+      "target": [
+        0.8826798530440161,
+        0.15077243221574307,
+        1.1109164536377718
+      ],
+      "ik_error": 3.809524845940393e-14
+    },
+    {
+      "phase": "present",
+      "start_seconds": 19.75000000000329,
+      "target": [
+        0.7539422251998542,
+        -0.1810493546836469,
+        1.0120884420790444
+      ],
+      "ik_error": 4.3832154821405814e-14
+    },
+    {
+      "phase": "align_eye_level",
+      "start_seconds": 25.400000000030268,
+      "target": [
+        0.7539422251998542,
+        -0.1810493546836469,
+        1.0193130055719077
+      ],
+      "ik_error": 2.716554244114905e-10
+    }
+  ],
+  "expected_volume_ml": 25.0,
+  "reading": {
+    "valid": true,
+    "volume_ml": 24.9390243902439,
+    "liquid_y": 384.0,
+    "liquid_x": 550,
+    "y20": 411.0,
+    "y35": 329.0,
+    "anchor_x": 549.0,
+    "liquid_bbox": [
+      540,
+      384,
+      21,
+      133
+    ],
+    "boundary_support_columns": 17,
+    "boundary_support_fraction": 1.0,
+    "eye_alignment_error_px": 0.5,
+    "method": "two_color_graduation_anchors_and_liquid_boundary"
+  },
+  "reading_history": [
+    {
+      "time": 25.400000000030268,
+      "valid": true,
+      "volume_ml": 25.0,
+      "liquid_y": 392.0,
+      "liquid_x": 550,
+      "y20": 419.0,
+      "y35": 338.0,
+      "anchor_x": 547.75,
+      "liquid_bbox": [
+        540,
+        392,
+        21,
+        134
+      ],
+      "boundary_support_columns": 17,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 8.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    {
+      "time": 27.600000000040772,
+      "valid": true,
+      "volume_ml": 24.9390243902439,
+      "liquid_y": 384.0,
+      "liquid_x": 550,
+      "y20": 411.0,
+      "y35": 329.0,
+      "anchor_x": 549.0,
+      "liquid_bbox": [
+        540,
+        384,
+        21,
+        133
+      ],
+      "boundary_support_columns": 17,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    {
+      "time": 27.850000000041966,
+      "valid": true,
+      "volume_ml": 24.9390243902439,
+      "liquid_y": 384.0,
+      "liquid_x": 550,
+      "y20": 411.0,
+      "y35": 329.0,
+      "anchor_x": 549.0,
+      "liquid_bbox": [
+        540,
+        384,
+        21,
+        133
+      ],
+      "boundary_support_columns": 17,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    {
+      "time": 28.10000000004316,
+      "valid": true,
+      "volume_ml": 24.9390243902439,
+      "liquid_y": 384.0,
+      "liquid_x": 550,
+      "y20": 411.0,
+      "y35": 329.0,
+      "anchor_x": 549.0,
+      "liquid_bbox": [
+        540,
+        384,
+        21,
+        133
+      ],
+      "boundary_support_columns": 17,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    },
+    {
+      "time": 28.350000000044353,
+      "valid": true,
+      "volume_ml": 24.9390243902439,
+      "liquid_y": 384.0,
+      "liquid_x": 550,
+      "y20": 411.0,
+      "y35": 329.0,
+      "anchor_x": 549.0,
+      "liquid_bbox": [
+        540,
+        384,
+        21,
+        133
+      ],
+      "boundary_support_columns": 17,
+      "boundary_support_fraction": 1.0,
+      "eye_alignment_error_px": 0.5,
+      "method": "two_color_graduation_anchors_and_liquid_boundary"
+    }
+  ],
+  "view_search_history": [],
+  "neq": 0,
+  "policy": "privileged_pose_teacher",
+  "perception": "RGB only; 20/35 mL color calibration anchors",
+  "grip_profile": "official",
+  "geometry_audit_passed": true,
+  "controller_parameters": {
+    "grip_opening_m": 0.003,
+    "motion_scale": 1.0,
+    "grasp_height_m": 0.225,
+    "grasp_x_m": 0.115,
+    "read_lateral_m": 0.14,
+    "read_distance_m": 0.35,
+    "grasp_roll_rad": 0.0,
+    "upright_feedback_gain": 0.0
+  },
+  "grip_force_target_n": null,
+  "grasp_reference_point_m": [
+    0.1147051549359107,
+    -3.8026851144750017e-06,
+    2.0580648488880738e-05
+  ],
+  "hardware_model": "Pinned official parallel-finger collision meshes; no custom pads",
+  "contact_calibration": "Uncalibrated simulation assumptions; no measured real-finger friction",
+  "friction_scale": 1.0,
+  "mass_scale": 1.0,
+  "initial_yaw_rad": 0.0,
+  "yaw_jitter_rad": 0.0,
+  "max_held_tilt_rad": 0.03831433161703611,
+  "max_contact_loss_seconds": 0.0,
+  "final_finger_normal_forces_n": [
+    9.477385274175026,
+    9.429284178484462
+  ],
+  "gripper_actuator_force_limit_n": 20.0,
+  "gripper_force_limit_source": "Official URDF prismatic-joint effort limits",
+  "motion_teacher_inputs": "Simulator cylinder pose for grasp and upright correction; robot/camera calibration",
+  "collision_model": "32 hollow wall segments and base; official",
+  "contact_parameters": {
+    "noslip_iterations": 0,
+    "impratio": 10.0,
+    "physics_timestep": 0.00025,
+    "finger_geoms": [
+      {
+        "type": 7,
+        "condim": 3,
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ]
+      },
+      {
+        "type": 7,
+        "condim": 3,
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ]
+      },
+      {
+        "type": 7,
+        "condim": 3,
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ]
+      },
+      {
+        "type": 7,
+        "condim": 3,
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ]
+      },
+      {
+        "type": 7,
+        "condim": 3,
+        "friction": [
+          1.0,
+          0.005,
+          0.0001
+        ]
+      }
+    ]
+  },
+  "max_lifted_m": 0.11927530538287756,
+  "initial_camera_distance_m": 0.656464119635686,
+  "final_camera_distance_m": 0.37321433131449017,
+  "seed": 100,
+  "position_jitter_m": 0.004,
+  "fps": 20,
+  "frames": 567,
+  "joint_command_columns": [
+    "right_joint1",
+    "right_joint2",
+    "right_joint3",
+    "right_joint4",
+    "right_joint5",
+    "right_joint6",
+    "half_gripper_gap_m",
+    "base_vx",
+    "base_yaw_rate"
+  ],
+  "source_sha256": {
+    "inspect_cylinder.py": "6bbcff34b8aa631db7c67482d8a9960ea35e425065ff6149250c7a32f2a11853",
+    "cylinder_actions.py": "177454229d36d63ec11f2a33cb63a3a3b8fb30e905ede7701df714f4c78db188",
+    "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+    "carry_env.py": "4a4052e5412b550d796591755609305a63aa4584271d7a5731e29892cdaf2d7a",
+    "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+    "scene_config.json": "cbebc6bb5c88431a38d2990d8961b36e0698e128c7c602d2f8ddb2415c7adeef"
+  },
+  "liquid_model": "Rigid upright flat-surface rendering; no sloshing, refraction or meniscus dynamics",
+  "absolute_reading_error_ml": 0.06097560975609895,
+  "final_linear_speed_m_s": 0.000220909042618986,
+  "final_angular_speed_rad_s": 0.0014043887203135038
+}

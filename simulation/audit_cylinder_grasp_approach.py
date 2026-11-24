@@ -1,0 +1,296 @@
+"""Measure approach error on saved neural rollouts and teacher traces."""
+import argparse
+import json
+from pathlib import Path
+
+import mujoco
+import numpy as np
+import imageio.v2 as imageio
+
+from carry_env import CONTROL_DT
+from cylinder_joint_actions import (APERTURE_SCALE_M, JOINT_SERVO_INCREMENT, JOINT_SERVO_STATE_WIDTH, require,
+                                    bounded_joint_command, robot_joint_observation, with_joint_servo_state,
+                                    servo_increment_targets, with_joint_wrist_cue_state)
+from cylinder_progress_prompts import CylinderProgressPrompts, PROGRESS_PROMPTS, PROGRESS_PROTOCOL
+from cylinder_far_approach_prompt import (
+    RANGE_CONDITIONED_PROMPT_PROTOCOLS, range_conditioned_prompt_indices, range_conditioned_prompts,
+)
+from cylinder_tray_vision import (ConfirmedTrayTarget, TRAY_CUE_PROTOCOLS, TRAY_FALLBACK_VIEW, TRAY_VISION_CAMERAS,
+                                  WRIST_TARGET_CUE_PROTOCOL, estimate_from_robot_views, observed_tray_cue_state)
+from cylinder_wrist_cue import cue_from_wrist_rgb
+from inspect_cylinder import CylinderEnv
+
+
+def verify_progress_prompts(initial_base, initial_command, episode, observations, trajectory):
+    require(episode['progress_protocol'] == PROGRESS_PROTOCOL, 'Unknown recorded progress protocol')
+    np.testing.assert_array_equal(initial_command, episode['progress_initial_joint_command'])
+    times = trajectory['timestamp']
+    cartesian = episode['action_space'] == 'cartesian'
+    if cartesian:
+        ticks = len(times)
+        progress_times = trajectory['progress_timestamp']
+        states = trajectory['progress_robot_state']
+        require(len(progress_times) > 0 and len(states) == len(progress_times)
+                and ticks <= len(progress_times) <= ticks + 1, 'Invalid Cartesian progress trace')
+        np.testing.assert_array_equal(progress_times[:ticks], times)
+        if len(progress_times) > ticks:
+            np.testing.assert_allclose(progress_times[-1], times[-1] + CONTROL_DT if ticks else 0.,
+                                       rtol=0., atol=1e-9)
+        times = progress_times
+    else:
+        require(len(times) > 0, 'Progress audit requires an executed controller trace')
+        previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
+        states = with_joint_servo_state(trajectory['robot_joint_state'], previous)
+    router = CylinderProgressPrompts(initial_base)
+    phase = np.array([router.observe(state) for state in states])
+    sample_times = observations['timestamp']
+    sample_indices = np.searchsorted(times, sample_times)
+    require(np.all(sample_indices < len(times)), 'A language observation has no recorded robot state')
+    np.testing.assert_array_equal(times[sample_indices], sample_times)
+    sampled_phases = phase[sample_indices]
+    far_protocol = episode.get('far_approach_prompt_protocol')
+    if far_protocol is None:
+        expected = np.asarray(PROGRESS_PROMPTS)[sampled_phases]
+    else:
+        require(far_protocol in RANGE_CONDITIONED_PROMPT_PROTOCOLS
+                and episode.get('tray_cue_protocol') == WRIST_TARGET_CUE_PROTOCOL,
+                'Unexpected range-conditioned prompt protocol')
+        chosen = range_conditioned_prompt_indices(observations['state'], sampled_phases, far_protocol)
+        expected = np.asarray(range_conditioned_prompts(far_protocol))[chosen]
+    np.testing.assert_array_equal(expected, observations['instruction'])
+    changes = [dict(time_s=float(times[i]), task_index=int(phase[i]))
+               for i in np.flatnonzero(np.diff(phase, prepend=-1))]
+    reported = episode['prompt_changes'] if cartesian else [
+        row for row in episode['prompt_changes'] if row['time_s'] <= times[-1]]
+    require(reported == changes, 'Recorded prompt changes do not match robot progress')
+    return sampled_phases
+
+
+def verify_servo_increments(directory, initial_command, observations, trajectory):
+    chunks = np.load(directory/'predicted_chunks.npy', allow_pickle=False)
+    times = trajectory['timestamp']
+    sample_indices = np.searchsorted(times, observations['timestamp'])
+    require(chunks.ndim == 3 and chunks.shape[2] == 26 and len(chunks) == len(sample_indices)
+            and len(times) and len(chunks) and sample_indices[0] == 0, 'Missing model chunk evidence')
+    ends = np.r_[sample_indices[1:], len(times)]
+    command_counts = ends - sample_indices
+    require(np.all((command_counts > 0) & (command_counts <= chunks.shape[1])), 'Invalid chunk-to-command alignment')
+    np.testing.assert_array_equal(times[sample_indices], observations['timestamp'])
+    raw = np.concatenate([chunk[:count, :9] for chunk, count in zip(chunks, command_counts, strict=True)])
+    np.testing.assert_array_equal(raw, trajectory['unfiltered_model_action'])
+    previous = np.vstack((initial_command, trajectory['joint_command'][:-1]))
+    np.testing.assert_array_equal(servo_increment_targets(raw, previous, CONTROL_DT), trajectory['action'])
+
+
+def wrist_pose_breakdown(env, local_error, initial_base):
+    rotation = env.data.xmat[env.gripper_body].reshape(3, 3)
+    origin = env.data.xpos[env.gripper_body]
+    current_tip = origin + rotation @ env.grasp_offset
+    error_world = rotation @ local_error
+    object_point = current_tip + error_world
+    base = env.base_pose()
+    angle = initial_base[2] - base[2]
+    c, s = np.cos(angle), np.sin(angle)
+    # Rigidly map the measured arm pose onto the reset base pose without a physics step.
+    reset_base_tip = current_tip.copy()
+    reset_base_tip[:2] = initial_base[:2] + np.array([[c, -s], [s, c]]) @ (current_tip[:2] - base[:2])
+    # The official teacher approaches along world +y. Tool roll does not change this axis.
+    nominal_shaft = np.array([0., 1., 0.])
+    official_tip = origin + nominal_shaft * env.grasp_offset[0]
+    return dict(error_world_m=error_world.tolist(),
+                base_xy_delta_m=(base[:2] - initial_base[:2]).tolist(),
+                base_yaw_delta_deg=float(-np.degrees(angle)),
+                wrist_shaft_error_deg=float(np.degrees(np.arccos(np.clip(rotation[:, 0] @ nominal_shaft, -1., 1.)))),
+                error_with_reset_base_rigid_pose_m=(object_point - reset_base_tip).tolist(),
+                error_with_teacher_shaft_same_wrist_origin_m=(object_point - official_tip).tolist())
+
+
+def measure_rollout(folder, *, pose_breakdown=False):
+    summary = json.loads((folder / 'summary.json').read_text())
+    require(summary['evaluation_complete'] and summary['total'] == 1, 'Expected one completed rollout')
+    episode = summary['episodes'][0]
+    action_space = episode['action_space']
+    require(action_space in ('joint', 'cartesian') and episode['geometry_audit']['passed'],
+            'Expected an audited neural rollout')
+    case = episode['case']
+    env = CylinderEnv(case['volume'], friction_scale=case.get('friction_scale', 1),
+                      mass_scale=case.get('mass_scale', 1), **summary['controller']['environment'])
+    directory = folder / 'episode_000'
+    wrist_cue = episode.get('initial_wrist_cue')
+    wrist_rgb = directory / 'initial_right_wrist_1024.png'
+    if wrist_cue is not None and episode['exact_input_images_recorded']:
+        require(wrist_rgb.is_file(), 'Recorded wrist cue is missing its source image')
+    try:
+        env.reset_inspection(seed=case['seed'], jitter=case.get('jitter', .004),
+                             yaw_jitter=case.get('yaw_jitter', 0))
+        initial_base = env.base_pose().copy()
+        progress = episode.get('progress_protocol')
+        require(progress == summary.get('progress_protocol'), 'Progress protocol differs between episode and rollout')
+        require(episode.get('far_approach_prompt_protocol') == summary.get('far_approach_prompt_protocol'),
+                'Range-conditioned prompt protocol differs between episode and rollout')
+        increment = summary.get('joint_action_representation') == JOINT_SERVO_INCREMENT
+        if increment:
+            require(progress and episode['joint_action_representation'] == JOINT_SERVO_INCREMENT,
+                    'Episode and rollout must agree on the increment action layout')
+        tray_protocol = episode.get('tray_cue_protocol')
+        tray_cue = episode.get('initial_tray_cue')
+        require(tray_protocol == summary.get('tray_cue_protocol'), 'Tray protocol differs between episode and rollout')
+        refresh_target = episode.get('refresh_tray_target', False)
+        require(refresh_target == summary.get('refresh_tray_target', False), 'RGB target refresh differs between episode and rollout')
+        require(not refresh_target or tray_protocol == WRIST_TARGET_CUE_PROTOCOL, 'Target refresh requires a wrist-target cue')
+        target_tracker = ConfirmedTrayTarget(tray_cue) if refresh_target else None
+        if tray_protocol:
+            require(tray_protocol in TRAY_CUE_PROTOCOLS and progress == PROGRESS_PROTOCOL and wrist_cue is None,
+                    'Unexpected tray cue configuration')
+            if episode['exact_input_images_recorded']:
+                names = set(episode['initial_tray_images'])
+                require(set(TRAY_VISION_CAMERAS) <= names <= {*TRAY_VISION_CAMERAS, TRAY_FALLBACK_VIEW},
+                        'Unexpected initial tray images')
+                images = {name: imageio.imread(directory/f'initial_tray_{name}.png') for name in names}
+                require(estimate_from_robot_views(env, images) == tray_cue,
+                        'Archived tray images do not reproduce the initial observation')
+        snapshots = []
+        max_state_error = 0.
+        aperture_index = 6 if action_space == 'joint' else 19
+        with (np.load(directory / 'recovery_physics.npz') as physics,
+              np.load(directory / 'model_observations.npz') as observations,
+              np.load(directory / 'trajectory.npz') as trajectory):
+            sampled_phases = None
+            if progress:
+                sampled_phases = verify_progress_prompts(
+                    initial_base, bounded_joint_command(env), episode, observations, trajectory)
+            cartesian_progress = None
+            if progress and action_space == 'cartesian':
+                query_ticks = np.searchsorted(trajectory['progress_timestamp'], observations['timestamp'])
+                cartesian_progress = trajectory['progress_robot_state'][query_ticks]
+            if increment:
+                verify_servo_increments(directory, bounded_joint_command(env), observations, trajectory)
+            require(len(physics['full_state']) == len(observations['state']) == len(observations['timestamp']),
+                    'Snapshot and observation counts differ')
+            if target_tracker is not None:
+                rgb_estimates = [json.loads(row) for row in observations['tray_rgb_estimate']]
+                require(len(rgb_estimates) == len(observations['timestamp']), 'RGB target estimate count differs from observations')
+            spec = int(physics['state_spec'])
+            for i, (state, timestamp, observed) in enumerate(zip(
+                    physics['full_state'], observations['timestamp'], observations['state'])):
+                mujoco.mj_setState(env.model, env.data, state, spec)
+                mujoco.mj_forward(env.model, env.data)
+                if action_space == 'joint':
+                    servo_state = len(observed) == JOINT_SERVO_STATE_WIDTH
+                    if servo_state:
+                        env.hold_targets = dict(zip(physics['hold_actuator_ids'].tolist(),
+                                                    physics['hold_targets'][i].tolist()))
+                        env.applied_action[:] = physics['applied_base_action'][i]
+                    reproduced = robot_joint_observation(env, servo_state=servo_state)
+                    if tray_protocol:
+                        approach = sampled_phases[i] == 0
+                        estimate = tray_cue if approach else None
+                        if target_tracker is not None:
+                            current = rgb_estimates[i]
+                            if approach:
+                                if episode['exact_input_images_recorded']:
+                                    rgb_dir = directory / 'model_observations' / f'chunk_{i:04d}'
+                                    names = list(TRAY_VISION_CAMERAS)
+                                    if (rgb_dir / f'tray_{TRAY_FALLBACK_VIEW}.png').is_file():
+                                        names.append(TRAY_FALLBACK_VIEW)
+                                    images = {name: imageio.imread(rgb_dir / f'tray_{name}.png') for name in names}
+                                    recovered = estimate_from_robot_views(env, images)
+                                    require((recovered is None) == (current is None),
+                                            'Archived RGB target presence differs')
+                                    if recovered is not None:
+                                        require(recovered['method'] == current['method'], 'Archived RGB target method differs')
+                                        np.testing.assert_allclose(recovered['world_xy_m'], current['world_xy_m'],
+                                                                   rtol=0., atol=1e-9)
+                                estimate = target_tracker.observe(current)
+                            else:
+                                require(current is None, 'Target estimate was recorded outside approach')
+                        reproduced = observed_tray_cue_state(env, reproduced, estimate, tray_protocol)
+                    elif wrist_cue is not None:
+                        if i == 0 and wrist_rgb.is_file():
+                            require(cue_from_wrist_rgb(env, imageio.imread(wrist_rgb)) == wrist_cue,
+                                    'Archived wrist image or calibration does not reproduce the model input')
+                        reproduced = with_joint_wrist_cue_state(reproduced, wrist_cue['world_xy_m'])
+                    np.testing.assert_array_equal(reproduced, observed)
+                else:
+                    reproduced = env.state_vector()
+                    if len(observed) == 26:
+                        reproduced = np.r_[reproduced, env.base_pose()].astype(np.float32)
+                    if cartesian_progress is not None:
+                        env.hold_targets = dict(zip(physics['hold_actuator_ids'].tolist(),
+                                                    physics['hold_targets'][i].tolist()))
+                        env.applied_action[:] = physics['applied_base_action'][i]
+                        np.testing.assert_allclose(robot_joint_observation(env, servo_state=True),
+                                                   cartesian_progress[i], rtol=np.finfo(np.float32).eps,
+                                                   atol=1e-12)
+                    # Restoring a snapshot may round a rotation component differently.
+                    np.testing.assert_allclose(reproduced, observed, rtol=np.finfo(np.float32).eps,
+                                               atol=1e-12)
+                max_state_error = max(max_state_error, float(np.abs(reproduced - observed).max()))
+                require(abs(env.data.time - timestamp) < 1e-9, 'Snapshot clock mismatch')
+                error = env.grip_point_relative() - env.grasp_offset
+                row = dict(time_s=float(timestamp), grasp_distance_m=float(np.linalg.norm(error)),
+                                      grasp_point_error_components_m=error.tolist(),
+                                      aperture_m=float(observed[aperture_index] * APERTURE_SCALE_M),
+                                      base_retreat_m=float(initial_base[1] - env.base_pose()[1]))
+                if pose_breakdown:
+                    row['pose_breakdown'] = wrist_pose_breakdown(env, error, initial_base)
+                snapshots.append(row)
+            maximum_contacts = int(trajectory['contacts'].max(initial=0))
+        require(bool(snapshots), 'No rollout snapshots')
+        return dict(rollout=str(folder.resolve()), snapshots=len(snapshots),
+                    robot_observations_reproduced_exactly=max_state_error == 0.,
+                    robot_observations_max_abs_difference=max_state_error,
+                    progress_prompts_reproduced_exactly=bool(progress),
+                    model_servo_increment_decode_exact=increment,
+                    maximum_recorded_loaded_contacts=maximum_contacts,
+                    nearest=min(snapshots, key=lambda row: row['grasp_distance_m']), first=snapshots[0],
+                    last=snapshots[-1], failure_reason=episode['failure_reason'])
+    finally:
+        env.close()
+
+
+def close_references(dataset, volume):
+    provenance = json.loads((dataset / 'demonstration_provenance.json').read_text())
+    references = []
+    for demo in provenance:
+        result = demo['metadata']['result']
+        if result['expected_volume_ml'] != volume or result.get('initial_state_provenance'):
+            continue
+        with np.load(Path(demo['source']) / 'trajectory.npz') as raw:
+            offset = [result['controller_parameters']['grasp_x_m'], 0, 0]
+            positions = raw['grip_point_relative'][raw['phase'] == 'close']
+            require(len(positions) > 0, 'Full teacher demonstration has no close phase')
+            distances = np.linalg.norm(positions - offset, axis=1)
+        references.append(dict(seed=result['seed'], episode=demo['source'],
+                               close_distance_m_min=float(distances.min()),
+                               close_distance_m_max=float(distances.max()),
+                               initial_close_distance_m=float(distances[0])))
+    require(bool(references), 'No full training demonstration for the reference volume')
+    return references
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--rollouts', nargs='+', type=Path, required=True)
+    parser.add_argument('--dataset', type=Path, required=True)
+    parser.add_argument('--reference-volume', type=float, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--pose-breakdown', action='store_true')
+    args = parser.parse_args()
+    report = dict(kind='recorded_joint_policy_geometric_approach_diagnostic',
+                  metric='Distance from cylinder grasp point to the intended offset in the gripper frame',
+                  reference='Recorded close phase of full training demonstrations, for descriptive comparison',
+                  teacher_references=close_references(args.dataset, args.reference_volume),
+                  policy_results=[measure_rollout(folder, pose_breakdown=args.pose_breakdown)
+                                  for folder in args.rollouts],
+                  new_policy_inference_run=False, independent_cases_read=False)
+    if args.pose_breakdown:
+        report['pose_breakdown_method'] = ('Measured world-space error and rigid-pose projections at the '
+                                           'same snapshot. Neither projection advances physics or scores a policy.')
+    with args.output.open('x') as file:
+        json.dump(report, file, indent=2)
+        file.write('\n')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,1434 @@
+{
+  "date_asia_shanghai": "2026-11-24",
+  "scope": "runs/*/checkpoints",
+  "weights_published_branch": "codex/cylinder-inspection-stability",
+  "preserved_verified": [
+    "models/wall-oss-0.5/model.safetensors",
+    "runs/cylinder-joint-early-v718-retreat-bc-v924-a6000/checkpoints/0_1024/model.safetensors",
+    "runs/cylinder-joint-early-v718-retreat-bc-v924-a6000/checkpoints/0_1024/optimizer.pt",
+    "runs/cylinder-v438-final-warm-presentation-v489/checkpoint-v438-step1024/model.safetensors",
+    "runs/cylinder-latest-wall-motion-replays-v1017/pinned-v944-step512/model.safetensors",
+    "runs/cylinder-focused-open-advance-admission-v1077/train-v1077.yml",
+    "datasets/cylinder-joint-v907-plus-early-v718-retreat-v924/meta/info.json",
+    "datasets/cylinder-joint-v1062-plus-matched-advance-v1077/meta/info.json"
+  ],
+  "deleted_files": 281,
+  "by_reason": {
+    "superseded_failed_final_zero_lift": {
+      "count": 119,
+      "allocated_bytes": 1068469719040
+    },
+    "completed_run_optimizer": {
+      "count": 162,
+      "allocated_bytes": 261353869312
+    }
+  },
+  "allocated_bytes_removed": 1329823588352,
+  "files": [
+    {
+      "path": "runs/cylinder-cartesian-epoch-resume-bc-v17-a6000/checkpoints/2_2048/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-cartesian-epoch-resume-bc-v17-a6000/checkpoints/2_2048/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613291520
+    },
+    {
+      "path": "runs/cylinder-cartesian-full-progress-bc-v929-a6000/checkpoints/1_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613291520
+    },
+    {
+      "path": "runs/cylinder-cartesian-readout-correction-bc-v746-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-cartesian-readout-correction-bc-v746-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-25mm-held-lift-bc-v623-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-25mm-held-lift-bc-v623-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-forward-bc-v232-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-forward-bc-v232-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-open-advance-loss-bc-v113-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-open-advance-loss-bc-v113-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-open-advance-sampling-bc-v112-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-open-stall-bc-v188-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-aligned-open-stall-bc-v188-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-all-lowered-grasp-bc-v765-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-all-lowered-grasp-bc-v765-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-approach-and-loaded-recovery-bc-v166-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-approach-and-loaded-recovery-bc-v166-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-approach-coverage-bc-v60-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-approach-held-matched-bc-v553-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-approach-progress-bc-v72-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-approach-progress-bc-v72-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-approach-recovery-bc-v52-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-base-approach-correction-bc-v41-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-base-recovery-bc-v77-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-base-recovery-bc-v77-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-base-response-bc-v63-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-base-response-bc-v63-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-center-and-retain-bc-v787-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-center-and-retain-bc-v787-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-centered-open-advance-bc-v780-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-centered-open-advance-bc-v780-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-certified-direct-advance-bc-v834-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-certified-direct-advance-bc-v834-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-closed-gripper-bc-v21-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-closed-gripper-bc-v21-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-closing-lateral-bc-v51-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-closing-lateral-bc-v51-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-coherent-full-routine-bc-v19-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-coherent-full-routine-bc-v19-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-complete-reset-data-bc-v95-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-contact-release-recovery-bc-v10-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-contact-release-recovery-bc-v10-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-coupled-pose-bc-v31-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-current-depth-bc-v79-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-current-depth-bc-v79-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-diagonal-data-bc-v96-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-diagonal-data-bc-v96-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-durable-readout-bc-v806-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-durable-readout-bc-v806-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-approach-bc-v673-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-early-approach-bc-v673-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-clearance-bc-v1000-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-contact-retreat-bc-v814-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-early-contact-retreat-bc-v814-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-correction-bc-v32-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-heading-return-bc-v944-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-lateral-sampled-bc-v212-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-early-lateral-sampled-bc-v212-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-early-open-lateral-advance-bc-v117-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-early-retreat-with-unloads-bc-v816-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-early-retreat-with-unloads-bc-v816-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-executed-loss-bc-v14-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-executed-loss-bc-v14-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-extended-heading-bc-v716-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-extended-heading-bc-v716-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-far-approach-prompt-bc-v99-a6000-retry2/checkpoints/1_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-far-approach-prompt-bc-v99-a6000-retry2/checkpoints/1_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613291520
+    },
+    {
+      "path": "runs/cylinder-joint-first-contact-recovery-bc-v100-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-floor-recovery-bc-v969-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-forward-near-grasp-bc-v75-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-forward-near-grasp-bc-v75-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-fresh-recovery-bc-v286-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-fresh-recovery-bc-v286-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-full-reset-read-bc-v65-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-full-reset-read-bc-v65-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-full-reset-read-bc-v65-a6000/checkpoints/0_512/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-grasp-transition-bc-v16-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-grasp-transition-bc-v16-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-heading-recovery-bc-v53-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-heading-recovery-bc-v53-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-heading-recovery-loss-bc-v70-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-heading-recovery-loss-bc-v70-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-heading-return-bc-v718-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-aperture-and-base-first-bc-v795-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-held-aperture-and-base-first-bc-v795-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-aperture-v84-bc-v90-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-aperture-v84-bc-v90-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-gravity-reference-bc-v638-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-gravity-reference-bc-v638-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-high-fill-bc-v648-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-planar-bc-v693-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-planar-bc-v693-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-reading-bc-v83-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-reading-bc-v83-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-recovery-bc-v48-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-held-recovery-bc-v48-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-retreat-start-bc-v49-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-retreat-start-bc-v49-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-held-wrist-heading-bc-v69-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-held-wrist-heading-bc-v69-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-high-alignment-loss-bc-v81-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-high-alignment-loss-bc-v81-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-high-approach-bc-v80-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-high-approach-bc-v80-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-high-right-recovery-bc-v224-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-high-right-recovery-bc-v224-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-high-volume-transitions-bc-v536-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-high-volume-transitions-bc-v536-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-hold-successors-bc-v26-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-last-native-right-release-bc-v183-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-late-held-and-pregrasp-bc-v665-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-late-held-and-pregrasp-bc-v665-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-late-held-approach-bc-v604-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-late-held-approach-bc-v604-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-clearance-bc-v82-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-clearance-bc-v82-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-clearance-bc-v88-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-clearance-bc-v88-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-lateral-v84-continuation-bc-v89-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-lift-off-bc-v24-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-lift-off-gripper-bc-v25-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-low-lateral-data-bc-v92-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-low-lateral-data-bc-v92-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-matched-mixed-bc-v525-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-matched-mixed-bc-v525-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-measured-gap-bc-v93-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-measured-gap-bc-v93-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-mixed-approach-recovery-bc-v148-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-mixed-approach-recovery-bc-v148-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-model-near-grasp-bc-v50-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-model-near-grasp-bc-v50-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-narrow-contact-bc-v950-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-narrow-recovery-bc-v76-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-narrow-recovery-bc-v76-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-close-plus-sustained-right-bc-v140-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-near-close-plus-sustained-right-bc-v140-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-close-warm-start-bc-v121-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-near-close-warm-start-bc-v121-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-descent-bc-v85-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-near-descent-bc-v85-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-descent-direction-bc-v86-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-near-descent-direction-bc-v86-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-grasp-bc-v67-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-near-grasp-bc-v67-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-near-grasp-roll-bc-v68-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-near-grasp-roll-bc-v68-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-on-policy-correction-increment-bc-v39-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-on-policy-correction-increment-bc-v39-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-on-policy-unload-bc-v592-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-on-policy-unload-bc-v592-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-phase-balanced-batch-sampling-bc-v115-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-phase-balanced-batch-sampling-bc-v115-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-position-paired-bc-v33-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-post-approach-aperture-bc-v609-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-post-approach-aperture-bc-v609-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-preclosure-data-bc-v91-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-preclosure-data-bc-v91-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-preclosure-realignment-bc-v247-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-preclosure-realignment-bc-v247-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-precontact-delay-bc-v58-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-precontact-delay-bc-v58-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-prelift-and-tight-bc-v508-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-prelift-and-tight-bc-v508-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-progress-prompt-bc-v28-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-reachable-lifts-bc-v683-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-reachable-lifts-bc-v683-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-read-support-bc-v61-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-rear-clearance-align-bc-v71-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-rear-clearance-align-bc-v71-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-recent-approach-bc-v560-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-recent-approach-bc-v560-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-regrasp-recovery-bc-v30-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-release-motion-bc-v56-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-reset-and-first-hold-bc-v692-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-reset-and-first-hold-bc-v692-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-reset-approach-weight-bc-v46-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-reset-through-contact-bc-v101-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-reset-through-contact-bc-v101-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-retimed-start-bc-v98-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-retreat-held-bc-v574-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-rim-release-bc-v78-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-rim-release-bc-v78-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-servo-increment-bc-v37-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-servo-increment-bc-v37-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-servo-state-bc-v20-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-servo-wrist-alignment-bc-v43-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-servo-wrist-clearance-bc-v44-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-shifted-base-recovery-expanded-bc-v84-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-shifted-refreshed-bc-v989-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-shifted-static-bc-v989-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-short-clearance-bc-v66-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-short-clearance-bc-v66-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-short-horizon-bc-v22-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-short-horizon-bc-v22-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-short-tray-retreat-bc-v965-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-bc-v54-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-bc-v54-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-correction-bc-v40-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-focus-bc-v11-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-focus-bc-v11-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-release-bc-v724-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-retreat-bc-v73-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-single-contact-retreat-bc-v73-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-start-recovery-bc-v97-a6000-retry1/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-start-recovery-bc-v97-a6000-retry1/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-stationary-base-bc-v29-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-stationary-base-bc-v29-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-supported-grasp-resume-bc-v217-a6000/checkpoints/1_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-supported-grasp-resume-bc-v217-a6000/checkpoints/1_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613291520
+    },
+    {
+      "path": "runs/cylinder-joint-timed-handoff-bc-v430-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-timed-handoff-bc-v430-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-tray-center-bc-v35-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-tray-center-bc-v35-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-tray-center-rate-bc-v36-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-tray-center-rate-bc-v36-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-tray-departure-yaw-bc-v87-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-tray-precontact-bc-v704-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-tray-vision-bc-v34-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-tray-vision-bc-v34-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v10-pregrasp-correction-bc-v12-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v10-pregrasp-correction-bc-v12-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v101-plus-v97-contact-bc-v102-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v102-plus-both-contact-sides-bc-v110-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v102-plus-v98-wide-contact-bc-v108-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v102-plus-v99-direct-approach-bc-v111-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v102-plus-v99-direct-approach-bc-v111-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v102-teacher-suffix-sampling-bc-v107-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v102-teacher-suffix-sampling-bc-v107-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v103-clearance-prompt-bc-v104-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v103-clearance-prompt-bc-v104-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v11-contact-correction-bc-v13-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v11-contact-correction-bc-v13-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v15-near-grasp-bc-v18-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v15-near-grasp-bc-v18-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v217-clearance-bc-v320-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v217-clearance-bc-v320-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v217-early-unload-bc-v344-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v217-early-unload-bc-v344-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v217-held-lift-bc-v334-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v217-held-lift-bc-v334-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v286-from-v247-held-bc-v296-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v286-from-v247-held-bc-v296-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v297-from-v247-held-bc-v304-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v320-depth-realignment-bc-v389-resumed-v402-a6000/checkpoints/1_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v320-depth-realignment-bc-v389-resumed-v402-a6000/checkpoints/1_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613291520
+    },
+    {
+      "path": "runs/cylinder-joint-v320-precontact-recovery-bc-v378-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v320-precontact-recovery-bc-v378-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v320-prelatch-recovery-bc-v367-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v320-prelatch-recovery-bc-v367-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v334-vertical-lift-loss-bc-v354-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v334-vertical-lift-loss-bc-v354-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v354-before-contact-bc-v412-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v354-before-contact-bc-v412-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v454-held-recovery-bc-v464-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-v454-held-recovery-bc-v464-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v553-approach-and-held-bc-v614-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978739200
+    },
+    {
+      "path": "runs/cylinder-joint-v553-approach-and-held-bc-v614-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v625-matched-approach-bc-v631-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-v625-matched-approach-bc-v631-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v944512-prompt-aligned-warm-bc-v1021-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-v944512-prompt-lift-roll-bc-v1025-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-verified-lift-bc-v15-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-visited-contact-bc-v57-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978743296
+    },
+    {
+      "path": "runs/cylinder-joint-visited-contact-bc-v57-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-weighted-base-approach-bc-v42-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-world-approach-bc-v59-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-world-approach-bc-v59-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-wrist-cue-bc-v23-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-wrist-cue-bc-v23-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-wrist-geometry-bc-v27-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    },
+    {
+      "path": "runs/cylinder-joint-wrist-target-increment-bc-v38-a6000/checkpoints/0_1024/model.safetensors",
+      "reason": "superseded_failed_final_zero_lift",
+      "allocated_bytes": 8978735104
+    },
+    {
+      "path": "runs/cylinder-joint-wrist-target-increment-bc-v38-a6000/checkpoints/0_1024/optimizer.pt",
+      "reason": "completed_run_optimizer",
+      "allocated_bytes": 1613295616
+    }
+  ]
+}

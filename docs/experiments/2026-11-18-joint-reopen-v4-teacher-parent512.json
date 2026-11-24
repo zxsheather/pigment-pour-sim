@@ -1,0 +1,709 @@
+{
+  "kind": "offline_teacher_observation_diagnostic",
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2/checkpoints/0_512",
+  "flow_steps": 10,
+  "flow_seed": 47,
+  "action_space": "joint",
+  "joint_dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4",
+  "physics_advanced": false,
+  "task_success_measured": false,
+  "note": "Teacher observations only; does not measure policy-induced drift or task success.",
+  "episodes": [
+    {
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/fixed-official-training-v1/volume_25_seed_27",
+      "samples": [
+        {
+          "phase": "approach",
+          "frame": 0,
+          "time_s": 0.0,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "88455717ebeb463fae49bdf971b9890247f420cf601c6daa6c3d6ebde0ce8cc7",
+          "image_sha256": {
+            "face_view": "55b84bf3625da5503ab1945b852b75d55e03f19e6f47fb1d66aa5041c8ae4092",
+            "left_wrist_view": "0992f0bb20d9a7fc618729463d21d0f8285355355fd55a8d1597a2ad11bf21c1",
+            "right_wrist_view": "c9add2f7b492f3386e4ac6ffa6c5cd4b2110e704791a824aee433eabf7ff554e"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03590511498671058,
+          "max_arm_error_first8_rad": 0.10842239856719971,
+          "mean_arm_error_horizon_rad": 0.03965339914958433,
+          "arm_mean_signed_error_first8_rad": [
+            0.019139364176428586,
+            -0.010343845933675766,
+            0.04089587181806564,
+            -0.07282000035047531,
+            0.006527126020753116,
+            -0.001615295186313619
+          ],
+          "gripper_width_error_first8_mm": 17.13897043839097,
+          "gripper_width_mean_signed_error_first8_mm": -17.13897043839097,
+          "mean_predicted_gripper_width_first8_mm": 50.86103131994605,
+          "mean_teacher_gripper_width_first8_mm": 68.00000175833702,
+          "base_vx_error_first8_m_s": 0.005000591278076172,
+          "base_vx_mean_signed_error_first8_m_s": 0.0013452637940645218,
+          "first_predicted_right_action": [
+            -0.007695615291595459,
+            1.0095894932746887,
+            -2.2042874097824097,
+            1.1559963822364807,
+            0.05332517623901367,
+            -0.001442328095436096,
+            0.5410544276237488,
+            0.006479822099208832,
+            0.025724947452545166
+          ],
+          "first_teacher_right_action": [
+            -2.733643498231686e-07,
+            1.0000017881393433,
+            -2.199989080429077,
+            1.1999871730804443,
+            2.733643498231686e-07,
+            -2.2021295970406493e-15,
+            0.6974359154701233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "advance",
+          "frame": 131,
+          "time_s": 6.549999999999089,
+          "observed_gripper_width_mm": 67.99997851252557,
+          "robot_state_sha256": "a3610b77c691d450053a10fb115b92376b57a91d31307102bf88131e52394e00",
+          "image_sha256": {
+            "face_view": "2c698c6a85004a369fd8a4d018554f944e8955fc56b173663bcfd936d4c1fa2d",
+            "left_wrist_view": "26e7f429271ca8552bfd1653b28cd39d2b69ad0e82e5afd91a4d36e46942d660",
+            "right_wrist_view": "0d8ef13580301442c7eab04cf441dada5d2f9efb4a4b494f88e1f546b6cd0dd9"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03384024903844531,
+          "max_arm_error_first8_rad": 0.1322840452194214,
+          "mean_arm_error_horizon_rad": 0.039014792074852214,
+          "arm_mean_signed_error_first8_rad": [
+            -0.019831201760098338,
+            -0.016870714724063873,
+            -0.005726248025894165,
+            0.023346508387476206,
+            -0.03764507174491882,
+            -0.004320449798784784
+          ],
+          "gripper_width_error_first8_mm": 17.020799266174436,
+          "gripper_width_mean_signed_error_first8_mm": -17.020799266174436,
+          "mean_predicted_gripper_width_first8_mm": 50.97920249216259,
+          "mean_teacher_gripper_width_first8_mm": 68.00000175833702,
+          "base_vx_error_first8_m_s": 0.005205268040299416,
+          "base_vx_mean_signed_error_first8_m_s": -0.0008463859558105469,
+          "first_predicted_right_action": [
+            -0.0489865206182003,
+            1.3950130939483643,
+            -1.5516619682312012,
+            0.009184685535728931,
+            -0.012194065377116203,
+            -0.010693938637444944,
+            0.4778125584125519,
+            0.015957795083522797,
+            0.012270063161849976
+          ],
+          "first_teacher_right_action": [
+            -0.018883265554904938,
+            1.4399644136428833,
+            -1.4193779230117798,
+            -0.020587017759680748,
+            0.018883243203163147,
+            -5.4450857017718235e-11,
+            0.6974359154701233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "close",
+          "frame": 173,
+          "time_s": 8.64999999999908,
+          "observed_gripper_width_mm": 17.640503905713558,
+          "robot_state_sha256": "8776077223f33faa72f4efb2b35c13642de8eb965232d863d3ecfc321ac5415e",
+          "image_sha256": {
+            "face_view": "449b346d2c140cbcb9f26c467dc88654031d5891896f07c04b05a3bcaf07535c",
+            "left_wrist_view": "8f7a1b63cb9a52ec0cae4008c49d2a511664206bcd6c4bd304ed0644ae218551",
+            "right_wrist_view": "1d749e4a27120e43343f8a29815519ab91b05f98c79bbafcf665402e86970e48"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.02247302808488409,
+          "max_arm_error_first8_rad": 0.0937151312828064,
+          "mean_arm_error_horizon_rad": 0.03881777054604362,
+          "arm_mean_signed_error_first8_rad": [
+            0.010644515976309776,
+            -0.014431945979595184,
+            -0.03233952075242996,
+            0.0045398324728012085,
+            0.009584935382008553,
+            0.0003752997012805159
+          ],
+          "gripper_width_error_first8_mm": 8.877521051326767,
+          "gripper_width_mean_signed_error_first8_mm": 8.877521051326767,
+          "mean_predicted_gripper_width_first8_mm": 16.75252117216587,
+          "mean_teacher_gripper_width_first8_mm": 7.8750002570450315,
+          "base_vx_error_first8_m_s": 0.004452690482139587,
+          "base_vx_mean_signed_error_first8_m_s": 0.00191568024456501,
+          "first_predicted_right_action": [
+            -0.05386244133114815,
+            1.516004204750061,
+            -1.508741319179535,
+            0.008937418460845947,
+            -0.04545259103178978,
+            0.004246594372034451,
+            0.16844114661216736,
+            0.010470949113368988,
+            0.015702039003372192
+          ],
+          "first_teacher_right_action": [
+            -0.017135391011834145,
+            1.5267143249511719,
+            -1.4841099977493286,
+            -0.04260440915822983,
+            0.017135361209511757,
+            9.469779561205316e-13,
+            0.14358974993228912,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "lift",
+          "frame": 216,
+          "time_s": 10.800000000001708,
+          "observed_gripper_width_mm": 16.712115593254566,
+          "robot_state_sha256": "97525b05e80e0fdb172807baedcfb92b97a78d751e266454b5002847582ee028",
+          "image_sha256": {
+            "face_view": "ee9b283fc6b1e9a72b0129944cf34df1261d54985de83ee178b2a05515dc1e2d",
+            "left_wrist_view": "17fac44f33970404e7e7ed0d37dedf92d62d65cb5d0e7e21150672fd1a9d1ecf",
+            "right_wrist_view": "f3f4b840ed379b91125519a8e1fd9fd834bb77e1d4710ba29219ecbe7c65a924"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.028230506110847504,
+          "max_arm_error_first8_rad": 0.08778446912765503,
+          "mean_arm_error_horizon_rad": 0.037160873499383594,
+          "arm_mean_signed_error_first8_rad": [
+            0.0020537020172923803,
+            0.012524276971817017,
+            0.0010904669761657715,
+            -0.03200867399573326,
+            0.00887677539139986,
+            -0.0003830254670340594
+          ],
+          "gripper_width_error_first8_mm": 11.286579882726075,
+          "gripper_width_mean_signed_error_first8_mm": 11.286579882726075,
+          "mean_predicted_gripper_width_first8_mm": 17.28657988831401,
+          "mean_teacher_gripper_width_first8_mm": 6.0000000055879354,
+          "base_vx_error_first8_m_s": 0.009886566549539566,
+          "base_vx_mean_signed_error_first8_m_s": -0.005350880324840546,
+          "first_predicted_right_action": [
+            0.039469560608267784,
+            1.614457905292511,
+            -1.7506415247917175,
+            0.18064378947019577,
+            0.06213403306901455,
+            -0.0007721971335286071,
+            0.15310323238372803,
+            0.014950074255466461,
+            0.0194857120513916
+          ],
+          "first_teacher_right_action": [
+            -0.017098695039749146,
+            1.5690293312072754,
+            -1.6628570556640625,
+            0.09386840462684631,
+            0.017088882625102997,
+            -2.4315284008480376e-06,
+            0.0615384615957737,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_15_seed_8021",
+      "samples": [
+        {
+          "phase": "approach",
+          "frame": 0,
+          "time_s": 0.0,
+          "observed_gripper_width_mm": 33.461113572120674,
+          "robot_state_sha256": "58c9ffd76816fdc56385c6b7ae1939e9140c67dabb8b3f1e8fe99fe8f9d2a311",
+          "image_sha256": {
+            "face_view": "cfed2530ed4e86eedb58485762d260dccab898249ab9b660c79193aeb0b019d5",
+            "left_wrist_view": "1821443a6648d5db1d5e3da498c9a7717de5c1c5edb7d3e719edcfb7dc1b8049",
+            "right_wrist_view": "a3f1fdb27d1b5657d376cce81b6f37916979792be5d285c5cc7cff6a9e099d6a"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03894563690118957,
+          "max_arm_error_first8_rad": 0.11866247653961182,
+          "mean_arm_error_horizon_rad": 0.04803169405082978,
+          "arm_mean_signed_error_first8_rad": [
+            0.040652566123753786,
+            0.01831420138478279,
+            0.04390045255422592,
+            -0.07228843122720718,
+            0.01124129956588149,
+            -0.0008100953709799796
+          ],
+          "gripper_width_error_first8_mm": 12.563135605305433,
+          "gripper_width_mean_signed_error_first8_mm": -12.34820120036602,
+          "mean_predicted_gripper_width_first8_mm": 34.65665437281132,
+          "mean_teacher_gripper_width_first8_mm": 47.00485557317734,
+          "base_vx_error_first8_m_s": 0.003578581032343209,
+          "base_vx_mean_signed_error_first8_m_s": 0.0022037551971152425,
+          "first_predicted_right_action": [
+            0.017920106649398804,
+            1.0149469375610352,
+            -1.9080339670181274,
+            0.9139727354049683,
+            0.04119269549846649,
+            -0.0048589641228318214,
+            0.383226603269577,
+            -0.0014431700110435486,
+            0.016044020652770996
+          ],
+          "first_teacher_right_action": [
+            -0.04227927327156067,
+            0.9711179733276367,
+            -1.9480513334274292,
+            1.0077072381973267,
+            0.040975213050842285,
+            -0.0035683324094861746,
+            0.3744087815284729,
+            -0.007946000434458256,
+            0.0
+          ]
+        },
+        {
+          "phase": "advance",
+          "frame": 136,
+          "time_s": 6.799999999998951,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "0e300064e210e773a5589b7ff06598266a09f023105cfb012b0daa0b0adc837c",
+          "image_sha256": {
+            "face_view": "da45bda12e8b8302e52675309c193ac44a83eb906a5c847ba571ad111d76e75e",
+            "left_wrist_view": "2bfdf0c43f0c6c677ed3e67ab68e9f14945314eac5505c1f563e81ede6b49bc0",
+            "right_wrist_view": "9db9b55bbdbd0236ffac09b4d02c5fdb8e9b3121d2f214421e7d5d9ca66f4ef5"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.02841597717097913,
+          "max_arm_error_first8_rad": 0.08599906146991998,
+          "mean_arm_error_horizon_rad": 0.03035834263669536,
+          "arm_mean_signed_error_first8_rad": [
+            0.028362425044178963,
+            -0.015038557350635529,
+            -0.01867520809173584,
+            -0.005853444337844849,
+            -0.017414552276022732,
+            -0.0037440555323622095
+          ],
+          "gripper_width_error_first8_mm": 20.153635824099183,
+          "gripper_width_mean_signed_error_first8_mm": -20.153635824099183,
+          "mean_predicted_gripper_width_first8_mm": 44.096366157755256,
+          "mean_teacher_gripper_width_first8_mm": 64.25000488758087,
+          "base_vx_error_first8_m_s": 0.0075218090787529945,
+          "base_vx_mean_signed_error_first8_m_s": -0.0012898938730359077,
+          "first_predicted_right_action": [
+            0.07359844306483865,
+            1.5044934153556824,
+            -1.5395429730415344,
+            -0.010713886469602585,
+            -0.0355680484790355,
+            0.0026501188831876132,
+            0.48914146423339844,
+            0.020493529736995697,
+            0.005890458822250366
+          ],
+          "first_teacher_right_action": [
+            -0.005145970266312361,
+            1.5251755714416504,
+            -1.4823282957077026,
+            -0.04284725710749626,
+            0.0012361406115815043,
+            -6.835870980598582e-14,
+            0.6974359154701233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "close",
+          "frame": 140,
+          "time_s": 6.99999999999884,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "9a314b21607116904821a7a7d6354f417e01af08119aafb341ca40370708211d",
+          "image_sha256": {
+            "face_view": "a2c770903749e6a466a43b6f690a8e9e8fa6d4db09ea72e46b60adc974df4189",
+            "left_wrist_view": "55ce17d6da8f03345aee8f4f06f59a215f87a6274fb42c064dad075551d9411a",
+            "right_wrist_view": "51863da3df8f867fe7d0a07176825a2a0375446f4d246753da54120dc34c2f8a"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.025798899907961942,
+          "max_arm_error_first8_rad": 0.08601040625944734,
+          "mean_arm_error_horizon_rad": 0.023381129569267817,
+          "arm_mean_signed_error_first8_rad": [
+            0.03809092426672578,
+            0.0007366463541984558,
+            -0.004894651472568512,
+            -0.014894932508468628,
+            0.0033411019248887897,
+            -0.0013892954494319106
+          ],
+          "gripper_width_error_first8_mm": 19.86170729622245,
+          "gripper_width_mean_signed_error_first8_mm": -19.86170729622245,
+          "mean_predicted_gripper_width_first8_mm": 34.63829454034567,
+          "mean_teacher_gripper_width_first8_mm": 54.50000256299973,
+          "base_vx_error_first8_m_s": 0.008076919242739677,
+          "base_vx_mean_signed_error_first8_m_s": -0.006191251799464226,
+          "first_predicted_right_action": [
+            0.08086443599313498,
+            1.5145167112350464,
+            -1.5446649193763733,
+            -0.09907807037234306,
+            -0.06506866146810353,
+            -0.0010020510573138658,
+            0.3578322231769562,
+            -0.023423917591571808,
+            0.0022774934768676758
+          ],
+          "first_teacher_right_action": [
+            -0.005145970266312361,
+            1.5251755714416504,
+            -1.4823282957077026,
+            -0.04284725710749626,
+            0.0012361406115815043,
+            -6.835870980598582e-14,
+            0.6666666865348816,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_25_seed_8023",
+      "samples": [
+        {
+          "phase": "approach",
+          "frame": 0,
+          "time_s": 0.0,
+          "observed_gripper_width_mm": 42.93664678931237,
+          "robot_state_sha256": "e5ab77e46aa9db37c3b852a04269cb06f5317a262e7c0886b8964b40459b6ea6",
+          "image_sha256": {
+            "face_view": "e5d0578dce4365b05afcc78aa183f12bfcacdc78645303c5c8ce9bbe4d6d0fa4",
+            "left_wrist_view": "301cec93517b897fc41f09c91ba5bff3f670489dd7de3f59448b39339428773d",
+            "right_wrist_view": "a460f7f617b39ec3825f3b08ec3f3790acc9f5d821fa27af3364d71ebfaa080a"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03510445147791567,
+          "max_arm_error_first8_rad": 0.11338730156421661,
+          "mean_arm_error_horizon_rad": 0.040050111258703204,
+          "arm_mean_signed_error_first8_rad": [
+            0.05528919748030603,
+            -0.019633565098047256,
+            0.053337082266807556,
+            -0.03065476566553116,
+            -0.02305803820490837,
+            0.00027803273405879736
+          ],
+          "gripper_width_error_first8_mm": 18.35385357029736,
+          "gripper_width_mean_signed_error_first8_mm": -18.35385357029736,
+          "mean_predicted_gripper_width_first8_mm": 38.05865127593279,
+          "mean_teacher_gripper_width_first8_mm": 56.41250520944595,
+          "base_vx_error_first8_m_s": 0.007980594411492348,
+          "base_vx_mean_signed_error_first8_m_s": -0.007980594411492348,
+          "first_predicted_right_action": [
+            0.05768309533596039,
+            1.0292666852474213,
+            -1.8982032537460327,
+            0.9234598278999329,
+            0.30685389041900635,
+            0.0002684874925762415,
+            0.40387651324272156,
+            -0.0015291646122932434,
+            0.0010159015655517578
+          ],
+          "first_teacher_right_action": [
+            0.0193397868424654,
+            1.084601640701294,
+            -1.8860843181610107,
+            0.9408081769943237,
+            0.31619521975517273,
+            0.0021903214510530233,
+            0.47089746594429016,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "advance",
+          "frame": 133,
+          "time_s": 6.649999999999034,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "24e9a29e2d24a052407a40051a1c972ab237138a5911c347d2acad5731fe8b8e",
+          "image_sha256": {
+            "face_view": "40cdac4288da85244b36d6834d28e791a399cf475fba7fe55c511dc9419d824f",
+            "left_wrist_view": "a17ed6853b37201969c4f439d02af2ec1ad29fd60cc9f7a11cca18660ccfe427",
+            "right_wrist_view": "aa06bc097836130a70c40253e5d07101547966203f2a78a9054610716ede6a86"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.029099006956631698,
+          "max_arm_error_first8_rad": 0.09297369595151395,
+          "mean_arm_error_horizon_rad": 0.030505382968812722,
+          "arm_mean_signed_error_first8_rad": [
+            0.031665896996855736,
+            -0.00934048742055893,
+            -0.02474820613861084,
+            -0.01229596883058548,
+            -0.009496441227383912,
+            -0.0026245546056226678
+          ],
+          "gripper_width_error_first8_mm": 24.03879728168249,
+          "gripper_width_mean_signed_error_first8_mm": -24.03879728168249,
+          "mean_predicted_gripper_width_first8_mm": 40.21120470017195,
+          "mean_teacher_gripper_width_first8_mm": 64.25000488758087,
+          "base_vx_error_first8_m_s": 0.0101624159142375,
+          "base_vx_mean_signed_error_first8_m_s": -0.00850734580308199,
+          "first_predicted_right_action": [
+            0.04656124673783779,
+            1.56131511926651,
+            -1.549740970134735,
+            -0.05721691623330116,
+            -0.003998096100986004,
+            -0.002551317727050584,
+            0.42864611744880676,
+            0.00662028044462204,
+            0.033371537923812866
+          ],
+          "first_teacher_right_action": [
+            0.027034737169742584,
+            1.6003857851028442,
+            -1.5568639039993286,
+            -0.04352189227938652,
+            -0.0017042577965185046,
+            -3.892413464028771e-13,
+            0.6974359154701233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "close",
+          "frame": 137,
+          "time_s": 6.849999999998923,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "f3fa5f89f525193af700a102d9c093171d2a8267056f1cc2da9b7082976d2f19",
+          "image_sha256": {
+            "face_view": "5e6e66c5152e19830a55985bae3c8810e76d6cb7308a443f10e0d0ee4777bab9",
+            "left_wrist_view": "3715f2d91a11a1fd5ed45b564195dfafce4de9c6819f6595ea7d2bb9ec8d3f6a",
+            "right_wrist_view": "c5d68ec16c1702cd2f32dfb0930b8d85483d6ce9bd7c3d84187e6a64a0ed491d"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.02684579073836855,
+          "max_arm_error_first8_rad": 0.09020906779915094,
+          "mean_arm_error_horizon_rad": 0.030131535820640255,
+          "arm_mean_signed_error_first8_rad": [
+            0.040452878922224045,
+            -0.025680754333734512,
+            0.0015030577778816223,
+            0.010539446026086807,
+            0.013248673640191555,
+            -0.0028428799797119045
+          ],
+          "gripper_width_error_first8_mm": 20.399305187165737,
+          "gripper_width_mean_signed_error_first8_mm": -20.399305187165737,
+          "mean_predicted_gripper_width_first8_mm": 34.10069664940238,
+          "mean_teacher_gripper_width_first8_mm": 54.50000256299973,
+          "base_vx_error_first8_m_s": 0.006336348131299019,
+          "base_vx_mean_signed_error_first8_m_s": 0.006319912150502205,
+          "first_predicted_right_action": [
+            0.06710420921444893,
+            1.5889715552330017,
+            -1.570812702178955,
+            -0.021156251430511475,
+            -0.09191332559566945,
+            -0.0018887595601816548,
+            0.3575837016105652,
+            -6.574392318725586e-05,
+            0.00020763278007507324
+          ],
+          "first_teacher_right_action": [
+            0.027034737169742584,
+            1.6003857851028442,
+            -1.5568639039993286,
+            -0.04352189227938652,
+            -0.0017042577965185046,
+            -3.892413464028771e-13,
+            0.6666666865348816,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "episode": "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/generated/cylinder-joint-v2-reopen-recovery-v1/volume_35_seed_8025",
+      "samples": [
+        {
+          "phase": "approach",
+          "frame": 0,
+          "time_s": 0.0,
+          "observed_gripper_width_mm": 35.34986771643162,
+          "robot_state_sha256": "2f81fd5223010ef77e0b1b7d6bd105acff316a7a11c5ca1178dbd1ec7f218e73",
+          "image_sha256": {
+            "face_view": "911ae312bf7748162000ccfaa51bc2faf8689abf217210cdc8360c3bb68d5c7e",
+            "left_wrist_view": "dfc5dc14425b628c02aa780e015eb5bfbaadd4a12d5015426a4faff36d0fc55b",
+            "right_wrist_view": "c383d37c00d2b3c365ffdd9e15d384f81727aeafcb09ebed7f2be84459937bcf"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03509012297339117,
+          "max_arm_error_first8_rad": 0.08040779829025269,
+          "mean_arm_error_horizon_rad": 0.0652879492433082,
+          "arm_mean_signed_error_first8_rad": [
+            0.05318799056112766,
+            -0.029513098299503326,
+            0.05997004359960556,
+            0.01808904856443405,
+            0.01638799160718918,
+            0.0029157864628359675
+          ],
+          "gripper_width_error_first8_mm": 20.326452450826764,
+          "gripper_width_mean_signed_error_first8_mm": -20.326452450826764,
+          "mean_predicted_gripper_width_first8_mm": 28.51500674150884,
+          "mean_teacher_gripper_width_first8_mm": 48.84146064519882,
+          "base_vx_error_first8_m_s": 0.006886182352900505,
+          "base_vx_mean_signed_error_first8_m_s": -0.006223132833838463,
+          "first_predicted_right_action": [
+            0.15953227132558823,
+            1.1364135146141052,
+            -1.6039336919784546,
+            0.8850560784339905,
+            0.7503957152366638,
+            0.0183196933940053,
+            0.2301267385482788,
+            0.002652198076248169,
+            -0.0300750732421875
+          ],
+          "first_teacher_right_action": [
+            0.08076421171426773,
+            1.1713505983352661,
+            -1.6534359455108643,
+            0.8769112825393677,
+            0.6906182765960693,
+            0.011911287903785706,
+            0.39324572682380676,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "advance",
+          "frame": 130,
+          "time_s": 6.499999999999117,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "16d854c3619efc7602c98c59d0b5311b9b2f6af52c3c042e57e5ed6859529b59",
+          "image_sha256": {
+            "face_view": "921125736f146bf05b51681a91f8760a2104f41c040bf8fe0e0fab22cdfd0af0",
+            "left_wrist_view": "2a8cbbe7efa5c6a24599db52d5421a468c4259e9f61ad4ad2eacbad90e25e311",
+            "right_wrist_view": "f8545c69d534ee8cb2a5b9fa8c55800efa5b43efc707224ea187b38e032f1e9e"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.021035818615928292,
+          "max_arm_error_first8_rad": 0.08468383550643921,
+          "mean_arm_error_horizon_rad": 0.028722900819654267,
+          "arm_mean_signed_error_first8_rad": [
+            0.02240656316280365,
+            0.0030280500650405884,
+            0.017482981085777283,
+            0.0017388127744197845,
+            0.014958510175347328,
+            -0.0010693421466938195
+          ],
+          "gripper_width_error_first8_mm": 29.48969271965325,
+          "gripper_width_mean_signed_error_first8_mm": -29.48969271965325,
+          "mean_predicted_gripper_width_first8_mm": 34.7603092622012,
+          "mean_teacher_gripper_width_first8_mm": 64.25000488758087,
+          "base_vx_error_first8_m_s": 0.00661840196698904,
+          "base_vx_mean_signed_error_first8_m_s": 0.00434968713670969,
+          "first_predicted_right_action": [
+            0.11831746995449066,
+            1.672237753868103,
+            -1.5563027262687683,
+            -0.06540878862142563,
+            0.0039422959089279175,
+            0.0024662982604323758,
+            0.40226030349731445,
+            0.012468315660953522,
+            0.0066817402839660645
+          ],
+          "first_teacher_right_action": [
+            0.08882155269384384,
+            1.6784932613372803,
+            -1.6409865617752075,
+            -0.03750674054026604,
+            -0.027919815853238106,
+            -1.8853895875081683e-11,
+            0.6974359154701233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "phase": "close",
+          "frame": 134,
+          "time_s": 6.699999999999006,
+          "observed_gripper_width_mm": 68.00000175833702,
+          "robot_state_sha256": "ac3248baeb16d5b9d3085800c79193d01c8801f5cf831cc2bdba62ef13715275",
+          "image_sha256": {
+            "face_view": "5695f8390d42e485047dbc7fba74fb4322aa61b4e86cfb57d69e4477fd27fff7",
+            "left_wrist_view": "47e26ee80d3ce18f4c2dd8946f7c03028b2eeb5f149390ba2a5f69d6bd4297bc",
+            "right_wrist_view": "0ecafe7e7b411bcd69d7937bfcfc0abd6a9548d8c910fbaa9f316d49c1dc5ff9"
+          },
+          "prefix_frames": 8,
+          "mean_arm_error_first8_rad": 0.03505876465099869,
+          "max_arm_error_first8_rad": 0.11015935242176056,
+          "mean_arm_error_horizon_rad": 0.03376899047944205,
+          "arm_mean_signed_error_first8_rad": [
+            0.06013663113117218,
+            0.0186380073428154,
+            0.004631601274013519,
+            -0.035089846700429916,
+            0.012029580771923065,
+            0.0013686422212674573
+          ],
+          "gripper_width_error_first8_mm": 17.109000775963068,
+          "gripper_width_mean_signed_error_first8_mm": -17.109000775963068,
+          "mean_predicted_gripper_width_first8_mm": 37.39100106060505,
+          "mean_teacher_gripper_width_first8_mm": 54.50000256299973,
+          "base_vx_error_first8_m_s": 0.006030908785760403,
+          "base_vx_mean_signed_error_first8_m_s": 0.005351697094738483,
+          "first_predicted_right_action": [
+            0.1430826559662819,
+            1.6865344047546387,
+            -1.6547558903694153,
+            -0.05753443390130997,
+            0.006722560152411461,
+            0.004515003296381714,
+            0.3883189558982849,
+            0.016595803201198578,
+            -0.0007297098636627197
+          ],
+          "first_teacher_right_action": [
+            0.08882155269384384,
+            1.6784932613372803,
+            -1.6409865617752075,
+            -0.03750674054026604,
+            -0.027919815853238106,
+            -1.8853895875081683e-11,
+            0.6666666865348816,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,616 @@
+{
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/checkpoints/0_1275",
+  "config": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/train.yml",
+  "controller": {
+    "environment": {
+      "grasp_x": 0.115,
+      "grasp_height": 0.225,
+      "solver_impratio": 10.0,
+      "physics_dt": 0.0005
+    },
+    "teacher": {
+      "grip_opening": 0.003
+    }
+  },
+  "probe_only": false,
+  "episodes": [
+    {
+      "policy": "wall_oss_full_cylinder",
+      "success": false,
+      "failure_reason": "lost_grasp",
+      "evaluation_interrupted": false,
+      "source_sha256": {
+        "run_wall_cylinder.py": "73134aa6e2e35c9d5494de2d88da2064a59bc33d8cf2715bfed5e7d9542d8728",
+        "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+        "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+        "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+        "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+        "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+        "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+        "robot_action_filter.py": "eab90be7d117ac497c4eec88f37504d6ad4004e7e9e298e0f41afe14e9e1ee8b"
+      },
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": false,
+        "base_retreat_m": 0.07005370619159845,
+        "camera_distance_m": 0.6431583771374245,
+        "linear_speed_m_s": 0.4818707068640751,
+        "angular_speed_rad_s": 1.037315163537325
+      },
+      "action_filter_seconds": 0.0,
+      "temporal_ensemble_predictions": 0,
+      "prediction_samples_per_observation": 1,
+      "state_embedding_precision": "training",
+      "sampled_action_decoding": "single model draw",
+      "robot_servo_envelope": {
+        "cartesian_speed_limit_m_s": 0.0,
+        "angular_speed_limit_rad_s": 0.0
+      },
+      "ik_projection": {
+        "max_allowed_weighted_residual": 0.002,
+        "max_attempted_residual": 8.323024895400018e-09,
+        "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+      },
+      "grip_profile": "official",
+      "case": {
+        "volume": 25.0,
+        "seed": 100,
+        "jitter": 0.004
+      },
+      "simulated_seconds": 20.799999999996874,
+      "max_slip_m": 0.05079196241161551,
+      "max_held_tilt_rad": 0.06178330942676956,
+      "max_lifted_m": 0.06936977851563919,
+      "expected_volume_ml": 25.0,
+      "reading": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "reading_history": [
+        {
+          "time": 0.05000000000000004,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.3000000000000002,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.5999999999999893,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.8999999999999563,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.1999999999999234,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.4999999999998903,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.7999999999998573,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.0999999999998686,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.349999999999952,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.6000000000000356,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.850000000000119,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.1000000000002026,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.350000000000286,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.6000000000003696,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.850000000000453,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.15000000000042,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.450000000000253,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.750000000000087,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.049999999999921,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.3499999999997545,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.649999999999588,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.949999999999422,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.249999999999256,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.549999999999089,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.849999999998923,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.149999999998757,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.449999999998591,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.749999999998424,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.049999999998347,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.299999999998652,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.549999999998958,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.799999999999264,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.049999999999569,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.299999999999875,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.55000000000018,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.800000000000486,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.050000000000791,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.300000000001097,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.550000000001402,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.800000000001708,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.050000000002013,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.300000000002319,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.550000000002624,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.80000000000293,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.050000000003235,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.300000000003541,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.550000000003847,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.800000000004152,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.050000000004458,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.300000000004763,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.550000000005069,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.800000000005374,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.05000000000568,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.300000000005985,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.55000000000629,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.800000000006596,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.050000000006902,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.300000000007207,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.550000000007513,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.800000000007818,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.050000000007945,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.350000000007245,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.650000000006546,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.950000000005847,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.250000000005148,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.55000000000445,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.85000000000375,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.15000000000305,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.45000000000235,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.750000000001652,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.050000000000953,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.350000000000254,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.649999999999554,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.949999999998855,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.249999999998156,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.549999999997457,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        }
+      ],
+      "final_tilt_rad": 0.019406317838600265,
+      "geometry_audit": {
+        "passed": true,
+        "default_profile": "official",
+        "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+        "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+        "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+        "custom_pads": 0,
+        "geometry_import": "Unchanged union of the source convex solids",
+        "fingers": [
+          {
+            "link": "left_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "left_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          },
+          {
+            "link": "right_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.876749017343577e-09
+          },
+          {
+            "link": "right_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8804677144956813e-09
+          }
+        ],
+        "contact_model": {
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ],
+          "condim": 3,
+          "noslip_iterations": 0,
+          "calibration": "Nominal simulator defaults; not measured hardware properties"
+        }
+      },
+      "inference_seconds": [
+        3.7907067389969598,
+        3.3197294840065297,
+        3.2353769530018326,
+        3.228154561998963,
+        3.5024173309939215,
+        3.0903909229964484,
+        3.1878939509988413,
+        3.085343142003694,
+        3.0678269089985406,
+        3.047789604999707,
+        3.107781195998541,
+        3.4351362270026584,
+        3.178432923996297,
+        3.2161836739978753,
+        3.2084785379993264,
+        2.996162657000241,
+        3.0811863299968536,
+        3.187310574998264,
+        3.540044701003353,
+        3.119328228000086,
+        3.0805990410008235,
+        3.2690771630004747,
+        2.976796925002418,
+        3.071261330995185,
+        3.099082262997399,
+        3.4113871999943512,
+        3.205704196996521,
+        3.0578681439947104,
+        3.4598405469951103,
+        3.2444896870001685,
+        3.1619366600061767,
+        3.196723259999999,
+        2.799354170994775,
+        3.0063865919946693,
+        3.161307800997747,
+        3.5120199369994225,
+        3.2548262549971696,
+        3.0698003560028155,
+        3.3863730040029623,
+        3.08074632500211,
+        3.178091554000275,
+        3.1842980129949865,
+        3.0249590709936456,
+        3.047589516005246,
+        3.147549107001396,
+        3.514040517999092,
+        3.146329176997824,
+        3.032375497998146,
+        3.2303159899965976,
+        2.9436747769941576,
+        3.093496232002508,
+        3.214518549000786
+      ],
+      "executed_dimensions": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22
+      ],
+      "ignored_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        21
+      ],
+      "observation_inputs": "Three RGB cameras and 26D robot proprioception including base x/y/yaw; no object pose, phase or fill value",
+      "base_odometry": true,
+      "exact_input_images_recorded": true,
+      "low_level_controller": "Generic robot IK, joint-rate limits and optional robot-feedback grip-force closure; no object-pose correction"
+    }
+  ],
+  "execution_prefix": 8,
+  "policy_batch_size": 1,
+  "flow_steps": 10,
+  "flow_noise": "random",
+  "action_filter_seconds": 0.0,
+  "robot_servo_envelope": {
+    "cartesian_speed_limit_m_s": 0.0,
+    "angular_speed_limit_rad_s": 0.0
+  },
+  "ik_max_residual": 0.002,
+  "temporal_ensemble_predictions": 0,
+  "prediction_samples_per_observation": 1,
+  "state_embedding_precision": "training",
+  "evaluation_complete": true,
+  "successes": 0,
+  "total": 1
+}

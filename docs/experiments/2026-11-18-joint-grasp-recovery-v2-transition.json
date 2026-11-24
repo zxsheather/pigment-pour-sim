@@ -1,0 +1,82 @@
+{
+  "stage": "v2_driver_launched",
+  "pid": 1370515,
+  "old_driver": 699975,
+  "old_trainer": 704492,
+  "parent": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1/checkpoints/0_768",
+  "new_run": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2",
+  "checkpoint_768_required": true,
+  "started": 1794962072.5203493,
+  "updated": 1794962684.6063912,
+  "results": [
+    {
+      "step": 128,
+      "success": false,
+      "failure_reason": "timeout",
+      "simulated_seconds": 90.00000000024771,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    },
+    {
+      "step": 256,
+      "success": false,
+      "failure_reason": "collision:[['', 'tabletop_1']]",
+      "simulated_seconds": 52.65000000006937,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    },
+    {
+      "step": 384,
+      "success": false,
+      "failure_reason": "timeout",
+      "simulated_seconds": 90.00000000024771,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    },
+    {
+      "step": 512,
+      "success": false,
+      "failure_reason": "collision:[['', 'tabletop_1']]",
+      "simulated_seconds": 14.10000000000574,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    },
+    {
+      "step": 640,
+      "success": false,
+      "failure_reason": "collision:[['right_right_official_collision_1_0', '']]",
+      "simulated_seconds": 6.849999999998923,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    },
+    {
+      "step": 768,
+      "success": false,
+      "failure_reason": "timeout",
+      "simulated_seconds": 90.00000000024771,
+      "held": false,
+      "max_lift_m": 0.0,
+      "max_loaded_finger_contacts": 0
+    }
+  ],
+  "rationale": "Six full evaluations failed before any loaded contact. Continue the same action schema with the 53-demo data and emphasis on grasp approach.",
+  "old_checkpoint_retained": "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1/checkpoints/0_768",
+  "old_checkpoint_sha256": "e6350760fa3b7279d67f0145dbea39577053b51df45473113eda4746396e786d",
+  "new_driver_pid": 1422335,
+  "argv": [
+    "/data/hlou/pigment-pour-study/.venv-wall/bin/python",
+    "/data/hlou/pigment-pour-study/pigment-pour-sim/simulation/train_and_evaluate_cylinder_joints.py",
+    "--run",
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-recovery-bc-v2",
+    "--parent",
+    "/data/hlou/pigment-pour-study/runs/cylinder-joint-position-bc-v1/checkpoints/0_768",
+    "--log",
+    "/data/hlou/pigment-pour-study/results/cylinder-joint-grasp-recovery-bc-v2.log"
+  ],
+  "log": "/data/hlou/pigment-pour-study/results/cylinder-joint-grasp-recovery-bc-v2.log"
+}

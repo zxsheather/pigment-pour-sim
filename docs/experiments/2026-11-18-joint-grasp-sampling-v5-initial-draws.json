@@ -1,0 +1,55 @@
+{
+  "kind": "reconstructed_initial_weighted_sampler_prefix",
+  "sampler_seed": 48,
+  "epoch": 0,
+  "batch_size": 4,
+  "training_window_steps": 128,
+  "stats": [
+    {
+      "weights": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-reopen-recovery-v4/frame-sampling-weights.npy",
+      "prefix_anchors": 512,
+      "groups": {
+        "reopen": {
+          "draws": 12,
+          "unique_frames": 11,
+          "unique_episodes": 4
+        },
+        "start_close": {
+          "draws": 5,
+          "unique_frames": 5,
+          "unique_episodes": 4
+        },
+        "other": {
+          "draws": 495,
+          "unique_frames": 474,
+          "unique_episodes": 57
+        }
+      }
+    },
+    {
+      "weights": "/data/hlou/pigment-pour-study/runs/cylinder-joint-grasp-sampling-data-check-v5/grasp-weights.npy",
+      "prefix_anchors": 512,
+      "groups": {
+        "reopen": {
+          "draws": 48,
+          "unique_frames": 32,
+          "unique_episodes": 6
+        },
+        "start_close": {
+          "draws": 21,
+          "unique_frames": 21,
+          "unique_episodes": 18
+        },
+        "other": {
+          "draws": 443,
+          "unique_frames": 421,
+          "unique_episodes": 59
+        }
+      }
+    }
+  ],
+  "based_on_official_sampler_and_immutable_weights": true,
+  "trace_from_live_optimizer": false,
+  "staged_configuration_trained": false,
+  "independent_cases_read": false
+}

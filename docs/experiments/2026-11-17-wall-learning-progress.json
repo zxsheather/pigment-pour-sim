@@ -1,0 +1,404 @@
+{
+  "string": [
+    {
+      "checkpoint_step_index": 255,
+      "run": "cylinder-bc-v2-step255-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 510,
+      "run": "cylinder-bc-v2-step510-single-v1",
+      "success": false,
+      "reason": "Unreachable model action:0.00280",
+      "seconds": 17.7000000000041,
+      "max_lifted_m": 0.003369965951596776,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 765,
+      "run": "cylinder-bc-v2-step765-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 1020,
+      "run": "cylinder-bc-v2-step1020-single-v1",
+      "success": false,
+      "reason": "timeout",
+      "seconds": 60.000000000104464,
+      "max_lifted_m": 0.0037752137269692065,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    }
+  ],
+  "continuous": [
+    {
+      "checkpoint_step_index": 255,
+      "run": "cylinder-continuous-v1-step255-single-v1",
+      "success": false,
+      "reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16']]",
+      "seconds": 16.500000000006896,
+      "max_lifted_m": 0.043374519428426406,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 510,
+      "run": "cylinder-continuous-v1-step510-single-v1",
+      "success": false,
+      "reason": "collision:[['tabletop_1', 'cylinder_base']]",
+      "seconds": 48.75000000005075,
+      "max_lifted_m": 0.15974505457871946,
+      "max_slip_m": 0.019731871860529916,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 765,
+      "run": "cylinder-continuous-v1-step765-single-v1",
+      "success": false,
+      "reason": "Unreachable model action:0.00448",
+      "seconds": 10.200000000000975,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "geometry_audit_passed": true
+    },
+    {
+      "checkpoint_step_index": 1020,
+      "run": "cylinder-continuous-v1-step1020-single-v1",
+      "success": false,
+      "reason": "lost_grasp",
+      "seconds": 83.25000000021548,
+      "max_lifted_m": 0.11663990348895936,
+      "max_slip_m": 0.025182784742476375,
+      "geometry_audit_passed": true,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": true,
+        "close_to_head": true,
+        "upright": true,
+        "still": false,
+        "base_retreat_m": 0.6515685547383007,
+        "camera_distance_m": 0.35967898933830533,
+        "linear_speed_m_s": 0.03382096139519887,
+        "angular_speed_rad_s": 0.19905541136366783
+      }
+    }
+  ],
+  "stage_diagnosis_510": [
+    {
+      "snapshot": 0,
+      "time": 0.0,
+      "base_retreat_m": 0.0,
+      "head_distance_m": 0.6564660634993152,
+      "tilt_rad": 0.0
+    },
+    {
+      "snapshot": 40,
+      "time": 16.00000000000806,
+      "base_retreat_m": 0.06515567965051938,
+      "head_distance_m": 0.6181089094372962,
+      "tilt_rad": 0.02749374139140365
+    },
+    {
+      "snapshot": 60,
+      "time": 23.999999999989416,
+      "base_retreat_m": 0.15500847257039463,
+      "head_distance_m": 0.4819866450397947,
+      "tilt_rad": 0.022462609194352206
+    },
+    {
+      "snapshot": 80,
+      "time": 31.999999999970772,
+      "base_retreat_m": 0.20209724790443173,
+      "head_distance_m": 0.4664205285757665,
+      "tilt_rad": 0.041396009748036
+    },
+    {
+      "snapshot": 100,
+      "time": 40.00000000000897,
+      "base_retreat_m": 0.23050218336300532,
+      "head_distance_m": 0.45691162819541187,
+      "tilt_rad": 0.038924225061101644
+    },
+    {
+      "snapshot": 121,
+      "time": 48.400000000049076,
+      "base_retreat_m": 0.2544472517765076,
+      "head_distance_m": 0.5177665812729896,
+      "tilt_rad": 0.053258846873386154
+    }
+  ],
+  "interpretation": "Development cases only. Lift during collision is not valid held lift. No model full-task success yet. Independent cases remain unused.",
+  "continuous_prefix16": [
+    {
+      "step": 1020,
+      "success": false,
+      "reason": "Unreachable model action:0.00502",
+      "seconds": 19.99999999999874,
+      "max_lifted_m": 0.01779020546646004,
+      "final_task_gates": {
+        "held": true,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": 0.1324512491361307,
+        "camera_distance_m": 0.7773130944183319,
+        "linear_speed_m_s": 0.09469753754847758,
+        "angular_speed_rad_s": 0.2550220978027397
+      }
+    },
+    {
+      "step": 510,
+      "success": false,
+      "reason": "timeout",
+      "seconds": 90.00000000024771,
+      "max_lifted_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": true,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.3671395675493898,
+        "camera_distance_m": 1.0026545229935249,
+        "linear_speed_m_s": 8.506274424245327e-14,
+        "angular_speed_rad_s": 1.1345843647612735e-15
+      }
+    }
+  ],
+  "generic_filter_04s": {
+    "checkpoint_step_index": 1020,
+    "run": "runs/cylinder-continuous-v1-step1020-filter04-v1",
+    "success": false,
+    "reason": "Unreachable model action:0.00227",
+    "seconds": 30.94999999997322,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "final_task_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": true,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.2388495318112107,
+      "camera_distance_m": 0.8797503757393053,
+      "linear_speed_m_s": 8.505377563689537e-14,
+      "angular_speed_rad_s": 8.19648820189569e-16
+    },
+    "decision": "Not selected: failed to establish grasp; filtering changes deployment distribution"
+  },
+  "recovery_centered": [
+    {
+      "step": 255,
+      "success": false,
+      "reason": "Unreachable model action:0.00224",
+      "seconds": 10.100000000000852,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.008462727358144129,
+        "camera_distance_m": 0.661687063012002,
+        "linear_speed_m_s": 8.506448682564119e-14,
+        "angular_speed_rad_s": 2.9929220422413047e-15
+      }
+    },
+    {
+      "step": 510,
+      "success": false,
+      "reason": "Unreachable model action:0.00265",
+      "seconds": 8.799999999999264,
+      "max_lifted_m": 0.0,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.012611542911195817,
+        "camera_distance_m": 0.6660245273854545,
+        "linear_speed_m_s": 8.506556607838097e-14,
+        "angular_speed_rad_s": 8.982107170145253e-16
+      }
+    }
+  ],
+  "centered255_servo_envelope": {
+    "success": false,
+    "reason": "Unreachable model action:0.00207",
+    "seconds": 32.549999999973394,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "settings": {
+      "cartesian_speed_limit_m_s": 0.04,
+      "angular_speed_limit_rad_s": 0.1
+    },
+    "final_task_gates": {
+      "held": false,
+      "lifted": false,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": true,
+      "still": true,
+      "base_retreat_m": 0.17153041037676153,
+      "camera_distance_m": 0.8203008911875452,
+      "linear_speed_m_s": 8.506471633095385e-14,
+      "angular_speed_rad_s": 1.7173638959697259e-15
+    },
+    "decision": "Did not establish grasp; not selected as a successful policy"
+  },
+  "continuous1020_zero_latent": {
+    "success": false,
+    "reason": "Unreachable model action:0.00274",
+    "seconds": 22.949999999991864,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "decision": "Did not establish grasp; keep standard Gaussian sampling"
+  },
+  "centered510_nearest_IK_01": {
+    "success": false,
+    "reason": "Unreachable model action:0.01171",
+    "seconds": 10.200000000000975,
+    "max_lifted_m": 0.0,
+    "max_slip_m": 0.0,
+    "ik_projection": {
+      "max_allowed_weighted_residual": 0.01,
+      "max_attempted_residual": 0.011707368670377003,
+      "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+    },
+    "decision": "No grasp; a looser IK execution rejection did not solve the model trajectory error; keep default .002"
+  },
+  "odometry": [
+    {
+      "step": 255,
+      "success": false,
+      "reason": "collision:[['', 'cylinder_wall_0'], ['', 'cylinder_wall_0'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_1'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_2'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_3'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_4'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_5'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_6'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_7'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_8'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_9'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_10'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_11'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_12'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_13'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_14'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_15'], ['', 'cylinder_wall_16'], ['', 'cylinder_wall_16']]",
+      "seconds": 16.500000000006896,
+      "held": false,
+      "max_lifted_m": 0.043214751345465485,
+      "displacement_is_collision_not_valid_lift": true,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": -0.052688200102420146,
+        "camera_distance_m": 0.752479515769453,
+        "linear_speed_m_s": 0.2887737028927979,
+        "angular_speed_rad_s": 6.66605449994025
+      }
+    },
+    {
+      "step": 510,
+      "success": false,
+      "reason": "lost_grasp",
+      "seconds": 41.10000000001422,
+      "held": true,
+      "max_lifted_m": 0.15477482286121713,
+      "max_slip_m": 0.025052714364220394,
+      "final_task_gates": {
+        "held": true,
+        "lifted": true,
+        "retreated": false,
+        "close_to_head": true,
+        "upright": false,
+        "still": false,
+        "base_retreat_m": 0.1665003713495078,
+        "camera_distance_m": 0.313712051015768,
+        "linear_speed_m_s": 0.17418371196078844,
+        "angular_speed_rad_s": 0.7755318535973754
+      },
+      "geometry_audit_passed": true
+    },
+    {
+      "step": 765,
+      "success": false,
+      "reason": "Unreachable model action:0.00333",
+      "seconds": 50.60000000005958,
+      "held": false,
+      "max_lifted_m": 0.011946511240563562,
+      "displacement_is_not_valid_held_lift": true,
+      "max_slip_m": 0.0,
+      "final_task_gates": {
+        "held": false,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.0622801115617031,
+        "camera_distance_m": 0.7181286627534522,
+        "linear_speed_m_s": 8.509210052354052e-14,
+        "angular_speed_rad_s": 4.0878090118635204e-15
+      },
+      "geometry_audit_passed": true,
+      "runtime_renderer": "Cached448/768; old interrupted attempt excluded"
+    }
+  ],
+  "odometry_development_prefix_collection": {
+    "kind": "two_short_25sec_policy_visited_state_rollouts_for_training_recoveries",
+    "source": "runs/cylinder-odometry-step255-recovery-rollouts-v1",
+    "not_original8_or_independent12_benchmark": true
+  },
+  "odometry510_temporal_ensemble4": {
+    "step": 510,
+    "success": false,
+    "reason": "cylinder_tilt",
+    "seconds": 25.849999999985105,
+    "held": true,
+    "max_lifted_m": 0.08037519637663437,
+    "max_slip_m": 0.010412705534797144,
+    "final_task_gates": {
+      "held": true,
+      "lifted": true,
+      "retreated": false,
+      "close_to_head": false,
+      "upright": false,
+      "still": false,
+      "base_retreat_m": 0.17479156680607577,
+      "camera_distance_m": 0.45019734875583517,
+      "linear_speed_m_s": 0.08623925038987698,
+      "angular_speed_rad_s": 0.4062499288310314
+    },
+    "geometry_audit_passed": true,
+    "decision": "Not selected: failed by tilt before baseline lost-grasp time"
+  },
+  "same_observation4_sampling_experiment": {
+    "checkpoint_step": 510,
+    "run": "runs/cylinder-odometry-step510-sameobs4-v2",
+    "status": "complete_failed_not_selected",
+    "prediction_samples": 4,
+    "model_batch_size": 1,
+    "first_driver_launch_failure_not_policy_score": true,
+    "success": false,
+    "reason": "Unreachable model action:0.00241",
+    "seconds": 29.94999999997555,
+    "held": false,
+    "max_lifted_m": 0.0,
+    "decision": "No grasp; baseline remains single Gaussian draw"
+  }
+}

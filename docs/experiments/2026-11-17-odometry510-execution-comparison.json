@@ -1,0 +1,251 @@
+{
+  "variants": [
+    {
+      "run": "runs/cylinder-odometry-step510-single-v1",
+      "model": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/checkpoints/0_510",
+      "controller": {
+        "environment": {
+          "grasp_x": 0.115,
+          "grasp_height": 0.225,
+          "solver_impratio": 10.0,
+          "physics_dt": 0.0005
+        },
+        "teacher": {
+          "grip_opening": 0.003
+        }
+      },
+      "result": {
+        "success": false,
+        "failure_reason": "lost_grasp",
+        "evaluation_interrupted": false,
+        "source_sha256": {
+          "run_wall_cylinder.py": "4e999b4903dced684ee7d8fbe1d756d7df461e3c94e1f83d0ff1c3d29575f40a",
+          "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+          "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+          "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+          "carry_env.py": "4a4052e5412b550d796591755609305a63aa4584271d7a5731e29892cdaf2d7a",
+          "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+          "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+          "robot_action_filter.py": "dfa81118f2b1429d93dd3b40c00e5cce0a2cb851c3998e97da45eb9a34b4eaa2"
+        },
+        "final_task_gates": {
+          "held": true,
+          "lifted": true,
+          "retreated": false,
+          "close_to_head": true,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.1665003713495078,
+          "camera_distance_m": 0.313712051015768,
+          "linear_speed_m_s": 0.17418371196078844,
+          "angular_speed_rad_s": 0.7755318535973754
+        },
+        "action_filter_seconds": 0.0,
+        "robot_servo_envelope": {
+          "cartesian_speed_limit_m_s": 0.0,
+          "angular_speed_limit_rad_s": 0.0
+        },
+        "ik_projection": {
+          "max_allowed_weighted_residual": 0.002,
+          "max_attempted_residual": 6.9773174234491985e-09,
+          "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+        },
+        "grip_profile": "official",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "simulated_seconds": 41.10000000001422,
+        "max_slip_m": 0.025052714364220394,
+        "max_held_tilt_rad": 0.11433594773005355,
+        "max_lifted_m": 0.15477482286121713,
+        "geometry_audit": {
+          "passed": true,
+          "default_profile": "official",
+          "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+          "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+          "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+          "custom_pads": 0,
+          "geometry_import": "Unchanged union of the source convex solids",
+          "fingers": [
+            {
+              "link": "left_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.876749017343577e-09
+            },
+            {
+              "link": "left_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8804677144956813e-09
+            },
+            {
+              "link": "right_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.876749017343577e-09
+            },
+            {
+              "link": "right_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8804677144956813e-09
+            }
+          ],
+          "contact_model": {
+            "friction": [
+              1.0,
+              0.005,
+              0.0001
+            ],
+            "condim": 3,
+            "noslip_iterations": 0,
+            "calibration": "Nominal simulator defaults; not measured hardware properties"
+          }
+        }
+      },
+      "episode_files": [
+        "summary.json"
+      ]
+    },
+    {
+      "run": "runs/cylinder-odometry-step510-ensemble4-v1",
+      "model": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/checkpoints/0_510",
+      "controller": {
+        "environment": {
+          "grasp_x": 0.115,
+          "grasp_height": 0.225,
+          "solver_impratio": 10.0,
+          "physics_dt": 0.0005
+        },
+        "teacher": {
+          "grip_opening": 0.003
+        }
+      },
+      "result": {
+        "success": false,
+        "failure_reason": "cylinder_tilt",
+        "evaluation_interrupted": false,
+        "source_sha256": {
+          "run_wall_cylinder.py": "c5d27951837eff3e56f8ab0b5e1c7fdba600abad61d95f849fc91c78e58c4267",
+          "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+          "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+          "inspect_cylinder.py": "b74f833a6a76557625e9068a4a907f9bff21c7a60e6e4ef3897905b66a3a7e20",
+          "carry_env.py": "4a4052e5412b550d796591755609305a63aa4584271d7a5731e29892cdaf2d7a",
+          "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+          "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+          "robot_action_filter.py": "ea295d90e5f0d94bf747224ae727781134ba04543dd2367a3c9dee86dae5ebdc"
+        },
+        "final_task_gates": {
+          "held": true,
+          "lifted": true,
+          "retreated": false,
+          "close_to_head": false,
+          "upright": false,
+          "still": false,
+          "base_retreat_m": 0.17479156680607577,
+          "camera_distance_m": 0.45019734875583517,
+          "linear_speed_m_s": 0.08623925038987698,
+          "angular_speed_rad_s": 0.4062499288310314
+        },
+        "action_filter_seconds": 0.0,
+        "temporal_ensemble_predictions": 4,
+        "robot_servo_envelope": {
+          "cartesian_speed_limit_m_s": 0.0,
+          "angular_speed_limit_rad_s": 0.0
+        },
+        "ik_projection": {
+          "max_allowed_weighted_residual": 0.002,
+          "max_attempted_residual": 9.82320149889635e-08,
+          "metric": "norm([tool_position_error_m,0.25*rotation_error_rad]); official joint limits preserved"
+        },
+        "grip_profile": "official",
+        "case": {
+          "volume": 25.0,
+          "seed": 100,
+          "jitter": 0.004
+        },
+        "simulated_seconds": 25.849999999985105,
+        "max_slip_m": 0.010412705534797144,
+        "max_held_tilt_rad": 0.12327749751788425,
+        "max_lifted_m": 0.08037519637663437,
+        "geometry_audit": {
+          "passed": true,
+          "default_profile": "official",
+          "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+          "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+          "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+          "custom_pads": 0,
+          "geometry_import": "Unchanged union of the source convex solids",
+          "fingers": [
+            {
+              "link": "left_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.876749017343577e-09
+            },
+            {
+              "link": "left_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8804677144956813e-09
+            },
+            {
+              "link": "right_arm_gripper_left_link",
+              "source_file": "mesh/collision/gripper_left_link.STL",
+              "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+              "convex_solids": 3,
+              "compiled_contact_geoms": 3,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.876749017343577e-09
+            },
+            {
+              "link": "right_arm_gripper_right_link",
+              "source_file": "mesh/collision/gripper_right_link.STL",
+              "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+              "convex_solids": 2,
+              "compiled_contact_geoms": 2,
+              "urdf_effort_limit_n": 20.0,
+              "maximum_vertex_error_m": 1.8804677144956813e-09
+            }
+          ],
+          "contact_model": {
+            "friction": [
+              1.0,
+              0.005,
+              0.0001
+            ],
+            "condim": 3,
+            "noslip_iterations": 0,
+            "calibration": "Nominal simulator defaults; not measured hardware properties"
+          }
+        }
+      },
+      "episode_files": [
+        "summary.json"
+      ]
+    }
+  ],
+  "decision": "Both failed; retain raw decoding as baseline. Uniform time-aligned ensemble was not adopted.",
+  "independent_test_consumed": false
+}

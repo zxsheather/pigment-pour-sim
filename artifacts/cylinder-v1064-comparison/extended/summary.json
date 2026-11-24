@@ -1,0 +1,2548 @@
+{
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v944512-open-advance-extended-bc-v1064-a6000/checkpoints/0_1024",
+  "config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-v944512-open-advance-extended-bc-v1064-a6000/train.yml",
+  "action_space": "joint",
+  "progress_protocol": "gripper_aperture_and_base_retreat_v1",
+  "joint_action_representation": "servo_increment",
+  "tray_cue_protocol": "reset_rgb_target_from_current_wrist_v1",
+  "controller": {
+    "environment": {
+      "grasp_x": 0.115,
+      "grasp_height": 0.225,
+      "solver_impratio": 10.0,
+      "physics_dt": 0.0005
+    },
+    "teacher": {
+      "grip_opening": 0.003
+    }
+  },
+  "probe_only": false,
+  "episodes": [
+    {
+      "policy": "wall_oss_full_cylinder",
+      "success": false,
+      "failure_reason": "timeout",
+      "action_space": "joint",
+      "evaluation_interrupted": false,
+      "source_sha256": {
+        "run_wall_cylinder.py": "81ca15beb6345bbf3eec027bb77b035ec78779ca20d4b24025a2198d8f37150b",
+        "run_wall_carry.py": "60d8945ef66d41d650fbb162e89e0cc26da10fc317c514b24c6b5e763b382352",
+        "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083",
+        "inspect_cylinder.py": "32a2fc7553882d1e1a83467a82963fb61996451fc03dbc992485959b09bd0e7d",
+        "carry_env.py": "e1a22cd22afcddbd4f03ec8fe66c09d99a9360d4ce92832610e261505f00ab40",
+        "audit_gripper.py": "04d86ebd6f2137827792bc9bfe3f69f90dc8caf924ab0d7aa8e1eca33b7c7c63",
+        "cylinder_reader.py": "5a55bb2dcb6cc868b032f4c0d8a68f270d5451124770abfbdfca5dcc9dd7e5ee",
+        "robot_action_filter.py": "100e90bde69d7ec03d8699c214c592c9b1d3fb70ed266480ffd7a371f0088fa3",
+        "robot_state_normalization.py": "39f5ba5c9de98cc58fa532258f34f5d468761752f721c5dce3e1d3c777cdb487",
+        "cylinder_joint_actions.py": "add25e1dda1561fb996b4317082c6f7793e604c9678e70c516285c4dd3013f40",
+        "cylinder_wrist_cue.py": "adb284f148dc44ef4511940ae58fda9f0bf13b415a8295c13bff61879caf98d3",
+        "cylinder_progress_prompts.py": "a4715165d109dac7b177f83ed3968c16db34493d9ce9ae8db04ef43d021000f6",
+        "cylinder_tray_vision.py": "198786fe4139641a3757a5ffbfe86156d357f6f7505b370bc1d1c6030aa2b95f",
+        "scene_config.json": "cbebc6bb5c88431a38d2990d8961b36e0698e128c7c602d2f8ddb2415c7adeef"
+      },
+      "final_task_gates": {
+        "held": false,
+        "loaded_fingers": 0,
+        "lifted": false,
+        "retreated": false,
+        "close_to_head": false,
+        "upright": true,
+        "still": true,
+        "base_retreat_m": 0.16093083730511915,
+        "camera_distance_m": 0.8040019937140344,
+        "linear_speed_m_s": 8.516178018289395e-14,
+        "angular_speed_rad_s": 0.0
+      },
+      "action_filter_seconds": 0.0,
+      "temporal_ensemble_predictions": 0,
+      "prediction_samples_per_observation": 1,
+      "state_embedding_precision": "training",
+      "unclipped_robot_state": false,
+      "gripper_opening_confirmation": {
+        "forecasts": 0,
+        "mode": "prefix-median",
+        "abrupt_increase_threshold_m_per_finger": 0.005,
+        "decisions": []
+      },
+      "sampled_action_decoding": "single model draw",
+      "robot_servo_envelope": {
+        "cartesian_speed_limit_m_s": 0.0,
+        "angular_speed_limit_rad_s": 0.0
+      },
+      "ik_projection": {
+        "applicable": false,
+        "reason": "Direct joint position targets; no Cartesian IK is called"
+      },
+      "joint_limit_projection": {
+        "maximum_rad": 0.0,
+        "frames": 0,
+        "margin_rad": 0.005
+      },
+      "grip_profile": "official",
+      "case": {
+        "volume": 25.0,
+        "seed": 100,
+        "jitter": 0.004
+      },
+      "simulated_seconds": 90.00000000024771,
+      "max_slip_m": 0.0,
+      "max_held_tilt_rad": 0.0,
+      "max_lifted_m": 0.0,
+      "max_supported_lift_m": 0.0,
+      "expected_volume_ml": 25.0,
+      "reading": {
+        "valid": false,
+        "reason": "calibration_anchors_not_visible"
+      },
+      "reading_history": [
+        {
+          "time": 0.05000000000000004,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.3000000000000002,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.5999999999999893,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 0.8999999999999563,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.1999999999999234,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.4999999999998903,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 1.7999999999998573,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.0999999999998686,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.349999999999952,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.6000000000000356,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 2.850000000000119,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.1000000000002026,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.350000000000286,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.6000000000003696,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 3.850000000000453,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.15000000000042,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.450000000000253,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 4.750000000000087,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.049999999999921,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.3499999999997545,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.649999999999588,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 5.949999999999422,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.249999999999256,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.549999999999089,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 6.849999999998923,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.149999999998757,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.449999999998591,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 7.749999999998424,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.049999999998347,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.299999999998652,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.549999999998958,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 8.799999999999264,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.049999999999569,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.299999999999875,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.55000000000018,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 9.800000000000486,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.050000000000791,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.300000000001097,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.550000000001402,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 10.800000000001708,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.050000000002013,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.300000000002319,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.550000000002624,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 11.80000000000293,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.050000000003235,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.300000000003541,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.550000000003847,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 12.800000000004152,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.050000000004458,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.300000000004763,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.550000000005069,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 13.800000000005374,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.05000000000568,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.300000000005985,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.55000000000629,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 14.800000000006596,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.050000000006902,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.300000000007207,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.550000000007513,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 15.800000000007818,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.050000000007945,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.350000000007245,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.650000000006546,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 16.950000000005847,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.250000000005148,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.55000000000445,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 17.85000000000375,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.15000000000305,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.45000000000235,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 18.750000000001652,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.050000000000953,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.350000000000254,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.649999999999554,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 19.949999999998855,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.249999999998156,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.549999999997457,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 20.849999999996758,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.14999999999606,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.44999999999536,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 21.74999999999466,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.04999999999396,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.349999999993262,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.649999999992563,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 22.949999999991864,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.249999999991164,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.549999999990465,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 23.849999999989766,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.149999999989067,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.449999999988368,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 24.74999999998767,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.04999999998697,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.34999999998627,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.64999999998557,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 25.949999999984872,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.249999999984173,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.549999999983473,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 26.849999999982774,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.149999999982075,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.449999999981376,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 27.749999999980677,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.049999999979978,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.34999999997928,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.64999999997858,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 28.94999999997788,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.24999999997718,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.54999999997648,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 29.849999999975783,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.149999999975083,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.449999999974384,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 30.749999999973685,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.049999999972986,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.349999999972287,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.649999999971588,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 31.94999999997089,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.19999999997172,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.44999999997292,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.69999999997411,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 32.949999999975304,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.1999999999765,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.44999999997769,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.699999999978886,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 33.94999999998008,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.19999999998127,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.44999999998247,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.69999999998366,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 34.949999999984854,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.19999999998605,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.44999999998724,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.699999999988435,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 35.94999999998963,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.19999999999082,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.449999999992016,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.69999999999321,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 36.949999999994404,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.1999999999956,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.44999999999679,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.699999999997985,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 37.94999999999918,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.20000000000037,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.450000000001566,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.70000000000276,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 38.95000000000395,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.20000000000515,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.45000000000634,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.700000000007535,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 39.95000000000873,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.20000000000992,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.450000000011116,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.70000000001231,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 40.9500000000135,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.2000000000147,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.45000000001589,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.700000000017084,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 41.95000000001828,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.20000000001947,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.450000000020665,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.70000000002186,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 42.95000000002305,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.20000000002425,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.45000000002544,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.700000000026634,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 43.95000000002783,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.20000000002902,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.450000000030215,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.70000000003141,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 44.9500000000326,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.200000000033796,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.45000000003499,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.700000000036184,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 45.95000000003738,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.20000000003857,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.450000000039765,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.70000000004096,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 46.95000000004215,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.200000000043346,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.45000000004454,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.70000000004573,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 47.95000000004693,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.20000000004812,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.450000000049315,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.70000000005051,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 48.9500000000517,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.200000000052896,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.45000000005409,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.70000000005528,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 49.95000000005648,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.20000000005767,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.450000000058864,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.70000000006006,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 50.95000000006125,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.200000000062445,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.45000000006364,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.70000000006483,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 51.95000000006603,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.20000000006722,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.450000000068414,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.70000000006961,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 52.9500000000708,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.200000000071995,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.45000000007319,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.70000000007438,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 53.950000000075576,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.20000000007677,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.450000000077964,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.70000000007916,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 54.95000000008035,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.200000000081545,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.45000000008274,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.70000000008393,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 55.950000000085126,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.20000000008632,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.45000000008751,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.70000000008871,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 56.9500000000899,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.200000000091094,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.45000000009229,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.70000000009348,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 57.950000000094676,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.20000000009587,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.45000000009706,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.70000000009826,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 58.95000000009945,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.200000000100644,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.45000000010184,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.70000000010303,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 59.950000000104225,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.20000000010542,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.45000000010661,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.700000000107806,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 60.950000000109,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.200000000110194,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.45000000011139,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.70000000011258,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 61.950000000113775,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.20000000011497,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.45000000011616,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.700000000117356,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 62.95000000011855,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 63.20000000011974,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 63.45000000012094,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 63.70000000012213,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 63.950000000123325,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 64.20000000012452,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 64.45000000012571,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 64.7000000001269,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 64.9500000001281,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.2000000001293,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.45000000013049,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.70000000013168,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 65.95000000013287,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 66.20000000013407,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 66.45000000013526,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 66.70000000013646,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 66.95000000013765,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 67.20000000013884,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 67.45000000014004,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 67.70000000014123,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 67.95000000014242,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 68.20000000014362,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 68.45000000014481,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 68.700000000146,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 68.9500000001472,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.20000000014839,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.45000000014959,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.70000000015078,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 69.95000000015197,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.20000000015317,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.45000000015436,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.70000000015555,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 70.95000000015675,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 71.20000000015794,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 71.45000000015914,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 71.70000000016033,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 71.95000000016152,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 72.20000000016272,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 72.45000000016391,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 72.7000000001651,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 72.9500000001663,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.20000000016749,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.45000000016869,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.70000000016988,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 73.95000000017107,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 74.20000000017227,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 74.45000000017346,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 74.70000000017465,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 74.95000000017585,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 75.20000000017704,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 75.45000000017824,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 75.70000000017943,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 75.95000000018062,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 76.20000000018182,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 76.45000000018301,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 76.7000000001842,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 76.9500000001854,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 77.20000000018659,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 77.45000000018779,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 77.70000000018898,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 77.95000000019017,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 78.20000000019137,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 78.45000000019256,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 78.70000000019375,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 78.95000000019495,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 79.20000000019614,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 79.45000000019733,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 79.70000000019853,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 79.95000000019972,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 80.20000000020092,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 80.45000000020211,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 80.7000000002033,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 80.9500000002045,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 81.20000000020569,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 81.45000000020688,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 81.70000000020808,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 81.95000000020927,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 82.20000000021047,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 82.45000000021166,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 82.70000000021285,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 82.95000000021405,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 83.20000000021524,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 83.45000000021643,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 83.70000000021763,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 83.95000000021882,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 84.20000000022002,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 84.45000000022121,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 84.7000000002224,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 84.9500000002236,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 85.20000000022479,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 85.45000000022598,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 85.70000000022718,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 85.95000000022837,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 86.20000000022956,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 86.45000000023076,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 86.70000000023195,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 86.95000000023315,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 87.20000000023434,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 87.45000000023553,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 87.70000000023673,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 87.95000000023792,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 88.20000000023911,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 88.45000000024031,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 88.7000000002415,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 88.9500000002427,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 89.20000000024389,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 89.45000000024508,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 89.70000000024628,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        },
+        {
+          "time": 89.95000000024747,
+          "loaded_fingers": 0,
+          "valid": false,
+          "reason": "physical_task_gates_not_met"
+        }
+      ],
+      "final_tilt_rad": 0.0,
+      "geometry_audit": {
+        "passed": true,
+        "default_profile": "official",
+        "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+        "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+        "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+        "custom_pads": 0,
+        "geometry_import": "Unchanged union of the source convex solids",
+        "fingers": [
+          {
+            "link": "left_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8767490163088206e-09
+          },
+          {
+            "link": "left_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.880467725507178e-09
+          },
+          {
+            "link": "right_arm_gripper_left_link",
+            "source_file": "mesh/collision/gripper_left_link.STL",
+            "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+            "convex_solids": 3,
+            "compiled_contact_geoms": 3,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.8767490163088206e-09
+          },
+          {
+            "link": "right_arm_gripper_right_link",
+            "source_file": "mesh/collision/gripper_right_link.STL",
+            "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+            "convex_solids": 2,
+            "compiled_contact_geoms": 2,
+            "urdf_effort_limit_n": 20.0,
+            "maximum_vertex_error_m": 1.880467725507178e-09
+          }
+        ],
+        "contact_model": {
+          "friction": [
+            1.0,
+            0.005,
+            0.0001
+          ],
+          "condim": 3,
+          "noslip_iterations": 0,
+          "calibration": "Nominal simulator defaults; not measured hardware properties"
+        }
+      },
+      "inference_seconds": [
+        1.4494283571839333,
+        0.8706137351691723,
+        0.8855405915528536,
+        0.8701268713921309,
+        0.8628955446183681,
+        0.8676342628896236,
+        0.8689833749085665,
+        0.8693719916045666,
+        0.8620153684169054,
+        0.8651321120560169,
+        0.8652589078992605,
+        0.8667906112968922,
+        0.862269040197134,
+        0.8572210874408484,
+        0.8649477772414684,
+        0.8606935702264309,
+        0.8589814640581608,
+        0.8611493650823832,
+        0.8592135049402714,
+        0.8647652883082628,
+        0.8621645458042622,
+        0.8610281888395548,
+        0.8636777885258198,
+        0.8575029037892818,
+        0.862339885905385,
+        0.8610054105520248,
+        0.8608105201274157,
+        0.8611368965357542,
+        0.8628445602953434,
+        0.8558420073240995,
+        0.8581364005804062,
+        0.8578690979629755,
+        0.8564239665865898,
+        0.8627641685307026,
+        0.8592120949178934,
+        0.8619003593921661,
+        0.8608832694590092,
+        0.8579040039330721,
+        0.8662189245223999,
+        0.8611013237386942,
+        0.8708561211824417,
+        0.861286299303174,
+        0.8673960063606501,
+        0.8643127400428057,
+        0.8671144060790539,
+        0.8678055051714182,
+        0.8638882450759411,
+        0.8658004701137543,
+        0.870193699374795,
+        0.864712243899703,
+        0.8611398674547672,
+        0.8619331326335669,
+        0.8586725238710642,
+        0.8581696376204491,
+        0.8620241917669773,
+        0.8555528651922941,
+        0.8595713507384062,
+        0.860989585518837,
+        0.8561318553984165,
+        0.861393291503191,
+        0.8584119826555252,
+        0.8608225397765636,
+        0.8608320970088243,
+        0.8606876730918884,
+        0.8605416752398014,
+        0.85895118676126,
+        0.8638639450073242,
+        0.8564022164791822,
+        0.8583506289869547,
+        0.8611975517123938,
+        0.856070252135396,
+        0.8587169554084539,
+        0.860240988433361,
+        0.8655716087669134,
+        0.8576187007129192,
+        0.8610587827861309,
+        0.8676576111465693,
+        0.8653732594102621,
+        0.8697663769125938,
+        0.8728346247226,
+        0.8657425176352262,
+        0.8699853159487247,
+        0.8691414818167686,
+        0.8682637698948383,
+        0.8679472636431456,
+        0.8682270795106888,
+        0.8689401727169752,
+        0.8692223243415356,
+        0.8710931222885847,
+        0.8699005842208862,
+        0.8707078136503696,
+        0.8729815110564232,
+        0.8710265960544348,
+        0.8694098964333534,
+        0.8739972487092018,
+        0.8709169365465641,
+        0.869356133043766,
+        0.8687130399048328,
+        0.8682643920183182,
+        0.8698412105441093,
+        0.8691939413547516,
+        0.8763229474425316,
+        0.8718908876180649,
+        0.8685516752302647,
+        0.8649328630417585,
+        0.8710788413882256,
+        0.8692450430244207,
+        0.8720676340162754,
+        0.8733825236558914,
+        0.8729175999760628,
+        0.8883561883121729,
+        0.8774925824254751,
+        0.8690215926617384,
+        0.8669428694993258,
+        0.8771613445132971,
+        0.866177761927247,
+        0.8621950671076775,
+        0.869064336642623,
+        0.8680751118808985,
+        0.8663343042135239,
+        0.865209462121129,
+        0.8662715144455433,
+        0.8694470282644033,
+        0.8663184940814972,
+        0.8666555378586054,
+        0.8693882506340742,
+        0.866156367585063,
+        0.8677240367978811,
+        0.8684076834470034,
+        0.8791158050298691,
+        0.8650027196854353,
+        0.8627189993858337,
+        0.8603766448795795,
+        0.858071330934763,
+        0.8671107981353998,
+        0.8618969153612852,
+        0.8640267513692379,
+        0.8624816592782736,
+        0.8634628523141146,
+        0.8653068915009499,
+        0.8670887239277363,
+        0.8629809990525246,
+        0.859282523393631,
+        0.8560365084558725,
+        0.8594013769179583,
+        0.8565744962543249,
+        0.8607420977205038,
+        0.8574223592877388,
+        0.8615493886172771,
+        0.8567661959677935,
+        0.8597304038703442,
+        0.8637472223490477,
+        0.8561336565762758,
+        0.8599926866590977,
+        0.8583823554217815,
+        0.8581726811826229,
+        0.8541177473962307,
+        0.8571695033460855,
+        0.8625900857150555,
+        0.8577931765466928,
+        0.8625476714223623,
+        0.8562775570899248,
+        0.8583433926105499,
+        0.8600255250930786,
+        0.8575311750173569,
+        0.8539385162293911,
+        0.8605384267866611,
+        0.873634560033679,
+        0.8527572732418776,
+        0.8631433192640543,
+        0.8604915160685778,
+        0.8562044762074947,
+        0.8569462355226278,
+        0.8642589300870895,
+        0.8590024709701538,
+        0.8607066236436367,
+        0.8626040909439325,
+        0.855262503027916,
+        0.8585501946508884,
+        0.8579766303300858,
+        0.8656742163002491,
+        0.8534135725349188,
+        0.8581508472561836,
+        0.8591957855969667,
+        0.8593686651438475,
+        0.863882340490818,
+        0.864128477871418,
+        0.8612927328795195,
+        0.8601885698735714,
+        0.8631115406751633,
+        0.8631633222103119,
+        0.858226964250207,
+        0.880018999800086,
+        0.8622423838824034,
+        0.8567069228738546,
+        0.8688951730728149,
+        0.859767047688365,
+        0.8594941962510347,
+        0.86095255240798,
+        0.8617629520595074,
+        0.8559991084039211,
+        0.8597129285335541,
+        0.859234044328332,
+        0.860327398404479,
+        0.8629840835928917,
+        0.8688204977661371,
+        0.879291120916605,
+        0.8663555476814508,
+        0.8709513563662767,
+        0.8732047136873007,
+        0.8633802011609077,
+        0.877132860943675,
+        0.8680192120373249,
+        0.8727010693401098,
+        0.8668599221855402,
+        0.8704354781657457,
+        0.8632744234055281,
+        0.8710167072713375,
+        0.869597751647234,
+        0.8703758344054222,
+        0.8683465160429478,
+        0.8709583915770054,
+        0.8672320060431957,
+        0.8667734954506159,
+        0.8659299109131098
+      ],
+      "executed_dimensions": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "ignored_dimensions": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "observation_inputs": "Three RGB cameras, measured robot progress and joint/servo state with the reset RGB tray cue projected along the current base axes during approach",
+      "initial_wrist_cue": null,
+      "base_odometry": true,
+      "exact_input_images_recorded": true,
+      "low_level_controller": "Official joint limits with original5mrad margin and rate-limited joint position servos; no object-pose correction",
+      "progress_protocol": "gripper_aperture_and_base_retreat_v1",
+      "prompt_changes": [
+        {
+          "time_s": 0.0,
+          "task_index": 0
+        }
+      ],
+      "progress_initial_joint_command": [
+        0.0,
+        1.0,
+        -2.2,
+        1.2,
+        0.0,
+        0.0,
+        0.034,
+        0.0,
+        0.0
+      ],
+      "joint_action_representation": "servo_increment",
+      "tray_cue_protocol": "reset_rgb_target_from_current_wrist_v1",
+      "initial_tray_cue": {
+        "world_xy_m": [
+          0.8825159964227323,
+          0.2998169764251765
+        ],
+        "method": "blue_bearings_and_scale_pair"
+      },
+      "initial_tray_images": [
+        "face_view",
+        "right_wrist_view"
+      ]
+    }
+  ],
+  "execution_prefix": 8,
+  "policy_batch_size": 1,
+  "flow_steps": 10,
+  "flow_noise": "random",
+  "action_filter_seconds": 0.0,
+  "robot_servo_envelope": {
+    "cartesian_speed_limit_m_s": 0.0,
+    "angular_speed_limit_rad_s": 0.0
+  },
+  "ik_max_residual": null,
+  "cartesian_ik_backoff": false,
+  "temporal_ensemble_predictions": 0,
+  "prediction_samples_per_observation": 1,
+  "state_embedding_precision": "training",
+  "gripper_open_confirmations": 0,
+  "gripper_open_confirmation_mode": "prefix-median",
+  "unclipped_robot_state": false,
+  "evaluation_complete": true,
+  "successes": 0,
+  "total": 1
+}

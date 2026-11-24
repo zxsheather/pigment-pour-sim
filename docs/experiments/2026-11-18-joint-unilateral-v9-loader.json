@@ -1,0 +1,160 @@
+{
+  "kind": "official_wall_joint_data_contract",
+  "passed": true,
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-unilateral-recovery-v9",
+  "episodes": 71,
+  "frames": 43440,
+  "training_iterations_per_epoch": 10317,
+  "batch_shapes": {
+    "input_ids": [
+      4,
+      510
+    ],
+    "attention_mask": [
+      4,
+      510
+    ],
+    "pixel_values": [
+      6144,
+      1176
+    ],
+    "image_grid_thw": [
+      12,
+      3
+    ],
+    "action_chunk": [
+      4,
+      32,
+      26
+    ],
+    "dof_mask": [
+      4,
+      32,
+      26
+    ],
+    "proprioception": [
+      4,
+      1,
+      26
+    ],
+    "agent_pos_mask": [
+      4,
+      1,
+      26
+    ],
+    "frame_index": [
+      4
+    ],
+    "sample_time": [
+      4
+    ],
+    "moe_token_types": [
+      4,
+      510
+    ]
+  },
+  "checks": [
+    {
+      "episode": 69,
+      "frame": 552,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    },
+    {
+      "episode": 69,
+      "frame": 0,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    },
+    {
+      "episode": 69,
+      "frame": 275,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    },
+    {
+      "episode": 70,
+      "frame": 441,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    },
+    {
+      "episode": 70,
+      "frame": 875,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    },
+    {
+      "episode": 70,
+      "frame": 0,
+      "relative_joint_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "decode_matches_source": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true
+    }
+  ],
+  "episode_end_repeats_last": true,
+  "action_active_dimensions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "robot_state_active_dimensions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "sampling_weights_match_source_indices": true,
+  "processor_loaded": true,
+  "checkpoint_serving_normalizer_factory_matches_training": true,
+  "serving_normalizer_key": "cylinder_joint_v1",
+  "distributed_backend": "gloo",
+  "neural_weights_loaded": false,
+  "model_forward": false,
+  "backward": false,
+  "task_success_measured": false,
+  "source_sha256": "991f3bf84877ef6705c02580206d784293867c7745632c196ee94194dfca99c8"
+}

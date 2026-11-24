@@ -1,0 +1,74 @@
+{
+  "kind": "executed_control_flow_loss_integration_check",
+  "wall_source_revision": "ce2a1ae31d9ee1028b97ca40e3f66034cf8c0e5f",
+  "checked_source": "/data/hlou/pigment-pour-study/wall-x-joint-executed-loss/wall_x/model/core/vla_mixin.py",
+  "loaded_model_config_multiplier": 2,
+  "weighted_steps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "weighted_action_channels": [
+    "gripper_width",
+    "base_forward",
+    "base_yaw"
+  ],
+  "batch_shape": [
+    4,
+    32,
+    26
+  ],
+  "loader_passed": true,
+  "fixture_results": [
+    {
+      "config": "baseline_config",
+      "checked_loss": 1.9999159574508667,
+      "matching_gradient": true,
+      "total_weighted_valid_elements": 1098,
+      "masked_gradients_zero": true
+    },
+    {
+      "config": "executed_control_2x",
+      "checked_loss": 1.9789607524871826,
+      "matching_gradient": true,
+      "total_weighted_valid_elements": 1188,
+      "masked_gradients_zero": true
+    }
+  ],
+  "torch_dtype": "torch.float32",
+  "neural_task_measured": false,
+  "full_model_weights_loaded": false,
+  "training_job_started": false,
+  "independent_cases_read": false,
+  "patch": {
+    "file": "/data/hlou/pigment-pour-study/wall-x-joint-executed-loss/wall_x/model/core/vla_mixin.py",
+    "before_sha256": "a847eb6641f5c4c353e3d37cca0bebad0322cf0fe16ed3e1e4b2ab4b1f45f571",
+    "after_sha256": "c1e574e661ff9ec998b39b3f974d37b78d9ef5364dd7018c746f5cc5d4587b9f",
+    "configuration_key": "joint_executed_control_loss_multiplier",
+    "weighted_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "weighted_action_channels": [
+      6,
+      7,
+      8
+    ],
+    "only_valid_labels_contribute": true,
+    "serving_model_changed": false
+  },
+  "architecture": "/data/hlou/pigment-pour-study/runs/cylinder-joint-executed-control-loss-check/architecture.json",
+  "train_config": "/data/hlou/pigment-pour-study/runs/cylinder-joint-executed-control-loss-check/train.yml",
+  "stock_wall_mixin_sha256": "a847eb6641f5c4c353e3d37cca0bebad0322cf0fe16ed3e1e4b2ab4b1f45f571"
+}

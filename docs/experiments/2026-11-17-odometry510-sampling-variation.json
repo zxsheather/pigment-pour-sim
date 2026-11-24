@@ -1,0 +1,160 @@
+{
+  "model": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/checkpoints/0_510",
+  "config": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-bc-v1/train.yml",
+  "episode": "/data/hlou/pigment-pour-study/runs/cylinder-odometry-step510-single-v1/episode_000",
+  "samples": 8,
+  "seed": 47,
+  "load_report": {
+    "missing_keys": [],
+    "unexpected_keys": [
+      "action_preprocessor.normalizer_action.delta./data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+      "action_preprocessor.normalizer_action.min./data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+      "action_preprocessor.normalizer_propri.delta./data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1",
+      "action_preprocessor.normalizer_propri.min./data/hlou/pigment-pour-study/datasets/cylinder-recovery-odometry-v1"
+    ],
+    "norm_key": "cylinder_official_v2",
+    "cameras": [
+      "face_view",
+      "left_wrist_view",
+      "right_wrist_view"
+    ],
+    "attention": "sdpa",
+    "torch": "2.9.0+cu130",
+    "flow_steps": 10,
+    "virtual_tail_after_normalization": 0,
+    "robot_state_dimensions": 26,
+    "base_odometry": true,
+    "flow_noise": "random"
+  },
+  "observations": [
+    {
+      "snapshot": 50,
+      "simulated_seconds": 19.99999999999874,
+      "state_sha256": "b36e6e08add2b98cc710d2c78e6ceb3fd88fbe092af2545e9933f43bd2bf8b2b",
+      "image_sha256": {
+        "face_view": "6f11160e467ece98039d2b0626d38d1e5dd8a1cca6ce1b1aa107163ea392f249",
+        "left_wrist_view": "246a89a97a14232d606e6e0351e125a29d503ee129d0d8f69b48ccd323c39fad",
+        "right_wrist_view": "094d556df9a0493d6a89f41c1a720d8b468d9ecdcc5fad39370aacd086a4594b"
+      },
+      "right_position_rms_std_m_per_tick": [
+        0.0016488432884216309,
+        0.0016447234665974975,
+        0.0025851556565612555,
+        0.0038342487532645464,
+        0.004610610660165548,
+        0.004740543197840452,
+        0.004686402622610331,
+        0.0035967202857136726
+      ],
+      "right_rotation_rms_std_rad_per_tick": [
+        0.005174912141755391,
+        0.006071407126075656,
+        0.006175129495052307,
+        0.0066825473820064495,
+        0.00584438781575915,
+        0.005859307954685586,
+        0.00616538265956204,
+        0.00640593171518753
+      ],
+      "right_half_gap_std_m_per_tick": [
+        0.0005928134196437895,
+        0.00017343687068205327,
+        0.00037384344614110887,
+        0.0002640194143168628,
+        0.0002729987900238484,
+        0.0001599282695678994,
+        0.00026547969901002944,
+        0.0002845341223292053
+      ],
+      "base_forward_std_m_s_per_tick": [
+        0.0015495701227337122,
+        0.0018159877508878708,
+        0.001503841020166874,
+        0.0032860732171684504,
+        0.0014202703023329377,
+        0.0014499087119475007,
+        0.0011849235743284225,
+        0.0015222621150314808
+      ],
+      "base_yaw_std_rad_s_per_tick": [
+        0.002756940433755517,
+        0.0016815268900245428,
+        0.002198470290750265,
+        0.0035175057128071785,
+        0.0026343208737671375,
+        0.002982101868838072,
+        0.002926901914179325,
+        0.0021437692921608686
+      ]
+    },
+    {
+      "snapshot": 70,
+      "simulated_seconds": 27.999999999980094,
+      "state_sha256": "a6b1c2d9a103e5eb515e40a02379501ec5c961f59999e6d5e00169f8fad3d1a0",
+      "image_sha256": {
+        "face_view": "bca4709a94322c32574dcfaf9a2fbad0fa2f035c3e61b8feae31f66e0deae921",
+        "left_wrist_view": "10689c2b864644d4cade4044fc86d885a06f4080522e6564b236476f51f244cf",
+        "right_wrist_view": "a81e5fb6a77d5c153f0b8d479218e11eeb78d1152ac8c9ae98c4d6698dc36df3"
+      },
+      "right_position_rms_std_m_per_tick": [
+        0.0017190570943057537,
+        0.002558239735662937,
+        0.003475985722616315,
+        0.0030160187743604183,
+        0.0042345114052295685,
+        0.0057944622822105885,
+        0.0064465198665857315,
+        0.008083152584731579
+      ],
+      "right_rotation_rms_std_rad_per_tick": [
+        0.004945144468840461,
+        0.0057657910347592095,
+        0.006243481022101978,
+        0.006213780312382159,
+        0.0061585004544817586,
+        0.007606030019421462,
+        0.005211425175285258,
+        0.006134917201913087
+      ],
+      "right_half_gap_std_m_per_tick": [
+        0.00029495751368813217,
+        0.0002821032830979675,
+        0.00024254672462120652,
+        0.00033754183095879853,
+        0.00018265751714352518,
+        0.0002166399935958907,
+        0.00020998877880629152,
+        0.0001275928516406566
+      ],
+      "base_forward_std_m_s_per_tick": [
+        0.001409508171491325,
+        0.001205451670102775,
+        0.0015460836002603173,
+        0.0012870189966633916,
+        0.0011828611604869366,
+        0.0011534212389960885,
+        0.0012706541456282139,
+        0.0015351093607023358
+      ],
+      "base_yaw_std_rad_s_per_tick": [
+        0.00371405272744596,
+        0.0016945546958595514,
+        0.0037837065756320953,
+        0.00214903405867517,
+        0.0035234158858656883,
+        0.002753408858552575,
+        0.003347450867295265,
+        0.002958869095891714
+      ]
+    }
+  ],
+  "physics_advanced": false,
+  "task_success_measured": false,
+  "note": "Same observation, independent standard Gaussian flow samples; no teacher action or object state.",
+  "source_sha256": {
+    "diagnose_wall_sampling.py": "7e4ccc66e37273ee7455ebb1ceaa689fe9d624080d7e8b9ffeb4ce44c347ba28",
+    "run_wall_cylinder.py": "c5d27951837eff3e56f8ab0b5e1c7fdba600abad61d95f849fc91c78e58c4267",
+    "run_wall_carry.py": "a23e2add7d595d40b02b4d37216638b8d2b362cb65d06733b822278a57cdc097",
+    "cylinder_actions.py": "f157f2a03d4be68f631d29ab084bc48518c9c1d7123870aa8a002db5b8b6d083"
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "shapes": {
+    "input_ids": [
+      4,
+      510
+    ],
+    "attention_mask": [
+      4,
+      510
+    ],
+    "pixel_values": [
+      6144,
+      1176
+    ],
+    "image_grid_thw": [
+      12,
+      3
+    ],
+    "action_chunk": [
+      4,
+      32,
+      26
+    ],
+    "dof_mask": [
+      4,
+      32,
+      26
+    ],
+    "proprioception": [
+      4,
+      1,
+      26
+    ],
+    "agent_pos_mask": [
+      4,
+      1,
+      26
+    ],
+    "frame_index": [
+      4
+    ],
+    "sample_time": [
+      4
+    ],
+    "moe_token_types": [
+      4,
+      510
+    ]
+  },
+  "training_iterations_per_epoch": 7552,
+  "sampling": {
+    "sampler": "RecoveryDistributedSampler",
+    "weights_sha256": "8325eb84cf01f2643218c72b94c49ace586aa069918166ba9f7fa7575ed6411a",
+    "validation_frames_excluded": true,
+    "expected_recovery_fraction": 0.5032824665331127
+  },
+  "base_odometry_observed": true,
+  "active_base_dimensions": [
+    20,
+    21,
+    22
+  ],
+  "padding_dimensions": [
+    23,
+    24,
+    25
+  ],
+  "finite": true,
+  "dataset_names": [
+    "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1",
+    "/data/hlou/pigment-pour-study/datasets/cylinder-hold-recovery-v1"
+  ],
+  "state_unchanged_and_base_labels_preserved": true,
+  "relative_rotations_match_loader": true,
+  "episode_end_actions_repeat_last": true,
+  "explicit_episode_checks": [
+    {
+      "episode": 51,
+      "source_index": 31642,
+      "frame_index": 154,
+      "relative_actions_match": true,
+      "robot_state_preserved": true,
+      "collated_action_shape": [
+        1,
+        32,
+        26
+      ],
+      "finite": true,
+      "padding_masked": true
+    },
+    {
+      "episode": 51,
+      "source_index": 31796,
+      "frame_index": 308,
+      "relative_actions_match": true,
+      "robot_state_preserved": true,
+      "collated_action_shape": [
+        1,
+        32,
+        26
+      ],
+      "finite": true,
+      "padding_masked": true
+    },
+    {
+      "episode": 51,
+      "source_index": 31488,
+      "frame_index": 0,
+      "relative_actions_match": true,
+      "robot_state_preserved": true,
+      "collated_action_shape": [
+        1,
+        32,
+        26
+      ],
+      "finite": true,
+      "padding_masked": true
+    }
+  ],
+  "explicit_episode_training_coverage": [
+    {
+      "episode": 51,
+      "usable_training_anchors": 297,
+      "first_frame": 0,
+      "last_frame": 308,
+      "source_frame_zero_in_training": true,
+      "initial2s_training_anchors": 40,
+      "expected_sampling_fraction": 0.06176187969948937
+    }
+  ],
+  "selected_training_episodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "virtual_action_and_state_tail": "Only action tail is padded; all 26 robot-state dimensions observed",
+  "note": "Data-path validation only; no model forward/backward."
+}

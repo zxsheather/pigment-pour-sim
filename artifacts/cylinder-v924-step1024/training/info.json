@@ -1,0 +1,173 @@
+{
+    "codebase_version": "v3.0",
+    "robot_type": "quanta_x1_official_cylinder_joint_control",
+    "total_episodes": 537,
+    "total_frames": 373093,
+    "total_tasks": 3,
+    "chunks_size": 1000,
+    "data_files_size_in_mb": 100,
+    "video_files_size_in_mb": 200,
+    "fps": 20,
+    "splits": {
+        "train": "0:537"
+    },
+    "data_path": "data/chunk-{chunk_index:03d}/file-{file_index:03d}.parquet",
+    "video_path": "videos/{video_key}/chunk-{chunk_index:03d}/file-{file_index:03d}.mp4",
+    "features": {
+        "observation.state": {
+            "dtype": "float32",
+            "shape": [
+                26
+            ],
+            "names": [
+                "right_joint_position_1",
+                "right_joint_position_2",
+                "right_joint_position_3",
+                "right_joint_position_4",
+                "right_joint_position_5",
+                "right_joint_position_6",
+                "right_gripper_opening_fraction",
+                "base_vx",
+                "base_yaw_rate",
+                "right_joint_velocity_1",
+                "right_joint_velocity_2",
+                "right_joint_velocity_3",
+                "right_joint_velocity_4",
+                "right_joint_velocity_5",
+                "right_joint_velocity_6",
+                "base_odometry_x",
+                "base_odometry_y",
+                "base_odometry_yaw",
+                "wrist_to_cylinder_target_forward_asinh",
+                "right_joint_tracking_error_2",
+                "right_joint_tracking_error_3",
+                "wrist_to_cylinder_target_left_asinh",
+                "wrist_to_cylinder_target_up_asinh",
+                "initial_rgb_detection_valid",
+                "right_gripper_tracking_error_fraction",
+                "previous_base_forward_command"
+            ]
+        },
+        "action": {
+            "dtype": "float32",
+            "shape": [
+                9
+            ],
+            "names": [
+                "right_joint_command_increment_1_rad",
+                "right_joint_command_increment_2_rad",
+                "right_joint_command_increment_3_rad",
+                "right_joint_command_increment_4_rad",
+                "right_joint_command_increment_5_rad",
+                "right_joint_command_increment_6_rad",
+                "right_gripper_opening_fraction",
+                "base_vx",
+                "base_yaw_rate"
+            ]
+        },
+        "observation.images.face_view": {
+            "dtype": "video",
+            "shape": [
+                448,
+                448,
+                3
+            ],
+            "names": [
+                "height",
+                "width",
+                "channels"
+            ],
+            "info": {
+                "video.height": 448,
+                "video.width": 448,
+                "video.codec": "h264",
+                "video.pix_fmt": "yuv420p",
+                "video.is_depth_map": false,
+                "video.fps": 20,
+                "video.channels": 3,
+                "has_audio": false
+            }
+        },
+        "observation.images.left_wrist_view": {
+            "dtype": "video",
+            "shape": [
+                448,
+                448,
+                3
+            ],
+            "names": [
+                "height",
+                "width",
+                "channels"
+            ],
+            "info": {
+                "video.height": 448,
+                "video.width": 448,
+                "video.codec": "h264",
+                "video.pix_fmt": "yuv420p",
+                "video.is_depth_map": false,
+                "video.fps": 20,
+                "video.channels": 3,
+                "has_audio": false
+            }
+        },
+        "observation.images.right_wrist_view": {
+            "dtype": "video",
+            "shape": [
+                448,
+                448,
+                3
+            ],
+            "names": [
+                "height",
+                "width",
+                "channels"
+            ],
+            "info": {
+                "video.height": 448,
+                "video.width": 448,
+                "video.codec": "h264",
+                "video.pix_fmt": "yuv420p",
+                "video.is_depth_map": false,
+                "video.fps": 20,
+                "video.channels": 3,
+                "has_audio": false
+            }
+        },
+        "timestamp": {
+            "dtype": "float32",
+            "shape": [
+                1
+            ],
+            "names": null
+        },
+        "frame_index": {
+            "dtype": "int64",
+            "shape": [
+                1
+            ],
+            "names": null
+        },
+        "episode_index": {
+            "dtype": "int64",
+            "shape": [
+                1
+            ],
+            "names": null
+        },
+        "index": {
+            "dtype": "int64",
+            "shape": [
+                1
+            ],
+            "names": null
+        },
+        "task_index": {
+            "dtype": "int64",
+            "shape": [
+                1
+            ],
+            "names": null
+        }
+    }
+}

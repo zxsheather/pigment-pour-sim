@@ -1,0 +1,158 @@
+{
+  "kind": "actual_neural_closed_loop_failure_diagnosis",
+  "model": "runs/cylinder-hold-correction-bc-v1/checkpoints/0_384",
+  "formal_evaluation": true,
+  "ik_max_residual": 0.002,
+  "success": false,
+  "failure_reason": "lost_grasp",
+  "simulated_seconds": 62.55000000011664,
+  "source_trajectory_sha256": "75be5048f61f3912c70ccde4d7eabf9a7816d9353fd684902e9d74afa4d29749",
+  "analysis_window_s": [
+    52.000000000066265,
+    62.5000000001164
+  ],
+  "gripper_field_units": "Stored action/state19 are dimensionless full opening divided by0.0975m; per-finger half opening = value*0.0975/2",
+  "commanded_half_opening_mm": [
+    2.3608751222491264,
+    34.685854017734535
+  ],
+  "maximum_one_frame_opening_increase_mm": 18.051029294729233,
+  "actual_half_opening_mm": [
+    9.74746036529541,
+    10.905437469482422
+  ],
+  "two_contact_fraction": 1.0,
+  "last_logged_pre_step_slip_mm": 24.693388077307674,
+  "final_scored_max_slip_mm": 25.650057024244873,
+  "final_task_gates": {
+    "held": true,
+    "lifted": true,
+    "retreated": false,
+    "close_to_head": true,
+    "upright": true,
+    "still": false,
+    "base_retreat_m": 0.013856107887017133,
+    "camera_distance_m": 0.3994151847790529,
+    "linear_speed_m_s": 0.1221486427359198,
+    "angular_speed_rad_s": 0.6407773804032995
+  },
+  "finding": "Executed commands contain abrupt opening spikes in the final held window: maximum one-frame increase18.05mm per finger and target half-opening34.69mm. Both contacts remain in every logged pre-step frame, but scored slip exceeds25mm. These spikes are a plausible contributor, not a proved sole cause; contact forces and a counterfactual have not been measured.",
+  "limitations": [
+    "Window observations are before each physics step; final scored failure is after last step",
+    "No counterfactual action test or causal attribution",
+    "Not a task success, teacher success, or independent-suite result"
+  ],
+  "opening_spikes_over15mm_per_finger": [
+    {
+      "time_s": 60.65000000010757,
+      "commanded_half_opening_mm": 22.060841694474224,
+      "actual_half_opening_mm": 10.564062118530273,
+      "slip_before_mm": 10.381695564382747,
+      "slip_400ms_later_mm": 11.035378192494528,
+      "contacts": 2,
+      "chunk_index": 151,
+      "position_in_executed8": 5
+    },
+    {
+      "time_s": 60.700000000107806,
+      "commanded_half_opening_mm": 33.49735379219055,
+      "actual_half_opening_mm": 10.483081817626953,
+      "slip_before_mm": 10.482453483720876,
+      "slip_400ms_later_mm": 11.155579448192865,
+      "contacts": 2,
+      "chunk_index": 151,
+      "position_in_executed8": 6
+    },
+    {
+      "time_s": 60.750000000108045,
+      "commanded_half_opening_mm": 34.685854017734535,
+      "actual_half_opening_mm": 10.691307067871094,
+      "slip_before_mm": 9.760611763441672,
+      "slip_400ms_later_mm": 11.446637994703428,
+      "contacts": 2,
+      "chunk_index": 151,
+      "position_in_executed8": 7
+    }
+  ],
+  "predicted_chunks_sha256": "228d5c59b57b2e7a66d6165f6d43c6d19ae0834abd92a76edf8c9f2f47561ed7",
+  "overlapping_forecast_evidence": [
+    {
+      "control_tick": 1213,
+      "time_s": 60.650000000000006,
+      "forecasts": [
+        {
+          "forecast_index": 148,
+          "horizon_index": 29,
+          "half_opening_mm": 3.053084373474121
+        },
+        {
+          "forecast_index": 149,
+          "horizon_index": 21,
+          "half_opening_mm": 3.317815065383911
+        },
+        {
+          "forecast_index": 150,
+          "horizon_index": 13,
+          "half_opening_mm": 3.2414047718048096
+        },
+        {
+          "forecast_index": 151,
+          "horizon_index": 5,
+          "half_opening_mm": 22.060840606689453
+        }
+      ]
+    },
+    {
+      "control_tick": 1214,
+      "time_s": 60.7,
+      "forecasts": [
+        {
+          "forecast_index": 148,
+          "horizon_index": 30,
+          "half_opening_mm": 3.2444467544555664
+        },
+        {
+          "forecast_index": 149,
+          "horizon_index": 22,
+          "half_opening_mm": 3.4648098945617676
+        },
+        {
+          "forecast_index": 150,
+          "horizon_index": 14,
+          "half_opening_mm": 3.1630313396453857
+        },
+        {
+          "forecast_index": 151,
+          "horizon_index": 6,
+          "half_opening_mm": 33.497352600097656
+        }
+      ]
+    },
+    {
+      "control_tick": 1215,
+      "time_s": 60.75,
+      "forecasts": [
+        {
+          "forecast_index": 148,
+          "horizon_index": 31,
+          "half_opening_mm": 3.1354196071624756
+        },
+        {
+          "forecast_index": 149,
+          "horizon_index": 23,
+          "half_opening_mm": 3.080141067504883
+        },
+        {
+          "forecast_index": 150,
+          "horizon_index": 15,
+          "half_opening_mm": 3.104218006134033
+        },
+        {
+          "forecast_index": 151,
+          "horizon_index": 7,
+          "half_opening_mm": 34.68585205078125
+        }
+      ]
+    }
+  ]
+}
