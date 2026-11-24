@@ -1,0 +1,200 @@
+{
+  "kind": "official_wall_joint_data_contract",
+  "passed": true,
+  "action_representation": "servo_increment",
+  "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924",
+  "episodes": 537,
+  "frames": 373093,
+  "flow_horizon": 8,
+  "training_iterations_per_epoch": 88609,
+  "batch_shapes": {
+    "input_ids": [
+      4,
+      482
+    ],
+    "attention_mask": [
+      4,
+      482
+    ],
+    "pixel_values": [
+      6144,
+      1176
+    ],
+    "image_grid_thw": [
+      12,
+      3
+    ],
+    "action_chunk": [
+      4,
+      8,
+      26
+    ],
+    "dof_mask": [
+      4,
+      8,
+      26
+    ],
+    "proprioception": [
+      4,
+      1,
+      26
+    ],
+    "agent_pos_mask": [
+      4,
+      1,
+      26
+    ],
+    "frame_index": [
+      4
+    ],
+    "sample_time": [
+      4
+    ],
+    "moe_token_types": [
+      4,
+      482
+    ]
+  },
+  "checks": [
+    {
+      "episode": 0,
+      "frame": 655,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 0,
+      "frame": 0,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 0,
+      "frame": 326,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 268,
+      "frame": 559,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 268,
+      "frame": 1103,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 268,
+      "frame": 0,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 536,
+      "frame": 1,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 536,
+      "frame": 866,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    },
+    {
+      "episode": 536,
+      "frame": 432,
+      "action_labels_exact": true,
+      "robot_state_exact": true,
+      "gripper_and_base_absolute": true,
+      "normalization_matches_inference": true,
+      "masks_and_padding_correct": true,
+      "zero_arm_increments_at_padded_steps": true
+    }
+  ],
+  "episode_end_repeats_last": true,
+  "action_active_dimensions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "robot_state_active_dimensions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+  ],
+  "sampling_weights_match_source_indices": true,
+  "processor_loaded": true,
+  "checkpoint_serving_normalizer_factory_matches_training": true,
+  "serving_normalizer_key": "cylinder_joint_v1",
+  "distributed_backend": "gloo",
+  "neural_weights_loaded": false,
+  "model_forward": false,
+  "backward": false,
+  "task_success_measured": false,
+  "source_sha256": "80a064ff445b014a9eb7b7d375c2b5b130f502522c88dd64a457cda6453e4b32"
+}

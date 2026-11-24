@@ -1,0 +1,328 @@
+_raw_data:
+  action_horizon_ar: 8
+  action_horizon_flow: 8
+  camera_name_mapping:
+    face_view: front view
+    left_wrist_view: left wrist view
+    right_wrist_view: right wrist view
+  dataset_type: lerobot
+  key_mappings:
+    action: action
+    camera:
+      observation.images.face_view: face_view
+      observation.images.left_wrist_view: left_wrist_view
+      observation.images.right_wrist_view: right_wrist_view
+    state: observation.state
+  lerobot_config:
+    frame_sampling_weights_path: /data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/v924-frame-sampling-weights.npy
+    repo_id: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+    root: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+  max_length: 1024
+  norm_stats_path: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924/joint_norm_stats.json
+  num_workers: 4
+  resolution:
+    face_view: 448
+    left_wrist_view: 224
+    right_wrist_view: 224
+  state_bins: 512
+  train_test_split: 1.0
+  use_state_string_representation: false
+_raw_yaml:
+  checkpoint:
+    resume_from: /data/hlou/pigment-pour-study/runs/cylinder-v438-final-warm-presentation-v489/checkpoint-v438-step1024/model.safetensors
+    save_path: /data/hlou/pigment-pour-study/runs/cylinder-joint-early-v718-retreat-bc-v924-a6000/checkpoints
+  data:
+    action_horizon_ar: 8
+    action_horizon_flow: 8
+    camera_name_mapping:
+      face_view: front view
+      left_wrist_view: left wrist view
+      right_wrist_view: right wrist view
+    dataset_type: lerobot
+    key_mappings:
+      action: action
+      camera:
+        observation.images.face_view: face_view
+        observation.images.left_wrist_view: left_wrist_view
+        observation.images.right_wrist_view: right_wrist_view
+      state: observation.state
+    lerobot_config:
+      frame_sampling_weights_path: /data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/v924-frame-sampling-weights.npy
+      repo_id: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+      root: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+    max_length: 1024
+    norm_stats_path: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924/joint_norm_stats.json
+    num_workers: 4
+    resolution:
+      face_view: 448
+      left_wrist_view: 224
+      right_wrist_view: 224
+    state_bins: 512
+    train_test_split: 1.0
+    use_state_string_representation: false
+  debug:
+    nvtx: false
+    profile: false
+  distributed:
+    bf16: true
+    find_unused_parameters: true
+    use_fsdp: false
+    use_gradient_checkpointing: true
+    use_mixed_precision: true
+  hyperparams:
+    batch_size_per_gpu: 4
+    gradient_accumulation_steps: 1
+    num_epoch: 1000
+    optimizer:
+      betas:
+      - 0.9
+      - 0.95
+      learning_rate: 1.0e-05
+      lr_groups:
+      - fail_on_empty: true
+        include:
+        - action_preprocessor.w
+        - action_preprocessor.time_
+        - action_preprocessor.action_proj_back
+        - moe.experts.1
+        - qkv_proj_experts.1
+        - o_proj_experts.1
+        - input_layernorms.1
+        - post_attention_layernorms.1
+        - model.norms.1
+        lr: 1.0e-05
+        name: action
+      - fail_on_empty: true
+        include:
+        - action_preprocessor.propri_proj
+        lr: 5.0e-05
+        name: state_projection
+      max_grad_norm: 1.0
+      optimizer_type: adamw
+      train_action_expert_only: true
+      weight_decay: 1.0e-08
+    scheduler:
+      num_training_steps: 1025
+      scheduler_type: constant
+    seed: 48
+  logging:
+    epoch_save_interval: 1000
+    log_interval: 10
+    log_name: cylinder-joint-early-v718-retreat-bc-v924-a6000
+    save_interval: 128
+    use_wandb: false
+    val_interval: 1000000
+  model:
+    ar_loss_weight: 0.0
+    attn_deterministic: true
+    attn_implementation: sdpa
+    backbone: qwen2_5
+    config_path: /data/hlou/pigment-pour-study/runs/cylinder-extended-contact-height-admission-v922/architecture-v922-contact-height.json
+    flow_loss_weight: 1.0
+    pretrained_path: null
+    processor_path: /data/hlou/pigment-pour-study/runs/cylinder-joint-v15-near-grasp-data-check-v18/parent-v15-step384
+    use_ema: false
+  model_type: qwen2_5
+  task:
+    action_horizon: 8
+    action_horizon_flow: 8
+    agent_pos_config:
+      base_forward_command: 1
+      base_odometry: 3
+      follow_right_arm_joint_position: 6
+      follow_right_gripper: 1
+      right_arm_joint_velocity: 6
+      right_gripper_tracking_error: 1
+      right_joint_2_3_tracking_error: 2
+      velocity_decomposed: 2
+      wrist_target_forward: 1
+      wrist_target_left: 1
+      wrist_target_up: 1
+      wrist_target_valid: 1
+    ar_dof_config:
+      action_padding: 17
+      follow_right_arm_servo_increment: 6
+      follow_right_gripper: 1
+      velocity_decomposed: 2
+    dof_config:
+      action_padding: 17
+      follow_right_arm_servo_increment: 6
+      follow_right_gripper: 1
+      velocity_decomposed: 2
+    use_state_string_representation: false
+checkpoint:
+  resume_data: null
+  resume_ema: null
+  resume_from: /data/hlou/pigment-pour-study/runs/cylinder-v438-final-warm-presentation-v489/checkpoint-v438-step1024/model.safetensors
+  resume_model: null
+  resume_optimizer: null
+  resume_rng: null
+  resume_scheduler: null
+  resume_step: null
+  save_path: /data/hlou/pigment-pour-study/runs/cylinder-joint-early-v718-retreat-bc-v924-a6000/checkpoints
+  validate_first: false
+data:
+  action_tokenizer_path: null
+  camera_name_mapping:
+    face_view: front view
+    left_wrist_view: left wrist view
+    right_wrist_view: right wrist view
+  dataset_type: lerobot
+  key_mappings:
+    action: action
+    camera:
+      observation.images.face_view: face_view
+      observation.images.left_wrist_view: left_wrist_view
+      observation.images.right_wrist_view: right_wrist_view
+    state: observation.state
+  lerobot_config:
+    frame_sampling_weights_path: /data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/v924-frame-sampling-weights.npy
+    repo_id: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+    root: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924
+  noise_scheduler: null
+  norm_stats_path: /data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924/joint_norm_stats.json
+  normalizer_config: null
+  num_workers: 4
+  padding_side: left
+  priority_order: null
+  resolution:
+    face_view: 448
+    left_wrist_view: 224
+    right_wrist_view: 224
+  train_test_split: 1.0
+  use_fast_tokenizer: false
+dataset_path: null
+debug:
+  enable_mfu: false
+  enable_mfu_profile: false
+  nvtx: false
+  profile: false
+  profile_active_iters: 3
+  profile_save_path: ./profile
+  profile_wait_iters: 1
+  profile_warmup_iters: 1
+  save_debug_batch_path: null
+  show_time_details: false
+  visualize_sample: false
+distributed:
+  bf16: true
+  broadcast_buffers: true
+  bucket_cap_mb: 25
+  find_unused_parameters: true
+  fsdp_backward_prefetch: backward_pre
+  fsdp_cpu_offload: false
+  fsdp_forward_prefetch: false
+  fsdp_hsdp_replicate_size: null
+  fsdp_limit_all_gathers: true
+  fsdp_reduce_dtype: bf16
+  fsdp_save_policy: full
+  fsdp_sharding_strategy: full_shard
+  fsdp_sync_module_states: true
+  fsdp_use_orig_params: true
+  use_amp: false
+  use_fsdp: false
+  use_gradient_checkpointing: true
+  use_gradient_checkpointing_offload: false
+  use_mixed_precision: true
+  use_selective_recompute: false
+hyperparams:
+  batch_size_per_gpu: 4
+  gradient_accumulation_steps: 1
+  num_epoch: 1000
+  optimizer:
+    action_expert_learning_rate: null
+    action_lr_keywords: null
+    betas: !!python/tuple
+    - 0.9
+    - 0.95
+    enable_grad_clip: true
+    eps: 1.0e-08
+    foreach: null
+    fused: true
+    learning_rate: 1.0e-05
+    lr_groups:
+    - fail_on_empty: true
+      include:
+      - action_preprocessor.w
+      - action_preprocessor.time_
+      - action_preprocessor.action_proj_back
+      - moe.experts.1
+      - qkv_proj_experts.1
+      - o_proj_experts.1
+      - input_layernorms.1
+      - post_attention_layernorms.1
+      - model.norms.1
+      lr: 1.0e-05
+      name: action
+    - fail_on_empty: true
+      include:
+      - action_preprocessor.propri_proj
+      lr: 5.0e-05
+      name: state_projection
+    max_grad_norm: 1.0
+    optimizer_type: adamw
+    train_action_expert_only: true
+    weight_decay: 1.0e-08
+  scheduler:
+    num_training_steps: 1025
+    scheduler_type: constant
+  seed: 48
+logging:
+  epoch_save_interval: 1000
+  gc_interval_steps: 1000
+  ignore_until_interval: 0
+  log_entity: null
+  log_interval: 10
+  log_name: cylinder-joint-early-v718-retreat-bc-v924-a6000
+  log_project: wallx
+  loss_log_smooth_window: 1
+  save_interval: 128
+  use_wandb: false
+  val_interval: 1000000
+  wandb_offline: false
+model:
+  action_tokenizer_checkpoint_path: null
+  action_tokenizer_config_dir: null
+  action_tokenizer_path: null
+  action_tokenizer_type: null
+  ar_loss_weight: 0.0
+  attn_deterministic: true
+  attn_implementation: sdpa
+  backbone: qwen2_5
+  config_path: /data/hlou/pigment-pour-study/runs/cylinder-extended-contact-height-admission-v922/architecture-v922-contact-height.json
+  customized_robot_config: null
+  enable_customized_robot_config: false
+  flow_loss_weight: 1.0
+  new_special_tokens: null
+  pretrained_path: null
+  processor_path: /data/hlou/pigment-pour-study/runs/cylinder-joint-v15-near-grasp-data-check-v18/parent-v15-step384
+  use_ema: false
+model_type: qwen2_5
+task:
+  action_horizon: 8
+  action_horizon_flow: 8
+  agent_pos_config:
+    base_forward_command: 1
+    base_odometry: 3
+    follow_right_arm_joint_position: 6
+    follow_right_gripper: 1
+    right_arm_joint_velocity: 6
+    right_gripper_tracking_error: 1
+    right_joint_2_3_tracking_error: 2
+    velocity_decomposed: 2
+    wrist_target_forward: 1
+    wrist_target_left: 1
+    wrist_target_up: 1
+    wrist_target_valid: 1
+  ar_dof_config:
+    action_padding: 17
+    follow_right_arm_servo_increment: 6
+    follow_right_gripper: 1
+    velocity_decomposed: 2
+  dof_config:
+    action_padding: 17
+    follow_right_arm_servo_increment: 6
+    follow_right_gripper: 1
+    velocity_decomposed: 2
+  noise_scheduler: null
+  use_state_string_representation: false

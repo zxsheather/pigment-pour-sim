@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "default_profile": "official",
+  "source_commit": "63610199bbd70eafd1fc087a015ec5c74a0c906c",
+  "source_url": "https://github.com/X-Square-Robot/sdk_robot.git",
+  "urdf_sha256": "fbb450ae64447793d4f18cfb7f1f9655c09e1d0c1327d797fc6656d2727b2aa0",
+  "custom_pads": 0,
+  "geometry_import": "Unchanged union of the source convex solids",
+  "fingers": [
+    {
+      "link": "left_arm_gripper_left_link",
+      "source_file": "mesh/collision/gripper_left_link.STL",
+      "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+      "convex_solids": 3,
+      "compiled_contact_geoms": 3,
+      "urdf_effort_limit_n": 20.0,
+      "maximum_vertex_error_m": 1.8767490163088206e-09
+    },
+    {
+      "link": "left_arm_gripper_right_link",
+      "source_file": "mesh/collision/gripper_right_link.STL",
+      "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+      "convex_solids": 2,
+      "compiled_contact_geoms": 2,
+      "urdf_effort_limit_n": 20.0,
+      "maximum_vertex_error_m": 1.880467725507178e-09
+    },
+    {
+      "link": "right_arm_gripper_left_link",
+      "source_file": "mesh/collision/gripper_left_link.STL",
+      "sha256": "3e43838c5023aa6bda5d6a339535d806c74461548c6c97befc8c0bf05be166ea",
+      "convex_solids": 3,
+      "compiled_contact_geoms": 3,
+      "urdf_effort_limit_n": 20.0,
+      "maximum_vertex_error_m": 1.8767490163088206e-09
+    },
+    {
+      "link": "right_arm_gripper_right_link",
+      "source_file": "mesh/collision/gripper_right_link.STL",
+      "sha256": "86c16517b8d624d0349615a0f11d7a1573ac48bb98ff112ab979d9e3e2cdc039",
+      "convex_solids": 2,
+      "compiled_contact_geoms": 2,
+      "urdf_effort_limit_n": 20.0,
+      "maximum_vertex_error_m": 1.880467725507178e-09
+    }
+  ],
+  "contact_model": {
+    "friction": [
+      1.0,
+      0.005,
+      0.0001
+    ],
+    "condim": 3,
+    "noslip_iterations": 0,
+    "calibration": "Nominal simulator defaults; not measured hardware properties"
+  }
+}

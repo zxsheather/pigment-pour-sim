@@ -1,0 +1,95 @@
+{
+  "base": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-49ml-data-admission-v1062/v1062-verified-49ml-readout-inputs.json",
+    "sha256": "413b1b62fbdaa2df67bf1b47ea4b380170130acc7f21dc24c4ea55979ca5c960"
+  },
+  "audit": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-certified-advance-window-audit-v1076/v1076-certified-advance-window-audit.json",
+    "sha256": "d13b120ef0e8097baa06be27dca8a880f1cf5c1d588675f46e8ea4ca2a1a2c67"
+  },
+  "paired_reference": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-open-advance-paired-training-v1064/v1064-verified-open-advance-pair.json",
+    "sha256": "7b76bf356b4482d58a7d76b8a72e1e758da8136f943c3c640672e73e0b861602"
+  },
+  "official_loader": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/official-v1077-data-validation.json",
+    "sha256": "aa527f729fd90ec0651f1853338f8ed782cbd16e3e978f54a8f2ef1ffcee9eb2"
+  },
+  "qualified_rows": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/qualifications.json",
+    "sha256": "1dc3830d4cb83f531809efab579706372a0872072f4cfe68031e165cdc042a8f"
+  },
+  "config": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/train-v1077.yml",
+    "sha256": "8c66d8e0bae3917ae8b1c838227454ba9d38e0d6d068a22def90fb84eb63b5ea"
+  },
+  "architecture": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-open-advance-paired-training-v1064/architecture-wide.json",
+    "sha256": "bafa84b3820d580db441938a19a1e014d65e65344560c6ccfbddd170c4334c0b"
+  },
+  "sampler": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/v1077-weights.npy",
+    "sha256": "130eed5b7d5385465e646a8459acd20987438c4604ea20e56d87cde9023644c8"
+  },
+  "serving_normalizer": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/serving-normalizer-view/norm_stats.json",
+    "sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde"
+  },
+  "active_loss": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-symmetric-heading-response-v942/fixed-wall-x/wall_x/model/core/action/cylinder_wrist_pose_loss.py",
+    "sha256": "2f4d8425ac2f30c8b390919a1bbef7aef06429ea3cdadcdd01806df837a204b9"
+  },
+  "dataset": {
+    "kind": "verified_wrist_target_correction_append",
+    "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v1055-plus-49ml-readout-v1062",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v1062-plus-matched-advance-v1077",
+    "qualifications": "/data/hlou/pigment-pour-study/runs/cylinder-focused-open-advance-admission-v1077/qualifications.json",
+    "new_episodes": 3,
+    "new_frames": 1712,
+    "episodes": 568,
+    "frames": 396009,
+    "base_frames_exact": true,
+    "normalization_exact": true,
+    "base_normalization_sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde",
+    "normalization_sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde",
+    "original_video_hardlinks": 1546,
+    "appended_video_hardlinks": 9,
+    "new_sampling_fraction": 0.2,
+    "new_approach_fraction": 0.75,
+    "held_only": false,
+    "reader_reopen_passed": true,
+    "independent_cases_read": false
+  },
+  "sampling_fraction_by_new_group": {
+    "matched_extended_forward": 0.011533655292425046,
+    "other_extended_forward": 0.0026184514717937954,
+    "remaining_approach": 0.00401171769259442,
+    "lift_and_retreat": 0.00299158080652441,
+    "present_and_read": 0.0030265045691748593
+  },
+  "nearby_training_windows": [
+    {
+      "seed": 10663200,
+      "nearby_in_training": 12,
+      "nearby_total": 14,
+      "sample_probability": 0.0037406449597054223
+    },
+    {
+      "seed": 10663202,
+      "nearby_in_training": 11,
+      "nearby_total": 13,
+      "sample_probability": 0.003428924546396637
+    },
+    {
+      "seed": 10663204,
+      "nearby_in_training": 14,
+      "nearby_total": 15,
+      "sample_probability": 0.004364085786322993
+    }
+  ],
+  "old_sampling_weights_unchanged": true,
+  "training_admission_performed": true,
+  "optimizer_started": false,
+  "execution_prefix": 8,
+  "independent_cases_read": false
+}

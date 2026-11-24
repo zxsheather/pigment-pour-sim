@@ -1,0 +1,77 @@
+{
+  "base": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-extended-contact-height-admission-v922/v922-verified-contact-height-inputs.json",
+    "sha256": "c3c7a1342d5dd4271d0b53884420ea0bcb164497d6933fb4a1c38746a296a8e9"
+  },
+  "camera_index": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-fresh-contact-cameras-v917/v917-v718-contact-cameras.json",
+    "sha256": "43acf7a7eae6629343fb2f7e4f67deb82116dfe92002e6ee41983f175008b306"
+  },
+  "active_loss": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-symmetric-base-response-v896/fixed-wall-x/wall_x/model/core/action/cylinder_wrist_pose_loss.py",
+    "sha256": "0c23bdb6d2d8adc2b640f3fc449a2a46572ea2dcd9abc83d41356af33d8a6c54"
+  },
+  "wall_sampler_module": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-symmetric-base-response-v896/fixed-wall-x/wall_x/data/backends/lerobot/recovery_sampler.py",
+    "sha256": "4567a1e7a635aaf43c78318eaf39c4c1b583e01fb37d240758a0bd622580ab0a"
+  },
+  "dataset": {
+    "kind": "verified_wrist_target_correction_append",
+    "base": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v889-plus-contact-and-lateral-v907",
+    "dataset": "/data/hlou/pigment-pour-study/datasets/cylinder-joint-v907-plus-early-v718-retreat-v924",
+    "qualifications": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/qualifications.json",
+    "new_episodes": 6,
+    "new_frames": 4337,
+    "episodes": 537,
+    "frames": 373093,
+    "base_frames_exact": true,
+    "normalization_exact": true,
+    "base_normalization_sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde",
+    "normalization_sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde",
+    "original_video_hardlinks": 1444,
+    "appended_video_hardlinks": 18,
+    "new_sampling_fraction": 0.2,
+    "new_approach_fraction": 0.75,
+    "held_only": false,
+    "reader_reopen_passed": true,
+    "independent_cases_read": false
+  },
+  "official_loader": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/official-v924-data-validation.json",
+    "sha256": "eb05a970f4a5f3b65c897d75b5064887b2d21c6ba608a75cd8c1bdae36ce5c4d"
+  },
+  "config": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/train-v924.yml",
+    "sha256": "65cadf6df528b47c3b89194509b51874b1fa5cefe20f021346c1959e1b628d14"
+  },
+  "qualifications": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/qualifications.json",
+    "sha256": "d0a3944c911628c02ecd90b3bc1a08c9a27be6bb081f80a46504f5f18376125b"
+  },
+  "sampler": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/v924-frame-sampling-weights.npy",
+    "sha256": "fffc712a0947b7c2b09bcab06ca12b6739d7620bc99eb2a8b406e0c0f1e95f2a"
+  },
+  "architecture": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-extended-contact-height-admission-v922/architecture-v922-contact-height.json",
+    "sha256": "fcc49ccb3fa27c41e37f7f5a2d91b3b7601263b0d5c81591eaf2debdc241a146"
+  },
+  "serving_normalizer": {
+    "path": "/data/hlou/pigment-pour-study/runs/cylinder-v718-early-retreat-admission-v924/serving-normalizer-view/norm_stats.json",
+    "sha256": "e8d842d9515b455b487360ebbbabfeac0150b1f57a5116984a9dac8d96afddde"
+  },
+  "sampling_by_phase": {
+    "first_contact_window": 0.002103169899846679,
+    "demonstrated_retreat_windows": 0.005783717224578368,
+    "approach_and_grasp": 0.007012880051083922,
+    "lift_and_retreat": 0.005027577570109678,
+    "present_and_read": 0.003994380874371692
+  },
+  "added_training_fraction": 0.02392172561999034,
+  "old_sampling_weights_unchanged": true,
+  "optimizer_started": false,
+  "training_admission_performed": true,
+  "execution_prefix": 8,
+  "model_success_measured": false,
+  "independent_cases_read": false
+}
